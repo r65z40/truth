@@ -176,16 +176,24 @@ theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 15
 autowrap_mode = 3
 
-[node name="FactsTitle" type="Label" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
-layout_mode = 2
-theme_type_variation = &"DocumentLabel"
-theme_override_colors/font_color = Color(0.557, 0.122, 0.122, 1)
-text = "ÉLÉMENTS NOTABLES"
-
-[node name="FactsList" type="VBoxContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
+[node name="FactsPanel" type="PanelContainer" parent="Layout/Content/Columns/DocumentColumn"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="FactsLayout" type="VBoxContainer" parent="Layout/Content/Columns/DocumentColumn/FactsPanel"]
+layout_mode = 2
 theme_override_constants/separation = 6
+
+[node name="FactsTitle" type="Label" parent="Layout/Content/Columns/DocumentColumn/FactsPanel/FactsLayout"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "ÉLÉMENTS NOTABLES DE CETTE PIÈCE : cliquez pour les noter dans votre carnet"
+
+[node name="FactsList" type="HFlowContainer" parent="Layout/Content/Columns/DocumentColumn/FactsPanel/FactsLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
 
 [node name="ConclusionPanel" parent="Layout/Content/Columns/DocumentColumn" instance=ExtResource("2_conclusion")]
 unique_name_in_owner = true

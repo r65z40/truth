@@ -17,6 +17,14 @@ const COLOR_TEXT := "#e8e4d8"
 const CHARS_PER_SECOND := 400.0
 
 const QUICK_COMMANDS := ["AIDE", "DOSSIERS", "MESSAGES", "VERITAS", "IDENT", "EFFACER"]
+const QUICK_TOOLTIPS := {
+	"AIDE": "Liste des commandes du terminal.",
+	"DOSSIERS": "Ouvrir les dossiers qui vous sont assignés.",
+	"MESSAGES": "Consulter la messagerie interne.",
+	"VERITAS": "Demander l'avis du système d'analyse VERITAS.",
+	"IDENT": "Afficher votre identité d'agent.",
+	"EFFACER": "Effacer l'écran du terminal.",
+}
 
 var _typing_tween: Tween
 
@@ -30,6 +38,7 @@ func _ready() -> void:
 	for command in QUICK_COMMANDS:
 		var button := Button.new()
 		button.text = command
+		button.tooltip_text = QUICK_TOOLTIPS.get(command, "")
 		button.custom_minimum_size = Vector2(0, 44)
 		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(submit_command.bind(command))
@@ -76,7 +85,6 @@ func submit_command(raw: String) -> void:
 		TerminalCommands.Action.END_DAY:
 			end_day_requested.emit()
 		TerminalCommands.Action.MENU:
-			print_line("Fermeture de session...", COLOR_DIM)
 			menu_requested.emit()
 		TerminalCommands.Action.VERITAS:
 			print_line("%s : %s" % [Veritas.NAME, Veritas.terminal_reply(GameState.get_condition_state())])

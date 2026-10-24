@@ -37,7 +37,8 @@ var _tab_group := ButtonGroup.new()
 @onready var _doc_title: Label = %DocTitle
 @onready var _doc_meta: Label = %DocMeta
 @onready var _doc_body: RichTextLabel = %DocBody
-@onready var _facts_list: VBoxContainer = %FactsList
+@onready var _facts_list: HFlowContainer = %FactsList
+@onready var _facts_panel: Control = %FactsPanel
 @onready var _veritas_strip: Control = %VeritasStrip
 @onready var _veritas_remark: Label = %VeritasRemark
 @onready var _empty_hint: Label = %EmptyHint
@@ -112,6 +113,7 @@ func select_document(document_id: String) -> void:
 
 func note_fact(fact_id: String) -> void:
 	GameState.note_fact(current_case_id, fact_id)
+	notify.emit("Élément noté dans votre carnet.")
 	_refresh_all()
 
 
@@ -138,6 +140,7 @@ func confront_selected() -> void:
 		_confront_result.text = "Contradiction déjà établie."
 	else:
 		_confront_result.text = "CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport."
+		notify.emit("CONTRADICTION ÉTABLIE")
 	selected_facts.clear()
 	_refresh_all()
 
@@ -150,6 +153,7 @@ func open_conclusion() -> void:
 	_conclusion_panel.setup(current_case_id)
 	_document_tabs.hide()
 	_document_panel.hide()
+	_facts_panel.hide()
 	_footer.hide()
 	_conclusion_panel.show()
 
@@ -235,11 +239,11 @@ func _refresh_facts(case_data: Dictionary) -> void:
 		var button := Button.new()
 		button.name = "Fact_" + fact.id
 		var is_noted: bool = fact.id in noted
-		button.text = ("NOTÉ  " if is_noted else "+ NOTER  ") + fact.label
+		button.text = ("NOTÉ : " if is_noted else "+ ") + fact.label
 		button.disabled = is_noted
-		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.tooltip_text = "Déjà dans votre carnet." if is_noted else "Ajouter cet élément à votre carnet d'enquête."
 		button.custom_minimum_size = Vector2(0, 44)
+		button.add_theme_font_size_override("font_size", 15)
 		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(note_fact.bind(fact.id))
 		_facts_list.add_child(button)
@@ -267,7 +271,9 @@ func _refresh_notebook() -> void:
 		_notebook_list.add_child(button)
 	_confront_button.disabled = selected_facts.size() != MAX_SELECTED_FACTS
 	if case_state.noted_facts.is_empty() and _confront_result.text == "":
-		_confront_result.text = "Notez des éléments (en bas de chaque pièce), puis sélectionnez-en deux pour les confronter."
+		_confront_result.text = "Notez des éléments sous chaque pièce, puis sélectionnez-en deux ici pour les confronter."
+	elif selected_facts.size() == 1:
+		_confront_result.text = "Sélectionnez un second élément à confronter."
 
 
 func _refresh_case_list() -> void:
@@ -311,6 +317,7 @@ func _show_case_view(has_case: bool) -> void:
 	_case_summary.visible = has_case
 	_document_tabs.visible = has_case
 	_document_panel.visible = has_case
+	_facts_panel.visible = has_case
 	_footer.visible = has_case
 	_notebook.visible = has_case
 	_empty_hint.visible = not has_case

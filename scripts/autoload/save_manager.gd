@@ -33,6 +33,8 @@ func save_game(state: Node = null, path := "") -> Error:
 		"save_version": SAVE_VERSION,
 		"game_version": ProjectSettings.get_setting("application/config/version", "0"),
 		"saved_at": Time.get_datetime_string_from_system(),
+		# Résumé lisible sans charger la partie (affiché par le menu).
+		"summary": {"date": state.get_date_long(), "rank": state.get_rank_title()},
 		"state": state.to_dict(),
 	}
 	var file := FileAccess.open(path, FileAccess.WRITE)
@@ -63,6 +65,17 @@ func load_game(state: Node = null, path := "") -> Error:
 	state.from_dict(payload.state)
 	game_loaded.emit()
 	return OK
+
+
+## Résumé de la sauvegarde ({date, rank}), ou {} si absente ou illisible.
+func read_summary(path := "") -> Dictionary:
+	path = _resolve(path)
+	if not FileAccess.file_exists(path):
+		return {}
+	var data = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(data) != TYPE_DICTIONARY:
+		return {}
+	return data.get("summary", {})
 
 
 func delete_save(path := "") -> void:

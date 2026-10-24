@@ -218,6 +218,43 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
+[sub_resource type="StyleBoxFlat" id="sb_objective"]
+bg_color = Color(0.055, 0.12, 0.08, 1)
+border_width_bottom = 1
+border_color = Color(0.122, 0.42, 0.247, 1)
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="sb_toast"]
+bg_color = Color(0.043, 0.051, 0.047, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.235, 0.878, 0.478, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="sb_tooltip"]
+bg_color = Color(0.082, 0.094, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.235, 0.878, 0.478, 1)
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+
 [sub_resource type="StyleBoxEmpty" id="sb_empty"]
 
 [resource]
@@ -294,6 +331,13 @@ TerminalText/base_type = &"RichTextLabel"
 TerminalText/colors/default_color = Color(0.235, 0.878, 0.478, 1)
 TerminalText/fonts/bold_font = SubResource("font_mono_bold")
 TerminalText/font_sizes/normal_font_size = 18
+ObjectiveBar/base_type = &"PanelContainer"
+ObjectiveBar/styles/panel = SubResource("sb_objective")
+ToastPanel/base_type = &"PanelContainer"
+ToastPanel/styles/panel = SubResource("sb_toast")
+TooltipPanel/styles/panel = SubResource("sb_tooltip")
+TooltipLabel/colors/font_color = Color(0.91, 0.894, 0.847, 1)
+TooltipLabel/font_sizes/font_size = 16
 TitleBar/base_type = &"PanelContainer"
 TitleBar/styles/panel = SubResource("sb_title_bar")
 TopBar/base_type = &"PanelContainer"

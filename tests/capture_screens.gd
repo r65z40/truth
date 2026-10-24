@@ -27,7 +27,6 @@ func _capture_all() -> void:
 	var desk: Node = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
 	await _wait(1.5)
-	desk.terminal.submit_command("aide")
 	await _snap("03_bureau", 1.0)
 	desk.terminal.submit_command("dossiers")
 	await _snap("04_dossiers_liste")

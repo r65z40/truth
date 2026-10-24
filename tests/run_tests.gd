@@ -46,12 +46,14 @@ func _run() -> void:
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
 		"test_assessment",
+		"test_guidance_steps",
 		"test_terminal_command_parsing",
 		"test_main_menu_scene",
 		"test_desk_scene_flow",
 		"test_full_session_flow",
 		"test_investigation_and_conclusion_flow",
 		"test_end_day_in_desk",
+		"test_friendly_desk",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -469,6 +471,28 @@ func test_case_51307_consequences() -> void:
 	check("51307_reminder" in ids, "rappel si le dossier 51307 traîne")
 
 
+func test_guidance_steps() -> void:
+	var step := func() -> Dictionary: return Guidance.next_step(GameState.get_condition_state(), GameState.messages)
+	check(step.call().target == "messages" and step.call().text.contains("prise de fonction"), "1. lire le message de Mazur")
+	GameState.mark_message_read("welcome_mazur")
+	check(step.call().text.begins_with("Ouvrir le dossier n° 40921"), "2. ouvrir le dossier")
+	GameState.mark_document_viewed("40921", "identity")
+	check(step.call().text.contains("(1/4)"), "3. lire toutes les pièces")
+	for document_id in ["work_report", "intercept", "travel_log"]:
+		GameState.mark_document_viewed("40921", document_id)
+	check(step.call().text.begins_with("Noter"), "4. noter des éléments")
+	GameState.note_fact("40921", "f_report_presence")
+	GameState.note_fact("40921", "f_log_trip")
+	check(step.call().text.begins_with("Confronter"), "5. confronter")
+	GameState.confront_facts("40921", "f_report_presence", "f_log_trip")
+	check(step.call().text.begins_with("Rédiger"), "6. conclure")
+	GameState.apply_decision("40921", "investigate")
+	check(step.call().text.begins_with("Lire vos nouveaux messages"), "7. lire la réponse")
+	for message in GameState.messages:
+		GameState.mark_message_read(message.id)
+	check(step.call().target == "end_day", "8. terminer la journée")
+
+
 func test_assessment() -> void:
 	var start := Assessment.describe(GameState.indicators, GameState.flags)
 	var texts: Array = start.lines.map(func(l: Dictionary) -> String: return l.text)
@@ -525,7 +549,7 @@ func test_desk_scene_flow() -> void:
 	check(ResourceLoader.exists(desk.MAIN_MENU_SCENE), "la scène du menu référencée par le bureau existe")
 	check(desk.get_node("%DateLabel").text == "LUNDI 3 NOVEMBRE 1986", "date affichée dans l'en-tête")
 	check(desk.get_node("%RankLabel").text == "INSPECTEUR DE 3E CLASSE", "grade affiché")
-	check(desk.get_node("%MessagesButton").text.contains("(2)"), "compteur de messages non lus")
+	check(desk.get_node("%MessagesButton").text.contains("2 non lu(s)"), "compteur de messages non lus")
 	check(desk.get_open_app() == "", "aucune fenêtre ouverte au départ")
 
 	desk.terminal.submit_command("dossiers")
@@ -544,7 +568,7 @@ func test_desk_scene_flow() -> void:
 	check(desk.get_open_app() == "messages", "le bouton Messages ouvre la messagerie")
 	await get_tree().process_frame
 	check(GameState.get_unread_count() == 1, "le message affiché est marqué lu")
-	check(desk.get_node("%MessagesButton").text.contains("(1)"), "le compteur se met à jour")
+	check(desk.get_node("%MessagesButton").text.contains("1 non lu(s)"), "le compteur se met à jour")
 	desk.terminal.submit_command("archives")
 	check(desk.get_open_app() == "archives", "une seule fenêtre ouverte à la fois")
 
@@ -576,11 +600,13 @@ func test_full_session_flow() -> void:
 	desk.windows.dossiers.select_case("40921")
 	desk.terminal.submit_command("sauver")
 	check(SaveManager.has_save(), "SAUVER crée la sauvegarde")
+	check(SaveManager.read_summary().get("date") == "LUNDI 3 NOVEMBRE 1986", "la sauvegarde porte un résumé lisible")
 	desk.get_node("%MenuButton").pressed.emit()
 	await _wait_for_scene("MainMenu")
 	menu = get_tree().current_scene
 	check(menu.name == "MainMenu", "DÉCONNEXION ramène au menu")
 	check(not menu.get_node("%ContinueButton").disabled, "« Continuer » est actif après sauvegarde")
+	check(menu.get_node("%ContinueButton").text.contains("LUNDI 3 NOVEMBRE 1986"), "« Continuer » indique la date de la partie")
 	GameState.new_game()
 	menu.get_node("%ContinueButton").pressed.emit()
 	await _wait_for_scene("Desk")
@@ -673,5 +699,35 @@ func test_end_day_in_desk() -> void:
 	check(desk.windows.dossiers.get_node("%CaseList").get_child_count() == 2, "le nouveau dossier apparaît dans la liste")
 	desk.windows.dossiers.select_case("51307")
 	check(desk.windows.dossiers.get_node("%DocumentTabs").get_child_count() == 4, "pièces de base du dossier 51307")
+	desk.queue_free()
+	await get_tree().process_frame
+
+
+func test_friendly_desk() -> void:
+	SaveManager.delete_save()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(desk.get_node("%ObjectiveBar").visible, "la barre d'objectif est affichée")
+	check(desk.get_node("%ObjectiveText").text.contains("prise de fonction"), "premier objectif : le message de Mazur")
+	check(desk.current_step.target == "messages", "le bouton Messages est signalé")
+	check(desk.get_node("%DossiersButton").text.contains("1 dossier(s) à traiter"), "le bouton Dossiers résume la situation")
+	check(desk.get_node("%DossiersButton").tooltip_text != "", "les boutons ont une info-bulle")
+	check(not desk.has_unsaved_changes, "rien à sauvegarder à l'arrivée")
+	desk.terminal.submit_command("dossiers")
+	desk.windows.dossiers.select_case("40921")
+	desk.windows.dossiers.note_fact("f_identity_card")
+	check(desk.get_node("%Toast").visible and desk.get_node("%ToastLabel").text.contains("carnet"), "notification après avoir noté")
+	check(desk.windows.dossiers.get_node("%FactsPanel").visible, "les éléments notables restent visibles sous la pièce")
+	check(desk.has_unsaved_changes, "des changements non sauvegardés")
+	desk.windows.dossiers.close()
+	desk.get_node("%MenuButton").pressed.emit()
+	await get_tree().process_frame
+	check(desk.is_inside_tree() and not desk.terminal.get_log_text().contains("Fermeture de session"), "première déconnexion : on reste au bureau")
+	check(desk.terminal.get_log_text().contains("non sauvegardées"), "le terminal prévient de la perte")
+	Settings.guidance = false
+	desk._refresh_objective()
+	check(not desk.get_node("%ObjectiveBar").visible, "l'aide se désactive dans les paramètres")
+	Settings.guidance = true
 	desk.queue_free()
 	await get_tree().process_frame

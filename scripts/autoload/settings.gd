@@ -8,6 +8,8 @@ const UI_SCALES := [1.0, 1.15, 1.3]
 
 var fullscreen := false
 var crt_effect := true
+## Affiche l'objectif conseillé en haut du bureau.
+var guidance := true
 ## Agrandit toute l'interface (lisibilité, petits écrans).
 var ui_scale := 1.0
 
@@ -23,6 +25,7 @@ func load_settings() -> void:
 		return
 	fullscreen = config.get_value("display", "fullscreen", fullscreen)
 	crt_effect = config.get_value("display", "crt_effect", crt_effect)
+	guidance = config.get_value("gameplay", "guidance", guidance)
 	ui_scale = config.get_value("display", "ui_scale", ui_scale)
 
 
@@ -30,6 +33,7 @@ func save_settings() -> void:
 	var config := ConfigFile.new()
 	config.set_value("display", "fullscreen", fullscreen)
 	config.set_value("display", "crt_effect", crt_effect)
+	config.set_value("gameplay", "guidance", guidance)
 	config.set_value("display", "ui_scale", ui_scale)
 	config.save(PATH)
 
@@ -51,6 +55,11 @@ func set_fullscreen(value: bool) -> void:
 
 func set_crt_effect(value: bool) -> void:
 	crt_effect = value
+	_commit()
+
+
+func set_guidance(value: bool) -> void:
+	guidance = value
 	_commit()
 
 
