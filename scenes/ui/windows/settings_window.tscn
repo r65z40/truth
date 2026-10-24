@@ -1,0 +1,85 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/windows/settings_window.gd" id="1_script"]
+
+[node name="SettingsWindow" type="PanelContainer"]
+custom_minimum_size = Vector2(560, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -170.0
+offset_right = 280.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+window_title = "PARAMÈTRES DU TERMINAL"
+classification = ""
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Content" type="MarginContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 18
+
+[node name="Options" type="VBoxContainer" parent="Layout/Content"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="FullscreenRow" type="HBoxContainer" parent="Layout/Content/Options"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Layout/Content/Options/FullscreenRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Plein écran"
+
+[node name="FullscreenToggle" type="Button" parent="Layout/Content/Options/FullscreenRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+toggle_mode = true
+text = "DÉSACTIVÉ"
+
+[node name="CrtRow" type="HBoxContainer" parent="Layout/Content/Options"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Layout/Content/Options/CrtRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Effet écran cathodique"
+
+[node name="CrtToggle" type="Button" parent="Layout/Content/Options/CrtRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+toggle_mode = true
+text = "ACTIVÉ"
+
+[node name="ScaleRow" type="HBoxContainer" parent="Layout/Content/Options"]
+layout_mode = 2
+
+[node name="ScaleLabel" type="Label" parent="Layout/Content/Options/ScaleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Taille de l'interface"
+
+[node name="ScaleOption" type="OptionButton" parent="Layout/Content/Options/ScaleRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+
+[node name="DoneButton" type="Button" parent="Layout/Content/Options"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "VALIDER"

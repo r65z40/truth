@@ -1,0 +1,18 @@
+{
+	"messages": [
+		{
+			"id": "welcome_mazur",
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Prise de fonction",
+			"date_label": "03.11.1986",
+			"body": "Inspecteur,\n\nBienvenue à la Section 4, Inspection des dossiers civils. Votre affectation prend effet ce jour.\n\nVotre premier dossier vous attend : citoyen n° 40921. Le Bureau des transports signale une irrégularité. Examinez les pièces avec méthode. Ne vous fiez à aucun document isolé.\n\nLe Ministère juge ses agents sur leurs résultats, mais aussi sur leur discernement.\n\nR. MAZUR"
+		},
+		{
+			"id": "circular_veritas",
+			"from": "Service central d'information",
+			"subject": "Note de service n° 86-114 : système VERITAS",
+			"date_label": "01.11.1986",
+			"body": "À l'attention de l'ensemble des agents.\n\nLe système d'analyse VERITAS est désormais raccordé aux terminaux de la Section 4. Il assistera les inspecteurs dans le recoupement des pièces.\n\nLes recommandations de VERITAS sont fournies à titre indicatif. La responsabilité des conclusions incombe à l'agent signataire.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+		}
+	]
+}

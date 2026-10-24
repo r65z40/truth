@@ -1,0 +1,66 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/terminal/terminal.gd" id="1_script"]
+
+[node name="Terminal" type="PanelContainer"]
+offset_right = 640.0
+offset_bottom = 480.0
+theme_type_variation = &"TerminalPanel"
+script = ExtResource("1_script")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
+text = "TERMINAL CENTRAL  //  ACCÈS NIVEAU 1"
+clip_text = true
+
+[node name="Led" type="Label" parent="Layout/Header"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "[ EN LIGNE ]"
+
+[node name="Rule" type="ColorRect" parent="Layout"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+color = Color(0.122, 0.42, 0.247, 1)
+
+[node name="Output" type="RichTextLabel" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+theme_type_variation = &"TerminalText"
+bbcode_enabled = true
+scroll_following = true
+selection_enabled = true
+
+[node name="InputRow" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="Prompt" type="Label" parent="Layout/InputRow"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "T-4/112 >"
+
+[node name="Input" type="LineEdit" parent="Layout/InputRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "saisir une commande (AIDE)"
+caret_blink = true
+context_menu_enabled = false
+
+[node name="QuickBar" type="HFlowContainer" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6

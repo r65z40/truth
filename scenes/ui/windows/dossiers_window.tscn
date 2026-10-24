@@ -1,0 +1,152 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/windows/dossiers_window.gd" id="1_script"]
+
+[node name="DossiersWindow" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 28.0
+offset_right = -36.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+window_title = "DOSSIERS  //  SECTION 4 - INSPECTION DES DOSSIERS CIVILS"
+classification = "CONFIDENTIEL"
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Content" type="MarginContainer" parent="Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="Columns" type="HBoxContainer" parent="Layout/Content"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="CaseColumn" type="VBoxContainer" parent="Layout/Content/Columns"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CaseListTitle" type="Label" parent="Layout/Content/Columns/CaseColumn"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "DOSSIERS ASSIGNÉS"
+
+[node name="CaseList" type="VBoxContainer" parent="Layout/Content/Columns/CaseColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DocumentColumn" type="VBoxContainer" parent="Layout/Content/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="CaseHeader" type="Label" parent="Layout/Content/Columns/DocumentColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "DOSSIER"
+autowrap_mode = 3
+
+[node name="CaseSummary" type="Label" parent="Layout/Content/Columns/DocumentColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+autowrap_mode = 3
+
+[node name="DocumentTabs" type="HFlowContainer" parent="Layout/Content/Columns/DocumentColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+[node name="DocumentPanel" type="PanelContainer" parent="Layout/Content/Columns/DocumentColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"DocumentPanel"
+
+[node name="DocScroll" type="ScrollContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="DocContent" type="VBoxContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="DocHeader" type="HBoxContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
+layout_mode = 2
+
+[node name="DocTitle" type="Label" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent/DocHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"DocumentLabel"
+theme_override_font_sizes/font_size = 24
+text = "TITRE"
+autowrap_mode = 3
+
+[node name="Stamp" type="Label" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent/DocHeader"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"StampLabel"
+theme_override_font_sizes/font_size = 20
+text = "[ CONFIDENTIEL ]"
+
+[node name="DocMeta" type="Label" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+theme_override_colors/font_color = Color(0.36, 0.31, 0.24, 1)
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+
+[node name="Rule" type="ColorRect" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.165, 0.141, 0.11, 0.6)
+
+[node name="DocBody" type="RichTextLabel" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentText"
+bbcode_enabled = true
+fit_content = true
+selection_enabled = true
+
+[node name="EmptyHint" type="Label" parent="Layout/Content/Columns/DocumentColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"MutedLabel"
+text = "Sélectionnez un dossier dans la liste pour consulter ses pièces."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Footer" type="HBoxContainer" parent="Layout/Content/Columns/DocumentColumn"]
+layout_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="Layout/Content/Columns/DocumentColumn/Footer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MutedLabel"
+
+[node name="ConclusionLabel" type="Label" parent="Layout/Content/Columns/DocumentColumn/Footer"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Formulaire de conclusion : raccordement en cours"

@@ -1,0 +1,101 @@
+{
+	"id": "40921",
+	"title": "Citoyen n° 40921",
+	"subject_name": "SEDLAR, Anton Pavel",
+	"summary": "Signalement transmis par le Bureau des transports. Écart possible entre la présence déclarée au travail et les déplacements enregistrés.",
+	"priority": "ordinaire",
+	"documents": [
+		{
+			"id": "identity",
+			"type": "identity",
+			"title": "Fiche d'identité civile",
+			"source": "Registre central de la population",
+			"reliability": "A",
+			"date": "1986-10-02",
+			"fields": [
+				["Nom", "SEDLAR"],
+				["Prénoms", "Anton Pavel"],
+				["Né le", "14.02.1949 à Velmira"],
+				["N° de citoyen", "40921"],
+				["Profession", "Technicien de maintenance, Centrale thermique n° 3"],
+				["Carte de travail", "KT-55-1902"],
+				["Adresse", "Bloc 14, escalier C, app. 61, rue de l'Unité, District 9, Velmira"],
+				["Situation", "Marié (Vera SEDLAR, institutrice), un enfant"],
+				["Famille hors district", "Mère : Irena SEDLAR, Halvek (zone frontalière). Sœur : Mira DOLAN, Halvek"],
+				["Antécédents", "Un avertissement pour absentéisme (1984)"]
+			],
+			"facts": [
+				{"key": "sedlar.work_card", "value": "KT-55-1902"}
+			]
+		},
+		{
+			"id": "work_report",
+			"type": "report",
+			"title": "Rapport administratif de présence",
+			"source": "Direction du personnel, Centrale thermique n° 3",
+			"reliability": "B",
+			"date": "1986-10-24",
+			"author": "B. ORLIK, chef d'équipe, atelier des chaudières",
+			"body": "Objet : présence du technicien SEDLAR A. (carte KT-55-1902)\n\nJe soussigné certifie que le citoyen SEDLAR a été présent à son poste, en équipe de jour (06h00 - 14h00), les 20, 21 et 22 octobre 1986.\n\nAucun incident à signaler. Le travail demandé sur la chaudière n° 2 a été effectué dans les délais. Comportement conforme aux attentes de la direction.\n\nFait à Velmira, le 24 octobre 1986.",
+			"facts": [
+				{"key": "sedlar.location.1986-10-21", "value": "Centrale thermique n° 3, Velmira (06h00 - 14h00)"}
+			]
+		},
+		{
+			"id": "intercept",
+			"type": "intercept",
+			"title": "Communication interceptée",
+			"source": "Service des écoutes, central téléphonique du District 9",
+			"reliability": "B",
+			"date": "1986-10-19",
+			"body": "Ligne surveillée : cabine publique, rue de l'Unité (District 9)\nAppel sortant vers : Halvek, poste 2-114 (abonnée : M. DOLAN)\nDurée : 1 min 52 s. Transcription partielle.\n\nHOMME : ... je serai là mardi, comme convenu. Le premier train.\nFEMME : Tu es sûr ? Et ton chef ?\nHOMME : Il s'en occupe. Je lui ai rendu service, il me rend service.\nFEMME : Apporte les papiers de maman. Tous. On ne pourra pas recommencer.\nHOMME : Je sais. Ne dis rien au téléphone.\n[Fin de l'appel]\n\nNote de l'opérateur : voix masculine non identifiée formellement. Appel passé depuis la cabine la plus proche du domicile de SEDLAR.",
+			"facts": [
+				{"key": "sedlar.planned_trip", "value": "Halvek, mardi (premier train)"}
+			]
+		},
+		{
+			"id": "travel_log",
+			"type": "travel_log",
+			"title": "Registre de déplacements",
+			"source": "Bureau des transports, contrôle ferroviaire ligne Velmira - Halvek",
+			"reliability": "A",
+			"date": "1986-10-22",
+			"columns": ["Date", "Heure", "Trajet", "Carte présentée", "Contrôleur"],
+			"rows": [
+				["14.10.1986", "18h20", "Velmira > Velmira-Nord", "KT-55-1902", "P-117"],
+				["21.10.1986", "06h05", "Velmira > Halvek", "KT-55-1902", "P-203"],
+				["21.10.1986", "21h40", "Halvek > Velmira", "KT-55-1902", "P-088"]
+			],
+			"body": "Rappel : en zone frontalière, la carte de travail tient lieu de pièce d'identité. La photographie n'est pas systématiquement contrôlée.",
+			"facts": [
+				{"key": "sedlar.work_card", "value": "KT-55-1902"},
+				{"key": "sedlar.location.1986-10-21", "value": "Train Velmira > Halvek (06h05), retour 21h40"}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "arrest",
+			"label": "Recommander une arrestation",
+			"effects": {"loyalty": 10, "suspicion": -5, "influence": 5},
+			"superior_message": "arrest"
+		},
+		{
+			"id": "close",
+			"label": "Clore le dossier",
+			"effects": {"loyalty": -5, "suspicion": 10, "influence": -3},
+			"superior_message": "close"
+		},
+		{
+			"id": "investigate",
+			"label": "Demander une enquête complémentaire",
+			"effects": {"loyalty": 2, "suspicion": 3, "influence": -2},
+			"superior_message": "investigate"
+		}
+	],
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "SEDLAR s'est bien rendu à Halvek le 21 octobre. Il a apporté à sa sœur les papiers de leur mère malade pour constituer une demande de soins de l'autre côté de la frontière, avec des documents en partie falsifiés. Le chef d'équipe ORLIK a couvert son absence en échange de réparations faites gratuitement chez lui.",
+		"involved": ["40921", "orlik_b", "dolan_m"]
+	}
+}
