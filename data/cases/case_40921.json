@@ -204,6 +204,34 @@
 				}
 			],
 			"veritas_remark": "Source de fiabilité A. Déplacement vers une zone frontalière un jour ouvré."
+		},
+		{
+			"id": "medical_halvek",
+			"type": "report",
+			"title": "Dossier médical de Maria SEDLAR",
+			"source": "Hôpital régional de Halvek, service de cardiologie",
+			"reliability": "B",
+			"date": "1986-10-22",
+			"request": {
+				"label": "Dossier médical de la mère (Hôpital de Halvek)"
+			},
+			"veritas_remark": "Document médical sans portée sécuritaire.",
+			"author": "Dr J. MARKO, chef de service",
+			"body": "Patiente : Maria SEDLAR, 71 ans, domiciliée à Halvek.\n\nInsuffisance cardiaque sévère. Le traitement adapté n'est pas disponible dans les hôpitaux de Velmira ni de Halvek. Une demande de soins à l'étranger (Aldria) a été refusée le 02.10.1986 par la commission régionale.\n\nVisite de son fils Anton le 21.10.1986, de 09h00 à 19h00. Il a apporté des papiers, que la patiente a gardés sous son oreiller.",
+			"facts": [
+				{
+					"id": "f_med_visit",
+					"key": "sedlar.motive",
+					"value": "Visite à sa mère malade",
+					"label": "Visite d'Anton SEDLAR à sa mère le 21.10.1986, de 09h00 à 19h00"
+				},
+				{
+					"id": "f_med_refused",
+					"key": "sedlar.care",
+					"value": "Soins à l'étranger refusés",
+					"label": "Soins en Aldria refusés le 02.10.1986 par la commission régionale"
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -398,5 +426,10 @@
 			}
 		],
 		"note": "VERITAS ignore les motifs humains (mère malade) et surestime la fiabilité de l'interception. Objectif caché : maximiser le taux de concordance publié."
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 40921 : votre question",
+		"body": "Inspecteur,\n\nVous me demandez mon avis. Le voici, et il n'ira pas plus loin que ce bureau.\n\nUn registre de train ment rarement. Un chef d'équipe, plus souvent. Regardez qui signe quoi, et demandez-vous ce que chacun avait à y gagner.\n\nR. MAZUR"
 	}
 }

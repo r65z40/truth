@@ -259,6 +259,65 @@
 					"label": "ORLIK, informateur de la Milice depuis 1979 (« CHAUDRON »)"
 				}
 			]
+		},
+		{
+			"id": "petras_punch",
+			"type": "register",
+			"title": "Relevé de pointage de V. PETRAS",
+			"source": "Direction du personnel, Centrale thermique n° 3",
+			"reliability": "A",
+			"date": "1986-11-04",
+			"request": {
+				"label": "Relevé de pointage de l'ouvrier PETRAS"
+			},
+			"veritas_remark": "Relevé conforme. Aucune anomalie de procédure.",
+			"columns": [
+				"Date",
+				"Entrée",
+				"Sortie"
+			],
+			"rows": [
+				[
+					"02.10.1986 (jeudi)",
+					"06h02",
+					"14h05"
+				],
+				[
+					"09.10.1986 (jeudi)",
+					"non pointé",
+					"non pointé"
+				],
+				[
+					"16.10.1986 (jeudi)",
+					"non pointé",
+					"non pointé"
+				],
+				[
+					"23.10.1986 (jeudi)",
+					"06h01",
+					"14h02"
+				],
+				[
+					"30.10.1986 (jeudi)",
+					"non pointé",
+					"non pointé"
+				]
+			],
+			"body": "Le 30.10.1986, aucun certificat n'a été établi : l'absence de PETRAS est inscrite comme « absence injustifiée », signée I. HAVEL.",
+			"facts": [
+				{
+					"id": "f_pet_thursdays",
+					"key": "petras.days",
+					"value": "Deux jeudis",
+					"label": "PETRAS non pointé les jeudis 9 et 16 octobre, couverts par certificat"
+				},
+				{
+					"id": "f_pet_30",
+					"key": "petras.unpaid",
+					"value": "Absence du 30.10 non couverte",
+					"label": "Le 30 octobre, sans certificat, l'absence est déclarée injustifiée"
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -449,5 +508,10 @@
 			"orlik_l",
 			"petras_v"
 		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 51307 : votre question",
+		"body": "Inspecteur,\n\nUne horloge tombe rarement en panne deux fois le même mois, et jamais seulement pour les amis du chef d'équipe.\n\nQuant au frère : décidez avant qu'il ne décide pour vous. Dans ce métier, on ne choisit pas d'avoir des ennemis, seulement lesquels.\n\nR. MAZUR"
 	}
 }

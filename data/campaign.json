@@ -1,0 +1,9 @@
+{
+	"note": "Campagne principale. Une extension jouant un autre personnage aura son propre fichier (voir docs/design/EXTENSIONS_PERSONNAGES.md).",
+	"id": "vosk",
+	"player": {
+		"name": "A. VOSK",
+		"badge": "INS-7734",
+		"superior": "R. MAZUR, Directeur adjoint, Section 4"
+	}
+}

@@ -33,10 +33,17 @@ static func get_starting_case_ids() -> Array:
 ## Une pièce peut porter des "conditions" (même format que les événements) :
 ## par exemple, un procès-verbal qui n'existe que si une audition a eu lieu.
 ## state : {day_index, flags, cases}
+## Une pièce qui porte "request" n'existe qu'une fois demandée par l'agent, à partir
+## du lendemain de la demande (requested_documents de l'état du dossier).
 static func filter_case(case_data: Dictionary, state: Dictionary) -> Dictionary:
 	var view := case_data.duplicate()
 	var documents := []
+	var case_state: Dictionary = state.get("cases", {}).get(case_data.get("id", ""), {})
+	var requested: Dictionary = case_state.get("requested_documents", {})
 	for document in case_data.get("documents", []):
+		if document.has("request"):
+			if not requested.has(document.id) or int(requested[document.id]) >= int(state.get("day_index", 0)):
+				continue
 		if EventRules.are_conditions_met(document.get("conditions", {}), state):
 			documents.append(document)
 	view["documents"] = documents

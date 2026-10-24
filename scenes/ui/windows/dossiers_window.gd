@@ -48,6 +48,8 @@ var _photo := IdPhoto.new()
 @onready var _footer: Control = %Footer
 @onready var _progress_label: Label = %ProgressLabel
 @onready var _conclusion_button: Button = %ConclusionButton
+@onready var _request_button: Button = %RequestButton
+@onready var _consult_button: Button = %ConsultButton
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
 
 
@@ -55,6 +57,8 @@ func _ready() -> void:
 	super()
 	_confront_button.pressed.connect(confront_selected)
 	_conclusion_button.pressed.connect(open_conclusion)
+	_request_button.pressed.connect(request_next_document)
+	_consult_button.pressed.connect(consult_superior)
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
 	_conclusion_panel.hide()
@@ -230,14 +234,67 @@ func _refresh_all() -> void:
 	if case_state.decision != "":
 		status_text += "  //  " + CaseLibrary.get_decision(case_data, case_state.decision).get("label", "").to_upper()
 	_case_header.text = "DOSSIER N° %s  |  %s  |  %s" % [current_case_id, case_data.subject_name, status_text]
-	_progress_label.text = "Pièces : %d/%d   Contradictions : %d" % [case_state.viewed_documents.size(),
+	_progress_label.text = "Pièces : %d/%d\nContradictions : %d" % [case_state.viewed_documents.size(),
 			case_data.documents.size(), case_state.contradictions_found.size()]
 	var can_decide := GameState.can_decide(current_case_id)
+	_refresh_actions(can_decide)
 	_conclusion_button.disabled = not can_decide
 	_conclusion_button.text = "RÉDIGER LA CONCLUSION" if can_decide else "RAPPORT TRANSMIS"
 	_refresh_facts(case_data)
 	_refresh_notebook()
 	_refresh_case_list()
+
+
+# --- Actions qui coûtent du temps --------------------------------------------
+
+func _refresh_actions(can_decide: bool) -> void:
+	var requestable := GameState.get_requestable_documents(current_case_id)
+	var pending := _pending_requests()
+	_request_button.disabled = not can_decide or requestable.is_empty() \
+			or not WorkTime.check(GameState.hours_used, "request_document").ok
+	if not pending.is_empty():
+		_request_button.text = "DEMANDE EN COURS"
+		_request_button.tooltip_text = "Réponse attendue demain : %s." % pending[0]
+	else:
+		_request_button.text = "DEMANDER (%d h)" % WorkTime.cost("request_document")
+		_request_button.tooltip_text = ("Demander une pièce complémentaire, livrée demain : %s." % requestable[0].request.label) \
+				if not requestable.is_empty() else "Aucune pièce complémentaire à demander pour ce dossier."
+	var consultation: Dictionary = CaseLibrary.get_case(current_case_id).get("consultation", {})
+	var consulted: bool = GameState.get_case_state(current_case_id).consulted
+	_consult_button.disabled = not can_decide or consultation.is_empty() or consulted \
+			or not WorkTime.check(GameState.hours_used, "consult_superior").ok
+	_consult_button.text = "CONSULTÉ" if consulted else "CONSULTER (%d h)" % WorkTime.cost("consult_superior")
+	_consult_button.tooltip_text = "Demander conseil à votre supérieur sur ce dossier (une fois)."
+
+
+## Libellés des pièces demandées aujourd'hui, pas encore arrivées.
+func _pending_requests() -> Array:
+	var labels := []
+	var requested: Dictionary = GameState.get_case_state(current_case_id).requested_documents
+	for document in CaseLibrary.get_case(current_case_id).get("documents", []):
+		if requested.has(document.id) and int(requested[document.id]) >= GameState.day_index:
+			labels.append(document.request.label)
+	return labels
+
+
+## Demande la prochaine pièce complémentaire disponible pour le dossier affiché.
+func request_next_document() -> void:
+	var requestable := GameState.get_requestable_documents(current_case_id)
+	if requestable.is_empty():
+		return
+	if GameState.request_document(current_case_id, requestable[0].id):
+		notify.emit("Demande transmise : %s. Réponse demain." % requestable[0].request.label)
+	else:
+		notify.emit("Plus assez de temps aujourd'hui pour cette demande.")
+	_refresh_all()
+
+
+func consult_superior() -> void:
+	if GameState.consult_superior(current_case_id):
+		notify.emit("Votre supérieur vous a répondu : voir MESSAGES.")
+	else:
+		notify.emit("Consultation impossible.")
+	_refresh_all()
 
 
 func _refresh_facts(case_data: Dictionary) -> void:

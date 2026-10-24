@@ -13,7 +13,7 @@ signal game_loaded
 ## 1 : prototype 0.1.
 ## 2 : carnet d'enquête (noted_facts, contradictions_found) dans chaque dossier.
 ## 3 : événements différés déjà déclenchés (fired_events).
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 const DEFAULT_PATH := "user://savegame.json"
 
 ## Fichier utilisé quand aucun chemin n'est précisé (les tests le redirigent).
@@ -105,5 +105,13 @@ func _migrate(payload: Dictionary) -> Dictionary:
 	if version == 2:
 		payload.state["fired_events"] = payload.state.get("fired_events", [])
 		version = 3
+	if version == 3:
+		# v4 : horloge de service, pièces demandées, consultation du supérieur.
+		payload.state["hours_used"] = payload.state.get("hours_used", 0)
+		payload.state["overtime_days"] = payload.state.get("overtime_days", [])
+		for case_state in payload.state.get("cases", {}).values():
+			case_state["requested_documents"] = case_state.get("requested_documents", {})
+			case_state["consulted"] = case_state.get("consulted", false)
+		version = 4
 	payload.save_version = version
 	return payload

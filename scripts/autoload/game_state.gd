@@ -11,6 +11,8 @@ signal decision_applied(case_id: String, decision_id: String, message_id: String
 signal day_started(day_index: int, events: Array)
 
 const INITIAL_MESSAGES_PATH := "res://data/messages/initial_messages.json"
+## Profil du personnage joué et identifiant de la campagne.
+const CAMPAIGN_PATH := "res://data/campaign.json"
 
 const INDICATOR_MIN := 0
 const INDICATOR_MAX := 100
@@ -38,6 +40,10 @@ var decisions: Array = []
 var flags: Dictionary = {}
 ## Identifiants des événements différés déjà déclenchés.
 var fired_events: Array = []
+## Heures de service déjà employées aujourd'hui (voir WorkTime).
+var hours_used: int = 0
+## Journées où l'agent a fait des heures supplémentaires (soirée perdue).
+var overtime_days: Array = []
 
 
 func _ready() -> void:
@@ -46,11 +52,10 @@ func _ready() -> void:
 
 ## Réinitialise complètement l'état pour une nouvelle partie.
 func new_game() -> void:
-	player = {
-		"name": "A. VOSK",
-		"badge": "INS-7734",
-		"rank": Career.Rank.INSPECTOR,
-	}
+	var campaign := DataLoader.load_json(CAMPAIGN_PATH)
+	player = campaign.get("player", {}).duplicate()
+	player["campaign"] = campaign.get("id", "vosk")
+	player["rank"] = Career.Rank.INSPECTOR
 	day_index = 0
 	indicators = INITIAL_INDICATORS.duplicate()
 	cases = {}
@@ -62,6 +67,8 @@ func new_game() -> void:
 	decisions = []
 	flags = {}
 	fired_events = []
+	hours_used = 0
+	overtime_days = []
 	state_changed.emit()
 
 
@@ -154,6 +161,76 @@ func confront_facts(case_id: String, fact_a_id: String, fact_b_id: String) -> St
 	return key
 
 
+# --- Horloge de service ------------------------------------------------------
+
+func get_clock_text() -> String:
+	return WorkTime.clock_text(hours_used)
+
+
+## Dépense les heures d'une action si possible. Renvoie false si la journée ne le
+## permet plus. Les heures supplémentaires sont notées pour la soirée.
+func spend_time(action: String) -> bool:
+	if not WorkTime.check(hours_used, action).ok:
+		return false
+	hours_used += WorkTime.cost(action)
+	if WorkTime.is_overtime(hours_used) and not day_index in overtime_days:
+		overtime_days.append(day_index)
+	state_changed.emit()
+	return true
+
+
+func is_overtime_today() -> bool:
+	return day_index in overtime_days
+
+
+## Demande une pièce complémentaire (livrée le lendemain). Renvoie false si
+## impossible : pièce inconnue, déjà demandée, ou plus assez de temps.
+func request_document(case_id: String, document_id: String) -> bool:
+	var document := CaseLibrary.get_document(CaseLibrary.get_case(case_id), document_id)
+	var case_state := get_case_state(case_id)
+	if not document.has("request") or case_state.requested_documents.has(document_id):
+		return false
+	if not spend_time("request_document"):
+		return false
+	case_state.requested_documents[document_id] = day_index
+	var request: Dictionary = document.request
+	flags.merge(request.get("flags", {}), true)
+	for indicator in request.get("effects", {}):
+		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(request.effects[indicator]),
+				INDICATOR_MIN, INDICATOR_MAX)
+	state_changed.emit()
+	return true
+
+
+## Pièces que l'agent peut encore demander pour ce dossier.
+func get_requestable_documents(case_id: String) -> Array:
+	var case_state := get_case_state(case_id)
+	var result := []
+	for document in CaseLibrary.get_case(case_id).get("documents", []):
+		if document.has("request") and not case_state.requested_documents.has(document.id) \
+				and EventRules.are_conditions_met(document.get("conditions", {}), get_condition_state()):
+			result.append(document)
+	return result
+
+
+## Consulte le supérieur sur un dossier (une fois par dossier) : message de conseil.
+func consult_superior(case_id: String) -> bool:
+	var consultation: Dictionary = CaseLibrary.get_case(case_id).get("consultation", {})
+	var case_state := get_case_state(case_id)
+	if consultation.is_empty() or case_state.consulted or not can_decide(case_id):
+		return false
+	if not spend_time("consult_superior"):
+		return false
+	case_state.consulted = true
+	flags["%s.consulted_superior" % case_id] = true
+	var message := consultation.duplicate()
+	message["id"] = "%s.consultation" % case_id
+	message["date_label"] = get_date_short()
+	receive_message(message, false)
+	state_changed.emit()
+	return true
+
+
 func can_decide(case_id: String) -> bool:
 	return get_case_state(case_id).decision == ""
 
@@ -165,6 +242,11 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 		push_warning("GameState: le dossier %s a déjà fait l'objet d'une décision." % case_id)
 		return {}
 	var case_state := get_case_state(case_id)
+	# Signer reste toujours possible ; l'heure n'est comptée que s'il en reste.
+	if WorkTime.check(hours_used, "sign_conclusion").ok:
+		hours_used += WorkTime.cost("sign_conclusion")
+		if WorkTime.is_overtime(hours_used) and not day_index in overtime_days:
+			overtime_days.append(day_index)
 	# Avis de VERITAS sur le dossier tel que l'agent l'a vu, avant la décision.
 	var advice := Veritas.recommendation(get_case_view(case_id), case_state)
 	var result := DecisionRules.resolve(CaseLibrary.get_case(case_id), case_state, decision_id)
@@ -223,6 +305,7 @@ func get_unread_count() -> int:
 ## Renvoie la liste des événements déclenchés.
 func end_day() -> Array:
 	day_index += 1
+	hours_used = 0
 	var fired := EventRules.due_events(get_condition_state())
 	for event in fired:
 		for case_id in event.get("assign_cases", []):
@@ -255,6 +338,8 @@ func to_dict() -> Dictionary:
 		"decisions": decisions.duplicate(true),
 		"flags": flags.duplicate(true),
 		"fired_events": fired_events.duplicate(),
+		"hours_used": hours_used,
+		"overtime_days": overtime_days.duplicate(),
 	}
 
 
@@ -280,9 +365,11 @@ func from_dict(data: Dictionary) -> void:
 	decisions = data.get("decisions", [])
 	flags = data.get("flags", {})
 	fired_events = data.get("fired_events", [])
+	hours_used = int(data.get("hours_used", 0))
+	overtime_days = data.get("overtime_days", []).map(func(day) -> int: return int(day))
 	state_changed.emit()
 
 
 func _new_case_state() -> Dictionary:
 	return {"status": CASE_OPEN, "viewed_documents": [], "noted_facts": [],
-			"contradictions_found": [], "decision": ""}
+			"contradictions_found": [], "decision": "", "requested_documents": {}, "consulted": false}

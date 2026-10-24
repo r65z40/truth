@@ -41,6 +41,9 @@ func _run() -> void:
 		"test_end_day_without_decision",
 		"test_delayed_consequences",
 		"test_save_migration_from_v2",
+		"test_save_migration_from_v3",
+		"test_work_time",
+		"test_request_and_consultation",
 		"test_veritas",
 		"test_veritas_model",
 		"test_case_51307_depends_on_first_case",
@@ -60,6 +63,7 @@ func _run() -> void:
 		"test_investigation_and_conclusion_flow",
 		"test_end_day_in_desk",
 		"test_friendly_desk",
+		"test_time_in_desk",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -400,6 +404,73 @@ func test_save_migration_from_v2() -> void:
 	check(GameState.day_index == 1, "jour conservé")
 
 
+func test_save_migration_from_v3() -> void:
+	var data := GameState.to_dict()
+	data.erase("hours_used")
+	data.erase("overtime_days")
+	for case_state in data.cases.values():
+		case_state.erase("requested_documents")
+		case_state.erase("consulted")
+	var file := FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"save_version": 3, "state": data}))
+	file.close()
+	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "une sauvegarde v3 se charge")
+	check(GameState.hours_used == 0 and GameState.overtime_days == [], "horloge ajoutée")
+	check(GameState.get_case_state("40921").requested_documents == {} and GameState.get_case_state("40921").consulted == false,
+			"champs de demande ajoutés aux dossiers")
+	GameState.spend_time("request_document")
+	GameState.get_case_state("40921").requested_documents["medical_halvek"] = 0
+	SaveManager.save_game(GameState, TEST_SAVE_PATH)
+	GameState.new_game()
+	SaveManager.load_game(GameState, TEST_SAVE_PATH)
+	check(GameState.hours_used == 1 and GameState.get_case_state("40921").requested_documents.has("medical_halvek"),
+			"horloge et demandes sauvegardées")
+
+
+func test_work_time() -> void:
+	check(GameState.get_clock_text() == "08h00", "la journée commence à 08h00")
+	check(WorkTime.cost("request_document") == 1 and WorkTime.cost("verify_archive") == 2, "coûts lus dans les données")
+	check(WorkTime.cost("lire") == 0, "une action inconnue est gratuite")
+	for i in 8:
+		check(GameState.spend_time("consult_superior"), "heure %d disponible" % (i + 1))
+	check(GameState.get_clock_text() == "16h00" and not GameState.is_overtime_today(), "16h00 : fin de la journée normale")
+	check(GameState.spend_time("request_document") and GameState.is_overtime_today(), "heures supplémentaires notées")
+	check(GameState.spend_time("request_document"), "deuxième heure supplémentaire")
+	check(not GameState.spend_time("request_document"), "au-delà de 18h00, plus d'action payante")
+	check(GameState.hours_used == 10, "10 heures au plus")
+	GameState.apply_decision("40921", "investigate")
+	check(GameState.get_case_state("40921").decision == "investigate", "signer reste possible sans heure disponible")
+	GameState.end_day()
+	check(GameState.get_clock_text() == "08h00" and GameState.overtime_days == [0], "le lendemain, l'horloge repart ; la soirée perdue reste notée")
+
+
+func test_request_and_consultation() -> void:
+	check(GameState.get_requestable_documents("40921").map(func(d: Dictionary) -> String: return d.id) == ["medical_halvek"],
+			"une pièce à demander dans le 40921")
+	check(not "medical_halvek" in _visible_document_ids("40921"), "la pièce n'existe pas avant la demande")
+	check(GameState.request_document("40921", "medical_halvek") and GameState.hours_used == 1, "demande : 1 heure")
+	check(not GameState.request_document("40921", "medical_halvek"), "on ne demande pas deux fois")
+	check(not GameState.request_document("40921", "identity"), "une pièce ordinaire ne se demande pas")
+	check(GameState.get_requestable_documents("40921").is_empty(), "plus rien à demander")
+	check(not "medical_halvek" in _visible_document_ids("40921"), "la pièce n'arrive pas le jour même")
+	GameState.end_day()
+	check("medical_halvek" in _visible_document_ids("40921"), "la pièce arrive le lendemain")
+	var unread := GameState.get_unread_count()
+	check(GameState.consult_superior("40921") and GameState.hours_used == 1, "consulter Mazur : 1 heure")
+	check(GameState.get_unread_count() == unread + 1 and GameState.messages[-1].id == "40921.consultation", "Mazur répond par message")
+	check(GameState.flags.get("40921.consulted_superior") == true, "la consultation est mémorisée")
+	check(not GameState.consult_superior("40921"), "une seule consultation par dossier")
+	# Une demande trop curieuse se paie.
+	_reach_case_52310()
+	var suspicion := GameState.get_indicator("suspicion")
+	check(GameState.request_document("52310", "detention_file"), "demande du dossier de détention")
+	check(GameState.flags.get("52310.archive_requested") == true and GameState.get_indicator("suspicion") == suspicion + 2,
+			"la demande est signalée à la Section 7")
+	for case_id in ["40921", "51307", "52044", "52310"]:
+		var case_data := CaseLibrary.get_case(case_id)
+		check(CaseLibrary.validate_case(case_data).is_empty() and case_data.has("consultation"), "%s : consultation et pièce à demander" % case_id)
+
+
 func test_veritas() -> void:
 	var case_data := CaseLibrary.get_case("40921")
 	for document in case_data.documents:
@@ -482,7 +553,7 @@ func test_case_51307_depends_on_first_case() -> void:
 			if document_id in extra:
 				expected.append(document_id)
 		check(ids == expected, "40921 « %s » (contradiction : %s) > pièces %s" % [scenario[0], scenario[1], ids])
-	check(CaseLibrary.get_case("51307").documents.size() == 7, "le dossier complet garde ses 7 pièces")
+	check(CaseLibrary.get_case("51307").documents.size() == 8, "le dossier complet garde ses 8 pièces")
 
 
 func test_case_51307_contradictions_and_veritas() -> void:
@@ -730,7 +801,8 @@ func test_desk_scene_flow() -> void:
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
 	check(ResourceLoader.exists(desk.MAIN_MENU_SCENE), "la scène du menu référencée par le bureau existe")
-	check(desk.get_node("%DateLabel").text == "LUNDI 3 NOVEMBRE 1986", "date affichée dans l'en-tête")
+	check(desk.get_node("%DateLabel").text == "LUNDI 3 NOVEMBRE 1986\n08h00  //  8 h de service restantes",
+			"date et horloge dans l'en-tête : %s" % desk.get_node("%DateLabel").text)
 	check(desk.get_node("%RankLabel").text == "INSPECTEUR DE 3E CLASSE", "grade affiché")
 	check(desk.get_node("%MessagesButton").text.contains("2 non lu(s)"), "compteur de messages non lus")
 	check(desk.get_open_app() == "", "aucune fenêtre ouverte au départ")
@@ -878,7 +950,7 @@ func test_end_day_in_desk() -> void:
 	check(desk.terminal.get_log_text().contains("sans conclusion : 40921"), "le terminal signale le dossier en attente")
 	desk.get_node("%EndDayButton").pressed.emit()
 	check(GameState.day_index == 1, "seconde demande : la journée se termine")
-	check(desk.get_node("%DateLabel").text == "MARDI 4 NOVEMBRE 1986", "la date de l'en-tête avance")
+	check(desk.get_node("%DateLabel").text.begins_with("MARDI 4 NOVEMBRE 1986\n08h00"), "la date de l'en-tête avance, l'horloge repart")
 	check(SaveManager.has_save(), "sauvegarde automatique en fin de journée")
 	check(desk.terminal.get_log_text().contains("MARDI 4 NOVEMBRE 1986"), "le terminal ouvre une nouvelle session")
 	check(desk.get_node("%DayTransition").visible, "l'écran de transition s'affiche")
@@ -918,5 +990,24 @@ func test_friendly_desk() -> void:
 	desk._refresh_objective()
 	check(not desk.get_node("%ObjectiveBar").visible, "l'aide se désactive dans les paramètres")
 	Settings.guidance = true
+	desk.queue_free()
+	await get_tree().process_frame
+
+
+func test_time_in_desk() -> void:
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.terminal.submit_command("dossiers")
+	var dossiers_window = desk.windows.dossiers
+	dossiers_window.select_case("40921")
+	check(dossiers_window.get_node("%RequestButton").text == "DEMANDER (1 h)" and not dossiers_window.get_node("%RequestButton").disabled,
+			"bouton de demande de pièce")
+	dossiers_window.get_node("%RequestButton").pressed.emit()
+	check(dossiers_window.get_node("%RequestButton").text == "DEMANDE EN COURS" and dossiers_window.get_node("%RequestButton").disabled,
+			"la demande est en cours")
+	dossiers_window.get_node("%ConsultButton").pressed.emit()
+	check(dossiers_window.get_node("%ConsultButton").text == "CONSULTÉ" and GameState.hours_used == 2, "consultation : 2 heures employées")
+	check(desk.get_node("%DateLabel").text.ends_with("10h00  //  6 h de service restantes"), "l'horloge avance")
 	desk.queue_free()
 	await get_tree().process_frame

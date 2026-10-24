@@ -18,7 +18,9 @@ changements de `GAME_DESIGN_V2.md` (section 13).
 | 10 | Roadmap hiérarchisée | [ROADMAP_V2.md](ROADMAP_V2.md) |
 | — | Scénario V1 (canon, copie de référence) | [SCENARIO_V1.md](SCENARIO_V1.md) |
 | — | Références (jeux, films, livres, son) | [REFERENCES.md](REFERENCES.md) |
+| — | Extensions : incarner un autre personnage | [EXTENSIONS_PERSONNAGES.md](EXTENSIONS_PERSONNAGES.md) |
 
 ## Décisions
 
 - 2026-10-24 : fen valide les dix changements du canon et la gestion du temps.
+- 2026-10-24 : fen demande de prévoir des extensions jouant un autre personnage de l'histoire.

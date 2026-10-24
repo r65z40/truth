@@ -194,8 +194,19 @@ func _on_state_changed() -> void:
 	_refresh_header()
 
 
+## Ligne d'horloge sous la date : heure de service et temps restant.
+func clock_line() -> String:
+	var hours := GameState.hours_used
+	if WorkTime.is_overtime(hours):
+		return "%s  //  HEURES SUPPLÉMENTAIRES" % GameState.get_clock_text()
+	var left := WorkTime.day_hours() - hours
+	if left <= 0:
+		return "%s  //  FIN DE SERVICE" % GameState.get_clock_text()
+	return "%s  //  %d h de service restantes" % [GameState.get_clock_text(), left]
+
+
 func _refresh_header() -> void:
-	_date_label.text = GameState.get_date_long()
+	_date_label.text = "%s\n%s" % [GameState.get_date_long(), clock_line()]
 	_agent_label.text = "%s  //  %s" % [GameState.player.name, GameState.player.badge]
 	_rank_label.text = GameState.get_rank_title().to_upper()
 	var unread := GameState.get_unread_count()
