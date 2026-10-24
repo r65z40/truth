@@ -162,12 +162,34 @@ affichées : le joueur ne voit que `label`. Nouvelle condition `when` : l'ajoute
 dans `DecisionRules.is_condition_met()`. `CaseLibrary.validate_case()` vérifie
 la structure (testée pour chaque dossier).
 
+Une pièce peut porter `"request": {"label": "...", "flags": {}, "effects": {}}` :
+elle n'est visible qu'après une demande (`GameState.request_document`, 1 h de
+service) faite un jour précédent, donc livrée le lendemain. Un dossier peut
+porter `"consultation"` : le conseil du supérieur (`GameState.consult_superior`,
+1 h, une fois par dossier non conclu).
+
+## Temps de service (`data/rules/work_time.json`)
+
+Une journée compte 8 h, plus 2 h supplémentaires ; lire est gratuit. Le coût de
+chaque action est dans le JSON, la logique dans `WorkTime` (pur), l'état dans
+`GameState.hours_used` / `overtime_days`. Signer une conclusion ne bloque
+jamais, même à court d'heures. Le calendrier (`data/calendar.json`) liste les
+20 journées de service et les actes ; `FictionalCalendar.days_since_previous`
+sert aux ellipses (« N jours plus tard »).
+
+## Campagne (`data/campaign.json`)
+
+Profil du personnage joué (nom, matricule, supérieur). Rien n'est écrit en dur
+dans le code, pour pouvoir ajouter plus tard des campagnes jouant un autre
+personnage (`docs/design/EXTENSIONS_PERSONNAGES.md`).
+
 ## Sauvegarde
 
 Fichier `user://savegame.json` :
 `{save_version, game_version, saved_at, state}`. Pour changer le format :
 incrémenter `SAVE_VERSION` et ajouter une étape dans `SaveManager._migrate()`.
-Un chargement en échec ne modifie pas l'état courant.
+Un chargement en échec ne modifie pas l'état courant. Version actuelle : 4
+(heures de service, pièces demandées, consultation).
 Emplacement de `user://` sous Windows : `%APPDATA%\Godot\app_userdata\Ministry of Truth\`.
 
 ## Compatibilité mobile
