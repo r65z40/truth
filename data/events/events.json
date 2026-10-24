@@ -1,6 +1,33 @@
 {
 	"events": [
 		{
+			"id": "assign_51307",
+			"conditions": {
+				"min_day": 1
+			},
+			"assign_cases": [
+				"51307"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier : n° 51307",
+				"body": "Inspecteur,\n\nLa Direction de la Centrale thermique n° 3 signale un nombre anormal de certificats de présence signés par le chef d'équipe B. ORLIK. Vous connaissez déjà le nom.\n\nLe dossier 51307 vous est attribué. Il touche un membre du Parti et, indirectement, la Milice. Soyez exact.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "51307_milice_plea",
+			"conditions": {
+				"min_day": 1
+			},
+			"effects": {},
+			"message": {
+				"from": "Capitaine L. ORLIK, Milice du District 9",
+				"subject": "Au sujet de mon frère",
+				"body": "Inspecteur VOSK,\n\nJ'apprends qu'un dossier concerne mon frère Bohdan. Je n'interviens jamais dans le travail d'un collègue, vous le comprendrez.\n\nJe vous dis seulement ceci : Bohdan est un bon communiste, un ouvrier décoré, et l'atelier des chaudières est plein de jaloux.\n\nLa Milice du District 9 sait se souvenir de ceux qui font preuve de discernement.\n\nCapitaine L. ORLIK"
+			}
+		},
+		{
 			"id": "40921_reminder",
 			"conditions": {
 				"min_day": 1,
@@ -98,6 +125,78 @@
 				"from": "Service central d'information",
 				"subject": "Bulletin intérieur du 4 novembre",
 				"body": "PRODUCTION : la Centrale thermique n° 3 dépasse son objectif trimestriel de 4 %.\n\nSÉCURITÉ : le contrôle des déplacements vers les zones frontalières est renforcé à compter de ce jour. Toute carte de travail présentée sur la ligne Velmira - Halvek sera désormais vérifiée avec photographie.\n\nVERITAS : le taux de concordance entre les recommandations du système et les décisions des inspecteurs atteint 91 %.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		},
+		{
+			"id": "51307_reminder",
+			"conditions": {
+				"min_day": 2,
+				"undecided_cases": [
+					"51307"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Dossier 51307 : en attente",
+				"body": "Inspecteur,\n\nLe dossier ORLIK n'avance pas. Chaque jour qui passe ressemble davantage à une hésitation, et les hésitations se remarquent.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "51307_milice_hostile",
+			"conditions": {
+				"min_day": 2,
+				"requires_flags": [
+					"milice.hostile"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"milice.enemy": true
+			},
+			"message": {
+				"from": "Capitaine L. ORLIK, Milice du District 9",
+				"subject": "(sans objet)",
+				"body": "Inspecteur VOSK,\n\nVous avez fait votre devoir. Je ferai le mien.\n\nLa Milice tient, elle aussi, des dossiers. Le vôtre est ouvert depuis ce matin.\n\nCapitaine L. ORLIK"
+			}
+		},
+		{
+			"id": "51307_milice_grateful",
+			"conditions": {
+				"min_day": 2,
+				"requires_flags": [
+					"milice.favor_owed"
+				]
+			},
+			"effects": {
+				"influence": 2
+			},
+			"set_flags": {
+				"milice.ally": true
+			},
+			"message": {
+				"from": "Capitaine L. ORLIK, Milice du District 9",
+				"subject": "Remerciements",
+				"body": "Inspecteur VOSK,\n\nMon frère a repris son poste ce matin. Je n'oublie jamais un service.\n\nSi un jour vous avez besoin de la Milice du District 9, pour un renseignement, une porte à ouvrir ou une porte à fermer, appelez le poste 3-210 et demandez-moi.\n\nCapitaine L. ORLIK"
+			}
+		},
+		{
+			"id": "51307_demoted",
+			"conditions": {
+				"min_day": 2,
+				"requires_flags": [
+					"51307.orlik_demoted"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Direction, Centrale thermique n° 3",
+				"subject": "Exécution de la sanction B. ORLIK",
+				"body": "À l'attention de la Section 4.\n\nB. ORLIK a été rétrogradé ouvrier qualifié à compter de ce jour. Son droit de signature des certificats de présence lui est retiré.\n\nNous signalons que trois ouvriers de l'atelier des chaudières ne se sont pas présentés ce matin. Aucun certificat n'a été produit.\n\nLa Direction"
 			}
 		}
 	]

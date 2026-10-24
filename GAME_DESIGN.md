@@ -117,6 +117,28 @@ est plausible mais aveugle aux motifs humains, et il surestime l'interception.
 Son objectif caché : maximiser le taux de concordance publié. Le jeu mémorise si
 le joueur a suivi VERITAS (`veritas_agreed`), pour de futures réactions.
 
+## Dossier n° 51307 : ORLIK, Bohdan (0.4)
+
+Attribué le mardi 4 novembre. Chef d'équipe, membre du Parti, frère d'un capitaine
+de la Milice. Le même jour, le capitaine écrit : « La Milice sait se souvenir de
+ceux qui font preuve de discernement. »
+
+- Pièces de base : fiche d'identité, registre des certificats (4 en octobre,
+  0 en septembre), relevé d'entretien de l'horloge (aucune panne), lettre anonyme (D).
+- Contradiction toujours disponible : « panne de l'horloge » contre relevé technique.
+- Selon le dossier 40921 :
+  - enquête complémentaire fondée > audition d'ORLIK (« je n'ai jamais rien vendu »),
+    qui contredit la lettre anonyme ;
+  - arrestation de SEDLAR > son interrogatoire (14 heures, fiabilité C), qui confirme
+    la lettre ;
+  - classement sans instruction > note de KREMER : ORLIK est un informateur de la
+    Milice (« CHAUDRON »).
+- Décisions : arrestation (Milice hostile), sanction administrative (équilibre),
+  classement (influence +, faveur due à la Milice : voie de la corruption).
+- VERITAS recommande le classement à 71 % : il protège les réseaux d'informateurs.
+- Vérité : ORLIK vend des certificats contre du café et de l'alcool ; pour SEDLAR
+  seulement, c'était un échange de services.
+
 ## Carrière
 
 Inspecteur > Analyste du renseignement > Chef de section > Directeur du

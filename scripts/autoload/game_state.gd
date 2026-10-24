@@ -54,7 +54,7 @@ func new_game() -> void:
 	day_index = 0
 	indicators = INITIAL_INDICATORS.duplicate()
 	cases = {}
-	for case_id in CaseLibrary.get_case_ids():
+	for case_id in CaseLibrary.get_starting_case_ids():
 		cases[case_id] = _new_case_state()
 	messages = []
 	for message in DataLoader.load_json(INITIAL_MESSAGES_PATH).get("messages", []):
@@ -93,6 +93,27 @@ func adjust_indicator(indicator: String, delta: int) -> void:
 
 
 # --- Dossiers ----------------------------------------------------------------
+
+## Attribue un dossier au joueur (sans effet s'il l'a déjà).
+func assign_case(case_id: String) -> void:
+	if cases.has(case_id):
+		return
+	if CaseLibrary.get_case(case_id).is_empty():
+		push_error("GameState: dossier inconnu : %s" % case_id)
+		return
+	cases[case_id] = _new_case_state()
+	state_changed.emit()
+
+
+## État minimal utilisé pour évaluer des conditions (événements, pièces).
+func get_condition_state() -> Dictionary:
+	return {"day_index": day_index, "flags": flags, "cases": cases, "fired_events": fired_events}
+
+
+## Le dossier tel que le joueur le voit : seulement les pièces disponibles.
+func get_case_view(case_id: String) -> Dictionary:
+	return CaseLibrary.filter_case(CaseLibrary.get_case(case_id), get_condition_state())
+
 
 func get_case_state(case_id: String) -> Dictionary:
 	if not cases.has(case_id):
@@ -201,9 +222,10 @@ func get_unread_count() -> int:
 ## Renvoie la liste des événements déclenchés.
 func end_day() -> Array:
 	day_index += 1
-	var fired := EventRules.due_events({
-		"day_index": day_index, "flags": flags, "cases": cases, "fired_events": fired_events})
+	var fired := EventRules.due_events(get_condition_state())
 	for event in fired:
+		for case_id in event.get("assign_cases", []):
+			assign_case(case_id)
 		for indicator in event.get("effects", {}):
 			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(event.effects[indicator]),
 					INDICATOR_MIN, INDICATOR_MAX)
@@ -249,8 +271,8 @@ func from_dict(data: Dictionary) -> void:
 		var defaults := _new_case_state()
 		defaults.merge(cases[case_id], true)
 		cases[case_id] = defaults
-	# Un dossier ajouté au jeu après la sauvegarde doit quand même apparaître.
-	for case_id in CaseLibrary.get_case_ids():
+	# Un dossier de départ ajouté au jeu après la sauvegarde doit quand même apparaître.
+	for case_id in CaseLibrary.get_starting_case_ids():
 		if not cases.has(case_id):
 			cases[case_id] = _new_case_state()
 	messages = data.get("messages", [])

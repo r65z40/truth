@@ -24,7 +24,7 @@ data/ (JSON)  ──>  scripts/core (lecture, règles pures)  ──>  autoloads
 ```
 project.godot
 data/
-  cases/index.json            liste ordonnée des dossiers
+  cases/index.json            tous les dossiers + "starting_cases" (attribués au départ)
   cases/case_<id>.json        un dossier = un fichier
   messages/initial_messages.json
   events/events.json          événements différés (conséquences, rappels, bulletins)
@@ -87,6 +87,7 @@ tests/                        tests automatiques et captures d'écran
                 "forbidden_flags": [], "undecided_cases": []},
  "effects": {"influence": 2}, "set_flags": {"40921.orlik_confessed": true},
  "message": {"from": "...", "subject": "...", "body": "..."},
+ "assign_cases": ["51307"],                    // attribue un nouveau dossier
  "repeatable": false}
 ```
 
@@ -127,6 +128,12 @@ Un futur modèle de langage ne ferait que reformuler ces résultats, côté serv
   "truth": { ... }                             // vérité objective, jamais affichée
 }
 ```
+
+Une pièce peut porter `"conditions"` (même format que les événements) : elle
+n'apparaît que si elles sont remplies, par exemple
+`{"requires_flags": ["40921.orlik_confessed"]}`. L'interface passe toujours par
+`GameState.get_case_view(id)`, qui filtre les pièces ; les règles utilisent le
+dossier complet.
 
 Deux éléments qui portent sur la même `key` avec des `value` différentes se
 contredisent (`CaseLibrary.confront`). La clé et la valeur ne sont jamais

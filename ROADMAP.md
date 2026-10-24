@@ -31,10 +31,20 @@
 - [x] Accord ou désaccord avec VERITAS mémorisé dans l'historique des décisions
 - [x] Sauvegarde v3 (migration des v1 et v2)
 
+## Fait : 0.4 (2026-10-24)
+
+- [x] Dossiers attribués par événement (`assign_cases`), dossiers de départ dans `index.json`
+- [x] Pièces conditionnelles : le contenu d'un dossier dépend des choix passés
+- [x] Dossier 51307 (B. ORLIK) : 4 pièces de base + 3 pièces selon le dossier 40921, 2 contradictions possibles
+- [x] Pression de la Milice (capitaine L. ORLIK) et voie de la corruption (classement = faveur due)
+- [x] Suites du 51307 : Milice hostile, Milice alliée, rétrogradation, rappel
+- [x] VERITAS recommande le classement (71 %) : il protège les informateurs
+
 ## Prochaine itération
 
-- [ ] Deuxième dossier, lié aux choix du premier (piste ORLIK, ou KREMER si réattribution)
+- [ ] Affichage des indicateurs (décision de fen en attente)
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
+- [ ] Utiliser les drapeaux `milice.ally` / `milice.enemy` dans un troisième dossier
 - [ ] Sons d'ambiance (terminal, tampon de signature)
 
 ## Ensuite

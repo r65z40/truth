@@ -26,7 +26,7 @@ func _ready() -> void:
 func setup(new_case_id: String) -> void:
 	case_id = new_case_id
 	selected_decision = ""
-	var case_data := CaseLibrary.get_case(case_id)
+	var case_data := GameState.get_case_view(case_id)
 	var case_state := GameState.get_case_state(case_id)
 	_title.text = "RAPPORT DE CONCLUSION  //  DOSSIER N° %s" % case_id
 	_summary.text = build_summary_bbcode(case_data, case_state)

@@ -16,10 +16,31 @@ const REQUIRED_DOCUMENT_FIELDS := ["id", "type", "title", "source", "reliability
 static var _cache: Dictionary = {}
 
 
-## Liste des identifiants de dossiers disponibles, dans l'ordre de index.json.
+## Liste des identifiants de tous les dossiers du jeu, dans l'ordre de index.json.
 static func get_case_ids() -> Array:
 	var index := DataLoader.load_json(INDEX_PATH)
 	return index.get("cases", [])
+
+
+## Dossiers attribués dès le début d'une partie. Les autres arrivent par des
+## événements ("assign_cases" dans data/events/events.json).
+static func get_starting_case_ids() -> Array:
+	var index := DataLoader.load_json(INDEX_PATH)
+	return index.get("starting_cases", get_case_ids())
+
+
+## Copie du dossier ne contenant que les pièces visibles dans l'état donné.
+## Une pièce peut porter des "conditions" (même format que les événements) :
+## par exemple, un procès-verbal qui n'existe que si une audition a eu lieu.
+## state : {day_index, flags, cases}
+static func filter_case(case_data: Dictionary, state: Dictionary) -> Dictionary:
+	var view := case_data.duplicate()
+	var documents := []
+	for document in case_data.get("documents", []):
+		if EventRules.are_conditions_met(document.get("conditions", {}), state):
+			documents.append(document)
+	view["documents"] = documents
+	return view
 
 
 ## Renvoie le dossier complet, ou un Dictionary vide s'il n'existe pas.

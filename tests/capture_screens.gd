@@ -63,6 +63,16 @@ func _capture_all() -> void:
 	desk.terminal.submit_command("messages")
 	desk.windows.messages.select_message(GameState.messages[-2].id)
 	await _snap("15_lettre_famille")
+	for message in GameState.messages:
+		if message.subject == "Au sujet de mon frère":
+			desk.windows.messages.select_message(message.id)
+	await _snap("16_pression_milice")
+	desk.terminal.submit_command("dossiers")
+	desk.windows.dossiers.select_case("51307")
+	desk.windows.dossiers.select_document("sedlar_interrogation")
+	await _snap("17_dossier_51307_interrogatoire")
+	desk.windows.dossiers.select_document("clock_log")
+	await _snap("18_dossier_51307_horloge")
 	get_tree().quit()
 
 

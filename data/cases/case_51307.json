@@ -1,0 +1,404 @@
+{
+	"id": "51307",
+	"title": "Citoyen n° 51307",
+	"subject_name": "ORLIK, Bohdan",
+	"summary": "Signalement de la Direction de la Centrale thermique n° 3 : nombre anormal de certificats de présence signés par un chef d'équipe.",
+	"priority": "ordinaire",
+	"documents": [
+		{
+			"id": "identity",
+			"type": "identity",
+			"title": "Fiche d'identité civile",
+			"source": "Registre central de la population",
+			"reliability": "A",
+			"date": "1986-11-04",
+			"veritas_remark": "Membre du Parti depuis 25 ans, décoré. Indice de loyauté du sujet : élevé.",
+			"fields": [
+				[
+					"Nom",
+					"ORLIK"
+				],
+				[
+					"Prénoms",
+					"Bohdan"
+				],
+				[
+					"Né le",
+					"03.06.1938 à Velmira"
+				],
+				[
+					"N° de citoyen",
+					"51307"
+				],
+				[
+					"Profession",
+					"Chef d'équipe, atelier des chaudières, Centrale thermique n° 3"
+				],
+				[
+					"Adresse",
+					"Bloc 9, rue des Fondeurs, District 9, Velmira"
+				],
+				[
+					"Parti",
+					"Membre depuis 1961"
+				],
+				[
+					"Distinctions",
+					"Médaille du Travail (1983)"
+				],
+				[
+					"Famille",
+					"Frère : Lev ORLIK, capitaine, Milice du District 9"
+				]
+			],
+			"facts": [
+				{
+					"id": "f_orlik_party",
+					"key": "orlik.party",
+					"value": "Membre depuis 1961",
+					"label": "Membre du Parti depuis 1961, médaille du Travail"
+				},
+				{
+					"id": "f_orlik_brother",
+					"key": "orlik.brother",
+					"value": "Capitaine de la Milice",
+					"label": "Frère : Lev ORLIK, capitaine de la Milice du District 9"
+				}
+			]
+		},
+		{
+			"id": "certificates",
+			"type": "register",
+			"title": "Registre des certificats de présence",
+			"source": "Direction du personnel, Centrale thermique n° 3",
+			"reliability": "A",
+			"date": "1986-11-03",
+			"veritas_remark": "Volume de certificats atypique (+400 % sur un mois). Interprétation : charge de travail exceptionnelle probable.",
+			"columns": [
+				"Date",
+				"Ouvrier",
+				"Motif invoqué",
+				"Signataire"
+			],
+			"rows": [
+				[
+					"09.10.1986",
+					"PETRAS V.",
+					"Oubli de carte",
+					"B. ORLIK"
+				],
+				[
+					"16.10.1986",
+					"PETRAS V.",
+					"Panne de l'horloge",
+					"B. ORLIK"
+				],
+				[
+					"21.10.1986",
+					"SEDLAR A.",
+					"Panne de l'horloge",
+					"B. ORLIK"
+				],
+				[
+					"23.10.1986",
+					"MIKULA J.",
+					"Oubli de carte",
+					"B. ORLIK"
+				]
+			],
+			"body": "Certificats établis en remplacement d'un pointage manquant. En septembre 1986 : aucun certificat signé par B. ORLIK.",
+			"facts": [
+				{
+					"id": "f_cert_reason",
+					"key": "clock.status.october",
+					"value": "En panne certains jours",
+					"label": "Motif invoqué deux fois : « panne de l'horloge » (16.10 et 21.10)"
+				},
+				{
+					"id": "f_cert_count",
+					"key": "orlik.certificates",
+					"value": "4 en octobre",
+					"label": "4 certificats en octobre, aucun en septembre"
+				},
+				{
+					"id": "f_cert_petras",
+					"key": "petras.days",
+					"value": "Deux jeudis",
+					"label": "PETRAS couvert deux fois, les jeudis 9 et 16 octobre"
+				}
+			]
+		},
+		{
+			"id": "clock_log",
+			"type": "report",
+			"title": "Relevé d'entretien de l'horloge pointeuse",
+			"source": "Service technique, Centrale thermique n° 3",
+			"reliability": "A",
+			"date": "1986-11-01",
+			"veritas_remark": "Document technique sans portée sécuritaire.",
+			"author": "I. HAVEL, technicien d'entretien",
+			"body": "Horloge pointeuse de l'atelier des chaudières (modèle CHR-4).\n\nContrôles effectués le 01.10.1986 et le 31.10.1986 : appareil en état de marche. Aucun signalement de panne n'a été adressé au service technique en octobre.\n\nLe ruban encreur a été changé le 31.10, comme chaque mois.",
+			"facts": [
+				{
+					"id": "f_clock_ok",
+					"key": "clock.status.october",
+					"value": "En état de marche tout le mois",
+					"label": "Aucune panne signalée en octobre, horloge en état de marche"
+				}
+			]
+		},
+		{
+			"id": "anonymous",
+			"type": "letter",
+			"title": "Lettre anonyme",
+			"source": "Comité de quartier du District 9",
+			"reliability": "D",
+			"date": "1986-10-28",
+			"veritas_remark": "Source anonyme, fiabilité D. Les dénonciations anonymes visant des cadres du Parti sont fausses dans 68 % des cas.",
+			"body": "Au comité,\n\nORLIK vend ses certificats. Un paquet de café ou une bouteille, et vous êtes à l'usine sans y être. Tout l'atelier le sait et personne ne dit rien, parce que son frère porte l'uniforme.\n\nDemandez à PETRAS où il passe ses jeudis.\n\nUn ouvrier qui travaille pour de vrai.",
+			"facts": [
+				{
+					"id": "f_anon_motive",
+					"key": "orlik.motive",
+					"value": "Contre des denrées",
+					"label": "« Un paquet de café ou une bouteille »"
+				},
+				{
+					"id": "f_anon_petras",
+					"key": "petras.days",
+					"value": "Deux jeudis",
+					"label": "« Demandez à PETRAS où il passe ses jeudis »"
+				}
+			]
+		},
+		{
+			"id": "orlik_hearing",
+			"type": "report",
+			"title": "Procès-verbal d'audition de B. ORLIK",
+			"source": "Section 4, audition du 03.11.1986",
+			"reliability": "B",
+			"date": "1986-11-03",
+			"conditions": {
+				"requires_flags": [
+					"40921.orlik_confessed"
+				]
+			},
+			"veritas_remark": "Déclarations cohérentes. Le sujet reconnaît une faute mineure et coopère.",
+			"body": "Question : Pourquoi avez-vous certifié la présence de SEDLAR le 21 octobre ?\nORLIK : Pour lui rendre service. Il réparait mon chauffage, je l'aidais. Entre camarades, c'est normal.\n\nQuestion : Avez-vous reçu de l'argent ou des marchandises ?\nORLIK : Jamais. Je n'ai jamais rien vendu. Demandez à qui vous voulez.\n\nQuestion : L'horloge était-elle en panne ?\nORLIK : Elle tombe en panne tout le temps, cette horloge.",
+			"facts": [
+				{
+					"id": "f_hearing_motive",
+					"key": "orlik.motive",
+					"value": "Échange de services, rien de vendu",
+					"label": "« Je n'ai jamais rien vendu »"
+				},
+				{
+					"id": "f_hearing_clock",
+					"key": "clock.status.october",
+					"value": "En panne certains jours",
+					"label": "« Elle tombe en panne tout le temps, cette horloge »"
+				}
+			]
+		},
+		{
+			"id": "sedlar_interrogation",
+			"type": "report",
+			"title": "Procès-verbal d'interrogatoire de A. SEDLAR",
+			"source": "Service des interpellations, Velmira",
+			"reliability": "C",
+			"date": "1986-11-03",
+			"conditions": {
+				"requires_flags": [
+					"40921.sedlar_arrested"
+				]
+			},
+			"veritas_remark": "Aveux obtenus. Concordance avec la lettre anonyme : élevée.",
+			"body": "Durée de l'interrogatoire : 14 heures.\n\nSEDLAR reconnaît s'être rendu à Halvek le 21 octobre « pour sa mère ». Il déclare que le chef d'équipe ORLIK lui a demandé deux paquets de café en échange du certificat de présence.\n\nSEDLAR refuse de signer la partie du procès-verbal concernant les « papiers ».",
+			"facts": [
+				{
+					"id": "f_sedlar_motive",
+					"key": "orlik.motive",
+					"value": "Contre des denrées",
+					"label": "« Deux paquets de café pour le certificat »"
+				},
+				{
+					"id": "f_sedlar_duration",
+					"key": "interrogation.duration",
+					"value": "14 heures",
+					"label": "Interrogatoire de 14 heures"
+				}
+			]
+		},
+		{
+			"id": "kremer_note",
+			"type": "report",
+			"title": "Note de l'inspecteur KREMER",
+			"source": "Section 2, transmise pour information",
+			"reliability": "C",
+			"date": "1986-11-03",
+			"conditions": {
+				"requires_flags": [
+					"40921.closed_unchecked"
+				]
+			},
+			"veritas_remark": "Note non validée par la hiérarchie de la Section 2.",
+			"body": "Collègue,\n\nJ'ai repris le dossier SEDLAR que vous aviez classé. Pour votre information : B. ORLIK figure depuis 1979 au fichier des informateurs de la Milice du District 9, sous le nom de code « CHAUDRON ».\n\nCe genre d'homme ne tombe jamais seul. Prudence.\n\nKREMER",
+			"facts": [
+				{
+					"id": "f_kremer_informant",
+					"key": "orlik.informant",
+					"value": "Informateur de la Milice depuis 1979",
+					"label": "ORLIK, informateur de la Milice depuis 1979 (« CHAUDRON »)"
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "arrest",
+			"label": "Recommander l'arrestation",
+			"description": "Faux certificats et trafic : transmission au service des interpellations.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 8,
+						"suspicion": -3,
+						"influence": 2
+					},
+					"response": "arrest_found",
+					"flags": {
+						"51307.orlik_arrested": true,
+						"milice.hostile": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 4,
+						"suspicion": 3,
+						"influence": 0
+					},
+					"response": "arrest_unfounded",
+					"flags": {
+						"51307.orlik_arrested": true,
+						"milice.hostile": true
+					}
+				}
+			]
+		},
+		{
+			"id": "demote",
+			"label": "Proposer une sanction administrative",
+			"description": "Rétrogradation et retrait du droit de signature, sans poursuites.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 3,
+						"suspicion": -1,
+						"influence": 3
+					},
+					"response": "demote_found",
+					"flags": {
+						"51307.orlik_demoted": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 1,
+						"suspicion": 2,
+						"influence": 1
+					},
+					"response": "demote_unfounded",
+					"flags": {
+						"51307.orlik_demoted": true
+					}
+				}
+			]
+		},
+		{
+			"id": "close",
+			"label": "Classer le dossier",
+			"description": "Aucune suite. Le chef d'équipe conserve son poste.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -6,
+						"suspicion": 12,
+						"influence": 6
+					},
+					"response": "close_found",
+					"flags": {
+						"milice.favor_owed": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -2,
+						"suspicion": 4,
+						"influence": 5
+					},
+					"response": "close_unfounded",
+					"flags": {
+						"milice.favor_owed": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"arrest_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 51307 : interpellation de B. ORLIK",
+			"body": "Inspecteur,\n\nL'horloge fonctionnait, les certificats mentaient : votre rapport est solide. ORLIK a été interpellé à la sortie de son équipe.\n\nVous devez savoir que son frère, le capitaine Lev ORLIK, a appelé mon bureau trois fois ce matin. Je n'ai pas pris ses appels. Vous non plus, si j'étais vous.\n\nR. MAZUR"
+		},
+		"arrest_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 51307 : interpellation de B. ORLIK",
+			"body": "Inspecteur,\n\nORLIK a été interpellé. Votre rapport ne s'appuie sur aucun élément établi : la défense n'aura aucun mal à parler d'une lettre anonyme et d'une vengeance d'atelier.\n\nLe capitaine ORLIK, son frère, s'est déjà plaint de vous. Avec un dossier aussi mince, je ne pourrai pas vous couvrir longtemps.\n\nR. MAZUR"
+		},
+		"demote_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 51307 : sanction administrative",
+			"body": "Inspecteur,\n\nSanction proportionnée et étayée : ORLIK perd son poste de chef d'équipe et son droit de signature. Pas de procès, pas de vagues.\n\nLe capitaine ORLIK appréciera sans doute que son frère reste libre. C'est un équilibre. On y prend goût, dans ce métier.\n\nR. MAZUR"
+		},
+		"demote_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 51307 : sanction administrative",
+			"body": "Inspecteur,\n\nVous proposez de sanctionner un chef d'équipe décoré sans avoir établi la moindre irrégularité. La Direction de la centrale exécutera, mais elle demande sur quelle base.\n\nJe lui répondrai quelque chose. Ce sera la dernière fois.\n\nR. MAZUR"
+		},
+		"close_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 51307 : classement",
+			"body": "Inspecteur,\n\nVous établissez vous-même que l'horloge fonctionnait et que les certificats sont faux. Puis vous classez.\n\nJe ne vous demanderai pas qui vous a appelé. Je note simplement que le capitaine ORLIK est passé dans nos couloirs hier, et qu'il avait l'air de bonne humeur.\n\nR. MAZUR"
+		},
+		"close_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 51307 : classement",
+			"body": "Inspecteur,\n\nDossier classé. La Direction de la centrale sera déçue, la Milice beaucoup moins.\n\nC'est votre signature, pas la mienne.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "close",
+		"confidence": 71,
+		"rationale": "Membre du Parti depuis 1961, décoré. Dénonciation anonyme de fiabilité D. Risque pour la sécurité de l'État : faible. Une procédure fragiliserait un réseau de coopération utile.",
+		"note": "VERITAS protège les informateurs de la Milice : son objectif caché est la stabilité des réseaux de renseignement, pas la vérité."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "ORLIK vend des certificats contre du café et de l'alcool depuis l'été (PETRAS fait la queue au marché noir chaque jeudi). Pour SEDLAR seulement, c'était un échange de services. ORLIK est un informateur de la Milice (« CHAUDRON »), protégé par son frère. L'horloge n'a jamais été en panne.",
+		"involved": [
+			"51307",
+			"40921",
+			"orlik_l",
+			"petras_v"
+		]
+	}
+}
