@@ -145,6 +145,27 @@ ceux qui font preuve de discernement. »
 - Vérité : ORLIK vend des certificats contre du café et de l'alcool ; pour SEDLAR
   seulement, c'était un échange de services.
 
+## Dossier n° 52044 : KOVAC, Zora (0.6)
+
+Attribué le mercredi 5 novembre. La Boulangerie d'État n° 12 encaisse 1 412 carnets
+pour 1 080 attendus. Trois contradictions : l'écart entre recensement et carnets
+délivrés, et deux carnets délivrés en octobre à des personnes mortes en août et
+septembre. Mettre en cause le Bureau du ravitaillement n'aboutit que si l'agent a
+établi la mort d'un titulaire (condition `contradiction:<clé>`) ; l'écart seul ne
+fait que muter le préposé DRAZEK. VERITAS (83) accuse la gérante : il donne une
+conformité maximale aux registres des services de l'État. Pièces selon le 51307 :
+déposition de PETRAS (« carnets du cimetière ») ou note de la Milice.
+
+## Dossier n° 52310 : VARGA, Teodor (0.6)
+
+Attribué le jeudi 6 novembre par la Section 7. Le poème « Novembre » de l'édition
+revue de 1986 forme l'acrostiche HALVEK ; l'édition de 1979 forme HALINA (la femme
+morte du poète). La fiche d'identité, refaite par la Section 7, ne porte pas la
+cicatrice de la fiche de lecteur de 1979. Vérité : le vrai VARGA est mort en
+détention en 1983 ; l'homme de la photo est Karel BENES, l'occupant actuel de
+l'appartement. VERITAS (91) ignore les documents « hors période ». Dans tous les
+cas, KREMER, relégué aux archives, écrit à Vosk : c'est la fin de l'acte 1.
+
 ## Carrière
 
 Inspecteur > Analyste du renseignement > Chef de section > Directeur du
@@ -157,5 +178,6 @@ automatique (réputation, relations, résultats, choix, événements).
   personnel (choix de fen).
 - 2026-10-24 : les conséquences récompensent l'instruction (contradiction établie)
   plus que la décision elle-même ; le joueur confronte des éléments par paires.
+- 2026-10-24 : conception V2 validée par fen (`docs/design/`).
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

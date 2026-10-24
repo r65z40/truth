@@ -49,6 +49,8 @@ func _run() -> void:
 		"test_case_52044_structure",
 		"test_case_52044_decisions",
 		"test_case_52044_consequences",
+		"test_case_52310_structure",
+		"test_case_52310_consequences",
 		"test_assessment",
 		"test_guidance_steps",
 		"test_terminal_command_parsing",
@@ -587,6 +589,63 @@ func test_case_52044_consequences() -> void:
 	check("52044_reminder" in ids, "52044 : rappel si le dossier traîne")
 
 
+## Joue jusqu'au jour 3 (attribution du dossier 52310).
+func _reach_case_52310(decision_40921: String = "investigate") -> void:
+	_play_first_case(decision_40921, true)
+	GameState.end_day()
+	GameState.end_day()
+
+
+func test_case_52310_structure() -> void:
+	var case_data := CaseLibrary.get_case("52310")
+	check(CaseLibrary.validate_case(case_data).is_empty(), "52310 : dossier valide %s" % [CaseLibrary.validate_case(case_data)])
+	var keys := CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check(keys.size() == 2 and "poem.acrostic" in keys and "varga.mark" in keys, "52310 : 2 contradictions (%s)" % [keys])
+	check(CaseLibrary.confront(case_data, "f_p86_acrostic", "f_p79_acrostic") == "poem.acrostic", "52310 : HALVEK contre HALINA")
+	check(CaseLibrary.confront(case_data, "f_cen_acrostic", "f_p86_acrostic") == "", "52310 : le rapport et l'édition de 1986 concordent")
+	check(CaseLibrary.confront(case_data, "f_var_mark", "f_rc_mark") == "varga.mark", "52310 : la cicatrice a disparu")
+	check(CaseLibrary.get_document(case_data, "reader_card").photo.mark == "scar"
+			and CaseLibrary.get_document(case_data, "identity").photo.mark == "none", "52310 : les deux photos diffèrent")
+	_reach_case_52310()
+	check(GameState.cases.has("52310"), "52310 : attribué le jour 3")
+	check(not "sedlar_link" in _visible_document_ids("52310"), "52310 : pas d'interrogatoire de SEDLAR s'il est libre")
+	_reach_case_52310("arrest")
+	check("sedlar_link" in _visible_document_ids("52310"), "52310 : SEDLAR arrêté > on l'interroge sur VARGA")
+	var scenarios := [
+		["arrest", [], "arrest"], ["arrest", ["varga.mark"], "arrest_knowing"],
+		["no_code", [], "no_code_unfounded"], ["no_code", ["poem.acrostic"], "no_code_proved"],
+		["no_code", ["varga.mark"], "no_code_unfounded"],
+		["identity_error", [], "identity_unfounded"], ["identity_error", ["varga.mark"], "identity_proved"],
+		["identity_error", ["poem.acrostic"], "identity_unfounded"],
+	]
+	for scenario in scenarios:
+		var result := DecisionRules.resolve(case_data, {"contradictions_found": scenario[1]}, scenario[0])
+		check(result.response_id == scenario[2], "52310 %s %s > %s (obtenu %s)" % [scenario[0], scenario[1], scenario[2], result.get("response_id")])
+
+
+func test_case_52310_consequences() -> void:
+	var scenarios := [
+		["arrest", [], ["52310_benes_letter", "act1_kremer_note"], "52310.varga_arrested"],
+		["no_code", ["f_p86_acrostic", "f_p79_acrostic"], ["52310_dubek", "act1_kremer_note"], "section7.hostile"],
+		["identity_error", ["f_var_mark", "f_rc_mark"], ["act1_kremer_seen"], "52310.truth_known"],
+	]
+	for scenario in scenarios:
+		_reach_case_52310()
+		if not scenario[1].is_empty():
+			GameState.confront_facts("52310", scenario[1][0], scenario[1][1])
+		GameState.apply_decision("52310", scenario[0])
+		var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+		for event_id in scenario[2]:
+			check(event_id in ids, "52310 %s > %s (%s)" % [scenario[0], event_id, ids])
+		check(not ("act1_kremer_note" in ids and "act1_kremer_seen" in ids), "52310 : une seule note de KREMER")
+		check(GameState.flags.get(scenario[3]) == true, "52310 %s : drapeau %s" % [scenario[0], scenario[3]])
+		check(GameState.flags.get("kremer.contact") == true, "52310 %s : contact avec KREMER établi" % scenario[0])
+		check(not "52310_reminder" in ids, "52310 : pas de rappel après la décision")
+	_reach_case_52310()
+	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("52310_reminder" in ids and not "act1_kremer_note" in ids, "52310 : rappel, et pas de note tant qu'il n'est pas conclu")
+
+
 func test_guidance_steps() -> void:
 	var step := func() -> Dictionary: return Guidance.next_step(GameState.get_condition_state(), GameState.messages)
 	check(step.call().target == "messages" and step.call().text.contains("prise de fonction"), "1. lire le message de Mazur")
@@ -783,7 +842,7 @@ func test_investigation_and_conclusion_flow() -> void:
 			"le formulaire rappelle la contradiction établie")
 	check(conclusion.get_node("%SignButton").disabled, "signature impossible sans choix")
 	check(conclusion.get_node("%VeritasAdvice").text.contains("indice de conformité 87")
-			and conclusion.get_node("%VeritasAdvice").text.contains("Facteurs : Déplacement non déclaré"),
+			and conclusion.get_node("%VeritasAdvice").text.contains("Facteurs principaux :\n- Déplacement non déclaré"),
 			"le formulaire affiche l'avis de VERITAS et ses facteurs")
 	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
 	conclusion.get_node("%SignButton").pressed.emit()

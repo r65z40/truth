@@ -106,9 +106,11 @@ func _draw() -> void:
 	draw_rect(frame, ink, false, 1.0)
 	draw_set_transform(Vector2.ZERO)
 	var font := get_theme_default_font()
+	# La légende déborde de la photo de part et d'autre, centrée.
 	var width := PHOTO_SIZE.x * DISPLAY_SCALE
-	draw_string(font, Vector2(0, PHOTO_SIZE.y * DISPLAY_SCALE + 14), str(photo.get("caption", "")),
-			HORIZONTAL_ALIGNMENT_CENTER, width, 11, shade)
+	var caption_width := width + 60.0
+	draw_string(font, Vector2((width - caption_width) / 2.0, PHOTO_SIZE.y * DISPLAY_SCALE + 14), str(photo.get("caption", "")),
+			HORIZONTAL_ALIGNMENT_CENTER, caption_width, 11, shade)
 
 
 func _ellipse(center: Vector2, radius: Vector2, from := 0.0, to := TAU, steps := 32) -> PackedVector2Array:

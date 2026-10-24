@@ -312,6 +312,134 @@
 				"subject": "Sans objet",
 				"body": "Pour l'inspecteur qui s'occupe de la boulangerie de la rue du Moulin.\n\nOn m'a dit de ne pas chercher à savoir qui. Je ne cherche pas.\n\nIl y a une miche pour vous chaque matin, si vous passez un jour par la rue du Moulin. Personne ne vous demandera de ticket.\n\nZ. K."
 			}
+		},
+		{
+			"id": "assign_52310",
+			"conditions": {
+				"min_day": 3
+			},
+			"assign_cases": [
+				"52310"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier prioritaire : n° 52310",
+				"body": "Inspecteur,\n\nLe Service de la censure (Section 7) nous transmet le dossier d'un poète, Teodor VARGA. Son recueil aurait servi à transmettre un message codé vers la zone frontalière.\n\nLa Section 7 attend une conclusion rapide. Elle attend aussi, je crois, une conclusion précise. Lisez tout, y compris ce qu'on ne vous demande pas de lire.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "daily_bulletin_3",
+			"conditions": {
+				"min_day": 3
+			},
+			"effects": {},
+			"message": {
+				"from": "Service central d'information",
+				"subject": "Bulletin intérieur du 6 novembre",
+				"body": "ÉNERGIE : les négociations avec la République d'Aldria sur le crédit énergétique d'hiver entrent dans une phase « constructive ». Une commission d'inspection aldrienne est attendue en décembre.\n\nCULTURE : le Service de la censure dénonce l'usage de la poésie à des fins de propagande étrangère.\n\nTRAVAIL : la Centrale thermique n° 3 tourne à 112 % de sa capacité nominale malgré le retard des pièces de rechange. Les équipes sont félicitées.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		},
+		{
+			"id": "52310_reminder",
+			"conditions": {
+				"min_day": 4,
+				"undecided_cases": [
+					"52310"
+				]
+			},
+			"effects": {
+				"suspicion": 4
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Dossier 52310 : la Section 7 s'impatiente",
+				"body": "Inspecteur,\n\nL'analyste DUBEK, de la Section 7, a appelé deux fois. Il demande si la Section 4 « a un problème avec la poésie ».\n\nConcluez.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "daily_bulletin_4",
+			"conditions": {
+				"min_day": 4
+			},
+			"effects": {},
+			"message": {
+				"from": "Service central d'information",
+				"subject": "Bulletin intérieur du 7 novembre",
+				"body": "SÉCURITÉ : démantèlement d'un « réseau de passage » utilisant des œuvres littéraires. L'enquête se poursuit.\n\nRAVITAILLEMENT : le crédit aldrien permettra de maintenir les rations d'hiver. Les rumeurs de baisse sont infondées.\n\nPERSONNEL : réorganisation des services d'archives du ministère à compter du lundi 10 novembre.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		},
+		{
+			"id": "52310_benes_letter",
+			"conditions": {
+				"min_day": 4,
+				"requires_flags": [
+					"52310.varga_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Requête de Mme Irena BENES",
+				"body": "Monsieur l'Inspecteur,\n\nMercredi soir, des hommes sont venus chez nous, quai des Tanneurs, appartement 40. Ils cherchaient « Teodor VARGA ». Ils ont emmené mon mari, Karel BENES, en pyjama, parce qu'il a le même âge et qu'il est correcteur comme l'était M. VARGA.\n\nNous habitons cet appartement depuis 1982. M. VARGA, on nous a dit qu'il avait émigré.\n\nJ'ai vu Karel hier au parloir, dix minutes. Il avait le nez cassé et il ne pouvait plus fermer la main droite. Il m'a dit qu'il avait signé. Je ne sais pas quoi.\n\nIrena BENES\n\n[Mention du Bureau des requêtes : homonymie alléguée, requête transmise à la Section 7.]"
+			}
+		},
+		{
+			"id": "52310_dubek",
+			"conditions": {
+				"min_day": 4,
+				"requires_flags": [
+					"section7.hostile"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"message": {
+				"from": "M. DUBEK, analyste principal, Section 7",
+				"subject": "Votre conclusion sur le dossier 52310",
+				"body": "Inspecteur VOSK,\n\nJ'ai lu votre conclusion. Vous opposez à notre analyse une édition de 1979 retirée du catalogue, c'est-à-dire un document qui, officiellement, n'existe plus.\n\nJe prends note de votre goût pour les textes qui n'existent plus. La Section 7 aussi.\n\nM. DUBEK"
+			}
+		},
+		{
+			"id": "act1_kremer_seen",
+			"conditions": {
+				"min_day": 4,
+				"requires_flags": [
+					"52310.identity_questioned"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"kremer.contact": true,
+				"52310.truth_known": true
+			},
+			"message": {
+				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
+				"subject": "(sans objet)",
+				"body": "Vous avez vu la cicatrice. Moi aussi, en 1979 : c'est moi qui avais établi sa fiche de lecteur.\n\nTeodor VARGA a été arrêté en mars 1981. Il est mort en détention en 1983. Officiellement, il a émigré. L'homme de la photo s'appelle Karel BENES : il habite l'appartement de VARGA depuis 1982.\n\nOn m'envoie aux archives lundi, « réorganisation ». On ne pouvait pas me rendre plus grand service. Les originaux sont au sous-sol B.\n\nNe m'écrivez pas. Ne parlez pas de moi à MAZUR. Brûlez ceci.\n\nK."
+			}
+		},
+		{
+			"id": "act1_kremer_note",
+			"conditions": {
+				"min_day": 4,
+				"requires_flags": [
+					"52310.decided"
+				],
+				"forbidden_flags": [
+					"52310.identity_questioned"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"kremer.contact": true
+			},
+			"message": {
+				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
+				"subject": "(sans objet)",
+				"body": "Inspecteur,\n\nComparez la photo de la fiche 52310 avec celle de la fiche de lecteur de 1979. Regardez la joue droite.\n\nCe n'est pas le même homme. Le vrai Teodor VARGA a été arrêté en 1981 et n'est jamais revenu. Le ministère a déjà condamné quelqu'un sous ce nom ; il lui en faut un deuxième pour le procès.\n\nOn m'envoie aux archives lundi. Si vous voulez voir les originaux, c'est là qu'ils seront. Ne m'écrivez pas. Brûlez ceci.\n\nK."
+			}
 		}
 	]
 }

@@ -35,8 +35,8 @@ func setup(new_case_id: String) -> void:
 	if not advice.is_empty():
 		var show_multipliers: bool = GameState.flags.get(Veritas.PARAMS_FLAG, false) == true
 		var factors := Veritas.explain(case_data, case_state, show_multipliers)
-		_veritas_advice.text = "%s RECOMMANDE : %s  (indice de conformité %d)\n%s\nFacteurs : %s\nLa responsabilité de la conclusion incombe à l'agent signataire." % [
-			Veritas.NAME, advice.label.to_upper(), advice.confidence, advice.rationale, " ; ".join(factors)]
+		_veritas_advice.text = "%s RECOMMANDE : %s  (indice de conformité %d)\n%s\nFacteurs principaux :\n- %s\nLa responsabilité de la conclusion incombe à l'agent signataire." % [
+			Veritas.NAME, advice.label.to_upper(), advice.confidence, advice.rationale, "\n- ".join(factors)]
 	for child in _choices.get_children():
 		_choices.remove_child(child)
 		child.queue_free()

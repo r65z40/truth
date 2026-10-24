@@ -56,6 +56,19 @@ Directive de game design V2 de fen : audit, game design V2, carrière, factions,
 VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 (voir `docs/design/README.md`). Priorité : un acte 1 complet et stable.
 
+## En cours : 0.6, acte 1 complet
+
+- [x] Dossier 52044 : carnets du cimetière (3 contradictions, issues selon la contradiction établie)
+- [x] Dossier 52310 : le poète T. VARGA (deux éditions, deux photos, Section 7)
+- [x] Note de KREMER, fin de l'acte 1 (deux variantes), lettre de Mme BENES, bulletins des 5, 6 et 7 novembre
+- [x] Photos d'identité dessinées à partir des données (`IdPhoto`)
+- [x] VERITAS : indice de conformité calculé, `VERITAS POURQUOI`
+- [x] Onglets des pièces sur une ligne défilante (dossiers de 8 pièces)
+- [ ] Fondations de la localisation (français, anglais)
+- [ ] Horloge de service, demander une pièce, consulter Mazur
+- [ ] Soirées (Lena, radio d'Aldria)
+- [ ] Calendrier en 20 journées, écran de fin d'acte, promotion
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
