@@ -42,9 +42,15 @@ func _run() -> void:
 		"test_delayed_consequences",
 		"test_save_migration_from_v2",
 		"test_veritas",
+		"test_veritas_model",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
+		"test_case_52044_structure",
+		"test_case_52044_decisions",
+		"test_case_52044_consequences",
+		"test_case_52310_structure",
+		"test_case_52310_consequences",
 		"test_assessment",
 		"test_guidance_steps",
 		"test_terminal_command_parsing",
@@ -344,7 +350,8 @@ func test_end_day_without_decision() -> void:
 	check(GameState.messages[-1].date_label == "04.11.1986", "messages datés du jour")
 	check(days == [1], "signal day_started émis")
 	var next_ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
-	check(next_ids == ["51307_reminder"], "le lendemain, seul le rappel du nouveau dossier : %s" % [next_ids])
+	check(next_ids == ["51307_reminder", "assign_52044", "daily_bulletin_2"],
+			"le lendemain : rappel, dossier 52044 et bulletin : %s" % [next_ids])
 	GameState.day_started.disconnect(on_day)
 
 
@@ -394,7 +401,7 @@ func test_veritas() -> void:
 	check(Veritas.terminal_reply(GameState.get_condition_state()).contains("4 pièce(s) non consultée(s)"), "VERITAS signale les pièces non lues")
 	for document in case_data.documents:
 		GameState.mark_document_viewed("40921", document.id)
-	check(Veritas.terminal_reply(GameState.get_condition_state()).contains("Indice de confiance : 87"), "puis donne sa recommandation")
+	check(Veritas.terminal_reply(GameState.get_condition_state()).contains("Indice de conformité : 87"), "puis donne sa recommandation")
 	GameState.apply_decision("40921", "arrest")
 	check(Veritas.terminal_reply(GameState.get_condition_state()).begins_with("Aucun dossier"), "rien à signaler une fois le dossier traité")
 	check(GameState.decisions[0].veritas_agreed == true, "accord avec VERITAS mémorisé")
@@ -403,6 +410,38 @@ func test_veritas() -> void:
 # --- Dossier 51307 (ORLIK) ---------------------------------------------------
 
 ## Joue le dossier 40921 avec une décision donnée, puis passe au lendemain.
+func test_veritas_model() -> void:
+	var expected := {"40921": ["arrest", 87], "51307": ["close", 71], "52044": ["arrest_baker", 83], "52310": ["arrest", 91]}
+	for case_id in expected:
+		var case_data := CaseLibrary.get_case(case_id)
+		var advice := Veritas.recommendation(case_data)
+		check(advice.decision_id == expected[case_id][0] and advice.confidence == expected[case_id][1],
+				"%s : indice calculé %s %d (obtenu %s %s)" % [case_id, expected[case_id][0], expected[case_id][1], advice.decision_id, advice.confidence])
+		check(advice.decision_id == case_data.veritas.recommendation, "%s : recommandation déclarée = indice le plus fort" % case_id)
+	var c52044 := CaseLibrary.get_case("52044")
+	var before: Dictionary = Veritas.scores(c52044)
+	var after: Dictionary = Veritas.scores(c52044, {"contradictions_found": ["horvat.status"]})
+	check(after.report_bureau.score == before.report_bureau.score + 20, "un fait établi par l'agent compte pour VERITAS")
+	check(Veritas.recommendation(c52044, {"contradictions_found": ["horvat.status", "lenska.status"]}).decision_id == "arrest_baker",
+			"VERITAS maintient son avis malgré les faits (biais de la source d'État)")
+	var c52310 := CaseLibrary.get_case("52310")
+	var halina: Dictionary = Veritas.scores(c52310, {"contradictions_found": ["poem.acrostic"]})
+	check(halina.no_code.score == 40 and halina.no_code.factors.size() == 1 and halina.no_code.factors[0].contribution == 0.0,
+			"un document hors période pèse zéro (multiplicateur caché)")
+	var hidden := c52044.duplicate(true)
+	hidden.documents = hidden.documents.filter(func(d: Dictionary) -> bool: return d.id != "issue_register")
+	check(Veritas.scores(hidden).arrest_baker.score == 62, "un facteur dont la pièce est absente ne compte pas")
+	var plain := Veritas.explain(CaseLibrary.get_case("40921"))
+	check(plain.size() == 3 and plain[0].begins_with("Déplacement non déclaré") and not plain[0].contains(" x "),
+			"VERITAS POURQUOI : 3 facteurs, sans multiplicateur (%s)" % [plain])
+	var detailed := Veritas.explain(CaseLibrary.get_case("40921"), {}, true)
+	check(detailed[0].contains("poids 8 x 2 = 16"), "avec les paramètres connus, le multiplicateur apparaît (%s)" % detailed[0])
+	for document_id in ["identity", "work_report", "intercept", "travel_log"]:
+		GameState.mark_document_viewed("40921", document_id)
+	var reply := Veritas.terminal_reply(GameState.get_condition_state(), PackedStringArray(["POURQUOI"]))
+	check(reply.contains("Facteurs principaux") and reply.contains("Famille résidant à Halvek"), "commande VERITAS POURQUOI")
+
+
 func _play_first_case(decision_id: String, establish_contradiction: bool) -> void:
 	GameState.new_game()
 	if establish_contradiction:
@@ -469,6 +508,142 @@ func test_case_51307_consequences() -> void:
 	_play_first_case("arrest", true)
 	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
 	check("51307_reminder" in ids, "rappel si le dossier 51307 traîne")
+
+
+## Joue jusqu'au jour 2 (attribution du dossier 52044), après un choix sur le 51307.
+func _reach_case_52044(decision_51307: String) -> void:
+	_play_first_case("investigate", true)
+	if decision_51307 != "":
+		GameState.confront_facts("51307", "f_cert_reason", "f_clock_ok")
+		GameState.apply_decision("51307", decision_51307)
+	GameState.end_day()
+
+
+func test_case_52044_structure() -> void:
+	var case_data := CaseLibrary.get_case("52044")
+	check(CaseLibrary.validate_case(case_data).is_empty(), "52044 : dossier valide %s" % [CaseLibrary.validate_case(case_data)])
+	var keys := CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	for key in ["sector.books", "horvat.status", "lenska.status"]:
+		check(key in keys, "52044 : contradiction possible sur %s" % key)
+	check(keys.size() == 3, "52044 : exactement 3 contradictions (%s)" % [keys])
+	check(CaseLibrary.confront(case_data, "f_reg_horvat", "f_death_horvat") == "horvat.status", "52044 : carnet délivré à un mort")
+	check(CaseLibrary.confront(case_data, "f_rep_expected", "f_reg_total") == "sector.books", "52044 : 1 080 contre 1 412 carnets")
+	check(CaseLibrary.confront(case_data, "f_reg_horvat", "f_death_lenska") == "", "52044 : deux personnes différentes ne se contredisent pas")
+	check(Veritas.recommendation(case_data).decision_id == "arrest_baker", "52044 : VERITAS accuse la boulangère")
+	# Attribution au jour 2 seulement.
+	GameState.end_day()
+	check(not GameState.cases.has("52044"), "52044 : pas encore attribué le jour 1")
+	GameState.end_day()
+	check(GameState.cases.has("52044"), "52044 : attribué le jour 2")
+	var base := ["identity", "commerce_report", "issue_register", "death_register", "kovac_statement"]
+	for scenario in [["", []], ["arrest", ["petras_statement"]], ["close", ["milice_note"]], ["demote", []]]:
+		_reach_case_52044(scenario[0])
+		if scenario[0] == "close":
+			GameState.end_day()
+		var expected: Array = base.duplicate()
+		expected.append_array(scenario[1])
+		var ids := _visible_document_ids("52044")
+		check(ids == expected, "51307 « %s » > pièces du 52044 %s" % [scenario[0], ids])
+
+
+func test_case_52044_decisions() -> void:
+	var case_data := CaseLibrary.get_case("52044")
+	var scenarios := [
+		["report_bureau", [], "bureau_unfounded"],
+		["report_bureau", ["sector.books"], "bureau_partial"],
+		["report_bureau", ["horvat.status"], "bureau_proved"],
+		["report_bureau", ["lenska.status"], "bureau_proved"],
+		["report_bureau", ["sector.books", "horvat.status"], "bureau_proved"],
+		["arrest_baker", [], "arrest_baker"],
+		["arrest_baker", ["sector.books"], "arrest_baker_knowing"],
+		["close", [], "close"],
+		["close", ["horvat.status"], "close_knowing"],
+	]
+	for scenario in scenarios:
+		var result := DecisionRules.resolve(case_data, {"contradictions_found": scenario[1]}, scenario[0])
+		check(result.response_id == scenario[2], "52044 %s %s > %s (obtenu %s)" % [scenario[0], scenario[1], scenario[2], result.get("response_id")])
+	check(DecisionRules.is_condition_met("contradiction:horvat.status", {"contradictions_found": ["horvat.status"]}), "condition contradiction:<clé> vraie")
+	check(not DecisionRules.is_condition_met("contradiction:horvat.status", {"contradictions_found": ["sector.books"]}), "condition contradiction:<clé> fausse")
+
+
+func test_case_52044_consequences() -> void:
+	var scenarios := [
+		["arrest_baker", ["f_rep_expected", "f_reg_total"], "52044_petition", "52044.innocent_condemned"],
+		["report_bureau", ["f_reg_horvat", "f_death_horvat"], "52044_bureau_cold", "player.noticed_by_halm"],
+		["close", ["f_reg_lenska", "f_death_lenska"], "52044_gift", "player.bribed"],
+	]
+	for scenario in scenarios:
+		_reach_case_52044("demote")
+		check(GameState.confront_facts("52044", scenario[1][0], scenario[1][1]) != "", "52044 : contradiction établie pour %s" % scenario[0])
+		GameState.apply_decision("52044", scenario[0])
+		var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+		check(scenario[2] in ids, "52044 %s > %s le lendemain (%s)" % [scenario[0], scenario[2], ids])
+		check(GameState.flags.get(scenario[3]) == true, "52044 %s : drapeau %s" % [scenario[0], scenario[3]])
+		check(not "52044_reminder" in ids, "52044 : pas de rappel après la décision")
+	_reach_case_52044("demote")
+	GameState.apply_decision("52044", "report_bureau")
+	GameState.end_day()
+	check(GameState.flags.get("52044.drazek_warned") == true, "52044 : accusation sans preuve > DRAZEK prévenu")
+	_reach_case_52044("demote")
+	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("52044_reminder" in ids, "52044 : rappel si le dossier traîne")
+
+
+## Joue jusqu'au jour 3 (attribution du dossier 52310).
+func _reach_case_52310(decision_40921: String = "investigate") -> void:
+	_play_first_case(decision_40921, true)
+	GameState.end_day()
+	GameState.end_day()
+
+
+func test_case_52310_structure() -> void:
+	var case_data := CaseLibrary.get_case("52310")
+	check(CaseLibrary.validate_case(case_data).is_empty(), "52310 : dossier valide %s" % [CaseLibrary.validate_case(case_data)])
+	var keys := CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check(keys.size() == 2 and "poem.acrostic" in keys and "varga.mark" in keys, "52310 : 2 contradictions (%s)" % [keys])
+	check(CaseLibrary.confront(case_data, "f_p86_acrostic", "f_p79_acrostic") == "poem.acrostic", "52310 : HALVEK contre HALINA")
+	check(CaseLibrary.confront(case_data, "f_cen_acrostic", "f_p86_acrostic") == "", "52310 : le rapport et l'édition de 1986 concordent")
+	check(CaseLibrary.confront(case_data, "f_var_mark", "f_rc_mark") == "varga.mark", "52310 : la cicatrice a disparu")
+	check(CaseLibrary.get_document(case_data, "reader_card").photo.mark == "scar"
+			and CaseLibrary.get_document(case_data, "identity").photo.mark == "none", "52310 : les deux photos diffèrent")
+	_reach_case_52310()
+	check(GameState.cases.has("52310"), "52310 : attribué le jour 3")
+	check(not "sedlar_link" in _visible_document_ids("52310"), "52310 : pas d'interrogatoire de SEDLAR s'il est libre")
+	_reach_case_52310("arrest")
+	check("sedlar_link" in _visible_document_ids("52310"), "52310 : SEDLAR arrêté > on l'interroge sur VARGA")
+	var scenarios := [
+		["arrest", [], "arrest"], ["arrest", ["varga.mark"], "arrest_knowing"],
+		["no_code", [], "no_code_unfounded"], ["no_code", ["poem.acrostic"], "no_code_proved"],
+		["no_code", ["varga.mark"], "no_code_unfounded"],
+		["identity_error", [], "identity_unfounded"], ["identity_error", ["varga.mark"], "identity_proved"],
+		["identity_error", ["poem.acrostic"], "identity_unfounded"],
+	]
+	for scenario in scenarios:
+		var result := DecisionRules.resolve(case_data, {"contradictions_found": scenario[1]}, scenario[0])
+		check(result.response_id == scenario[2], "52310 %s %s > %s (obtenu %s)" % [scenario[0], scenario[1], scenario[2], result.get("response_id")])
+
+
+func test_case_52310_consequences() -> void:
+	var scenarios := [
+		["arrest", [], ["52310_benes_letter", "act1_kremer_note"], "52310.varga_arrested"],
+		["no_code", ["f_p86_acrostic", "f_p79_acrostic"], ["52310_dubek", "act1_kremer_note"], "section7.hostile"],
+		["identity_error", ["f_var_mark", "f_rc_mark"], ["act1_kremer_seen"], "52310.truth_known"],
+	]
+	for scenario in scenarios:
+		_reach_case_52310()
+		if not scenario[1].is_empty():
+			GameState.confront_facts("52310", scenario[1][0], scenario[1][1])
+		GameState.apply_decision("52310", scenario[0])
+		var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+		for event_id in scenario[2]:
+			check(event_id in ids, "52310 %s > %s (%s)" % [scenario[0], event_id, ids])
+		check(not ("act1_kremer_note" in ids and "act1_kremer_seen" in ids), "52310 : une seule note de KREMER")
+		check(GameState.flags.get(scenario[3]) == true, "52310 %s : drapeau %s" % [scenario[0], scenario[3]])
+		check(GameState.flags.get("kremer.contact") == true, "52310 %s : contact avec KREMER établi" % scenario[0])
+		check(not "52310_reminder" in ids, "52310 : pas de rappel après la décision")
+	_reach_case_52310()
+	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("52310_reminder" in ids and not "act1_kremer_note" in ids, "52310 : rappel, et pas de note tant qu'il n'est pas conclu")
 
 
 func test_guidance_steps() -> void:
@@ -631,7 +806,11 @@ func test_investigation_and_conclusion_flow() -> void:
 	desk.terminal.submit_command("dossiers")
 	var dossiers = desk.windows.dossiers
 	dossiers.select_case("40921")
+	dossiers.select_document("identity")
+	check(dossiers._photo.visible and dossiers._photo.photo.get("facial_hair") == "mustache",
+			"la fiche d'identité affiche la photo du sujet")
 	dossiers.select_document("work_report")
+	check(not dossiers._photo.visible, "pas de photo sur un rapport")
 	var facts_list: Node = dossiers.get_node("%FactsList")
 	check(facts_list.get_child_count() == 2, "le rapport présente 2 éléments notables")
 	check(dossiers.get_node("%VeritasStrip").visible and dossiers.get_node("%VeritasRemark").text.begins_with("VERITAS >"),
@@ -662,7 +841,9 @@ func test_investigation_and_conclusion_flow() -> void:
 	check(conclusion.get_node("%ConclusionSummary").get_parsed_text().contains("Présent à son poste"),
 			"le formulaire rappelle la contradiction établie")
 	check(conclusion.get_node("%SignButton").disabled, "signature impossible sans choix")
-	check(conclusion.get_node("%VeritasAdvice").text.contains("87 %"), "le formulaire affiche l'avis de VERITAS")
+	check(conclusion.get_node("%VeritasAdvice").text.contains("indice de conformité 87")
+			and conclusion.get_node("%VeritasAdvice").text.contains("Facteurs principaux :\n- Déplacement non déclaré"),
+			"le formulaire affiche l'avis de VERITAS et ses facteurs")
 	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
 	conclusion.get_node("%SignButton").pressed.emit()
 	await get_tree().process_frame

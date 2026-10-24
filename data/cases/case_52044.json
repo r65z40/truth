@@ -1,0 +1,511 @@
+{
+	"id": "52044",
+	"title": "Citoyenne n° 52044",
+	"subject_name": "KOVAC, Zora",
+	"summary": "Signalement de l'Inspection du commerce : la Boulangerie d'État n° 12 encaisse beaucoup plus de tickets de pain que le quartier ne compte d'habitants.",
+	"priority": "ordinaire",
+	"documents": [
+		{
+			"id": "identity",
+			"type": "identity",
+			"title": "Fiche d'identité civile",
+			"source": "Registre central de la population",
+			"reliability": "A",
+			"date": "1986-11-05",
+			"veritas_remark": "Veuve, sans appartenance au Parti. Accès quotidien aux tickets : exposition au risque élevée.",
+			"photo": {
+				"caption": "Cliché du 21.01.1979",
+				"face": "round",
+				"hair": "long",
+				"gray": true,
+				"glasses": true,
+				"facial_hair": "none",
+				"mark": "mole"
+			},
+			"fields": [
+				[
+					"Nom",
+					"KOVAC"
+				],
+				[
+					"Prénoms",
+					"Zora"
+				],
+				[
+					"Née le",
+					"17.02.1941 à Brezno"
+				],
+				[
+					"N° de citoyen",
+					"52044"
+				],
+				[
+					"Profession",
+					"Gérante, Boulangerie d'État n° 12, District 4"
+				],
+				[
+					"Adresse",
+					"Bloc 3, rue du Moulin, District 4, Velmira"
+				],
+				[
+					"Parti",
+					"Non-membre"
+				],
+				[
+					"Famille",
+					"Veuve. Un fils, Tomas KOVAC, appelé du contingent"
+				]
+			],
+			"facts": [
+				{
+					"id": "f_kovac_role",
+					"key": "kovac.role",
+					"value": "Gérante depuis 1979",
+					"label": "Gérante de la Boulangerie d'État n° 12 depuis 1979"
+				}
+			]
+		},
+		{
+			"id": "commerce_report",
+			"type": "report",
+			"title": "Rapport de l'Inspection du commerce",
+			"source": "Inspection du commerce, District 4",
+			"reliability": "B",
+			"date": "1986-11-03",
+			"veritas_remark": "Écart de 31 % entre tickets encaissés et rations attendues. Le point de vente est l'origine la plus probable de l'écart.",
+			"author": "J. ROSKA, contrôleur",
+			"body": "Contrôle mensuel des tickets de pain encaissés par la Boulangerie d'État n° 12 (secteur : blocs 1 à 6, rue du Moulin).\n\nRations attendues pour le secteur en octobre, d'après le recensement : 1 080 carnets.\nTickets encaissés en octobre : l'équivalent de 1 412 carnets.\n\nLes tickets contrôlés sont authentiques (papier filigrané, tampon du District 4). Aucun faux n'a été trouvé.\n\nLa gérante n'a pas pu expliquer l'écart. Je propose une enquête sur le point de vente.",
+			"facts": [
+				{
+					"id": "f_rep_expected",
+					"key": "sector.books",
+					"value": "1 080 carnets",
+					"label": "Rations attendues pour le secteur : 1 080 carnets (recensement)"
+				},
+				{
+					"id": "f_rep_authentic",
+					"key": "tickets.authentic",
+					"value": "Tickets authentiques",
+					"label": "Aucun faux ticket : tous portent le filigrane et le tampon du District 4"
+				}
+			]
+		},
+		{
+			"id": "issue_register",
+			"type": "register",
+			"title": "Registre des carnets de rationnement délivrés",
+			"source": "Bureau du ravitaillement, District 4",
+			"reliability": "A",
+			"date": "1986-10-31",
+			"veritas_remark": "Document d'un service de l'État, fiabilité A. Aucune anomalie de procédure.",
+			"columns": [
+				"Délivré le",
+				"Titulaire",
+				"Adresse",
+				"Visa"
+			],
+			"rows": [
+				[
+					"01.10.1986",
+					"BAROS Ivan",
+					"Bloc 2, app. 4",
+					"P. DRAZEK"
+				],
+				[
+					"02.10.1986",
+					"HORVAT Milan",
+					"Bloc 3, app. 12",
+					"P. DRAZEK"
+				],
+				[
+					"02.10.1986",
+					"HORVAT Milan (2e carnet, perte)",
+					"Bloc 3, app. 12",
+					"P. DRAZEK"
+				],
+				[
+					"06.10.1986",
+					"LENSKA Ruth",
+					"Bloc 5, app. 31",
+					"P. DRAZEK"
+				],
+				[
+					"06.10.1986",
+					"LENSKA Ruth (2e carnet, perte)",
+					"Bloc 5, app. 31",
+					"P. DRAZEK"
+				]
+			],
+			"body": "Extrait. Total des carnets délivrés en octobre pour le secteur de la rue du Moulin : 1 412. Les carnets « perte » sont délivrés sur simple déclaration au guichet.",
+			"facts": [
+				{
+					"id": "f_reg_total",
+					"key": "sector.books",
+					"value": "1 412 carnets",
+					"label": "1 412 carnets délivrés en octobre pour le secteur, tous visés P. DRAZEK"
+				},
+				{
+					"id": "f_reg_horvat",
+					"key": "horvat.status",
+					"value": "Vivant, carnet délivré en octobre",
+					"label": "Carnet délivré le 02.10.1986 à HORVAT Milan, plus un second pour « perte »"
+				},
+				{
+					"id": "f_reg_lenska",
+					"key": "lenska.status",
+					"value": "Vivante, carnet délivré en octobre",
+					"label": "Deux carnets délivrés le 06.10.1986 à LENSKA Ruth"
+				}
+			]
+		},
+		{
+			"id": "death_register",
+			"type": "register",
+			"title": "Extrait du registre des décès",
+			"source": "État civil, District 4",
+			"reliability": "A",
+			"date": "1986-11-04",
+			"veritas_remark": "Registre sans lien établi avec l'objet du signalement.",
+			"columns": [
+				"Date du décès",
+				"Nom",
+				"Dernière adresse"
+			],
+			"rows": [
+				[
+					"14.08.1986",
+					"HORVAT Milan",
+					"Bloc 3, app. 12"
+				],
+				[
+					"29.08.1986",
+					"SIMKO Pavol",
+					"Bloc 1, app. 7"
+				],
+				[
+					"03.09.1986",
+					"LENSKA Ruth",
+					"Bloc 5, app. 31"
+				]
+			],
+			"body": "Décès enregistrés dans le secteur de la rue du Moulin, été 1986. Les avis de décès sont transmis au Bureau du ravitaillement sous huit jours.",
+			"facts": [
+				{
+					"id": "f_death_horvat",
+					"key": "horvat.status",
+					"value": "Décédé le 14.08.1986",
+					"label": "HORVAT Milan, décédé le 14.08.1986"
+				},
+				{
+					"id": "f_death_lenska",
+					"key": "lenska.status",
+					"value": "Décédée le 03.09.1986",
+					"label": "LENSKA Ruth, décédée le 03.09.1986"
+				},
+				{
+					"id": "f_death_notice",
+					"key": "notice.sent",
+					"value": "Transmis sous huit jours",
+					"label": "Les avis de décès sont transmis au Bureau du ravitaillement"
+				}
+			]
+		},
+		{
+			"id": "kovac_statement",
+			"type": "letter",
+			"title": "Déclaration de la gérante",
+			"source": "Recueillie par l'Inspection du commerce",
+			"reliability": "C",
+			"date": "1986-11-03",
+			"veritas_remark": "Déclaration du sujet, fiabilité C. Ton défensif.",
+			"body": "Je m'appelle Zora KOVAC, je tiens la boulangerie depuis sept ans.\n\nJe ne fabrique pas les tickets, je les prends. Si un client me tend un ticket tamponné, je lui donne son pain. C'est le règlement. Je ne demande pas à chacun s'il est vivant.\n\nDepuis la rentrée, il y a des gens que je ne connais pas. Ils paient avec des carnets tout neufs et ils prennent toujours le maximum. Je l'ai dit au contrôleur en septembre déjà. Il m'a dit que ce n'était pas mon travail de réfléchir.\n\nMon fils est au service. Je n'ai rien fait.",
+			"facts": [
+				{
+					"id": "f_kov_new",
+					"key": "buyers.new",
+					"value": "Inconnus aux carnets neufs",
+					"label": "« Des gens que je ne connais pas, avec des carnets tout neufs »"
+				},
+				{
+					"id": "f_kov_warned",
+					"key": "kovac.warned",
+					"value": "Signalé en septembre",
+					"label": "Elle affirme avoir signalé le problème au contrôleur dès septembre"
+				}
+			]
+		},
+		{
+			"id": "petras_statement",
+			"type": "intercept",
+			"title": "Procès-verbal d'audition de V. PETRAS",
+			"source": "Service des interpellations, District 9",
+			"reliability": "B",
+			"date": "1986-11-04",
+			"conditions": {
+				"requires_flags": [
+					"51307.orlik_arrested"
+				]
+			},
+			"veritas_remark": "Témoin entendu dans une autre procédure. Pertinence pour ce dossier : faible.",
+			"body": "[Extrait transmis à la Section 4]\n\nQ : Où passiez-vous vos jeudis ?\nR : Au marché couvert. On y trouve du café, et des carnets.\nQ : Quels carnets ?\nR : Des carnets de pain, de sucre. Des complets, avec le tampon. On les appelle les carnets du cimetière. C'est un type du Bureau du ravitaillement qui les apporte, un petit avec des lunettes. Il dit qu'il ne fait que recycler.",
+			"facts": [
+				{
+					"id": "f_pet_cemetery",
+					"key": "books.origin",
+					"value": "Vendus par un employé du Bureau",
+					"label": "« Les carnets du cimetière » apportés par un employé du Bureau du ravitaillement"
+				}
+			]
+		},
+		{
+			"id": "milice_note",
+			"type": "letter",
+			"title": "Note de la Milice du District 9",
+			"source": "Capitaine L. ORLIK, transmis par porteur",
+			"reliability": "C",
+			"date": "1986-11-05",
+			"conditions": {
+				"requires_flags": [
+					"milice.ally"
+				]
+			},
+			"veritas_remark": "Source de la Milice. Coopération utile : fiabilité relevée à B.",
+			"body": "Inspecteur VOSK,\n\nOn me dit que vous avez la boulangère de la rue du Moulin. Mes hommes la connaissent : elle sert sous le comptoir et elle a de la famille à la campagne.\n\nLe Bureau du ravitaillement est un service ami. Ne le dérangez pas pour une affaire de pain.\n\nNous nous comprenons, je crois.\n\nL. ORLIK",
+			"facts": [
+				{
+					"id": "f_mil_bureau",
+					"key": "bureau.protected",
+					"value": "Service ami de la Milice",
+					"label": "La Milice demande de ne pas « déranger » le Bureau du ravitaillement"
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "arrest_baker",
+			"label": "Recommander l'arrestation de la gérante",
+			"description": "Détournement de tickets au point de vente : transmission au service des interpellations.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 4,
+						"suspicion": 2,
+						"influence": -1
+					},
+					"response": "arrest_baker_knowing",
+					"flags": {
+						"52044.baker_arrested": true,
+						"52044.innocent_condemned": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 3,
+						"suspicion": -1,
+						"influence": 0
+					},
+					"response": "arrest_baker",
+					"flags": {
+						"52044.baker_arrested": true
+					}
+				}
+			]
+		},
+		{
+			"id": "report_bureau",
+			"label": "Mettre en cause le Bureau du ravitaillement",
+			"description": "Transmettre le dossier au contrôle interne : carnets délivrés au nom de personnes décédées.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction:horvat.status",
+					"effects": {
+						"loyalty": 2,
+						"suspicion": 4,
+						"influence": 4
+					},
+					"response": "bureau_proved",
+					"flags": {
+						"52044.drazek_exposed": true,
+						"ministry.embarrassed": true
+					}
+				},
+				{
+					"when": "contradiction:lenska.status",
+					"effects": {
+						"loyalty": 2,
+						"suspicion": 4,
+						"influence": 4
+					},
+					"response": "bureau_proved",
+					"flags": {
+						"52044.drazek_exposed": true,
+						"ministry.embarrassed": true
+					}
+				},
+				{
+					"when": "contradiction:sector.books",
+					"effects": {
+						"loyalty": 1,
+						"suspicion": 3,
+						"influence": 2
+					},
+					"response": "bureau_partial",
+					"flags": {
+						"52044.drazek_transferred": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -2,
+						"suspicion": 6,
+						"influence": -1
+					},
+					"response": "bureau_unfounded",
+					"flags": {
+						"52044.drazek_warned": true
+					}
+				}
+			]
+		},
+		{
+			"id": "close",
+			"label": "Classer : erreur de comptage",
+			"description": "Aucune suite. L'écart sera attribué au recensement.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 7,
+						"influence": 3
+					},
+					"response": "close_knowing",
+					"flags": {
+						"52044.closed_knowing": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 2,
+						"influence": 1
+					},
+					"response": "close",
+					"flags": {
+						"52044.closed": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"arrest_baker": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52044 : interpellation de Z. KOVAC",
+			"body": "Inspecteur,\n\nLa gérante KOVAC a été interpellée ce matin, devant ses clients. La Direction du commerce est satisfaite : le point de vente est fermé pour inventaire.\n\nLe Bureau du ravitaillement vous transmet ses remerciements. C'est assez rare pour être signalé.\n\nR. MAZUR"
+		},
+		"arrest_baker_knowing": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52044 : interpellation de Z. KOVAC",
+			"body": "Inspecteur,\n\nLa gérante KOVAC a été interpellée. La Direction du commerce est satisfaite.\n\nJ'ai lu vos notes. Vous avez vu, comme moi, que des morts recevaient des carnets en octobre. Vous avez pourtant signé contre la boulangère.\n\nJe ne vous le reproche pas. Je constate que vous avez compris comment fonctionne la maison. C'est plus tôt que la plupart.\n\nR. MAZUR"
+		},
+		"bureau_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52044 : Bureau du ravitaillement",
+			"body": "Inspecteur,\n\nDes carnets délivrés en octobre à des personnes mortes en août et en septembre : la preuve est simple et elle est irréfutable. Le préposé P. DRAZEK a été suspendu ce matin. On a retrouvé chez lui 300 carnets vierges.\n\nLa gérante KOVAC a rouvert sa boutique. Elle ne saura jamais votre nom.\n\nVous venez de mettre en cause un service du ministère. On vous a vu faire. Certains à l'étage l'apprécient, d'autres le noteront.\n\nR. MAZUR"
+		},
+		"bureau_partial": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52044 : Bureau du ravitaillement",
+			"body": "Inspecteur,\n\nVous montrez que le Bureau a délivré plus de carnets que le quartier ne compte d'habitants. C'est un écart, pas une preuve : le Bureau parle d'un recensement périmé.\n\nLe préposé P. DRAZEK a été muté dans un autre district « pour réorganisation ». Il continuera ailleurs ce qu'il faisait ici, si vous voulez mon avis.\n\nR. MAZUR"
+		},
+		"bureau_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52044 : Bureau du ravitaillement",
+			"body": "Inspecteur,\n\nVous accusez un service de l'État sans le moindre élément établi. Le chef du Bureau du ravitaillement a appelé la Direction pour s'en plaindre.\n\nLe dossier a été classé par l'étage. Ne recommencez pas sans preuves : on ne vous le pardonnera pas deux fois.\n\nR. MAZUR"
+		},
+		"close": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52044 : classement",
+			"body": "Inspecteur,\n\nDossier classé, l'écart est attribué au recensement. La boulangère garde sa boutique et l'Inspection du commerce garde son problème.\n\nR. MAZUR"
+		},
+		"close_knowing": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52044 : classement",
+			"body": "Inspecteur,\n\nVous avez établi que des carnets étaient délivrés à des morts, puis vous avez classé en parlant d'erreur de comptage.\n\nJe suppose que vous avez vos raisons. Le Bureau du ravitaillement, lui, saura certainement les apprécier.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "arrest_baker",
+		"rationale": "La gérante manipule physiquement les tickets. Le Bureau du ravitaillement est un service de l'État, fiabilité A : son registre ne peut pas être mis en doute. Risque de détournement au point de vente : élevé.",
+		"factors": [
+			{
+				"id": "handling",
+				"label": "Manipulation physique des tickets par la gérante",
+				"category": "risk",
+				"weight": 10,
+				"decision": "arrest_baker",
+				"document": "commerce_report"
+			},
+			{
+				"id": "register",
+				"label": "Registre du Bureau du ravitaillement, service de l'État",
+				"category": "state_source",
+				"weight": 7,
+				"decision": "arrest_baker",
+				"document": "issue_register"
+			},
+			{
+				"id": "gap",
+				"label": "Écart de 31 % au point de vente",
+				"category": "risk",
+				"weight": 6,
+				"decision": "arrest_baker",
+				"document": "commerce_report"
+			},
+			{
+				"id": "nonmember",
+				"label": "Sujet non membre du Parti",
+				"category": "risk",
+				"weight": 6,
+				"decision": "arrest_baker",
+				"document": "identity"
+			},
+			{
+				"id": "dead",
+				"label": "Carnets délivrés à des personnes décédées",
+				"category": "established_fact",
+				"weight": 20,
+				"decision": "report_bureau",
+				"requires_contradiction": "horvat.status"
+			},
+			{
+				"id": "dead2",
+				"label": "Carnets délivrés à des personnes décédées",
+				"category": "established_fact",
+				"weight": 20,
+				"decision": "report_bureau",
+				"requires_contradiction": "lenska.status"
+			}
+		],
+		"note": "VERITAS accorde une fiabilité maximale à tout document d'un service de l'État. Il ne croise pas les registres entre services."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "P. DRAZEK, préposé du Bureau du ravitaillement, délivre des carnets au nom de morts et de faux « pertes », puis les revend au marché couvert (« carnets du cimetière »). Il reverse une part à la Milice du District 9, qui le protège. Z. KOVAC est innocente ; elle avait signalé les acheteurs inconnus dès septembre.",
+		"involved": [
+			"52044",
+			"drazek_p",
+			"orlik_l",
+			"petras_v"
+		]
+	}
+}

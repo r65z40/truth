@@ -87,7 +87,7 @@ func submit_command(raw: String) -> void:
 		TerminalCommands.Action.MENU:
 			menu_requested.emit()
 		TerminalCommands.Action.VERITAS:
-			print_line("%s : %s" % [Veritas.NAME, Veritas.terminal_reply(GameState.get_condition_state())])
+			print_line("%s : %s" % [Veritas.NAME, Veritas.terminal_reply(GameState.get_condition_state(), command.args)])
 		TerminalCommands.Action.DEBUG_STATE:
 			if OS.is_debug_build():
 				print_line("[DEV] Loyauté %d  Suspicion %d  Influence %d" % [GameState.get_indicator("loyalty"),

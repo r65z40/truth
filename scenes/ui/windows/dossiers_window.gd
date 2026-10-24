@@ -23,6 +23,7 @@ var current_document_id := ""
 ## Éléments du carnet sélectionnés pour une confrontation (au plus 2).
 var selected_facts: Array[String] = []
 var _tab_group := ButtonGroup.new()
+var _photo := IdPhoto.new()
 
 @onready var _case_list: VBoxContainer = %CaseList
 @onready var _notebook: Control = %Notebook
@@ -31,7 +32,9 @@ var _tab_group := ButtonGroup.new()
 @onready var _confront_result: Label = %ConfrontResult
 @onready var _case_header: Label = %CaseHeader
 @onready var _case_summary: Label = %CaseSummary
-@onready var _document_tabs: HFlowContainer = %DocumentTabs
+## Onglets des pièces sur une seule ligne, qui défile si le dossier en compte beaucoup.
+@onready var _document_tabs: HBoxContainer = %DocumentTabs
+@onready var _document_tabs_scroll: ScrollContainer = %DocumentTabsScroll
 @onready var _document_panel: PanelContainer = %DocumentPanel
 @onready var _doc_scroll: ScrollContainer = %DocScroll
 @onready var _doc_title: Label = %DocTitle
@@ -55,6 +58,10 @@ func _ready() -> void:
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
 	_conclusion_panel.hide()
+	# La photo d'identité s'affiche dans l'en-tête de la pièce, à droite du titre.
+	_doc_title.add_sibling(_photo)
+	_doc_title.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_photo.hide()
 	_show_case_view(false)
 
 
@@ -94,6 +101,8 @@ func select_document(document_id: String) -> void:
 	current_document_id = document_id
 	for tab: Button in _document_tabs.get_children():
 		tab.set_pressed_no_signal(tab.get_meta("document_id") == document_id)
+		if tab.get_meta("document_id") == document_id:
+			_document_tabs_scroll.ensure_control_visible.call_deferred(tab)
 	_doc_title.text = document.title.to_upper()
 	_doc_meta.text = "Source : %s\nFiabilité : %s     Date : %s" % [
 		document.source,
@@ -101,6 +110,8 @@ func select_document(document_id: String) -> void:
 		_format_iso_date(document.get("date", "")),
 	]
 	_doc_body.text = render_document_bbcode(document)
+	_photo.photo = document.get("photo", {})
+	_photo.visible = document.has("photo")
 	var remark := Veritas.document_remark(document)
 	_veritas_strip.visible = remark != ""
 	_veritas_remark.text = "%s > %s" % [Veritas.NAME, remark]
@@ -151,7 +162,7 @@ func open_conclusion() -> void:
 	if not GameState.can_decide(current_case_id):
 		return
 	_conclusion_panel.setup(current_case_id)
-	_document_tabs.hide()
+	_document_tabs_scroll.hide()
 	_document_panel.hide()
 	_facts_panel.hide()
 	_footer.hide()
@@ -315,7 +326,7 @@ func _build_document_tabs(case_data: Dictionary) -> void:
 func _show_case_view(has_case: bool) -> void:
 	_case_header.visible = has_case
 	_case_summary.visible = has_case
-	_document_tabs.visible = has_case
+	_document_tabs_scroll.visible = has_case
 	_document_panel.visible = has_case
 	_facts_panel.visible = has_case
 	_footer.visible = has_case

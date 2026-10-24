@@ -8,6 +8,8 @@ extends RefCounted
 ##
 ## Conditions disponibles :
 ## - "contradiction_found" : le joueur a établi au moins une contradiction.
+## - "contradiction:<clé>"  : le joueur a établi la contradiction sur cette clé
+##                            (ex. "contradiction:horvat.status").
 ## - "default"             : toujours vraie.
 
 
@@ -37,5 +39,7 @@ static func is_condition_met(condition: String, case_state: Dictionary) -> bool:
 			return true
 		"contradiction_found":
 			return not case_state.get("contradictions_found", []).is_empty()
+	if condition.begins_with("contradiction:"):
+		return condition.trim_prefix("contradiction:") in case_state.get("contradictions_found", [])
 	push_warning("DecisionRules: condition inconnue : %s" % condition)
 	return false

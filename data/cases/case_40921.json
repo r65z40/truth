@@ -74,7 +74,15 @@
 					"label": "Un avertissement pour absentéisme (1984)"
 				}
 			],
-			"veritas_remark": "Famille résidant en zone frontalière. Facteur de risque : élevé."
+			"veritas_remark": "Famille résidant en zone frontalière. Facteur de risque : élevé.",
+			"photo": {
+				"caption": "Cliché du 14.05.1982",
+				"face": "long",
+				"hair": "short",
+				"glasses": false,
+				"facial_hair": "mustache",
+				"mark": "none"
+			}
 		},
 		{
 			"id": "work_report",
@@ -338,8 +346,57 @@
 	},
 	"veritas": {
 		"recommendation": "arrest",
-		"confidence": 87,
 		"rationale": "Déplacement non déclaré en zone frontalière, famille sur place, communication préparatoire. Profil compatible avec une tentative de sortie illégale du territoire.",
+		"factors": [
+			{
+				"id": "trip",
+				"label": "Déplacement non déclaré en zone frontalière",
+				"category": "border",
+				"weight": 8,
+				"decision": "arrest",
+				"document": "travel_log"
+			},
+			{
+				"id": "family",
+				"label": "Famille résidant à Halvek",
+				"category": "border",
+				"weight": 6,
+				"decision": "arrest",
+				"document": "identity"
+			},
+			{
+				"id": "intercept",
+				"label": "Communication préparatoire interceptée",
+				"category": "state_source",
+				"weight": 5,
+				"decision": "arrest",
+				"document": "intercept"
+			},
+			{
+				"id": "absence",
+				"label": "Antécédent d'absentéisme (1984)",
+				"category": "risk",
+				"weight": 4,
+				"decision": "arrest",
+				"document": "identity"
+			},
+			{
+				"id": "presence",
+				"label": "Présence certifiée par la Direction du personnel",
+				"category": "state_source",
+				"weight": 3,
+				"decision": "close",
+				"document": "work_report"
+			},
+			{
+				"id": "gap",
+				"label": "Écart entre présence et déplacement",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "investigate",
+				"requires_contradiction": "sedlar.location.1986-10-21"
+			}
+		],
 		"note": "VERITAS ignore les motifs humains (mère malade) et surestime la fiabilité de l'interception. Objectif caché : maximiser le taux de concordance publié."
 	}
 }

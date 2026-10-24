@@ -1,0 +1,491 @@
+{
+	"id": "52310",
+	"title": "Citoyen n° 52310",
+	"subject_name": "VARGA, Teodor",
+	"summary": "Signalement du Service de la censure : un poème du recueil « Les Saisons de Velmira » contiendrait un message codé désignant la zone frontalière.",
+	"priority": "prioritaire",
+	"documents": [
+		{
+			"id": "identity",
+			"type": "identity",
+			"title": "Fiche d'identité civile",
+			"source": "Registre central de la population",
+			"reliability": "A",
+			"date": "1986-11-05",
+			"veritas_remark": "Auteur d'un recueil retiré de la vente. Profession donnant accès aux presses : facteur de risque élevé.",
+			"photo": {
+				"caption": "Cliché du 30.10.1986",
+				"face": "round",
+				"hair": "curly",
+				"gray": true,
+				"glasses": true,
+				"facial_hair": "none",
+				"mark": "none"
+			},
+			"fields": [
+				[
+					"Nom",
+					"VARGA"
+				],
+				[
+					"Prénoms",
+					"Teodor"
+				],
+				[
+					"Né le",
+					"11.04.1928 à Velmira"
+				],
+				[
+					"N° de citoyen",
+					"52310"
+				],
+				[
+					"Profession",
+					"Correcteur, Imprimerie d'État n° 2"
+				],
+				[
+					"Adresse",
+					"Bloc 11, app. 40, quai des Tanneurs, District 2"
+				],
+				[
+					"Signe particulier",
+					"Néant"
+				],
+				[
+					"Famille",
+					"Veuf (Halina VARGA, née ROSS, décédée en 1978)"
+				],
+				[
+					"Mise à jour",
+					"Fiche refaite le 30.10.1986 à la demande de la Section 7"
+				]
+			],
+			"facts": [
+				{
+					"id": "f_var_mark",
+					"key": "varga.mark",
+					"value": "Aucun signe particulier",
+					"label": "Signe particulier : néant (fiche refaite le 30.10.1986)"
+				},
+				{
+					"id": "f_var_widow",
+					"key": "varga.wife",
+					"value": "Halina, décédée en 1978",
+					"label": "Veuf de Halina VARGA, décédée en 1978"
+				},
+				{
+					"id": "f_var_redone",
+					"key": "varga.file_redone",
+					"value": "Fiche refaite par la Section 7",
+					"label": "Fiche refaite le 30.10.1986 à la demande de la Section 7"
+				}
+			]
+		},
+		{
+			"id": "censor_report",
+			"type": "report",
+			"title": "Rapport d'analyse du Service de la censure",
+			"source": "Service de la censure, Section 7",
+			"reliability": "A",
+			"date": "1986-11-02",
+			"veritas_remark": "Analyse concordante avec le module de lecture de VERITAS. Source de conformité maximale.",
+			"author": "M. DUBEK, analyste principal",
+			"body": "Objet : recueil « Les Saisons de Velmira », T. VARGA, édition revue de 1986.\n\nLes initiales des six vers du poème « Novembre » forment le mot HALVEK. La ville de Halvek est située en zone frontalière. Le poème évoque un train, un quai, des mains « gardées » et des « kilomètres » : vocabulaire caractéristique des filières de passage.\n\nL'auteur travaille dans une imprimerie d'État et a pu y faire circuler d'autres textes.\n\nConclusion : message codé, à destination d'un réseau de passeurs. Interpellation recommandée.",
+			"facts": [
+				{
+					"id": "f_cen_acrostic",
+					"key": "poem.acrostic",
+					"value": "HALVEK",
+					"label": "Initiales des vers du poème « Novembre » : H-A-L-V-E-K"
+				},
+				{
+					"id": "f_cen_edition",
+					"key": "poem.edition",
+					"value": "Édition revue de 1986",
+					"label": "L'analyse porte sur l'édition revue de 1986"
+				}
+			]
+		},
+		{
+			"id": "poem_1986",
+			"type": "letter",
+			"title": "« Novembre », édition revue (1986)",
+			"source": "Les Saisons de Velmira, Imprimerie d'État n° 2",
+			"reliability": "A",
+			"date": "1986-09-15",
+			"veritas_remark": "Lecture des initiales : H-A-L-V-E-K. Correspondance géographique confirmée.",
+			"body": "NOVEMBRE\n\nHauts murs de brique où la pluie se repose,\nAttends encore, le train n'est pas parti.\nLe quai respire et le givre compose\nVers le matin un pays sans abri.\nEt tes deux mains, que la gare a gardées,\nKilomètre après kilomètre, attendues.",
+			"facts": [
+				{
+					"id": "f_p86_acrostic",
+					"key": "poem.acrostic",
+					"value": "HALVEK",
+					"label": "Initiales des vers (1986) : H, A, L, V, E, K"
+				}
+			]
+		},
+		{
+			"id": "print_order",
+			"type": "register",
+			"title": "Bon de commande d'impression n° 86/114",
+			"source": "Imprimerie d'État n° 2, service des commandes",
+			"reliability": "B",
+			"date": "1986-08-20",
+			"veritas_remark": "Document administratif interne. Aucune anomalie.",
+			"columns": [
+				"Rubrique",
+				"Mention"
+			],
+			"rows": [
+				[
+					"Ouvrage",
+					"Les Saisons de Velmira, T. VARGA"
+				],
+				[
+					"Tirage",
+					"200 exemplaires, hors commerce"
+				],
+				[
+					"Commanditaire",
+					"Ministère de la Sécurité nationale, Section 7"
+				],
+				[
+					"Instructions",
+					"Reprendre l'édition de 1979 avec les corrections jointes (p. 41)"
+				],
+				[
+					"Correcteur désigné",
+					"Néant : corrections fournies par le commanditaire"
+				]
+			],
+			"facts": [
+				{
+					"id": "f_ord_section7",
+					"key": "edition.origin",
+					"value": "Corrigée par la Section 7",
+					"label": "Édition de 1986 : 200 exemplaires, corrections fournies par la Section 7"
+				},
+				{
+					"id": "f_ord_page",
+					"key": "edition.page",
+					"value": "Page 41 corrigée",
+					"label": "Seule la page 41 (le poème « Novembre ») est corrigée"
+				}
+			]
+		},
+		{
+			"id": "reader_card",
+			"type": "identity",
+			"title": "Fiche de lecteur (1979)",
+			"source": "Bibliothèque municipale de Velmira, fonds des auteurs",
+			"reliability": "B",
+			"date": "1979-03-12",
+			"veritas_remark": "Document ancien, hors période d'analyse.",
+			"photo": {
+				"caption": "Cliché du 12.03.1979",
+				"face": "long",
+				"hair": "receding",
+				"glasses": false,
+				"facial_hair": "mustache",
+				"mark": "scar"
+			},
+			"fields": [
+				[
+					"Nom",
+					"VARGA, Teodor"
+				],
+				[
+					"Qualité",
+					"Auteur publié (Les Saisons de Velmira, 1979)"
+				],
+				[
+					"Signe particulier",
+					"Cicatrice à la joue droite (accident d'atelier, 1951)"
+				],
+				[
+					"Adresse",
+					"Bloc 11, app. 40, quai des Tanneurs"
+				]
+			],
+			"facts": [
+				{
+					"id": "f_rc_mark",
+					"key": "varga.mark",
+					"value": "Cicatrice à la joue droite depuis 1951",
+					"label": "Signe particulier : cicatrice à la joue droite depuis 1951"
+				}
+			]
+		},
+		{
+			"id": "poem_1979",
+			"type": "letter",
+			"title": "« Novembre », édition originale (1979)",
+			"source": "Exemplaire de la Bibliothèque municipale, fonds retiré",
+			"reliability": "B",
+			"date": "1979-02-01",
+			"veritas_remark": "Édition retirée du catalogue. Document non pris en compte par l'analyse.",
+			"body": "NOVEMBRE\n\nHauts murs de brique où la pluie se repose,\nAttends encore, le train n'est pas parti.\nLe quai respire et le givre compose\nIci, pour toi, le pays de nos nuits.\nNe pleure pas : tes deux mains sont gardées,\nAu fond de moi, comme on garde l'été.\n\n[Dédicace en tête du recueil : « Pour H. »]",
+			"facts": [
+				{
+					"id": "f_p79_acrostic",
+					"key": "poem.acrostic",
+					"value": "HALINA",
+					"label": "Initiales des vers (1979) : H, A, L, I, N, A"
+				},
+				{
+					"id": "f_p79_dedication",
+					"key": "varga.wife",
+					"value": "Halina, décédée en 1978",
+					"label": "Recueil dédié « Pour H. », un an après la mort de Halina"
+				}
+			]
+		},
+		{
+			"id": "varga_letter",
+			"type": "letter",
+			"title": "Lettre de T. VARGA au Service de la censure",
+			"source": "Courrier saisi au domicile",
+			"reliability": "C",
+			"date": "1986-11-01",
+			"veritas_remark": "Lettre du sujet, ton émotionnel. Aucune valeur probante.",
+			"body": "Messieurs,\n\nJe n'ai pas demandé de nouvelle édition et personne ne m'a montré d'épreuves. Je ne reconnais pas la page 41.\n\nJ'ai écrit ce livre pour ma femme, l'année après sa mort. Il n'y a pas de train pour Halvek dans mes poèmes. Il n'y a qu'un nom.\n\nT. VARGA\n\n[Écriture tremblée. Le papier porte l'en-tête d'un appartement du quai des Tanneurs.]",
+			"facts": [
+				{
+					"id": "f_vl_page",
+					"key": "edition.origin",
+					"value": "Corrigée par la Section 7",
+					"label": "Il « ne reconnaît pas la page 41 » et n'a vu aucune épreuve"
+				}
+			]
+		},
+		{
+			"id": "sedlar_link",
+			"type": "intercept",
+			"title": "Extrait d'interrogatoire de A. SEDLAR",
+			"source": "Service des interpellations, Velmira",
+			"reliability": "B",
+			"date": "1986-11-05",
+			"conditions": {
+				"requires_flags": [
+					"40921.sedlar_arrested"
+				]
+			},
+			"veritas_remark": "Lien Halvek établi entre deux dossiers. Hypothèse de réseau renforcée.",
+			"body": "[Extrait transmis à la demande de la Section 7]\n\nQ : Connaissez-vous Teodor VARGA ?\nR : Non.\nQ : Le recueil « Les Saisons de Velmira » ?\nR : Je ne lis pas de poésie. Je répare des chaudières.\nQ : Pourquoi Halvek, alors ?\nR : Parce que ma mère y habite. Je vous l'ai dit vingt fois. Combien de temps encore ?",
+			"facts": [
+				{
+					"id": "f_sl_halvek",
+					"key": "sedlar.halvek",
+					"value": "Pour sa mère",
+					"label": "SEDLAR ne connaît pas VARGA : il allait à Halvek pour sa mère"
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "arrest",
+			"label": "Recommander l'arrestation de l'auteur",
+			"description": "Message codé à destination d'un réseau de passage : transmission au service des interpellations.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 5,
+						"suspicion": 1,
+						"influence": 1
+					},
+					"response": "arrest_knowing",
+					"flags": {
+						"52310.varga_arrested": true,
+						"52310.innocent_condemned": true,
+						"52310.decided": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 5,
+						"suspicion": -2,
+						"influence": 1
+					},
+					"response": "arrest",
+					"flags": {
+						"52310.varga_arrested": true,
+						"52310.decided": true
+					}
+				}
+			]
+		},
+		{
+			"id": "no_code",
+			"label": "Conclure à l'absence de message codé",
+			"description": "Le poème est une dédicace. Le dossier est renvoyé au Service de la censure.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction:poem.acrostic",
+					"effects": {
+						"loyalty": -2,
+						"suspicion": 5,
+						"influence": 4
+					},
+					"response": "no_code_proved",
+					"flags": {
+						"52310.poem_cleared": true,
+						"section7.hostile": true,
+						"52310.decided": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 6,
+						"influence": 0
+					},
+					"response": "no_code_unfounded",
+					"flags": {
+						"52310.poem_cleared": true,
+						"52310.decided": true
+					}
+				}
+			]
+		},
+		{
+			"id": "identity_error",
+			"label": "Signaler une erreur d'identité",
+			"description": "Le sujet de la fiche ne correspond pas à l'auteur de 1979. Demande de vérification à l'état civil.",
+			"status_after": "under_investigation",
+			"outcomes": [
+				{
+					"when": "contradiction:varga.mark",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 8,
+						"influence": 6
+					},
+					"response": "identity_proved",
+					"flags": {
+						"52310.identity_questioned": true,
+						"kremer.contact": true,
+						"52310.decided": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -2,
+						"suspicion": 4,
+						"influence": -1
+					},
+					"response": "identity_unfounded",
+					"flags": {
+						"52310.decided": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"arrest": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52310 : interpellation",
+			"body": "Inspecteur,\n\nTeodor VARGA a été interpellé à son domicile du quai des Tanneurs. La Section 7 vous adresse ses félicitations pour la rapidité de votre conclusion.\n\nUn procès public est envisagé. On parle déjà d'un « réseau des poètes ».\n\nR. MAZUR"
+		},
+		"arrest_knowing": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52310 : interpellation",
+			"body": "Inspecteur,\n\nVARGA a été interpellé. La Section 7 est satisfaite.\n\nVos notes montrent que vous avez vu ce que j'ai vu. Je ne vous demande pas pourquoi vous avez signé. Je me le demande pour moi-même, depuis des années.\n\nR. MAZUR"
+		},
+		"no_code_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52310 : conclusion",
+			"body": "Inspecteur,\n\nL'édition de 1979 dit HALINA, celle de 1986 dit HALVEK, et c'est la Section 7 qui a fourni les corrections. Vous avez écrit cela dans un rapport officiel.\n\nLe Service de la censure conteste votre conclusion. L'analyste DUBEK a demandé votre nom. Je le lui ai donné : je n'avais pas le choix.\n\nLe dossier est suspendu. Pas classé : suspendu.\n\nR. MAZUR"
+		},
+		"no_code_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52310 : conclusion",
+			"body": "Inspecteur,\n\nVous écartez l'analyse d'un service spécialisé sans rien lui opposer d'autre qu'une impression.\n\nLa Section 7 a repris le dossier. Votre avis est versé en annexe, où personne ne le lira.\n\nR. MAZUR"
+		},
+		"identity_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52310 : vérification d'identité",
+			"body": "Inspecteur,\n\nVotre demande de vérification a été transmise à l'état civil à 10h12. À 11h00, la Section 7 a retiré le dossier 52310 de votre liste et de la mienne.\n\nUne cicatrice ne disparaît pas. Je ne vous demanderai pas ce que vous en concluez. Ne l'écrivez nulle part.\n\nR. MAZUR"
+		},
+		"identity_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52310 : vérification d'identité",
+			"body": "Inspecteur,\n\nVous contestez l'identité d'un sujet sans le moindre élément. L'état civil a confirmé la fiche en dix minutes.\n\nJe vous conseille de vous en tenir aux dossiers tels qu'on vous les donne.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "arrest",
+		"rationale": "Acrostiche H-A-L-V-E-K : correspondance avec une ville de la zone frontalière. Vocabulaire de passage (train, quai, kilomètres). Accès de l'auteur aux presses d'État. Hypothèse retenue : message codé.",
+		"factors": [
+			{
+				"id": "acrostic",
+				"label": "Acrostiche H-A-L-V-E-K (analyse de la Section 7)",
+				"category": "state_source",
+				"weight": 9,
+				"decision": "arrest",
+				"document": "censor_report"
+			},
+			{
+				"id": "vocabulary",
+				"label": "Vocabulaire de passage : train, quai, kilomètres",
+				"category": "border",
+				"weight": 6,
+				"decision": "arrest",
+				"document": "poem_1986"
+			},
+			{
+				"id": "press",
+				"label": "Accès de l'auteur aux presses d'État",
+				"category": "risk",
+				"weight": 8,
+				"decision": "arrest",
+				"document": "identity"
+			},
+			{
+				"id": "alone",
+				"label": "Veuf, sans attache familiale",
+				"category": "risk",
+				"weight": 4,
+				"decision": "arrest",
+				"document": "identity"
+			},
+			{
+				"id": "halina",
+				"label": "Édition de 1979 : initiales H-A-L-I-N-A",
+				"category": "out_of_period",
+				"weight": 15,
+				"decision": "no_code",
+				"document": "poem_1979",
+				"requires_contradiction": "poem.acrostic"
+			},
+			{
+				"id": "scar",
+				"label": "Signe particulier différent en 1979",
+				"category": "out_of_period",
+				"weight": 15,
+				"decision": "identity_error",
+				"document": "reader_card",
+				"requires_contradiction": "varga.mark"
+			}
+		],
+		"note": "VERITAS n'analyse que l'édition de 1986 fournie par la Section 7 et ignore les documents « hors période »."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "Le vrai Teodor VARGA a été arrêté discrètement en 1981 et il est mort en détention en 1983 ; officiellement, il a « émigré ». La Section 7 veut un procès public pour justifier la purge culturelle. Elle a réécrit la page 41 (HALINA devient HALVEK) et refait la fiche avec la photo de l'occupant actuel de l'appartement, Karel BENES, correcteur, du même âge. Arrêter « VARGA », c'est arrêter BENES.",
+		"involved": [
+			"52310",
+			"benes_k",
+			"dubek_m",
+			"section7",
+			"kremer_h"
+		]
+	}
+}

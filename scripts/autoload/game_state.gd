@@ -165,6 +165,8 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 		push_warning("GameState: le dossier %s a déjà fait l'objet d'une décision." % case_id)
 		return {}
 	var case_state := get_case_state(case_id)
+	# Avis de VERITAS sur le dossier tel que l'agent l'a vu, avant la décision.
+	var advice := Veritas.recommendation(get_case_view(case_id), case_state)
 	var result := DecisionRules.resolve(CaseLibrary.get_case(case_id), case_state, decision_id)
 	if result.is_empty():
 		push_error("GameState: décision inconnue %s pour le dossier %s" % [decision_id, case_id])
@@ -176,7 +178,6 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	case_state.decision = decision_id
 	flags.merge(result.flags, true)
 	# On garde la trace de l'accord avec VERITAS : le système s'en souviendra.
-	var advice := Veritas.recommendation(CaseLibrary.get_case(case_id))
 	decisions.append({"case_id": case_id, "decision_id": decision_id, "day_index": day_index,
 			"outcome": result.response_id, "veritas_agreed": advice.get("decision_id", "") == decision_id})
 	var message_id := "%s.%s" % [case_id, result.response_id]

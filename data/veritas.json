@@ -1,0 +1,17 @@
+{
+	"note": "Paramètres internes de VERITAS. Les multiplicateurs ne sont montrés au joueur qu'après la découverte de la commande VERITAS PARAMETRES (drapeau veritas.params_known).",
+	"base": 40,
+	"min": 1,
+	"max": 99,
+	"categories": {
+		"state_source": {"label": "Conformité de la source (service de l'État)", "multiplier": 3},
+		"border": {"label": "Exposition frontalière", "multiplier": 2},
+		"party": {"label": "Appartenance au Parti", "multiplier": 2},
+		"network": {"label": "Stabilité des réseaux de renseignement", "multiplier": 2},
+		"risk": {"label": "Facteur de risque individuel", "multiplier": 1},
+		"established_fact": {"label": "Fait établi par l'agent", "multiplier": 1},
+		"anonymous": {"label": "Source anonyme", "multiplier": 0.5},
+		"out_of_period": {"label": "Document hors période d'analyse", "multiplier": 0},
+		"directive": {"label": "Directive confidentielle", "multiplier": 1}
+	}
+}
