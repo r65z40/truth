@@ -74,7 +74,15 @@
 					"label": "Un avertissement pour absentéisme (1984)"
 				}
 			],
-			"veritas_remark": "Famille résidant en zone frontalière. Facteur de risque : élevé."
+			"veritas_remark": "Famille résidant en zone frontalière. Facteur de risque : élevé.",
+			"photo": {
+				"caption": "Cliché du 14.05.1982",
+				"face": "long",
+				"hair": "short",
+				"glasses": false,
+				"facial_hair": "mustache",
+				"mark": "none"
+			}
 		},
 		{
 			"id": "work_report",

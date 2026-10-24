@@ -13,6 +13,14 @@
 			"reliability": "A",
 			"date": "1986-11-04",
 			"veritas_remark": "Membre du Parti depuis 25 ans, décoré. Indice de loyauté du sujet : élevé.",
+			"photo": {
+				"caption": "Cliché du 02.09.1980",
+				"face": "round",
+				"hair": "receding",
+				"gray": true,
+				"facial_hair": "none",
+				"mark": "scar"
+			},
 			"fields": [
 				[
 					"Nom",

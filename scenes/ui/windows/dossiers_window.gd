@@ -23,6 +23,7 @@ var current_document_id := ""
 ## Éléments du carnet sélectionnés pour une confrontation (au plus 2).
 var selected_facts: Array[String] = []
 var _tab_group := ButtonGroup.new()
+var _photo := IdPhoto.new()
 
 @onready var _case_list: VBoxContainer = %CaseList
 @onready var _notebook: Control = %Notebook
@@ -55,6 +56,10 @@ func _ready() -> void:
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
 	_conclusion_panel.hide()
+	# La photo d'identité s'affiche dans l'en-tête de la pièce, à droite du titre.
+	_doc_title.add_sibling(_photo)
+	_doc_title.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_photo.hide()
 	_show_case_view(false)
 
 
@@ -101,6 +106,8 @@ func select_document(document_id: String) -> void:
 		_format_iso_date(document.get("date", "")),
 	]
 	_doc_body.text = render_document_bbcode(document)
+	_photo.photo = document.get("photo", {})
+	_photo.visible = document.has("photo")
 	var remark := Veritas.document_remark(document)
 	_veritas_strip.visible = remark != ""
 	_veritas_remark.text = "%s > %s" % [Veritas.NAME, remark]

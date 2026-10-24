@@ -714,7 +714,11 @@ func test_investigation_and_conclusion_flow() -> void:
 	desk.terminal.submit_command("dossiers")
 	var dossiers = desk.windows.dossiers
 	dossiers.select_case("40921")
+	dossiers.select_document("identity")
+	check(dossiers._photo.visible and dossiers._photo.photo.get("facial_hair") == "mustache",
+			"la fiche d'identité affiche la photo du sujet")
 	dossiers.select_document("work_report")
+	check(not dossiers._photo.visible, "pas de photo sur un rapport")
 	var facts_list: Node = dossiers.get_node("%FactsList")
 	check(facts_list.get_child_count() == 2, "le rapport présente 2 éléments notables")
 	check(dossiers.get_node("%VeritasStrip").visible and dossiers.get_node("%VeritasRemark").text.begins_with("VERITAS >"),

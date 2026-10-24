@@ -13,6 +13,15 @@
 			"reliability": "A",
 			"date": "1986-11-05",
 			"veritas_remark": "Veuve, sans appartenance au Parti. Accès quotidien aux tickets : exposition au risque élevée.",
+			"photo": {
+				"caption": "Cliché du 21.01.1979",
+				"face": "round",
+				"hair": "long",
+				"gray": true,
+				"glasses": true,
+				"facial_hair": "none",
+				"mark": "mole"
+			},
 			"fields": [
 				[
 					"Nom",
