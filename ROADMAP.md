@@ -50,7 +50,7 @@
 - [x] Déconnexion confirmée si la journée n'est pas sauvegardée
 - [x] Menu : accroche, date de la sauvegarde sur CONTINUER ; option « Aide à l'enquête »
 
-## Conception V2 (proposition du 2026-10-24, en attente de validation)
+## Conception V2 (validée par fen le 2026-10-24)
 
 Directive de game design V2 de fen : audit, game design V2, carrière, factions,
 VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`

@@ -1,7 +1,8 @@
 # Conception V2 : sommaire
 
 Documents produits pour la directive de game design V2 de fen (2026-10-24).
-Tout ici est une **proposition** ; le canon reste `SCENARIO_V1.md`.
+Validé par fen le 2026-10-24 : le canon est `SCENARIO_V1.md` complété par les
+changements de `GAME_DESIGN_V2.md` (section 13).
 
 | # | Livrable demandé | Fichier |
 | --- | --- | --- |
@@ -16,8 +17,8 @@ Tout ici est une **proposition** ; le canon reste `SCENARIO_V1.md`.
 | 9 | Faisabilité de l'acte 5 | [ACTE5_FAISABILITE.md](ACTE5_FAISABILITE.md) |
 | 10 | Roadmap hiérarchisée | [ROADMAP_V2.md](ROADMAP_V2.md) |
 | — | Scénario V1 (canon, copie de référence) | [SCENARIO_V1.md](SCENARIO_V1.md) |
+| — | Références (jeux, films, livres, son) | [REFERENCES.md](REFERENCES.md) |
 
-## Décisions attendues de fen
+## Décisions
 
-Les dix changements du canon listés à la fin de `GAME_DESIGN_V2.md`, et la
-gestion du temps (section 3), qui ne sera pas codée avant validation.
+- 2026-10-24 : fen valide les dix changements du canon et la gestion du temps.

@@ -3,7 +3,8 @@
 Copie de référence du document de scénario du 2026-10-24
 ([Claude Doc](https://claude.ai/artifact/KLQcMmT6CDQhUQVttANdhH)).
 **Ce texte est le canon narratif.** Il n'est pas modifié ici : les changements
-proposés sont dans `AUDIT.md` et `GAME_DESIGN_V2.md`, en attente de validation.
+validés le 2026-10-24 sont dans `GAME_DESIGN_V2.md` (section 13) et priment sur
+ce texte là où ils diffèrent.
 
 ## Intention
 

@@ -1,7 +1,8 @@
-# MINISTRY OF TRUTH : game design V2 (proposition)
+# MINISTRY OF TRUTH : game design V2
 
-Statut : **proposition à valider par fen**. Le canon reste `SCENARIO_V1.md`.
-Tout ce qui modifie le canon est marqué **[CHANGEMENT]** et listé à la fin.
+Statut : **validé par fen le 2026-10-24** (les dix changements et la gestion du
+temps). Le canon est désormais `SCENARIO_V1.md` complété par les changements
+marqués **[CHANGEMENT]**, listés à la fin. Références : `REFERENCES.md`.
 
 > « Dans un État où chaque citoyen possède un dossier, tu commences par
 > inspecter la vérité. Tu finis par décider de ce qu'elle doit être. »
@@ -41,7 +42,7 @@ Le pouvoir n'est jamais un chiffre à faire monter : c'est une liste d'actions
 débloquées, chacune avec un coût en temps, en faveurs ou en suspicion. Détail
 dans `CARRIERE.md`.
 
-## 3. Gestion du temps : prototype à valider (non implémenté)
+## 3. Gestion du temps (validée le 2026-10-24, à implémenter)
 
 Fen a répondu oui à une limite de temps dans la journée ; la directive demande un
 système d'unités et pas de compte à rebours permanent. Proposition : **l'horloge
@@ -224,7 +225,7 @@ jumpscares, clichés de pirates, hologrammes, action militaire, caricature.
 | Sauvegarde par acte | Rejouer sans tout refaire | Points de reprise, format v4 | Faible | Migration | 1 point par acte |
 | Localisation | Marché Steam | `tr()`, surcouches | Moyen | Énigmes intraduisibles | Interface + acte 1 |
 
-## 13. Changements du canon proposés (à valider un par un)
+## 13. Changements du canon (validés par fen le 2026-10-24)
 
 1. 15 dossiers dont 14 enquêtes, au lieu de « 16 » (audit 2.1).
 2. 20 journées de service avec ellipses, au lieu de 24 (audit 2.2).
