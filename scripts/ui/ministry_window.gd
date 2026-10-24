@@ -8,6 +8,8 @@ extends PanelContainer
 ## Surcharger _on_opened() pour rafraîchir le contenu à l'ouverture.
 
 signal closed
+## Demande au bureau d'afficher une courte notification.
+signal notify(text: String)
 
 @export var window_title := "FENÊTRE"
 @export var classification := "DIFFUSION RESTREINTE"

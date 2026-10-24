@@ -43,6 +43,7 @@ scripts/
     event_rules.gd            événements dus au début d'une journée
     veritas.gd                VERITAS déterministe (remarques, recommandation)
     assessment.gd             évaluation de l'agent en mots (data/assessment.json)
+    guidance.gd               objectif du jour affiché au bureau (étape suivante)
   ui/ministry_window.gd       cadre commun des fenêtres
 scenes/
   main_menu/                  menu principal
@@ -95,6 +96,16 @@ tests/                        tests automatiques et captures d'écran
 
 Évalués à chaque nouvelle journée, dans l'ordre du fichier. Les drapeaux posés par
 les décisions (`flags` des issues) sont le lien entre un dossier et ses suites.
+
+## Accompagnement du joueur
+
+`scripts/core/guidance.gd` calcule, à partir de l'état seul, la prochaine étape
+utile (`{text, hint, target}`) : lire les messages, ouvrir un dossier, noter et
+confronter des éléments, rédiger la conclusion, finir la journée. Le bureau
+l'affiche dans la barre OBJECTIF et fait pulser le bouton visé. Désactivable dans
+Paramètres (`gameplay/guidance`). Les fenêtres émettent `notify(text)` ; le bureau
+affiche ces notifications brèves (toast). Les sauvegardes contiennent un résumé
+(`summary` : date, grade) lu par le menu sans charger la partie.
 
 ## VERITAS
 

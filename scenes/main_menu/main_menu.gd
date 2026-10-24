@@ -30,6 +30,10 @@ func _ready() -> void:
 
 func refresh() -> void:
 	_continue_button.disabled = not SaveManager.has_save()
+	var summary := SaveManager.read_summary()
+	_continue_button.text = "CONTINUER" + ("\n" + summary.date if summary.has("date") else "")
+	_continue_button.tooltip_text = "Reprendre la dernière partie sauvegardée."
+	%NewGameButton.tooltip_text = "Commencer votre carrière d'inspecteur, le lundi 3 novembre 1986."
 
 
 func open_settings() -> void:

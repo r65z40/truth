@@ -41,6 +41,15 @@
 - [x] VERITAS recommande le classement (71 %) : il protège les informateurs
 - [x] Dossier personnel : évaluation de l'agent en mots, sans chiffres (choix de fen, 2026-10-24)
 
+## Fait : 0.5 (2026-10-24)
+
+- [x] Barre OBJECTIF : étape suivante calculée par `Guidance`, bouton visé mis en évidence
+- [x] Éléments notables toujours visibles sous la pièce, boutons « + élément » / « NOTÉ »
+- [x] Notifications brèves (élément noté, contradiction, sauvegarde, rapport transmis)
+- [x] Info-bulles sur les boutons du bureau, compteurs sur les boutons latéraux
+- [x] Déconnexion confirmée si la journée n'est pas sauvegardée
+- [x] Menu : accroche, date de la sauvegarde sur CONTINUER ; option « Aide à l'enquête »
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)

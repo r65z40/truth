@@ -6,7 +6,7 @@ ministère de la Sécurité nationale : il examine des dossiers, recoupe des pi�
 contradictoires et transmet des conclusions qui pèsent sur sa carrière, sur la
 vie des citoyens et sur le régime.
 
-Statut : **0.4** (deux dossiers liés, journées, conséquences différées, VERITAS).
+Statut : **0.5** (deux dossiers liés, journées, conséquences différées, VERITAS, objectifs guidés).
 Cible : Windows via Steam en priorité, puis Linux/macOS, mobile plus tard.
 
 ## Prérequis

@@ -10,9 +10,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -280.0
-offset_top = -170.0
+offset_top = -200.0
 offset_right = 280.0
-offset_bottom = 170.0
+offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
@@ -59,6 +59,21 @@ size_flags_horizontal = 3
 text = "Effet écran cathodique"
 
 [node name="CrtToggle" type="Button" parent="Layout/Content/Options/CrtRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+toggle_mode = true
+text = "ACTIVÉ"
+
+[node name="GuidanceRow" type="HBoxContainer" parent="Layout/Content/Options"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Layout/Content/Options/GuidanceRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Aide à l'enquête (objectifs)"
+
+[node name="GuidanceToggle" type="Button" parent="Layout/Content/Options/GuidanceRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(180, 44)
 layout_mode = 2

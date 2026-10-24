@@ -94,6 +94,32 @@ layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 19
 
+[node name="ObjectiveBar" type="PanelContainer" parent="Main"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ObjectiveBar"
+
+[node name="Row" type="HBoxContainer" parent="Main/ObjectiveBar"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="ObjectiveTag" type="Label" parent="Main/ObjectiveBar/Row"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "OBJECTIF >"
+
+[node name="ObjectiveText" type="Label" parent="Main/ObjectiveBar/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+clip_text = true
+
+[node name="ObjectiveHint" type="Label" parent="Main/ObjectiveBar/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+clip_text = true
+
 [node name="Body" type="MarginContainer" parent="Main"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -124,7 +150,7 @@ text = "POSTE DE TRAVAIL"
 
 [node name="DossiersButton" type="Button" parent="Main/Body/Columns/Side"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 focus_mode = 0
 text = "DOSSIERS"
@@ -132,7 +158,7 @@ alignment = 0
 
 [node name="MessagesButton" type="Button" parent="Main/Body/Columns/Side"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 focus_mode = 0
 text = "MESSAGES"
@@ -140,7 +166,7 @@ alignment = 0
 
 [node name="ArchivesButton" type="Button" parent="Main/Body/Columns/Side"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 focus_mode = 0
 text = "ARCHIVES"
@@ -148,7 +174,7 @@ alignment = 0
 
 [node name="PersonnelButton" type="Button" parent="Main/Body/Columns/Side"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 focus_mode = 0
 text = "DOSSIER PERSONNEL"
@@ -245,6 +271,31 @@ layout_mode = 1
 [node name="PersonnelWindow" parent="WindowLayer" instance=ExtResource("7_personnel")]
 unique_name_in_owner = true
 layout_mode = 1
+
+[node name="Toast" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -120.0
+offset_right = 260.0
+offset_bottom = -76.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"ToastPanel"
+
+[node name="ToastLabel" type="Label" parent="Toast"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="DayTransition" type="ColorRect" parent="."]
 unique_name_in_owner = true
