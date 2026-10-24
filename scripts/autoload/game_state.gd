@@ -5,6 +5,8 @@ extends Node
 ## Toute modification passe par les méthodes ci-dessous, qui émettent state_changed.
 
 signal state_changed
+## Émis après une décision : le bureau s'en sert pour afficher la réponse du supérieur.
+signal decision_applied(case_id: String, decision_id: String, message_id: String)
 
 const INITIAL_MESSAGES_PATH := "res://data/messages/initial_messages.json"
 
@@ -19,11 +21,12 @@ const INITIAL_INDICATORS := {"loyalty": 50, "suspicion": 20, "influence": 10}
 ## Statuts possibles d'un dossier dans la partie.
 const CASE_OPEN := "open"
 const CASE_CLOSED := "closed"
+const CASE_UNDER_INVESTIGATION := "under_investigation"
 
 var player: Dictionary = {}
 var day_index: int = 0
 var indicators: Dictionary = {}
-## case_id -> {status, viewed_documents: Array, decision: String}
+## case_id -> {status, viewed_documents, noted_facts, contradictions_found, decision}
 var cases: Dictionary = {}
 ## Messages reçus : {id, from, subject, date_label, body, read}
 var messages: Array = []
@@ -105,6 +108,60 @@ func is_document_viewed(case_id: String, document_id: String) -> bool:
 	return document_id in get_case_state(case_id).viewed_documents
 
 
+## Ajoute un élément notable au carnet d'enquête du dossier.
+func note_fact(case_id: String, fact_id: String) -> void:
+	var case_state := get_case_state(case_id)
+	if fact_id in case_state.noted_facts:
+		return
+	case_state.noted_facts.append(fact_id)
+	state_changed.emit()
+
+
+## Confronte deux éléments notés. Enregistre la contradiction si elle existe.
+## Renvoie la clé contredite, ou "" si les éléments ne se contredisent pas.
+func confront_facts(case_id: String, fact_a_id: String, fact_b_id: String) -> String:
+	var key := CaseLibrary.confront(CaseLibrary.get_case(case_id), fact_a_id, fact_b_id)
+	var case_state := get_case_state(case_id)
+	if key != "" and not key in case_state.contradictions_found:
+		case_state.contradictions_found.append(key)
+		state_changed.emit()
+	return key
+
+
+func can_decide(case_id: String) -> bool:
+	return get_case_state(case_id).decision == ""
+
+
+## Applique une décision : indicateurs, statut, drapeaux, historique, message du supérieur.
+## Renvoie le résultat de DecisionRules.resolve(), ou {} si la décision est impossible.
+func apply_decision(case_id: String, decision_id: String) -> Dictionary:
+	if not can_decide(case_id):
+		push_warning("GameState: le dossier %s a déjà fait l'objet d'une décision." % case_id)
+		return {}
+	var case_state := get_case_state(case_id)
+	var result := DecisionRules.resolve(CaseLibrary.get_case(case_id), case_state, decision_id)
+	if result.is_empty():
+		push_error("GameState: décision inconnue %s pour le dossier %s" % [decision_id, case_id])
+		return {}
+	for indicator in result.effects:
+		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(result.effects[indicator]),
+				INDICATOR_MIN, INDICATOR_MAX)
+	case_state.status = result.status_after
+	case_state.decision = decision_id
+	flags.merge(result.flags, true)
+	decisions.append({"case_id": case_id, "decision_id": decision_id, "day_index": day_index,
+			"outcome": result.response_id})
+	var message_id := "%s.%s" % [case_id, result.response_id]
+	if not result.response.is_empty():
+		var message: Dictionary = result.response.duplicate()
+		message["id"] = message_id
+		message["date_label"] = get_date_short()
+		receive_message(message, false)
+	state_changed.emit()
+	decision_applied.emit(case_id, decision_id, message_id)
+	return result
+
+
 # --- Messages ----------------------------------------------------------------
 
 func receive_message(message: Dictionary, notify := true) -> void:
@@ -154,6 +211,11 @@ func from_dict(data: Dictionary) -> void:
 	for key in data.get("indicators", {}):
 		indicators[key] = int(data.indicators[key])
 	cases = data.get("cases", {})
+	for case_id in cases:
+		# Complète les champs ajoutés au format après la création de la sauvegarde.
+		var defaults := _new_case_state()
+		defaults.merge(cases[case_id], true)
+		cases[case_id] = defaults
 	# Un dossier ajouté au jeu après la sauvegarde doit quand même apparaître.
 	for case_id in CaseLibrary.get_case_ids():
 		if not cases.has(case_id):
@@ -165,4 +227,5 @@ func from_dict(data: Dictionary) -> void:
 
 
 func _new_case_state() -> Dictionary:
-	return {"status": CASE_OPEN, "viewed_documents": [], "decision": ""}
+	return {"status": CASE_OPEN, "viewed_documents": [], "noted_facts": [],
+			"contradictions_found": [], "decision": ""}

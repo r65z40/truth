@@ -9,7 +9,10 @@ extends Node
 signal game_saved
 signal game_loaded
 
-const SAVE_VERSION := 1
+## Historique des versions :
+## 1 : prototype 0.1.
+## 2 : carnet d'enquête (noted_facts, contradictions_found) dans chaque dossier.
+const SAVE_VERSION := 2
 const DEFAULT_PATH := "user://savegame.json"
 
 ## Fichier utilisé quand aucun chemin n'est précisé (les tests le redirigent).
@@ -80,9 +83,10 @@ func _migrate(payload: Dictionary) -> Dictionary:
 	if version < 1 or typeof(payload.get("state")) != TYPE_DICTIONARY:
 		push_error("SaveManager: format de sauvegarde inconnu.")
 		return {}
-	# Exemple pour plus tard :
-	# if version == 1:
-	#     payload.state["nouveau_champ"] = valeur_par_defaut
-	#     version = 2
+	if version == 1:
+		for case_state in payload.state.get("cases", {}).values():
+			case_state["noted_facts"] = case_state.get("noted_facts", [])
+			case_state["contradictions_found"] = case_state.get("contradictions_found", [])
+		version = 2
 	payload.save_version = version
 	return payload

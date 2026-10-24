@@ -37,6 +37,7 @@ scripts/
     case_library.gd           accès aux dossiers, validation, contradictions
     fictional_calendar.gd     date du jeu
     career.gd                 grades
+    decision_rules.gd         résolution d'une décision (issue, effets, réponse)
   ui/ministry_window.gd       cadre commun des fenêtres
 scenes/
   main_menu/                  menu principal
@@ -66,6 +67,11 @@ tests/                        tests automatiques et captures d'écran
   `app_requested` > `Desk.open_app()` > fenêtre `MinistryWindow.open()`.
 - **Lecture d'une pièce** : `DossiersWindow.select_document()` > affichage BBCode >
   `GameState.mark_document_viewed()`.
+- **Carnet d'enquête** : « + NOTER » > `GameState.note_fact()` ; deux éléments
+  sélectionnés > `GameState.confront_facts()` > `CaseLibrary.confront()`.
+- **Conclusion** : `ConclusionPanel.submitted` > `GameState.apply_decision()` >
+  `DecisionRules.resolve()` > effets, statut, drapeaux, message du supérieur >
+  signal `decision_applied` > le bureau ouvre la messagerie sur la réponse.
 
 ## Format d'un dossier (`data/cases/case_<id>.json`)
 
@@ -78,15 +84,27 @@ tests/                        tests automatiques et captures d'écran
     "fields": [["Libellé", "Valeur"]],        // optionnel : fiche
     "columns": [...], "rows": [[...]],         // optionnel : registre
     "author": "...", "body": "texte",          // optionnel
-    "facts": [{"key": "sujet.lieu.date", "value": "..."}]  // pour les contradictions
+    "facts": [{"id": "f_log_trip", "key": "sujet.lieu.date", "value": "...",
+               "label": "texte montré au joueur"}]   // éléments notables
   }],
-  "decisions": [{"id": "arrest", "label": "...", "effects": {"loyalty": 10}, "superior_message": "arrest"}],
+  "decisions": [{
+    "id": "arrest", "label": "...", "description": "...",
+    "status_after": "closed|under_investigation",
+    "outcomes": [                               // testées dans l'ordre
+      {"when": "contradiction_found", "effects": {"loyalty": 10}, "response": "arrest_found", "flags": {}},
+      {"when": "default", ...}                  // obligatoire, en dernier
+    ]
+  }],
+  "responses": {"arrest_found": {"from": "...", "subject": "...", "body": "..."}},
   "truth": { ... }                             // vérité objective, jamais affichée
 }
 ```
 
-Deux pièces qui donnent une valeur différente pour la même clé de `facts` se
-contredisent (`CaseLibrary.find_contradictions`).
+Deux éléments qui portent sur la même `key` avec des `value` différentes se
+contredisent (`CaseLibrary.confront`). La clé et la valeur ne sont jamais
+affichées : le joueur ne voit que `label`. Nouvelle condition `when` : l'ajouter
+dans `DecisionRules.is_condition_met()`. `CaseLibrary.validate_case()` vérifie
+la structure (testée pour chaque dossier).
 
 ## Sauvegarde
 

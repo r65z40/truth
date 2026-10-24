@@ -31,10 +31,16 @@ func _run() -> void:
 		"test_document_and_message_tracking",
 		"test_save_roundtrip",
 		"test_save_rejects_bad_files",
+		"test_save_migration_from_v1",
+		"test_case_validation_detects_problems",
+		"test_fact_confrontation",
+		"test_decision_rules",
+		"test_apply_decision",
 		"test_terminal_command_parsing",
 		"test_main_menu_scene",
 		"test_desk_scene_flow",
 		"test_full_session_flow",
+		"test_investigation_and_conclusion_flow",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -184,6 +190,99 @@ func test_save_rejects_bad_files() -> void:
 	check(SaveManager.load_game(GameState, "user://absent.json") == ERR_FILE_NOT_FOUND, "fichier absent signalé")
 
 
+func test_save_migration_from_v1() -> void:
+	# Sauvegarde du prototype 0.1 : pas de carnet d'enquête dans les dossiers.
+	var v1 := {"save_version": 1, "game_version": "0.1.0", "saved_at": "", "state": {
+		"player": {"name": "A. VOSK", "badge": "INS-7734", "rank": 0}, "day_index": 2,
+		"indicators": {"loyalty": 40, "suspicion": 30, "influence": 10},
+		"cases": {"40921": {"status": "open", "viewed_documents": ["identity"], "decision": ""}},
+		"messages": [], "decisions": [], "flags": {}}}
+	var file := FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	file.store_string(JSON.stringify(v1))
+	file.close()
+	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "une sauvegarde v1 se charge")
+	var case_state := GameState.get_case_state("40921")
+	check(case_state.noted_facts == [] and case_state.contradictions_found == [], "champs du carnet ajoutés")
+	check(case_state.viewed_documents == ["identity"] and GameState.day_index == 2, "données v1 conservées")
+
+
+func test_case_validation_detects_problems() -> void:
+	var broken := {"id": "x", "title": "x", "subject_name": "x", "documents": [
+		{"id": "d1", "type": "report", "title": "t", "source": "s", "reliability": "A",
+			"facts": [{"id": "f1", "key": "k"}]}],
+		"decisions": [{"id": "dec", "outcomes": [{"when": "contradiction_found", "response": "absente"}]}],
+		"responses": {}}
+	var problems := CaseLibrary.validate_case(broken)
+	check(problems.size() >= 3, "élément incomplet, issue par défaut manquante, réponse absente : %d problème(s)" % problems.size())
+
+
+func test_fact_confrontation() -> void:
+	var case_data := CaseLibrary.get_case("40921")
+	check(CaseLibrary.get_fact(case_data, "f_log_trip").document_id == "travel_log", "un élément connaît sa pièce")
+	check(CaseLibrary.confront(case_data, "f_report_presence", "f_log_trip") == "sedlar.location.1986-10-21",
+			"présence au poste contre train pour Halvek : contradiction")
+	check(CaseLibrary.confront(case_data, "f_log_trip", "f_report_presence") != "", "l'ordre n'a pas d'importance")
+	check(CaseLibrary.confront(case_data, "f_identity_card", "f_log_card") == "", "même carte : pas de contradiction")
+	check(CaseLibrary.confront(case_data, "f_intercept_trip", "f_report_presence") == "", "sujets différents : pas de contradiction")
+	check(CaseLibrary.confront(case_data, "f_log_trip", "f_log_trip") == "", "un élément ne se contredit pas lui-même")
+	check(GameState.confront_facts("40921", "f_report_presence", "f_log_trip") != "", "GameState enregistre la contradiction")
+	GameState.confront_facts("40921", "f_log_trip", "f_report_presence")
+	check(GameState.get_case_state("40921").contradictions_found.size() == 1, "pas de doublon")
+
+
+func test_decision_rules() -> void:
+	var case_data := CaseLibrary.get_case("40921")
+	var without := GameState.get_case_state("40921").duplicate(true)
+	var with_found := without.duplicate(true)
+	with_found.contradictions_found = ["sedlar.location.1986-10-21"]
+	var expected := {
+		"arrest": ["arrest_found", "arrest_unfounded", "closed"],
+		"close": ["close_despite_evidence", "close_unchecked", "closed"],
+		"investigate": ["investigate_found", "investigate_unfounded", "under_investigation"],
+	}
+	for decision_id in expected:
+		var found := DecisionRules.resolve(case_data, with_found, decision_id)
+		var unfound := DecisionRules.resolve(case_data, without, decision_id)
+		check(found.response_id == expected[decision_id][0], "%s avec contradiction : %s" % [decision_id, found.response_id])
+		check(unfound.response_id == expected[decision_id][1], "%s sans contradiction : %s" % [decision_id, unfound.response_id])
+		check(found.status_after == expected[decision_id][2], "%s : statut %s" % [decision_id, found.status_after])
+		check(not found.response.is_empty() and found.response.body.length() > 50, "%s : message du supérieur rédigé" % decision_id)
+		check(found.effects != unfound.effects, "%s : les effets dépendent de l'instruction" % decision_id)
+	# Arrêter sur des faits établis est mieux vu que d'arrêter sans preuve.
+	var arrest_found := DecisionRules.resolve(case_data, with_found, "arrest")
+	var arrest_unfound := DecisionRules.resolve(case_data, without, "arrest")
+	check(arrest_found.effects.suspicion < arrest_unfound.effects.suspicion, "arrestation sans preuve : plus de suspicion")
+	var close_found := DecisionRules.resolve(case_data, with_found, "close")
+	check(close_found.effects.suspicion > 10, "classer malgré une contradiction établie éveille la suspicion")
+	check(DecisionRules.resolve(case_data, without, "inexistante").is_empty(), "décision inconnue : résultat vide")
+
+
+func test_apply_decision() -> void:
+	var received := []
+	var on_applied := func(case_id: String, decision_id: String, message_id: String) -> void:
+		received.append([case_id, decision_id, message_id])
+	GameState.decision_applied.connect(on_applied)
+	GameState.confront_facts("40921", "f_report_presence", "f_log_trip")
+	var unread_before := GameState.get_unread_count()
+	var result := GameState.apply_decision("40921", "arrest")
+	check(not result.is_empty(), "la décision s'applique")
+	check(GameState.get_indicator("loyalty") == 60 and GameState.get_indicator("suspicion") == 15
+			and GameState.get_indicator("influence") == 15, "indicateurs : %s" % GameState.indicators)
+	var case_state := GameState.get_case_state("40921")
+	check(case_state.status == GameState.CASE_CLOSED and case_state.decision == "arrest", "dossier clos, décision enregistrée")
+	check(GameState.flags.get("40921.sedlar_arrested") == true, "conséquence persistante enregistrée")
+	check(GameState.decisions.size() == 1 and GameState.decisions[0].outcome == "arrest_found", "historique des décisions")
+	check(GameState.get_unread_count() == unread_before + 1, "le supérieur envoie un message")
+	check(GameState.messages[-1].id == "40921.arrest_found" and GameState.messages[-1].date_label == "03.11.1986",
+			"message identifié et daté")
+	check(received == [["40921", "arrest", "40921.arrest_found"]], "signal decision_applied émis")
+	check(not GameState.can_decide("40921"), "une seule décision par dossier")
+	print("  (l'avertissement qui suit est attendu)")
+	check(GameState.apply_decision("40921", "close").is_empty(), "une seconde décision est refusée")
+	check(GameState.get_indicator("loyalty") == 60, "la seconde décision n'a aucun effet")
+	GameState.decision_applied.disconnect(on_applied)
+
+
 # --- Terminal ----------------------------------------------------------------
 
 func test_terminal_command_parsing() -> void:
@@ -290,3 +389,56 @@ func _wait_for_scene(scene_name: String) -> void:
 		await get_tree().process_frame
 		if get_tree().current_scene and get_tree().current_scene.name == scene_name:
 			return
+
+
+## Parcours d'enquête dans l'interface : noter, confronter, conclure, lire la réponse.
+func test_investigation_and_conclusion_flow() -> void:
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.terminal.submit_command("dossiers")
+	var dossiers = desk.windows.dossiers
+	dossiers.select_case("40921")
+	dossiers.select_document("work_report")
+	var facts_list: Node = dossiers.get_node("%FactsList")
+	check(facts_list.get_child_count() == 2, "le rapport présente 2 éléments notables")
+	facts_list.get_node("Fact_f_report_presence").pressed.emit()
+	check(GameState.get_case_state("40921").noted_facts == ["f_report_presence"], "un clic note l'élément")
+	check(facts_list.get_node("Fact_f_report_presence").disabled, "un élément noté ne peut plus être noté")
+	dossiers.select_document("travel_log")
+	dossiers.get_node("%FactsList").get_node("Fact_f_log_trip").pressed.emit()
+	dossiers.get_node("%FactsList").get_node("Fact_f_log_card").pressed.emit()
+	var notebook: Node = dossiers.get_node("%NotebookList")
+	check(notebook.get_child_count() == 3, "trois éléments au carnet")
+	notebook.get_node("Noted_f_log_card").pressed.emit()
+	notebook = dossiers.get_node("%NotebookList")
+	notebook.get_node("Noted_f_report_presence").pressed.emit()
+	check(not dossiers.get_node("%ConfrontButton").disabled, "deux éléments sélectionnés : on peut confronter")
+	dossiers.get_node("%ConfrontButton").pressed.emit()
+	check(dossiers.get_node("%ConfrontResult").text.begins_with("Aucune"), "carte et présence : aucune incohérence")
+	dossiers.get_node("%NotebookList").get_node("Noted_f_report_presence").pressed.emit()
+	dossiers.get_node("%NotebookList").get_node("Noted_f_log_trip").pressed.emit()
+	dossiers.get_node("%ConfrontButton").pressed.emit()
+	check(dossiers.get_node("%ConfrontResult").text.begins_with("CONTRADICTION"), "présence et train : contradiction établie")
+	check(dossiers.get_node("%ProgressLabel").text.contains("Contradictions : 1"), "le compteur de contradictions s'affiche")
+
+	dossiers.get_node("%ConclusionButton").pressed.emit()
+	var conclusion: Node = dossiers.get_node("%ConclusionPanel")
+	check(conclusion.visible and not dossiers.get_node("%DocumentPanel").visible, "le formulaire remplace la pièce")
+	check(conclusion.get_node("%ConclusionSummary").get_parsed_text().contains("Présent à son poste"),
+			"le formulaire rappelle la contradiction établie")
+	check(conclusion.get_node("%SignButton").disabled, "signature impossible sans choix")
+	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
+	conclusion.get_node("%SignButton").pressed.emit()
+	await get_tree().process_frame
+	check(desk.get_open_app() == "messages", "la réponse du supérieur s'affiche aussitôt")
+	check(desk.windows.messages.current_message_id == "40921.investigate_found", "c'est la bonne réponse")
+	check(desk.windows.messages.get_node("%MessageHeader").text.contains("enquête complémentaire accordée"),
+			"l'objet du message est affiché")
+	check(GameState.get_case_state("40921").status == GameState.CASE_UNDER_INVESTIGATION, "dossier en enquête complémentaire")
+	desk.terminal.submit_command("dossiers")
+	check(dossiers.get_node("%ConclusionButton").disabled, "on ne peut pas conclure deux fois")
+	desk.terminal.submit_command("archives")
+	check(desk.windows.archives.get_node("%ArchiveText").get_parsed_text().contains("40921"), "le rapport figure aux archives")
+	desk.queue_free()
+	await get_tree().process_frame

@@ -3,7 +3,7 @@ extends RefCounted
 ## Interprétation des commandes du terminal. Logique pure, sans interface,
 ## pour pouvoir être testée et réutilisée (clavier, boutons tactiles, futur VERITAS).
 
-enum Action { NONE, HELP, OPEN_APP, CLEAR, DATE, IDENT, SAVE, MENU, VERITAS, UNKNOWN }
+enum Action { NONE, HELP, OPEN_APP, CLEAR, DATE, IDENT, SAVE, MENU, VERITAS, DEBUG_STATE, UNKNOWN }
 
 ## Mot-clé normalisé -> [action, cible]
 const COMMANDS := {
@@ -33,6 +33,8 @@ const COMMANDS := {
 	"DECONNEXION": [Action.MENU, ""],
 	"QUITTER": [Action.MENU, ""],
 	"VERITAS": [Action.VERITAS, ""],
+	# Réservé au développement : affiche les indicateurs internes (versions debug uniquement).
+	"ETAT": [Action.DEBUG_STATE, ""],
 }
 
 const HELP_LINES := [

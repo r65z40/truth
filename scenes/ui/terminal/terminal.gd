@@ -77,6 +77,12 @@ func submit_command(raw: String) -> void:
 			menu_requested.emit()
 		TerminalCommands.Action.VERITAS:
 			print_line("VERITAS : Je suis à votre service, inspecteur. Mes fonctions d'analyse vous seront ouvertes prochainement.")
+		TerminalCommands.Action.DEBUG_STATE:
+			if OS.is_debug_build():
+				print_line("[DEV] Loyauté %d  Suspicion %d  Influence %d" % [GameState.get_indicator("loyalty"),
+						GameState.get_indicator("suspicion"), GameState.get_indicator("influence")], COLOR_DIM)
+			else:
+				print_line("COMMANDE INCONNUE : %s. Tapez AIDE." % command.input, COLOR_ALERT)
 		TerminalCommands.Action.UNKNOWN:
 			print_line("COMMANDE INCONNUE : %s. Tapez AIDE." % command.input, COLOR_ALERT)
 

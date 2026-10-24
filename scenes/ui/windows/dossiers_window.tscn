@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/windows/dossiers_window.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/windows/conclusion_panel.tscn" id="2_conclusion"]
 
 [node name="DossiersWindow" type="PanelContainer"]
 anchors_preset = 15
@@ -33,7 +34,7 @@ layout_mode = 2
 theme_override_constants/separation = 18
 
 [node name="CaseColumn" type="VBoxContainer" parent="Layout/Content/Columns"]
-custom_minimum_size = Vector2(280, 0)
+custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -46,6 +47,42 @@ text = "DOSSIERS ASSIGNÉS"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
+
+[node name="Notebook" type="VBoxContainer" parent="Layout/Content/Columns/CaseColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="NotebookTitle" type="Label" parent="Layout/Content/Columns/CaseColumn/Notebook"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "CARNET D'ENQUÊTE"
+
+[node name="NotebookScroll" type="ScrollContainer" parent="Layout/Content/Columns/CaseColumn/Notebook"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="NotebookList" type="VBoxContainer" parent="Layout/Content/Columns/CaseColumn/Notebook/NotebookScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="ConfrontResult" type="Label" parent="Layout/Content/Columns/CaseColumn/Notebook"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+
+[node name="ConfrontButton" type="Button" parent="Layout/Content/Columns/CaseColumn/Notebook"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+disabled = true
+text = "CONFRONTER (2 ÉLÉMENTS)"
 
 [node name="DocumentColumn" type="VBoxContainer" parent="Layout/Content/Columns"]
 layout_mode = 2
@@ -127,6 +164,22 @@ bbcode_enabled = true
 fit_content = true
 selection_enabled = true
 
+[node name="FactsTitle" type="Label" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+theme_override_colors/font_color = Color(0.557, 0.122, 0.122, 1)
+text = "ÉLÉMENTS NOTABLES"
+
+[node name="FactsList" type="VBoxContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ConclusionPanel" parent="Layout/Content/Columns/DocumentColumn" instance=ExtResource("2_conclusion")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
 [node name="EmptyHint" type="Label" parent="Layout/Content/Columns/DocumentColumn"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -138,6 +191,7 @@ vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="Footer" type="HBoxContainer" parent="Layout/Content/Columns/DocumentColumn"]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="ProgressLabel" type="Label" parent="Layout/Content/Columns/DocumentColumn/Footer"]
@@ -146,7 +200,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"MutedLabel"
 
-[node name="ConclusionLabel" type="Label" parent="Layout/Content/Columns/DocumentColumn/Footer"]
+[node name="ConclusionButton" type="Button" parent="Layout/Content/Columns/DocumentColumn/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-theme_type_variation = &"MutedLabel"
-text = "Formulaire de conclusion : raccordement en cours"
+theme_type_variation = &"AlertButton"
+text = "RÉDIGER LA CONCLUSION"

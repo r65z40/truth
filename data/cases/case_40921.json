@@ -13,19 +13,66 @@
 			"reliability": "A",
 			"date": "1986-10-02",
 			"fields": [
-				["Nom", "SEDLAR"],
-				["Prénoms", "Anton Pavel"],
-				["Né le", "14.02.1949 à Velmira"],
-				["N° de citoyen", "40921"],
-				["Profession", "Technicien de maintenance, Centrale thermique n° 3"],
-				["Carte de travail", "KT-55-1902"],
-				["Adresse", "Bloc 14, escalier C, app. 61, rue de l'Unité, District 9, Velmira"],
-				["Situation", "Marié (Vera SEDLAR, institutrice), un enfant"],
-				["Famille hors district", "Mère : Irena SEDLAR, Halvek (zone frontalière). Sœur : Mira DOLAN, Halvek"],
-				["Antécédents", "Un avertissement pour absentéisme (1984)"]
+				[
+					"Nom",
+					"SEDLAR"
+				],
+				[
+					"Prénoms",
+					"Anton Pavel"
+				],
+				[
+					"Né le",
+					"14.02.1949 à Velmira"
+				],
+				[
+					"N° de citoyen",
+					"40921"
+				],
+				[
+					"Profession",
+					"Technicien de maintenance, Centrale thermique n° 3"
+				],
+				[
+					"Carte de travail",
+					"KT-55-1902"
+				],
+				[
+					"Adresse",
+					"Bloc 14, escalier C, app. 61, rue de l'Unité, District 9, Velmira"
+				],
+				[
+					"Situation",
+					"Marié (Vera SEDLAR, institutrice), un enfant"
+				],
+				[
+					"Famille hors district",
+					"Mère : Irena SEDLAR, Halvek (zone frontalière). Sœur : Mira DOLAN, Halvek"
+				],
+				[
+					"Antécédents",
+					"Un avertissement pour absentéisme (1984)"
+				]
 			],
 			"facts": [
-				{"key": "sedlar.work_card", "value": "KT-55-1902"}
+				{
+					"id": "f_identity_card",
+					"key": "sedlar.work_card",
+					"value": "KT-55-1902",
+					"label": "Carte de travail n° KT-55-1902"
+				},
+				{
+					"id": "f_identity_family",
+					"key": "sedlar.family",
+					"value": "Mère et sœur à Halvek",
+					"label": "Mère et sœur résident à Halvek (zone frontalière)"
+				},
+				{
+					"id": "f_identity_record",
+					"key": "sedlar.record",
+					"value": "Avertissement 1984",
+					"label": "Un avertissement pour absentéisme (1984)"
+				}
 			]
 		},
 		{
@@ -38,7 +85,18 @@
 			"author": "B. ORLIK, chef d'équipe, atelier des chaudières",
 			"body": "Objet : présence du technicien SEDLAR A. (carte KT-55-1902)\n\nJe soussigné certifie que le citoyen SEDLAR a été présent à son poste, en équipe de jour (06h00 - 14h00), les 20, 21 et 22 octobre 1986.\n\nAucun incident à signaler. Le travail demandé sur la chaudière n° 2 a été effectué dans les délais. Comportement conforme aux attentes de la direction.\n\nFait à Velmira, le 24 octobre 1986.",
 			"facts": [
-				{"key": "sedlar.location.1986-10-21", "value": "Centrale thermique n° 3, Velmira (06h00 - 14h00)"}
+				{
+					"id": "f_report_presence",
+					"key": "sedlar.location.1986-10-21",
+					"value": "Centrale thermique n° 3, Velmira (06h00 - 14h00)",
+					"label": "Présent à son poste le 21.10.1986, de 06h00 à 14h00"
+				},
+				{
+					"id": "f_report_author",
+					"key": "report.author",
+					"value": "B. ORLIK",
+					"label": "Présence certifiée par le chef d'équipe B. ORLIK"
+				}
 			]
 		},
 		{
@@ -50,7 +108,30 @@
 			"date": "1986-10-19",
 			"body": "Ligne surveillée : cabine publique, rue de l'Unité (District 9)\nAppel sortant vers : Halvek, poste 2-114 (abonnée : M. DOLAN)\nDurée : 1 min 52 s. Transcription partielle.\n\nHOMME : ... je serai là mardi, comme convenu. Le premier train.\nFEMME : Tu es sûr ? Et ton chef ?\nHOMME : Il s'en occupe. Je lui ai rendu service, il me rend service.\nFEMME : Apporte les papiers de maman. Tous. On ne pourra pas recommencer.\nHOMME : Je sais. Ne dis rien au téléphone.\n[Fin de l'appel]\n\nNote de l'opérateur : voix masculine non identifiée formellement. Appel passé depuis la cabine la plus proche du domicile de SEDLAR.",
 			"facts": [
-				{"key": "sedlar.planned_trip", "value": "Halvek, mardi (premier train)"}
+				{
+					"id": "f_intercept_trip",
+					"key": "sedlar.planned_trip",
+					"value": "Halvek, mardi, premier train",
+					"label": "« Je serai là mardi, comme convenu. Le premier train. »"
+				},
+				{
+					"id": "f_intercept_chief",
+					"key": "chief.arrangement",
+					"value": "Le chef couvre en échange d'un service",
+					"label": "« Il s'en occupe. Je lui ai rendu service, il me rend service. »"
+				},
+				{
+					"id": "f_intercept_papers",
+					"key": "sedlar.papers",
+					"value": "Papiers de la mère",
+					"label": "« Apporte les papiers de maman. Tous. »"
+				},
+				{
+					"id": "f_intercept_voice",
+					"key": "intercept.voice",
+					"value": "Non identifiée",
+					"label": "Voix masculine non identifiée formellement"
+				}
 			]
 		},
 		{
@@ -60,16 +141,56 @@
 			"source": "Bureau des transports, contrôle ferroviaire ligne Velmira - Halvek",
 			"reliability": "A",
 			"date": "1986-10-22",
-			"columns": ["Date", "Heure", "Trajet", "Carte présentée", "Contrôleur"],
+			"columns": [
+				"Date",
+				"Heure",
+				"Trajet",
+				"Carte présentée",
+				"Contrôleur"
+			],
 			"rows": [
-				["14.10.1986", "18h20", "Velmira > Velmira-Nord", "KT-55-1902", "P-117"],
-				["21.10.1986", "06h05", "Velmira > Halvek", "KT-55-1902", "P-203"],
-				["21.10.1986", "21h40", "Halvek > Velmira", "KT-55-1902", "P-088"]
+				[
+					"14.10.1986",
+					"18h20",
+					"Velmira > Velmira-Nord",
+					"KT-55-1902",
+					"P-117"
+				],
+				[
+					"21.10.1986",
+					"06h05",
+					"Velmira > Halvek",
+					"KT-55-1902",
+					"P-203"
+				],
+				[
+					"21.10.1986",
+					"21h40",
+					"Halvek > Velmira",
+					"KT-55-1902",
+					"P-088"
+				]
 			],
 			"body": "Rappel : en zone frontalière, la carte de travail tient lieu de pièce d'identité. La photographie n'est pas systématiquement contrôlée.",
 			"facts": [
-				{"key": "sedlar.work_card", "value": "KT-55-1902"},
-				{"key": "sedlar.location.1986-10-21", "value": "Train Velmira > Halvek (06h05), retour 21h40"}
+				{
+					"id": "f_log_card",
+					"key": "sedlar.work_card",
+					"value": "KT-55-1902",
+					"label": "Carte KT-55-1902 présentée à chaque contrôle"
+				},
+				{
+					"id": "f_log_trip",
+					"key": "sedlar.location.1986-10-21",
+					"value": "Train Velmira > Halvek (06h05), retour 21h40",
+					"label": "21.10.1986 : train Velmira > Halvek à 06h05, retour à 21h40"
+				},
+				{
+					"id": "f_log_photo",
+					"key": "control.photo",
+					"value": "Non systématique",
+					"label": "La photographie de la carte n'est pas toujours contrôlée"
+				}
 			]
 		}
 	],
@@ -77,25 +198,136 @@
 		{
 			"id": "arrest",
 			"label": "Recommander une arrestation",
-			"effects": {"loyalty": 10, "suspicion": -5, "influence": 5},
-			"superior_message": "arrest"
+			"description": "Transmettre le dossier au service des interpellations.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 10,
+						"suspicion": -5,
+						"influence": 5
+					},
+					"response": "arrest_found",
+					"flags": {
+						"40921.sedlar_arrested": true,
+						"40921.orlik_exposed": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 6,
+						"suspicion": 3,
+						"influence": 1
+					},
+					"response": "arrest_unfounded",
+					"flags": {
+						"40921.sedlar_arrested": true
+					}
+				}
+			]
 		},
 		{
 			"id": "close",
 			"label": "Clore le dossier",
-			"effects": {"loyalty": -5, "suspicion": 10, "influence": -3},
-			"superior_message": "close"
+			"description": "Classer sans suite. Le citoyen n'est pas inquiété.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -8,
+						"suspicion": 15,
+						"influence": -3
+					},
+					"response": "close_despite_evidence",
+					"flags": {
+						"40921.closed_despite_evidence": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -4,
+						"suspicion": 8,
+						"influence": -2
+					},
+					"response": "close_unchecked",
+					"flags": {}
+				}
+			]
 		},
 		{
 			"id": "investigate",
 			"label": "Demander une enquête complémentaire",
-			"effects": {"loyalty": 2, "suspicion": 3, "influence": -2},
-			"superior_message": "investigate"
+			"description": "Solliciter des vérifications supplémentaires avant toute décision.",
+			"status_after": "under_investigation",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 3,
+						"suspicion": 0,
+						"influence": 3
+					},
+					"response": "investigate_found",
+					"flags": {
+						"40921.orlik_hearing_requested": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 0,
+						"suspicion": 4,
+						"influence": -2
+					},
+					"response": "investigate_unfounded",
+					"flags": {}
+				}
+			]
 		}
 	],
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
 		"what_happened": "SEDLAR s'est bien rendu à Halvek le 21 octobre. Il a apporté à sa sœur les papiers de leur mère malade pour constituer une demande de soins de l'autre côté de la frontière, avec des documents en partie falsifiés. Le chef d'équipe ORLIK a couvert son absence en échange de réparations faites gratuitement chez lui.",
-		"involved": ["40921", "orlik_b", "dolan_m"]
+		"involved": [
+			"40921",
+			"orlik_b",
+			"dolan_m"
+		]
+	},
+	"responses": {
+		"arrest_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40921 : interpellation",
+			"body": "Inspecteur,\n\nVotre rapport est arrivé ce matin. La contradiction entre le registre ferroviaire et le certificat de présence est établie : le citoyen SEDLAR a été interpellé à son domicile à 05h40.\n\nLe chef d'équipe ORLIK, signataire d'un certificat de complaisance, sera entendu à son tour.\n\nTravail rigoureux. Le Bureau des transports en a été informé.\n\nR. MAZUR"
+		},
+		"arrest_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40921 : interpellation",
+			"body": "Inspecteur,\n\nL'interpellation du citoyen SEDLAR a été exécutée, conformément à votre recommandation.\n\nJe constate cependant que votre rapport ne s'appuie sur aucun élément établi. Le Ministère n'arrête pas sur une intuition : il arrête sur des faits. À l'avenir, confrontez les pièces avant de signer.\n\nR. MAZUR"
+		},
+		"close_despite_evidence": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40921 : demande d'explications",
+			"body": "Inspecteur,\n\nVous avez classé le dossier 40921 alors que votre propre rapport relève une contradiction entre le certificat de présence et le registre ferroviaire.\n\nJe veux croire à une maladresse de débutant. Une note figurera néanmoins à votre dossier personnel. Présentez-vous à mon bureau demain à 08h00.\n\nR. MAZUR"
+		},
+		"close_unchecked": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40921 : classement",
+			"body": "Inspecteur,\n\nDossier classé, c'est noté. Le Bureau des transports conteste ce classement et me rappelle que son registre est une source de fiabilité A.\n\nJe n'ai pas d'objection de principe à la clémence. J'en ai à la négligence. Lisez toutes les pièces.\n\nR. MAZUR"
+		},
+		"investigate_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40921 : enquête complémentaire accordée",
+			"body": "Inspecteur,\n\nBonne initiative. La contradiction que vous relevez met en cause le chef d'équipe B. ORLIK autant que le citoyen SEDLAR.\n\nJ'ai transmis une demande d'audition d'ORLIK. Le dossier reste ouvert à votre nom : vous en serez informé.\n\nR. MAZUR"
+		},
+		"investigate_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40921 : enquête complémentaire",
+			"body": "Inspecteur,\n\nVous demandez une enquête complémentaire sans préciser ce qu'il faudrait vérifier. Je l'accorde, cette fois.\n\nLe temps de nos enquêteurs n'est pas illimité. La prochaine demande devra être motivée par des éléments du dossier.\n\nR. MAZUR"
+		}
 	}
 }

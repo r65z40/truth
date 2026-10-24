@@ -6,7 +6,7 @@ ministère de la Sécurité nationale : il examine des dossiers, recoupe des pi�
 contradictoires et transmet des conclusions qui pèsent sur sa carrière, sur la
 vie des citoyens et sur le régime.
 
-Statut : **prototype 0.1** (menu, bureau, terminal, consultation du premier dossier).
+Statut : **MVP 0.2** (menu, bureau, terminal, premier dossier jouable de bout en bout).
 Cible : Windows via Steam en priorité, puis Linux/macOS, mobile plus tard.
 
 ## Prérequis
@@ -46,3 +46,7 @@ Depuis l'éditeur, on peut aussi ouvrir `tests/test_runner.tscn` et appuyer sur
 - [ARCHITECTURE.md](ARCHITECTURE.md) : organisation du code et des données.
 - [ROADMAP.md](ROADMAP.md) : fait, en cours, à venir.
 - [CLAUDE.md](CLAUDE.md) : règles pour les sessions de développement assistées.
+
+## Captures
+
+Voir [docs/captures](docs/captures) (régénérées avec `tests/capture_screens.tscn`).

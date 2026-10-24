@@ -29,7 +29,9 @@ func select_message(message_id: String) -> void:
 func _refresh_list() -> void:
 	for child in _message_list.get_children():
 		child.queue_free()
-	for message in GameState.messages:
+	# Le plus récent en haut.
+	for i in range(GameState.messages.size() - 1, -1, -1):
+		var message: Dictionary = GameState.messages[i]
 		var button := Button.new()
 		button.text = "%s%s\n%s" % ["" if message.read else "[NOUVEAU] ", message.subject, message.from]
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
