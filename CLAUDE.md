@@ -42,5 +42,7 @@ godot --headless --path . res://tests/test_runner.tscn # doit finir par 0 échec
 
 ## Git
 
-Un commit par étape fonctionnelle, message en français, tests au vert.
+Dépôt : github.com/r65z40/truth. Travailler sur une branche, ouvrir une pull
+request ; fen teste dans Godot et fusionne lui-même. Un commit par étape
+fonctionnelle, message en français, tests au vert.
 Mettre à jour ROADMAP.md (et GAME_DESIGN.md si le design change).

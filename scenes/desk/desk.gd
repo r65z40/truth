@@ -24,6 +24,7 @@ const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 
 func _ready() -> void:
 	GameState.state_changed.connect(_refresh_header)
+	GameState.decision_applied.connect(_on_decision_applied)
 	terminal.app_requested.connect(open_app)
 	terminal.save_requested.connect(save_game)
 	terminal.menu_requested.connect(return_to_menu)
@@ -79,6 +80,14 @@ func _refresh_header() -> void:
 	_rank_label.text = GameState.get_rank_title().to_upper()
 	var unread := GameState.get_unread_count()
 	_messages_button.text = "MESSAGES" + ("   (%d)" % unread if unread > 0 else "")
+
+
+## Après la signature d'un rapport : la réponse du supérieur s'affiche aussitôt.
+func _on_decision_applied(case_id: String, _decision_id: String, message_id: String) -> void:
+	terminal.print_line("Rapport n° %s transmis à la hiérarchie." % case_id)
+	terminal.print_line("Nouveau message reçu.", Terminal.COLOR_ALERT)
+	open_app("messages")
+	windows.messages.select_message(message_id)
 
 
 func _on_window_closed() -> void:

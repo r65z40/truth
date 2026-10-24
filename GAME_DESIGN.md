@@ -78,6 +78,25 @@ en partie falsifiés, pour des soins de l'autre côté de la frontière ; ORLIK 
 couvert en échange de services. Arrêter est « correct » pour le régime mais
 brise une famille ; classer expose le joueur ; enquêter ouvre la piste ORLIK.
 
+## Instruction et conclusion (MVP 0.2)
+
+- Chaque pièce présente des **éléments notables** que le joueur peut noter dans
+  son **carnet d'enquête**. Il en sélectionne deux et les **confronte** : le jeu
+  dit seulement s'il y a contradiction, jamais qui ment.
+- Le **formulaire de conclusion** rappelle les pièces lues et les contradictions
+  établies, puis le joueur signe une recommandation (irréversible).
+- Les effets dépendent de la décision **et** de la qualité de l'instruction :
+
+| Décision | Contradiction établie | Sans contradiction établie |
+|---|---|---|
+| Arrestation | loyauté +10, suspicion -5, influence +5 ; ORLIK sera entendu | +6 / +3 / +1 ; Mazur reproche une arrestation sans faits |
+| Classement | -8 / +15 / -3 ; convocation, note au dossier | -4 / +8 / -2 ; reproche de négligence |
+| Enquête complémentaire | +3 / 0 / +3 ; audition d'ORLIK demandée, dossier ouvert | 0 / +4 / -2 ; accordée « cette fois » |
+
+Intention : aucune option n'est gratuite. Arrêter est le plus rentable pour la
+carrière mais brise une famille ; enquêter est prudent et ouvre la piste ORLIK ;
+classer protège SEDLAR au prix de la confiance de la hiérarchie.
+
 ## Carrière
 
 Inspecteur > Analyste du renseignement > Chef de section > Directeur du
@@ -86,5 +105,7 @@ automatique (réputation, relations, résultats, choix, événements).
 
 ## Journal des décisions de design
 
+- 2026-10-24 : les conséquences récompensent l'instruction (contradiction établie)
+  plus que la décision elle-même ; le joueur confronte des éléments par paires.
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

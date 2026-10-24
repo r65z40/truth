@@ -40,6 +40,38 @@ static func get_document(case_data: Dictionary, document_id: String) -> Dictiona
 	return {}
 
 
+## Renvoie un élément notable (fact) par son identifiant, avec l'id de sa pièce
+## ajouté sous "document_id". Dictionary vide s'il n'existe pas.
+static func get_fact(case_data: Dictionary, fact_id: String) -> Dictionary:
+	for document in case_data.get("documents", []):
+		for fact in document.get("facts", []):
+			if fact.get("id") == fact_id:
+				var result: Dictionary = fact.duplicate()
+				result["document_id"] = document.id
+				return result
+	return {}
+
+
+## Confronte deux éléments notables. Renvoie la clé contredite si les deux
+## éléments portent sur le même point avec des valeurs différentes, sinon "".
+static func confront(case_data: Dictionary, fact_a_id: String, fact_b_id: String) -> String:
+	var a := get_fact(case_data, fact_a_id)
+	var b := get_fact(case_data, fact_b_id)
+	if a.is_empty() or b.is_empty() or fact_a_id == fact_b_id:
+		return ""
+	if a.key == b.key and a.value != b.value:
+		return a.key
+	return ""
+
+
+## Renvoie une décision du dossier par son identifiant.
+static func get_decision(case_data: Dictionary, decision_id: String) -> Dictionary:
+	for decision in case_data.get("decisions", []):
+		if decision.get("id") == decision_id:
+			return decision
+	return {}
+
+
 ## Liste des problèmes de structure d'un dossier (vide si le dossier est valide).
 static func validate_case(case_data: Dictionary) -> Array[String]:
 	var problems: Array[String] = []
@@ -55,6 +87,21 @@ static func validate_case(case_data: Dictionary) -> Array[String]:
 		if seen_ids.has(doc_id):
 			problems.append("identifiant de document en double : %s" % doc_id)
 		seen_ids[doc_id] = true
+		for fact in document.get("facts", []):
+			for field in ["id", "key", "value", "label"]:
+				if not fact.has(field):
+					problems.append("document %s : élément sans %s" % [doc_id, field])
+			if seen_ids.has(fact.get("id", "")):
+				problems.append("identifiant en double : %s" % fact.get("id", ""))
+			seen_ids[fact.get("id", "")] = true
+	var responses: Dictionary = case_data.get("responses", {})
+	for decision in case_data.get("decisions", []):
+		var outcomes: Array = decision.get("outcomes", [])
+		if outcomes.is_empty() or outcomes[-1].get("when") != "default":
+			problems.append("décision %s : la dernière issue doit être \"default\"" % decision.get("id", "?"))
+		for outcome in outcomes:
+			if not responses.has(outcome.get("response", "")):
+				problems.append("décision %s : réponse introuvable %s" % [decision.get("id", "?"), outcome.get("response", "")])
 	return problems
 
 

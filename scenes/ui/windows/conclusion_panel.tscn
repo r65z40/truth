@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/windows/conclusion_panel.gd" id="1_script"]
+
+[node name="ConclusionPanel" type="PanelContainer"]
+size_flags_vertical = 3
+theme_type_variation = &"DocumentPanel"
+script = ExtResource("1_script")
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Form" type="VBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="ConclusionTitle" type="Label" parent="Scroll/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+theme_override_font_sizes/font_size = 22
+autowrap_mode = 3
+
+[node name="Rule" type="ColorRect" parent="Scroll/Form"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.165, 0.141, 0.11, 0.6)
+
+[node name="ConclusionSummary" type="RichTextLabel" parent="Scroll/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentText"
+bbcode_enabled = true
+fit_content = true
+
+[node name="ChoicesTitle" type="Label" parent="Scroll/Form"]
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+text = "RECOMMANDATION DE L'INSPECTEUR :"
+
+[node name="Choices" type="VBoxContainer" parent="Scroll/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Warning" type="Label" parent="Scroll/Form"]
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+theme_override_colors/font_color = Color(0.557, 0.122, 0.122, 1)
+theme_override_font_sizes/font_size = 15
+text = "La signature engage l'agent. Une recommandation transmise ne peut pas être retirée."
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Scroll/Form"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CancelButton" type="Button" parent="Scroll/Form/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "RETOUR AU DOSSIER"
+
+[node name="SignButton" type="Button" parent="Scroll/Form/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"AlertButton"
+disabled = true
+text = "SIGNER ET TRANSMETTRE"
