@@ -73,7 +73,8 @@
 					"value": "Avertissement 1984",
 					"label": "Un avertissement pour absentéisme (1984)"
 				}
-			]
+			],
+			"veritas_remark": "Famille résidant en zone frontalière. Facteur de risque : élevé."
 		},
 		{
 			"id": "work_report",
@@ -97,7 +98,8 @@
 					"value": "B. ORLIK",
 					"label": "Présence certifiée par le chef d'équipe B. ORLIK"
 				}
-			]
+			],
+			"veritas_remark": "Document certifié par un supérieur hiérarchique. Concordance avec les attentes : élevée."
 		},
 		{
 			"id": "intercept",
@@ -132,7 +134,8 @@
 					"value": "Non identifiée",
 					"label": "Voix masculine non identifiée formellement"
 				}
-			]
+			],
+			"veritas_remark": "Correspondance vocale probable avec le citoyen 40921 : 72 %. Vocabulaire évocateur d'une organisation préalable."
 		},
 		{
 			"id": "travel_log",
@@ -191,7 +194,8 @@
 					"value": "Non systématique",
 					"label": "La photographie de la carte n'est pas toujours contrôlée"
 				}
-			]
+			],
+			"veritas_remark": "Source de fiabilité A. Déplacement vers une zone frontalière un jour ouvré."
 		}
 	],
 	"decisions": [
@@ -254,7 +258,9 @@
 						"influence": -2
 					},
 					"response": "close_unchecked",
-					"flags": {}
+					"flags": {
+						"40921.closed_unchecked": true
+					}
 				}
 			]
 		},
@@ -329,5 +335,11 @@
 			"subject": "Dossier 40921 : enquête complémentaire",
 			"body": "Inspecteur,\n\nVous demandez une enquête complémentaire sans préciser ce qu'il faudrait vérifier. Je l'accorde, cette fois.\n\nLe temps de nos enquêteurs n'est pas illimité. La prochaine demande devra être motivée par des éléments du dossier.\n\nR. MAZUR"
 		}
+	},
+	"veritas": {
+		"recommendation": "arrest",
+		"confidence": 87,
+		"rationale": "Déplacement non déclaré en zone frontalière, famille sur place, communication préparatoire. Profil compatible avec une tentative de sortie illégale du territoire.",
+		"note": "VERITAS ignore les motifs humains (mère malade) et surestime la fiabilité de l'interception. Objectif caché : maximiser le taux de concordance publié."
 	}
 }

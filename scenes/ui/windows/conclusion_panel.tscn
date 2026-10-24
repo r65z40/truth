@@ -35,6 +35,18 @@ theme_type_variation = &"DocumentText"
 bbcode_enabled = true
 fit_content = true
 
+[node name="VeritasBox" type="PanelContainer" parent="Scroll/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TerminalPanel"
+
+[node name="VeritasAdvice" type="Label" parent="Scroll/Form/VeritasBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+
 [node name="ChoicesTitle" type="Label" parent="Scroll/Form"]
 layout_mode = 2
 theme_type_variation = &"DocumentLabel"

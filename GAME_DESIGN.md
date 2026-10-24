@@ -97,6 +97,26 @@ Intention : aucune option n'est gratuite. Arrêter est le plus rentable pour la
 carrière mais brise une famille ; enquêter est prudent et ouvre la piste ORLIK ;
 classer protège SEDLAR au prix de la confiance de la hiérarchie.
 
+## Journées et conséquences différées (0.3)
+
+Le joueur termine sa journée (« FIN DE SERVICE »). Le lendemain apporte :
+- **Arrestation** : requête de Vera SEDLAR, l'épouse, classée sans suite par
+  l'administration. Le coût humain devient visible.
+- **Classement malgré la contradiction** : note versée au dossier personnel.
+- **Classement sans instruction** : dossier réattribué à l'inspecteur KREMER.
+- **Enquête complémentaire fondée** : ORLIK avoue avoir couvert SEDLAR, et parle
+  d'une mère malade. Drapeau `40921.orlik_confessed` pour la suite.
+- **Aucune décision** : rappel de MAZUR, suspicion +3.
+- Bulletin du jour : contrôle renforcé sur la ligne de Halvek (conséquence
+  systémique) et taux de concordance VERITAS de 91 % (pression implicite).
+
+## VERITAS (0.3)
+
+VERITAS commente chaque pièce et recommande l'arrestation à 87 %. Son raisonnement
+est plausible mais aveugle aux motifs humains, et il surestime l'interception.
+Son objectif caché : maximiser le taux de concordance publié. Le jeu mémorise si
+le joueur a suivi VERITAS (`veritas_agreed`), pour de futures réactions.
+
 ## Carrière
 
 Inspecteur > Analyste du renseignement > Chef de section > Directeur du

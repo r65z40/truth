@@ -12,7 +12,8 @@ signal game_loaded
 ## Historique des versions :
 ## 1 : prototype 0.1.
 ## 2 : carnet d'enquête (noted_facts, contradictions_found) dans chaque dossier.
-const SAVE_VERSION := 2
+## 3 : événements différés déjà déclenchés (fired_events).
+const SAVE_VERSION := 3
 const DEFAULT_PATH := "user://savegame.json"
 
 ## Fichier utilisé quand aucun chemin n'est précisé (les tests le redirigent).
@@ -88,5 +89,8 @@ func _migrate(payload: Dictionary) -> Dictionary:
 			case_state["noted_facts"] = case_state.get("noted_facts", [])
 			case_state["contradictions_found"] = case_state.get("contradictions_found", [])
 		version = 2
+	if version == 2:
+		payload.state["fired_events"] = payload.state.get("fired_events", [])
+		version = 3
 	payload.save_version = version
 	return payload

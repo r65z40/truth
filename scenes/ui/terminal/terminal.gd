@@ -8,6 +8,7 @@ extends PanelContainer
 
 signal app_requested(app_name: String)
 signal save_requested
+signal end_day_requested
 signal menu_requested
 
 const COLOR_DIM := "#1f6b3f"
@@ -15,7 +16,7 @@ const COLOR_ALERT := "#d04a3a"
 const COLOR_TEXT := "#e8e4d8"
 const CHARS_PER_SECOND := 400.0
 
-const QUICK_COMMANDS := ["AIDE", "DOSSIERS", "MESSAGES", "ARCHIVES", "IDENT", "EFFACER"]
+const QUICK_COMMANDS := ["AIDE", "DOSSIERS", "MESSAGES", "VERITAS", "IDENT", "EFFACER"]
 
 var _typing_tween: Tween
 
@@ -72,11 +73,13 @@ func submit_command(raw: String) -> void:
 			print_line("GRADE : %s   AFFECTATION : Section 4" % GameState.get_rank_title())
 		TerminalCommands.Action.SAVE:
 			save_requested.emit()
+		TerminalCommands.Action.END_DAY:
+			end_day_requested.emit()
 		TerminalCommands.Action.MENU:
 			print_line("Fermeture de session...", COLOR_DIM)
 			menu_requested.emit()
 		TerminalCommands.Action.VERITAS:
-			print_line("VERITAS : Je suis à votre service, inspecteur. Mes fonctions d'analyse vous seront ouvertes prochainement.")
+			print_line("%s : %s" % [Veritas.NAME, Veritas.terminal_reply(GameState.cases)])
 		TerminalCommands.Action.DEBUG_STATE:
 			if OS.is_debug_build():
 				print_line("[DEV] Loyauté %d  Suspicion %d  Influence %d" % [GameState.get_indicator("loyalty"),

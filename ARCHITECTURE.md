@@ -27,6 +27,7 @@ data/
   cases/index.json            liste ordonnée des dossiers
   cases/case_<id>.json        un dossier = un fichier
   messages/initial_messages.json
+  events/events.json          événements différés (conséquences, rappels, bulletins)
 scripts/
   autoload/
     game_state.gd             état de la partie + signal state_changed
@@ -38,6 +39,8 @@ scripts/
     fictional_calendar.gd     date du jeu
     career.gd                 grades
     decision_rules.gd         résolution d'une décision (issue, effets, réponse)
+    event_rules.gd            événements dus au début d'une journée
+    veritas.gd                VERITAS déterministe (remarques, recommandation)
   ui/ministry_window.gd       cadre commun des fenêtres
 scenes/
   main_menu/                  menu principal
@@ -72,6 +75,30 @@ tests/                        tests automatiques et captures d'écran
 - **Conclusion** : `ConclusionPanel.submitted` > `GameState.apply_decision()` >
   `DecisionRules.resolve()` > effets, statut, drapeaux, message du supérieur >
   signal `decision_applied` > le bureau ouvre la messagerie sur la réponse.
+- **Fin de service** : `FIN` (deux fois si un dossier attend) > `Desk.end_day()` >
+  `GameState.end_day()` > `EventRules.due_events()` > effets, drapeaux, messages >
+  sauvegarde automatique > nouvelle session au terminal.
+
+## Événements différés (`data/events/events.json`)
+
+```jsonc
+{"id": "40921_orlik_hearing",
+ "conditions": {"min_day": 1, "requires_flags": ["40921.orlik_hearing_requested"],
+                "forbidden_flags": [], "undecided_cases": []},
+ "effects": {"influence": 2}, "set_flags": {"40921.orlik_confessed": true},
+ "message": {"from": "...", "subject": "...", "body": "..."},
+ "repeatable": false}
+```
+
+Évalués à chaque nouvelle journée, dans l'ordre du fichier. Les drapeaux posés par
+les décisions (`flags` des issues) sont le lien entre un dossier et ses suites.
+
+## VERITAS
+
+`scripts/core/veritas.gd` ne lit que les données : `veritas_remark` sur chaque pièce,
+bloc `veritas` du dossier (`recommendation`, `confidence`, `rationale`, `note` de
+scénario non affichée). Ses avis sont écrits par le scénario et peuvent être faux.
+Un futur modèle de langage ne ferait que reformuler ces résultats, côté serveur.
 
 ## Format d'un dossier (`data/cases/case_<id>.json`)
 
@@ -96,6 +123,7 @@ tests/                        tests automatiques et captures d'écran
     ]
   }],
   "responses": {"arrest_found": {"from": "...", "subject": "...", "body": "..."}},
+  "veritas": {"recommendation": "arrest", "confidence": 87, "rationale": "..."},
   "truth": { ... }                             // vérité objective, jamais affichée
 }
 ```
