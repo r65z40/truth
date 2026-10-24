@@ -133,7 +133,10 @@ func end_day() -> void:
 	for window: MinistryWindow in windows.values():
 		window.hide()
 	_scrim.hide()
-	_day_transition_label.text = "FIN DE SERVICE\n\n%s" % FictionalCalendar.format_long(GameState.day_index + 1)
+	var next_day := GameState.day_index + 1
+	var gap := FictionalCalendar.days_since_previous(next_day)
+	var ellipsis := "\n\n%d jours plus tard" % gap if gap > 2 else ""
+	_day_transition_label.text = "FIN DE SERVICE%s\n\n%s" % [ellipsis, FictionalCalendar.format_long(next_day)]
 	_day_transition.modulate.a = 0.0
 	_day_transition.show()
 	GameState.end_day()

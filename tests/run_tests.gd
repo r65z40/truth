@@ -135,7 +135,15 @@ func test_document_rendering_escapes_bbcode() -> void:
 
 func test_calendar() -> void:
 	check(FictionalCalendar.format_long(0) == "LUNDI 3 NOVEMBRE 1986", "jour 0 : %s" % FictionalCalendar.format_long(0))
-	check(FictionalCalendar.format_short(29) == "02.12.1986", "jour 29 : %s" % FictionalCalendar.format_short(29))
+	check(FictionalCalendar.service_days().size() == 20, "20 journées de service")
+	check(FictionalCalendar.format_long(4) == "VENDREDI 7 NOVEMBRE 1986", "journée 4 : %s" % FictionalCalendar.format_long(4))
+	check(FictionalCalendar.format_long(5) == "LUNDI 10 NOVEMBRE 1986", "le dimanche est sauté : %s" % FictionalCalendar.format_long(5))
+	check(FictionalCalendar.format_long(19) == "SAMEDI 6 DÉCEMBRE 1986", "dernière journée : %s" % FictionalCalendar.format_long(19))
+	check(FictionalCalendar.format_short(20) == "07.12.1986", "au-delà, jour par jour : %s" % FictionalCalendar.format_short(20))
+	check(FictionalCalendar.days_since_previous(1) == 1 and FictionalCalendar.days_since_previous(5) == 3
+			and FictionalCalendar.days_since_previous(15) == 11, "écarts entre journées (ellipses)")
+	check(FictionalCalendar.act_for_day(0).number == 1 and FictionalCalendar.act_for_day(4).number == 1
+			and FictionalCalendar.act_for_day(5).number == 2 and FictionalCalendar.act_for_day(19).title == "MIROIR", "actes")
 
 
 # --- État de la partie -------------------------------------------------------
