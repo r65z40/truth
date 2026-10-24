@@ -198,6 +198,120 @@
 				"subject": "Exécution de la sanction B. ORLIK",
 				"body": "À l'attention de la Section 4.\n\nB. ORLIK a été rétrogradé ouvrier qualifié à compter de ce jour. Son droit de signature des certificats de présence lui est retiré.\n\nNous signalons que trois ouvriers de l'atelier des chaudières ne se sont pas présentés ce matin. Aucun certificat n'a été produit.\n\nLa Direction"
 			}
+		},
+		{
+			"id": "assign_52044",
+			"conditions": {
+				"min_day": 2
+			},
+			"assign_cases": [
+				"52044"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier : n° 52044",
+				"body": "Inspecteur,\n\nL'Inspection du commerce signale la Boulangerie d'État n° 12, rue du Moulin. Elle encaisse un tiers de tickets de pain de plus que le quartier ne compte d'habitants.\n\nLe dossier 52044 vous est attribué. C'est une affaire de pain, mais le pain est une affaire d'État.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "daily_bulletin_2",
+			"conditions": {
+				"min_day": 2
+			},
+			"effects": {},
+			"message": {
+				"from": "Service central d'information",
+				"subject": "Bulletin intérieur du 5 novembre",
+				"body": "RAVITAILLEMENT : la ration de pain du mois de novembre est maintenue à son niveau d'octobre. Les rumeurs de pénurie sont l'œuvre d'éléments hostiles.\n\nCULTURE : le recueil « Les Saisons de Velmira » est retiré des bibliothèques municipales pour réexamen.\n\nMÉTÉO : premières gelées attendues sur le District 9.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		},
+		{
+			"id": "52044_reminder",
+			"conditions": {
+				"min_day": 3,
+				"undecided_cases": [
+					"52044"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Dossier 52044 : en attente",
+				"body": "Inspecteur,\n\nLa Direction du commerce demande où en est le dossier de la boulangerie. La file d'attente rue du Moulin commence à six heures du matin, et les gens parlent.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "52044_petition",
+			"conditions": {
+				"min_day": 3,
+				"requires_flags": [
+					"52044.baker_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Pétition des habitants de la rue du Moulin",
+				"body": "Monsieur l'Inspecteur,\n\nNous, habitants des blocs 1 à 6, demandons la réouverture de la boulangerie et le retour de Madame KOVAC. Elle a nourri le quartier pendant l'hiver 1984, quand les livraisons ne venaient plus.\n\nDepuis sa fermeture, nous allons au District 5. Les gens aux carnets neufs, eux, y sont déjà.\n\n41 signatures.\n\n[Mention du Bureau des requêtes : pétition collective, irrecevable.]"
+			}
+		},
+		{
+			"id": "52044_bureau_cold",
+			"conditions": {
+				"min_day": 3,
+				"requires_flags": [
+					"52044.drazek_exposed"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"player.noticed_by_halm": true
+			},
+			"message": {
+				"from": "Direction du ravitaillement, Ministère de la Sécurité nationale",
+				"subject": "Au sujet de l'agent P. DRAZEK",
+				"body": "Agent VOSK,\n\nLa Direction prend acte de votre rapport. L'agent DRAZEK a été suspendu.\n\nLa Direction rappelle que les irrégularités internes au ministère doivent être signalées par la voie hiérarchique, et non à l'occasion d'un dossier civil. Votre initiative a été portée à l'attention du Directeur HALM.\n\nLe Directeur du ravitaillement"
+			}
+		},
+		{
+			"id": "52044_gift",
+			"conditions": {
+				"min_day": 3,
+				"requires_flags": [
+					"52044.closed_knowing"
+				]
+			},
+			"effects": {
+				"influence": 2
+			},
+			"set_flags": {
+				"player.bribed": true
+			},
+			"message": {
+				"from": "Expéditeur inconnu, déposé à l'accueil",
+				"subject": "Pli à votre nom",
+				"body": "[Une enveloppe kraft, sans timbre. À l'intérieur, un carnet de rationnement complet pour le mois de novembre : pain, sucre, café.]\n\n[Le carnet est établi au nom de SIMKO Pavol, Bloc 1, app. 7.]\n\n[Aucun mot.]"
+			}
+		},
+		{
+			"id": "52044_kovac_thanks",
+			"conditions": {
+				"min_day": 4,
+				"requires_flags": [
+					"52044.drazek_exposed"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, déposé à l'accueil",
+				"subject": "Sans objet",
+				"body": "Pour l'inspecteur qui s'occupe de la boulangerie de la rue du Moulin.\n\nOn m'a dit de ne pas chercher à savoir qui. Je ne cherche pas.\n\nIl y a une miche pour vous chaque matin, si vous passez un jour par la rue du Moulin. Personne ne vous demandera de ticket.\n\nZ. K."
+			}
 		}
 	]
 }

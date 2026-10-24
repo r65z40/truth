@@ -45,6 +45,9 @@ func _run() -> void:
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
+		"test_case_52044_structure",
+		"test_case_52044_decisions",
+		"test_case_52044_consequences",
 		"test_assessment",
 		"test_guidance_steps",
 		"test_terminal_command_parsing",
@@ -344,7 +347,8 @@ func test_end_day_without_decision() -> void:
 	check(GameState.messages[-1].date_label == "04.11.1986", "messages datés du jour")
 	check(days == [1], "signal day_started émis")
 	var next_ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
-	check(next_ids == ["51307_reminder"], "le lendemain, seul le rappel du nouveau dossier : %s" % [next_ids])
+	check(next_ids == ["51307_reminder", "assign_52044", "daily_bulletin_2"],
+			"le lendemain : rappel, dossier 52044 et bulletin : %s" % [next_ids])
 	GameState.day_started.disconnect(on_day)
 
 
@@ -469,6 +473,85 @@ func test_case_51307_consequences() -> void:
 	_play_first_case("arrest", true)
 	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
 	check("51307_reminder" in ids, "rappel si le dossier 51307 traîne")
+
+
+## Joue jusqu'au jour 2 (attribution du dossier 52044), après un choix sur le 51307.
+func _reach_case_52044(decision_51307: String) -> void:
+	_play_first_case("investigate", true)
+	if decision_51307 != "":
+		GameState.confront_facts("51307", "f_cert_reason", "f_clock_ok")
+		GameState.apply_decision("51307", decision_51307)
+	GameState.end_day()
+
+
+func test_case_52044_structure() -> void:
+	var case_data := CaseLibrary.get_case("52044")
+	check(CaseLibrary.validate_case(case_data).is_empty(), "52044 : dossier valide %s" % [CaseLibrary.validate_case(case_data)])
+	var keys := CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	for key in ["sector.books", "horvat.status", "lenska.status"]:
+		check(key in keys, "52044 : contradiction possible sur %s" % key)
+	check(keys.size() == 3, "52044 : exactement 3 contradictions (%s)" % [keys])
+	check(CaseLibrary.confront(case_data, "f_reg_horvat", "f_death_horvat") == "horvat.status", "52044 : carnet délivré à un mort")
+	check(CaseLibrary.confront(case_data, "f_rep_expected", "f_reg_total") == "sector.books", "52044 : 1 080 contre 1 412 carnets")
+	check(CaseLibrary.confront(case_data, "f_reg_horvat", "f_death_lenska") == "", "52044 : deux personnes différentes ne se contredisent pas")
+	check(Veritas.recommendation(case_data).decision_id == "arrest_baker", "52044 : VERITAS accuse la boulangère")
+	# Attribution au jour 2 seulement.
+	GameState.end_day()
+	check(not GameState.cases.has("52044"), "52044 : pas encore attribué le jour 1")
+	GameState.end_day()
+	check(GameState.cases.has("52044"), "52044 : attribué le jour 2")
+	var base := ["identity", "commerce_report", "issue_register", "death_register", "kovac_statement"]
+	for scenario in [["", []], ["arrest", ["petras_statement"]], ["close", ["milice_note"]], ["demote", []]]:
+		_reach_case_52044(scenario[0])
+		if scenario[0] == "close":
+			GameState.end_day()
+		var expected: Array = base.duplicate()
+		expected.append_array(scenario[1])
+		var ids := _visible_document_ids("52044")
+		check(ids == expected, "51307 « %s » > pièces du 52044 %s" % [scenario[0], ids])
+
+
+func test_case_52044_decisions() -> void:
+	var case_data := CaseLibrary.get_case("52044")
+	var scenarios := [
+		["report_bureau", [], "bureau_unfounded"],
+		["report_bureau", ["sector.books"], "bureau_partial"],
+		["report_bureau", ["horvat.status"], "bureau_proved"],
+		["report_bureau", ["lenska.status"], "bureau_proved"],
+		["report_bureau", ["sector.books", "horvat.status"], "bureau_proved"],
+		["arrest_baker", [], "arrest_baker"],
+		["arrest_baker", ["sector.books"], "arrest_baker_knowing"],
+		["close", [], "close"],
+		["close", ["horvat.status"], "close_knowing"],
+	]
+	for scenario in scenarios:
+		var result := DecisionRules.resolve(case_data, {"contradictions_found": scenario[1]}, scenario[0])
+		check(result.response_id == scenario[2], "52044 %s %s > %s (obtenu %s)" % [scenario[0], scenario[1], scenario[2], result.get("response_id")])
+	check(DecisionRules.is_condition_met("contradiction:horvat.status", {"contradictions_found": ["horvat.status"]}), "condition contradiction:<clé> vraie")
+	check(not DecisionRules.is_condition_met("contradiction:horvat.status", {"contradictions_found": ["sector.books"]}), "condition contradiction:<clé> fausse")
+
+
+func test_case_52044_consequences() -> void:
+	var scenarios := [
+		["arrest_baker", ["f_rep_expected", "f_reg_total"], "52044_petition", "52044.innocent_condemned"],
+		["report_bureau", ["f_reg_horvat", "f_death_horvat"], "52044_bureau_cold", "player.noticed_by_halm"],
+		["close", ["f_reg_lenska", "f_death_lenska"], "52044_gift", "player.bribed"],
+	]
+	for scenario in scenarios:
+		_reach_case_52044("demote")
+		check(GameState.confront_facts("52044", scenario[1][0], scenario[1][1]) != "", "52044 : contradiction établie pour %s" % scenario[0])
+		GameState.apply_decision("52044", scenario[0])
+		var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+		check(scenario[2] in ids, "52044 %s > %s le lendemain (%s)" % [scenario[0], scenario[2], ids])
+		check(GameState.flags.get(scenario[3]) == true, "52044 %s : drapeau %s" % [scenario[0], scenario[3]])
+		check(not "52044_reminder" in ids, "52044 : pas de rappel après la décision")
+	_reach_case_52044("demote")
+	GameState.apply_decision("52044", "report_bureau")
+	GameState.end_day()
+	check(GameState.flags.get("52044.drazek_warned") == true, "52044 : accusation sans preuve > DRAZEK prévenu")
+	_reach_case_52044("demote")
+	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("52044_reminder" in ids, "52044 : rappel si le dossier traîne")
 
 
 func test_guidance_steps() -> void:
