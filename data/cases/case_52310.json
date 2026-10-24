@@ -88,7 +88,7 @@
 			"source": "Service de la censure, Section 7",
 			"reliability": "A",
 			"date": "1986-11-02",
-			"veritas_remark": "Analyse concordante avec le module de lecture de VERITAS. Probabilité de message codé : 91 %.",
+			"veritas_remark": "Analyse concordante avec le module de lecture de VERITAS. Source de conformité maximale.",
 			"author": "M. DUBEK, analyste principal",
 			"body": "Objet : recueil « Les Saisons de Velmira », T. VARGA, édition revue de 1986.\n\nLes initiales des six vers du poème « Novembre » forment le mot HALVEK. La ville de Halvek est située en zone frontalière. Le poème évoque un train, un quai, des mains « gardées » et des « kilomètres » : vocabulaire caractéristique des filières de passage.\n\nL'auteur travaille dans une imprimerie d'État et a pu y faire circuler d'autres textes.\n\nConclusion : message codé, à destination d'un réseau de passeurs. Interpellation recommandée.",
 			"facts": [
@@ -422,8 +422,59 @@
 	},
 	"veritas": {
 		"recommendation": "arrest",
-		"confidence": 91,
-		"rationale": "Acrostiche H-A-L-V-E-K : correspondance avec une ville de la zone frontalière. Vocabulaire de passage (train, quai, kilomètres). Accès de l'auteur aux presses d'État. Probabilité de message codé : 91 %.",
+		"rationale": "Acrostiche H-A-L-V-E-K : correspondance avec une ville de la zone frontalière. Vocabulaire de passage (train, quai, kilomètres). Accès de l'auteur aux presses d'État. Hypothèse retenue : message codé.",
+		"factors": [
+			{
+				"id": "acrostic",
+				"label": "Acrostiche H-A-L-V-E-K (analyse de la Section 7)",
+				"category": "state_source",
+				"weight": 9,
+				"decision": "arrest",
+				"document": "censor_report"
+			},
+			{
+				"id": "vocabulary",
+				"label": "Vocabulaire de passage : train, quai, kilomètres",
+				"category": "border",
+				"weight": 6,
+				"decision": "arrest",
+				"document": "poem_1986"
+			},
+			{
+				"id": "press",
+				"label": "Accès de l'auteur aux presses d'État",
+				"category": "risk",
+				"weight": 8,
+				"decision": "arrest",
+				"document": "identity"
+			},
+			{
+				"id": "alone",
+				"label": "Veuf, sans attache familiale",
+				"category": "risk",
+				"weight": 4,
+				"decision": "arrest",
+				"document": "identity"
+			},
+			{
+				"id": "halina",
+				"label": "Édition de 1979 : initiales H-A-L-I-N-A",
+				"category": "out_of_period",
+				"weight": 15,
+				"decision": "no_code",
+				"document": "poem_1979",
+				"requires_contradiction": "poem.acrostic"
+			},
+			{
+				"id": "scar",
+				"label": "Signe particulier différent en 1979",
+				"category": "out_of_period",
+				"weight": 15,
+				"decision": "identity_error",
+				"document": "reader_card",
+				"requires_contradiction": "varga.mark"
+			}
+		],
 		"note": "VERITAS n'analyse que l'édition de 1986 fournie par la Section 7 et ignore les documents « hors période »."
 	},
 	"truth": {

@@ -395,8 +395,49 @@
 	},
 	"veritas": {
 		"recommendation": "close",
-		"confidence": 71,
 		"rationale": "Membre du Parti depuis 1961, décoré. Dénonciation anonyme de fiabilité D. Risque pour la sécurité de l'État : faible. Une procédure fragiliserait un réseau de coopération utile.",
+		"factors": [
+			{
+				"id": "party",
+				"label": "Membre du Parti depuis 1961, décoré",
+				"category": "party",
+				"weight": 8,
+				"decision": "close",
+				"document": "identity"
+			},
+			{
+				"id": "network",
+				"label": "Frère capitaine de la Milice : réseau de coopération",
+				"category": "network",
+				"weight": 6,
+				"decision": "close",
+				"document": "identity"
+			},
+			{
+				"id": "anonymous",
+				"label": "Accusation par lettre anonyme, fiabilité D",
+				"category": "anonymous",
+				"weight": 6,
+				"decision": "close",
+				"document": "anonymous"
+			},
+			{
+				"id": "clock",
+				"label": "Horloge en état de marche selon le service technique",
+				"category": "state_source",
+				"weight": 3,
+				"decision": "arrest",
+				"document": "clock_log"
+			},
+			{
+				"id": "certs",
+				"label": "Certificats contredits par le relevé technique",
+				"category": "established_fact",
+				"weight": 12,
+				"decision": "arrest",
+				"requires_contradiction": "clock.status.october"
+			}
+		],
 		"note": "VERITAS protège les informateurs de la Milice : son objectif caché est la stabilité des réseaux de renseignement, pas la vérité."
 	},
 	"truth": {

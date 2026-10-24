@@ -109,10 +109,18 @@ affiche ces notifications brèves (toast). Les sauvegardes contiennent un résum
 
 ## VERITAS
 
-`scripts/core/veritas.gd` ne lit que les données : `veritas_remark` sur chaque pièce,
-bloc `veritas` du dossier (`recommendation`, `confidence`, `rationale`, `note` de
-scénario non affichée). Ses avis sont écrits par le scénario et peuvent être faux.
-Un futur modèle de langage ne ferait que reformuler ces résultats, côté serveur.
+`scripts/core/veritas.gd` ne lit que les données et les pièces visibles par
+l'agent. Chaque pièce porte une `veritas_remark` écrite. La recommandation est
+calculée : pour chaque décision, **indice de conformité** = `base` + somme des
+`weight` x multiplicateur de la `category` des facteurs du bloc `veritas.factors`
+(paramètres cachés dans `data/veritas.json`), borné entre 1 et 99. C'est un score
+institutionnel, pas une probabilité. Un facteur ne compte que si sa pièce est
+visible et, s'il a `requires_contradiction`, si l'agent a établi cette
+contradiction. `VERITAS POURQUOI` (terminal) et le formulaire de conclusion
+montrent les 3 facteurs principaux ; les multiplicateurs n'apparaissent qu'avec le
+drapeau `veritas.params_known`. `veritas.note` est une note de scénario jamais
+affichée. Un futur modèle de langage ne ferait que reformuler ces résultats,
+côté serveur.
 
 ## Format d'un dossier (`data/cases/case_<id>.json`)
 

@@ -445,8 +445,57 @@
 	},
 	"veritas": {
 		"recommendation": "arrest_baker",
-		"confidence": 83,
-		"rationale": "La gérante manipule physiquement les tickets. Le Bureau du ravitaillement est un service de l'État, fiabilité A : son registre ne peut pas être mis en doute. Probabilité de détournement au point de vente : élevée.",
+		"rationale": "La gérante manipule physiquement les tickets. Le Bureau du ravitaillement est un service de l'État, fiabilité A : son registre ne peut pas être mis en doute. Risque de détournement au point de vente : élevé.",
+		"factors": [
+			{
+				"id": "handling",
+				"label": "Manipulation physique des tickets par la gérante",
+				"category": "risk",
+				"weight": 10,
+				"decision": "arrest_baker",
+				"document": "commerce_report"
+			},
+			{
+				"id": "register",
+				"label": "Registre du Bureau du ravitaillement, service de l'État",
+				"category": "state_source",
+				"weight": 7,
+				"decision": "arrest_baker",
+				"document": "issue_register"
+			},
+			{
+				"id": "gap",
+				"label": "Écart de 31 % au point de vente",
+				"category": "risk",
+				"weight": 6,
+				"decision": "arrest_baker",
+				"document": "commerce_report"
+			},
+			{
+				"id": "nonmember",
+				"label": "Sujet non membre du Parti",
+				"category": "risk",
+				"weight": 6,
+				"decision": "arrest_baker",
+				"document": "identity"
+			},
+			{
+				"id": "dead",
+				"label": "Carnets délivrés à des personnes décédées",
+				"category": "established_fact",
+				"weight": 20,
+				"decision": "report_bureau",
+				"requires_contradiction": "horvat.status"
+			},
+			{
+				"id": "dead2",
+				"label": "Carnets délivrés à des personnes décédées",
+				"category": "established_fact",
+				"weight": 20,
+				"decision": "report_bureau",
+				"requires_contradiction": "lenska.status"
+			}
+		],
 		"note": "VERITAS accorde une fiabilité maximale à tout document d'un service de l'État. Il ne croise pas les registres entre services."
 	},
 	"truth": {

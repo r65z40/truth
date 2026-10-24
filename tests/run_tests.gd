@@ -42,6 +42,7 @@ func _run() -> void:
 		"test_delayed_consequences",
 		"test_save_migration_from_v2",
 		"test_veritas",
+		"test_veritas_model",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -398,7 +399,7 @@ func test_veritas() -> void:
 	check(Veritas.terminal_reply(GameState.get_condition_state()).contains("4 pièce(s) non consultée(s)"), "VERITAS signale les pièces non lues")
 	for document in case_data.documents:
 		GameState.mark_document_viewed("40921", document.id)
-	check(Veritas.terminal_reply(GameState.get_condition_state()).contains("Indice de confiance : 87"), "puis donne sa recommandation")
+	check(Veritas.terminal_reply(GameState.get_condition_state()).contains("Indice de conformité : 87"), "puis donne sa recommandation")
 	GameState.apply_decision("40921", "arrest")
 	check(Veritas.terminal_reply(GameState.get_condition_state()).begins_with("Aucun dossier"), "rien à signaler une fois le dossier traité")
 	check(GameState.decisions[0].veritas_agreed == true, "accord avec VERITAS mémorisé")
@@ -407,6 +408,38 @@ func test_veritas() -> void:
 # --- Dossier 51307 (ORLIK) ---------------------------------------------------
 
 ## Joue le dossier 40921 avec une décision donnée, puis passe au lendemain.
+func test_veritas_model() -> void:
+	var expected := {"40921": ["arrest", 87], "51307": ["close", 71], "52044": ["arrest_baker", 83], "52310": ["arrest", 91]}
+	for case_id in expected:
+		var case_data := CaseLibrary.get_case(case_id)
+		var advice := Veritas.recommendation(case_data)
+		check(advice.decision_id == expected[case_id][0] and advice.confidence == expected[case_id][1],
+				"%s : indice calculé %s %d (obtenu %s %s)" % [case_id, expected[case_id][0], expected[case_id][1], advice.decision_id, advice.confidence])
+		check(advice.decision_id == case_data.veritas.recommendation, "%s : recommandation déclarée = indice le plus fort" % case_id)
+	var c52044 := CaseLibrary.get_case("52044")
+	var before: Dictionary = Veritas.scores(c52044)
+	var after: Dictionary = Veritas.scores(c52044, {"contradictions_found": ["horvat.status"]})
+	check(after.report_bureau.score == before.report_bureau.score + 20, "un fait établi par l'agent compte pour VERITAS")
+	check(Veritas.recommendation(c52044, {"contradictions_found": ["horvat.status", "lenska.status"]}).decision_id == "arrest_baker",
+			"VERITAS maintient son avis malgré les faits (biais de la source d'État)")
+	var c52310 := CaseLibrary.get_case("52310")
+	var halina: Dictionary = Veritas.scores(c52310, {"contradictions_found": ["poem.acrostic"]})
+	check(halina.no_code.score == 40 and halina.no_code.factors.size() == 1 and halina.no_code.factors[0].contribution == 0.0,
+			"un document hors période pèse zéro (multiplicateur caché)")
+	var hidden := c52044.duplicate(true)
+	hidden.documents = hidden.documents.filter(func(d: Dictionary) -> bool: return d.id != "issue_register")
+	check(Veritas.scores(hidden).arrest_baker.score == 62, "un facteur dont la pièce est absente ne compte pas")
+	var plain := Veritas.explain(CaseLibrary.get_case("40921"))
+	check(plain.size() == 3 and plain[0].begins_with("Déplacement non déclaré") and not plain[0].contains(" x "),
+			"VERITAS POURQUOI : 3 facteurs, sans multiplicateur (%s)" % [plain])
+	var detailed := Veritas.explain(CaseLibrary.get_case("40921"), {}, true)
+	check(detailed[0].contains("poids 8 x 2 = 16"), "avec les paramètres connus, le multiplicateur apparaît (%s)" % detailed[0])
+	for document_id in ["identity", "work_report", "intercept", "travel_log"]:
+		GameState.mark_document_viewed("40921", document_id)
+	var reply := Veritas.terminal_reply(GameState.get_condition_state(), PackedStringArray(["POURQUOI"]))
+	check(reply.contains("Facteurs principaux") and reply.contains("Famille résidant à Halvek"), "commande VERITAS POURQUOI")
+
+
 func _play_first_case(decision_id: String, establish_contradiction: bool) -> void:
 	GameState.new_game()
 	if establish_contradiction:
@@ -749,7 +782,9 @@ func test_investigation_and_conclusion_flow() -> void:
 	check(conclusion.get_node("%ConclusionSummary").get_parsed_text().contains("Présent à son poste"),
 			"le formulaire rappelle la contradiction établie")
 	check(conclusion.get_node("%SignButton").disabled, "signature impossible sans choix")
-	check(conclusion.get_node("%VeritasAdvice").text.contains("87 %"), "le formulaire affiche l'avis de VERITAS")
+	check(conclusion.get_node("%VeritasAdvice").text.contains("indice de conformité 87")
+			and conclusion.get_node("%VeritasAdvice").text.contains("Facteurs : Déplacement non déclaré"),
+			"le formulaire affiche l'avis de VERITAS et ses facteurs")
 	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
 	conclusion.get_node("%SignButton").pressed.emit()
 	await get_tree().process_frame

@@ -50,7 +50,7 @@ const HELP_LINES := [
 	"  PROFIL     consulter votre dossier personnel",
 	"  IDENT      afficher l'identité de l'agent",
 	"  DATE       afficher la date du jour",
-	"  VERITAS    consulter le système d'analyse",
+	"  VERITAS    consulter le système d'analyse (VERITAS POURQUOI : détail)",
 	"  FIN        terminer la journée de service",
 	"  SAUVER     enregistrer la session",
 	"  EFFACER    effacer l'écran",
