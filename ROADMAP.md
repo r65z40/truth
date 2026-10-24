@@ -23,17 +23,25 @@
 - [x] Sauvegarde v2 avec migration automatique des sauvegardes v1
 - [x] Commande de développement ETAT (indicateurs, versions debug uniquement)
 
+## Fait : 0.3 (2026-10-24)
+
+- [x] Fin de service : passage au jour suivant (avec confirmation si un dossier attend), transition, sauvegarde automatique
+- [x] Événements différés en données (`data/events/events.json`) : conséquences du dossier 40921, rappel, bulletin
+- [x] VERITAS déterministe : remarque sur chaque pièce, recommandation chiffrée dans le formulaire, réponses au terminal
+- [x] Accord ou désaccord avec VERITAS mémorisé dans l'historique des décisions
+- [x] Sauvegarde v3 (migration des v1 et v2)
+
 ## Prochaine itération
 
-- [ ] Passage au jour suivant (« fin de service »), conséquence différée du dossier 40921
-- [ ] VERITAS déterministe : remarque sur les pièces et recommandation dans le formulaire
-- [ ] Deuxième dossier, lié aux choix du premier (piste ORLIK)
+- [ ] Deuxième dossier, lié aux choix du premier (piste ORLIK, ou KREMER si réattribution)
+- [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
+- [ ] Sons d'ambiance (terminal, tampon de signature)
 
 ## Ensuite
 
 - [ ] Troisième dossier, personnages récurrents (ORLIK, MAZUR)
 - [ ] Chronologie et association de preuves
-- [ ] Sons d'ambiance (terminal, tampons), polices libres embarquées
+- [ ] Polices libres embarquées
 - [ ] Preset d'export Windows, premiers tests sur machine cible
 
 ## Plus tard

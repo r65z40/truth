@@ -6,7 +6,7 @@ ministère de la Sécurité nationale : il examine des dossiers, recoupe des pi�
 contradictoires et transmet des conclusions qui pèsent sur sa carrière, sur la
 vie des citoyens et sur le régime.
 
-Statut : **MVP 0.2** (menu, bureau, terminal, premier dossier jouable de bout en bout).
+Statut : **0.3** (premier dossier jouable de bout en bout, journées, conséquences différées, VERITAS).
 Cible : Windows via Steam en priorité, puis Linux/macOS, mobile plus tard.
 
 ## Prérequis

@@ -7,6 +7,8 @@ extends Node
 signal state_changed
 ## Émis après une décision : le bureau s'en sert pour afficher la réponse du supérieur.
 signal decision_applied(case_id: String, decision_id: String, message_id: String)
+## Émis au début d'une nouvelle journée, avec les événements qui se sont déclenchés.
+signal day_started(day_index: int, events: Array)
 
 const INITIAL_MESSAGES_PATH := "res://data/messages/initial_messages.json"
 
@@ -34,6 +36,8 @@ var messages: Array = []
 var decisions: Array = []
 ## Drapeaux narratifs libres (conséquences persistantes).
 var flags: Dictionary = {}
+## Identifiants des événements différés déjà déclenchés.
+var fired_events: Array = []
 
 
 func _ready() -> void:
@@ -57,6 +61,7 @@ func new_game() -> void:
 		receive_message(message, false)
 	decisions = []
 	flags = {}
+	fired_events = []
 	state_changed.emit()
 
 
@@ -149,8 +154,10 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	case_state.status = result.status_after
 	case_state.decision = decision_id
 	flags.merge(result.flags, true)
+	# On garde la trace de l'accord avec VERITAS : le système s'en souviendra.
+	var advice := Veritas.recommendation(CaseLibrary.get_case(case_id))
 	decisions.append({"case_id": case_id, "decision_id": decision_id, "day_index": day_index,
-			"outcome": result.response_id})
+			"outcome": result.response_id, "veritas_agreed": advice.get("decision_id", "") == decision_id})
 	var message_id := "%s.%s" % [case_id, result.response_id]
 	if not result.response.is_empty():
 		var message: Dictionary = result.response.duplicate()
@@ -188,6 +195,31 @@ func get_unread_count() -> int:
 	return count
 
 
+# --- Journées -------------------------------------------------------------
+
+## Termine la journée : passe au jour suivant et applique les événements dus.
+## Renvoie la liste des événements déclenchés.
+func end_day() -> Array:
+	day_index += 1
+	var fired := EventRules.due_events({
+		"day_index": day_index, "flags": flags, "cases": cases, "fired_events": fired_events})
+	for event in fired:
+		for indicator in event.get("effects", {}):
+			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(event.effects[indicator]),
+					INDICATOR_MIN, INDICATOR_MAX)
+		flags.merge(event.get("set_flags", {}), true)
+		if event.has("message"):
+			var message: Dictionary = event.message.duplicate()
+			message["id"] = "event.%s.%d" % [event.id, day_index]
+			message["date_label"] = get_date_short()
+			receive_message(message, false)
+		if not event.id in fired_events:
+			fired_events.append(event.id)
+	state_changed.emit()
+	day_started.emit(day_index, fired)
+	return fired
+
+
 # --- Sérialisation (utilisée par SaveManager) ---------------------------------
 
 func to_dict() -> Dictionary:
@@ -199,6 +231,7 @@ func to_dict() -> Dictionary:
 		"messages": messages.duplicate(true),
 		"decisions": decisions.duplicate(true),
 		"flags": flags.duplicate(true),
+		"fired_events": fired_events.duplicate(),
 	}
 
 
@@ -223,6 +256,7 @@ func from_dict(data: Dictionary) -> void:
 	messages = data.get("messages", [])
 	decisions = data.get("decisions", [])
 	flags = data.get("flags", {})
+	fired_events = data.get("fired_events", [])
 	state_changed.emit()
 
 

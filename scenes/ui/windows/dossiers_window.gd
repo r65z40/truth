@@ -38,6 +38,8 @@ var _tab_group := ButtonGroup.new()
 @onready var _doc_meta: Label = %DocMeta
 @onready var _doc_body: RichTextLabel = %DocBody
 @onready var _facts_list: VBoxContainer = %FactsList
+@onready var _veritas_strip: Control = %VeritasStrip
+@onready var _veritas_remark: Label = %VeritasRemark
 @onready var _empty_hint: Label = %EmptyHint
 @onready var _footer: Control = %Footer
 @onready var _progress_label: Label = %ProgressLabel
@@ -98,6 +100,9 @@ func select_document(document_id: String) -> void:
 		_format_iso_date(document.get("date", "")),
 	]
 	_doc_body.text = render_document_bbcode(document)
+	var remark := Veritas.document_remark(document)
+	_veritas_strip.visible = remark != ""
+	_veritas_remark.text = "%s > %s" % [Veritas.NAME, remark]
 	_doc_scroll.scroll_vertical = 0
 	GameState.mark_document_viewed(current_case_id, document_id)
 	_refresh_all()

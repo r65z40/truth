@@ -36,11 +36,18 @@ func _run() -> void:
 		"test_fact_confrontation",
 		"test_decision_rules",
 		"test_apply_decision",
+		"test_events_file_is_valid",
+		"test_event_conditions",
+		"test_end_day_without_decision",
+		"test_delayed_consequences",
+		"test_save_migration_from_v2",
+		"test_veritas",
 		"test_terminal_command_parsing",
 		"test_main_menu_scene",
 		"test_desk_scene_flow",
 		"test_full_session_flow",
 		"test_investigation_and_conclusion_flow",
+		"test_end_day_in_desk",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -283,6 +290,106 @@ func test_apply_decision() -> void:
 	GameState.decision_applied.disconnect(on_applied)
 
 
+# --- Journées et événements -------------------------------------------------
+
+func test_events_file_is_valid() -> void:
+	var events := EventRules.get_events()
+	check(events.size() >= 5, "%d événements définis" % events.size())
+	var ids := {}
+	for event in events:
+		check(event.has("id") and not ids.has(event.id), "identifiant unique : %s" % event.get("id", "?"))
+		ids[event.get("id", "")] = true
+		if event.has("message"):
+			check(event.message.has("from") and event.message.has("subject") and event.message.has("body"),
+					"%s : message complet" % event.id)
+		for indicator in event.get("effects", {}):
+			check(GameState.INITIAL_INDICATORS.has(indicator), "%s : indicateur connu %s" % [event.id, indicator])
+
+
+func test_event_conditions() -> void:
+	var state := {"day_index": 1, "flags": {"a": true}, "cases": {"1": {"decision": ""}, "2": {"decision": "x"}}}
+	check(EventRules.are_conditions_met({}, state), "aucune condition : vrai")
+	check(not EventRules.are_conditions_met({"min_day": 2}, state), "jour minimal respecté")
+	check(EventRules.are_conditions_met({"requires_flags": ["a"]}, state), "drapeau requis présent")
+	check(not EventRules.are_conditions_met({"requires_flags": ["b"]}, state), "drapeau requis absent")
+	check(not EventRules.are_conditions_met({"forbidden_flags": ["a"]}, state), "drapeau interdit présent")
+	check(EventRules.are_conditions_met({"undecided_cases": ["1"]}, state), "dossier sans décision")
+	check(not EventRules.are_conditions_met({"undecided_cases": ["2"]}, state), "dossier déjà décidé")
+	var events := [{"id": "once"}, {"id": "again", "repeatable": true}]
+	state["fired_events"] = ["once", "again"]
+	var due := EventRules.due_events(state, events)
+	check(due.size() == 1 and due[0].id == "again", "un événement ne se répète que s'il est repeatable")
+
+
+func test_end_day_without_decision() -> void:
+	var days := []
+	var on_day := func(day: int, _events: Array) -> void: days.append(day)
+	GameState.day_started.connect(on_day)
+	var unread := GameState.get_unread_count()
+	var fired := GameState.end_day()
+	var fired_ids := fired.map(func(e: Dictionary) -> String: return e.id)
+	check(GameState.day_index == 1 and GameState.get_date_long() == "MARDI 4 NOVEMBRE 1986", "on passe au mardi 4 novembre")
+	check(fired_ids == ["40921_reminder", "daily_bulletin_1"], "rappel et bulletin : %s" % [fired_ids])
+	check(GameState.get_indicator("suspicion") == 23, "le retard éveille la suspicion")
+	check(GameState.get_unread_count() == unread + 2, "deux nouveaux messages")
+	check(GameState.messages[-1].date_label == "04.11.1986", "messages datés du jour")
+	check(days == [1], "signal day_started émis")
+	check(GameState.end_day().is_empty(), "les événements ne se répètent pas le lendemain")
+	GameState.day_started.disconnect(on_day)
+
+
+func test_delayed_consequences() -> void:
+	# decision, contradiction établie ?, événement attendu le lendemain
+	var scenarios := [
+		["arrest", true, "40921_family_letter"],
+		["arrest", false, "40921_family_letter"],
+		["close", true, "40921_reprimand"],
+		["close", false, "40921_reassigned"],
+		["investigate", true, "40921_orlik_hearing"],
+	]
+	for scenario in scenarios:
+		GameState.new_game()
+		if scenario[1]:
+			GameState.confront_facts("40921", "f_report_presence", "f_log_trip")
+		GameState.apply_decision("40921", scenario[0])
+		var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+		check(scenario[2] in ids, "%s (contradiction : %s) > %s" % [scenario[0], scenario[1], scenario[2]])
+		check(not "40921_reminder" in ids, "%s : pas de rappel une fois la décision prise" % scenario[0])
+	check(GameState.flags.get("40921.orlik_confessed") == true, "l'audition d'ORLIK pose un drapeau persistant")
+	GameState.new_game()
+	GameState.apply_decision("40921", "investigate")
+	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check(ids == ["daily_bulletin_1"], "enquête sans fondement : seulement le bulletin")
+	check(GameState.decisions[0].veritas_agreed == false, "désaccord avec VERITAS mémorisé")
+
+
+func test_save_migration_from_v2() -> void:
+	GameState.end_day()
+	var data := GameState.to_dict()
+	data.erase("fired_events")
+	var file := FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"save_version": 2, "state": data}))
+	file.close()
+	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "une sauvegarde v2 se charge")
+	check(GameState.fired_events == [], "liste des événements ajoutée")
+	check(GameState.day_index == 1, "jour conservé")
+
+
+func test_veritas() -> void:
+	var case_data := CaseLibrary.get_case("40921")
+	for document in case_data.documents:
+		check(Veritas.document_remark(document) != "", "VERITAS commente la pièce %s" % document.id)
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "arrest" and advice.confidence == 87, "VERITAS recommande l'arrestation à 87 %")
+	check(Veritas.terminal_reply(GameState.cases).contains("4 pièce(s) non consultée(s)"), "VERITAS signale les pièces non lues")
+	for document in case_data.documents:
+		GameState.mark_document_viewed("40921", document.id)
+	check(Veritas.terminal_reply(GameState.cases).contains("Indice de confiance : 87"), "puis donne sa recommandation")
+	GameState.apply_decision("40921", "arrest")
+	check(Veritas.terminal_reply(GameState.cases).begins_with("Aucun dossier"), "rien à signaler une fois le dossier traité")
+	check(GameState.decisions[0].veritas_agreed == true, "accord avec VERITAS mémorisé")
+
+
 # --- Terminal ----------------------------------------------------------------
 
 func test_terminal_command_parsing() -> void:
@@ -294,6 +401,7 @@ func test_terminal_command_parsing() -> void:
 	check(c.target == "messages", "alias MSG")
 	c = TerminalCommands.parse("dossier 40921")
 	check(c.target == "dossiers" and Array(c.args) == ["40921"], "arguments conservés")
+	check(TerminalCommands.parse("fin").action == TerminalCommands.Action.END_DAY, "FIN termine la journée")
 	check(TerminalCommands.parse("xyzzy").action == TerminalCommands.Action.UNKNOWN, "commande inconnue")
 	check(TerminalCommands.parse("   ").action == TerminalCommands.Action.NONE, "saisie vide ignorée")
 
@@ -402,6 +510,8 @@ func test_investigation_and_conclusion_flow() -> void:
 	dossiers.select_document("work_report")
 	var facts_list: Node = dossiers.get_node("%FactsList")
 	check(facts_list.get_child_count() == 2, "le rapport présente 2 éléments notables")
+	check(dossiers.get_node("%VeritasStrip").visible and dossiers.get_node("%VeritasRemark").text.begins_with("VERITAS >"),
+			"VERITAS commente la pièce affichée")
 	facts_list.get_node("Fact_f_report_presence").pressed.emit()
 	check(GameState.get_case_state("40921").noted_facts == ["f_report_presence"], "un clic note l'élément")
 	check(facts_list.get_node("Fact_f_report_presence").disabled, "un élément noté ne peut plus être noté")
@@ -428,6 +538,7 @@ func test_investigation_and_conclusion_flow() -> void:
 	check(conclusion.get_node("%ConclusionSummary").get_parsed_text().contains("Présent à son poste"),
 			"le formulaire rappelle la contradiction établie")
 	check(conclusion.get_node("%SignButton").disabled, "signature impossible sans choix")
+	check(conclusion.get_node("%VeritasAdvice").text.contains("87 %"), "le formulaire affiche l'avis de VERITAS")
 	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
 	conclusion.get_node("%SignButton").pressed.emit()
 	await get_tree().process_frame
@@ -440,5 +551,25 @@ func test_investigation_and_conclusion_flow() -> void:
 	check(dossiers.get_node("%ConclusionButton").disabled, "on ne peut pas conclure deux fois")
 	desk.terminal.submit_command("archives")
 	check(desk.windows.archives.get_node("%ArchiveText").get_parsed_text().contains("40921"), "le rapport figure aux archives")
+	desk.queue_free()
+	await get_tree().process_frame
+
+
+func test_end_day_in_desk() -> void:
+	SaveManager.delete_save()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.get_node("%EndDayButton").pressed.emit()
+	check(GameState.day_index == 0, "première demande : avertissement, pas de changement de jour")
+	check(desk.terminal.get_log_text().contains("sans conclusion : 40921"), "le terminal signale le dossier en attente")
+	desk.get_node("%EndDayButton").pressed.emit()
+	check(GameState.day_index == 1, "seconde demande : la journée se termine")
+	check(desk.get_node("%DateLabel").text == "MARDI 4 NOVEMBRE 1986", "la date de l'en-tête avance")
+	check(SaveManager.has_save(), "sauvegarde automatique en fin de journée")
+	check(desk.terminal.get_log_text().contains("MARDI 4 NOVEMBRE 1986"), "le terminal ouvre une nouvelle session")
+	check(desk.get_node("%DayTransition").visible, "l'écran de transition s'affiche")
+	desk.terminal.submit_command("veritas")
+	check(desk.terminal.get_log_text().contains("VERITAS : Dossier 40921"), "VERITAS répond au terminal")
 	desk.queue_free()
 	await get_tree().process_frame

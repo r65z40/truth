@@ -57,6 +57,12 @@ func _capture_all() -> void:
 	await _snap("12_reponse_superieur")
 	desk.terminal.submit_command("archives")
 	await _snap("13_archives")
+	desk.end_day()
+	await _snap("14_fin_de_service", 0.8)
+	await _wait(2.5)
+	desk.terminal.submit_command("messages")
+	desk.windows.messages.select_message(GameState.messages[-2].id)
+	await _snap("15_lettre_famille")
 	get_tree().quit()
 
 

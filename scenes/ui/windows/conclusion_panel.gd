@@ -13,6 +13,8 @@ var _choice_group := ButtonGroup.new()
 @onready var _summary: RichTextLabel = %ConclusionSummary
 @onready var _choices: VBoxContainer = %Choices
 @onready var _sign_button: Button = %SignButton
+@onready var _veritas_box: Control = %VeritasBox
+@onready var _veritas_advice: Label = %VeritasAdvice
 
 
 func _ready() -> void:
@@ -28,6 +30,11 @@ func setup(new_case_id: String) -> void:
 	var case_state := GameState.get_case_state(case_id)
 	_title.text = "RAPPORT DE CONCLUSION  //  DOSSIER N° %s" % case_id
 	_summary.text = build_summary_bbcode(case_data, case_state)
+	var advice := Veritas.recommendation(case_data)
+	_veritas_box.visible = not advice.is_empty()
+	if not advice.is_empty():
+		_veritas_advice.text = "%s RECOMMANDE : %s  (indice de confiance %d %%)\n%s\nLa responsabilité de la conclusion incombe à l'agent signataire." % [
+			Veritas.NAME, advice.label.to_upper(), advice.confidence, advice.rationale]
 	for child in _choices.get_children():
 		_choices.remove_child(child)
 		child.queue_free()

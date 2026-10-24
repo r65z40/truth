@@ -1,0 +1,104 @@
+{
+	"events": [
+		{
+			"id": "40921_reminder",
+			"conditions": {
+				"min_day": 1,
+				"undecided_cases": [
+					"40921"
+				]
+			},
+			"repeatable": false,
+			"effects": {
+				"suspicion": 3
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Dossier 40921 : en attente",
+				"body": "Inspecteur,\n\nLe dossier 40921 est toujours sans conclusion. Le Bureau des transports s'en inquiète, et moi aussi.\n\nUn dossier ordinaire ne doit pas occuper un inspecteur plus d'une journée. Transmettez votre rapport.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "40921_family_letter",
+			"conditions": {
+				"min_day": 1,
+				"requires_flags": [
+					"40921.sedlar_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Requête de Vera SEDLAR",
+				"body": "Monsieur l'Inspecteur,\n\nOn me dit que c'est vous qui avez signé le dossier de mon mari. Je ne sais pas ce qu'on lui reproche. Il est parti à Halvek pour sa mère, qui est malade et que les médecins d'ici ne veulent plus soigner.\n\nNotre fils demande quand son père rentrera. Je ne sais pas quoi lui répondre.\n\nJe vous prie de bien vouloir revoir sa situation.\n\nVera SEDLAR, Bloc 14, escalier C, app. 61\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "40921_orlik_hearing",
+			"conditions": {
+				"min_day": 1,
+				"requires_flags": [
+					"40921.orlik_hearing_requested"
+				]
+			},
+			"effects": {
+				"influence": 2
+			},
+			"set_flags": {
+				"40921.orlik_confessed": true
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Dossier 40921 : audition du chef d'équipe ORLIK",
+				"body": "Inspecteur,\n\nLe chef d'équipe B. ORLIK a été entendu hier soir. Il reconnaît avoir certifié la présence de SEDLAR le 21 octobre « pour rendre service ». En échange, SEDLAR réparait gratuitement le chauffage de son appartement.\n\nORLIK affirme que SEDLAR est allé voir sa mère malade à Halvek. Il dit ne rien savoir des « papiers ».\n\nLe dossier reste ouvert. Votre méthode a été remarquée à l'étage.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "40921_reprimand",
+			"conditions": {
+				"min_day": 1,
+				"requires_flags": [
+					"40921.closed_despite_evidence"
+				]
+			},
+			"effects": {
+				"influence": -2
+			},
+			"set_flags": {
+				"player.reprimanded": true
+			},
+			"message": {
+				"from": "Direction du personnel, Ministère de la Sécurité nationale",
+				"subject": "Note versée à votre dossier personnel",
+				"body": "Agent VOSK, matricule INS-7734.\n\nSuite à l'entretien avec le Directeur adjoint MAZUR, une note pour « manque de discernement dans le traitement d'un dossier civil » a été versée à votre dossier personnel.\n\nCette note sera prise en compte lors de votre prochaine évaluation.\n\nLe Directeur du personnel"
+			}
+		},
+		{
+			"id": "40921_reassigned",
+			"conditions": {
+				"min_day": 1,
+				"requires_flags": [
+					"40921.closed_unchecked"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Dossier 40921 : réattribution",
+				"body": "Inspecteur,\n\nÀ la demande du Bureau des transports, le dossier 40921 a été rouvert et confié à l'inspecteur KREMER, de la Section 2.\n\nVous n'avez plus à vous en occuper. Je vous laisse en tirer les conclusions qui s'imposent.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "daily_bulletin_1",
+			"conditions": {
+				"min_day": 1
+			},
+			"effects": {},
+			"message": {
+				"from": "Service central d'information",
+				"subject": "Bulletin intérieur du 4 novembre",
+				"body": "PRODUCTION : la Centrale thermique n° 3 dépasse son objectif trimestriel de 4 %.\n\nSÉCURITÉ : le contrôle des déplacements vers les zones frontalières est renforcé à compter de ce jour. Toute carte de travail présentée sur la ligne Velmira - Halvek sera désormais vérifiée avec photographie.\n\nVERITAS : le taux de concordance entre les recommandations du système et les décisions des inspecteurs atteint 91 %.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		}
+	]
+}
