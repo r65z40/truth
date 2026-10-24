@@ -42,6 +42,10 @@ func _run() -> void:
 		"test_delayed_consequences",
 		"test_save_migration_from_v2",
 		"test_veritas",
+		"test_case_51307_depends_on_first_case",
+		"test_case_51307_contradictions_and_veritas",
+		"test_case_51307_consequences",
+		"test_assessment",
 		"test_terminal_command_parsing",
 		"test_main_menu_scene",
 		"test_desk_scene_flow",
@@ -132,6 +136,7 @@ func test_new_game_defaults() -> void:
 	check(GameState.indicators == GameState.INITIAL_INDICATORS, "indicateurs initiaux")
 	check(GameState.get_rank_title() == "Inspecteur de 3e classe", "grade initial")
 	check(GameState.cases.has("40921"), "le dossier 40921 est assigné")
+	check(not GameState.cases.has("51307"), "le dossier 51307 n'arrive pas dès le premier jour")
 	check(GameState.get_case_state("40921").status == GameState.CASE_OPEN, "le dossier est ouvert")
 	check(GameState.get_unread_count() == 2, "deux messages non lus au départ")
 	check(GameState.day_index == 0 and GameState.decisions.is_empty(), "jour 0, aucune décision")
@@ -329,12 +334,15 @@ func test_end_day_without_decision() -> void:
 	var fired := GameState.end_day()
 	var fired_ids := fired.map(func(e: Dictionary) -> String: return e.id)
 	check(GameState.day_index == 1 and GameState.get_date_long() == "MARDI 4 NOVEMBRE 1986", "on passe au mardi 4 novembre")
-	check(fired_ids == ["40921_reminder", "daily_bulletin_1"], "rappel et bulletin : %s" % [fired_ids])
+	check(fired_ids == ["assign_51307", "51307_milice_plea", "40921_reminder", "daily_bulletin_1"],
+			"nouveau dossier, pression de la Milice, rappel et bulletin : %s" % [fired_ids])
+	check(GameState.cases.has("51307"), "le dossier 51307 est attribué")
 	check(GameState.get_indicator("suspicion") == 23, "le retard éveille la suspicion")
-	check(GameState.get_unread_count() == unread + 2, "deux nouveaux messages")
+	check(GameState.get_unread_count() == unread + 4, "quatre nouveaux messages")
 	check(GameState.messages[-1].date_label == "04.11.1986", "messages datés du jour")
 	check(days == [1], "signal day_started émis")
-	check(GameState.end_day().is_empty(), "les événements ne se répètent pas le lendemain")
+	var next_ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check(next_ids == ["51307_reminder"], "le lendemain, seul le rappel du nouveau dossier : %s" % [next_ids])
 	GameState.day_started.disconnect(on_day)
 
 
@@ -359,7 +367,7 @@ func test_delayed_consequences() -> void:
 	GameState.new_game()
 	GameState.apply_decision("40921", "investigate")
 	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
-	check(ids == ["daily_bulletin_1"], "enquête sans fondement : seulement le bulletin")
+	check(ids == ["assign_51307", "51307_milice_plea", "daily_bulletin_1"], "enquête sans fondement : pas de suite propre au 40921")
 	check(GameState.decisions[0].veritas_agreed == false, "désaccord avec VERITAS mémorisé")
 
 
@@ -381,13 +389,99 @@ func test_veritas() -> void:
 		check(Veritas.document_remark(document) != "", "VERITAS commente la pièce %s" % document.id)
 	var advice := Veritas.recommendation(case_data)
 	check(advice.decision_id == "arrest" and advice.confidence == 87, "VERITAS recommande l'arrestation à 87 %")
-	check(Veritas.terminal_reply(GameState.cases).contains("4 pièce(s) non consultée(s)"), "VERITAS signale les pièces non lues")
+	check(Veritas.terminal_reply(GameState.get_condition_state()).contains("4 pièce(s) non consultée(s)"), "VERITAS signale les pièces non lues")
 	for document in case_data.documents:
 		GameState.mark_document_viewed("40921", document.id)
-	check(Veritas.terminal_reply(GameState.cases).contains("Indice de confiance : 87"), "puis donne sa recommandation")
+	check(Veritas.terminal_reply(GameState.get_condition_state()).contains("Indice de confiance : 87"), "puis donne sa recommandation")
 	GameState.apply_decision("40921", "arrest")
-	check(Veritas.terminal_reply(GameState.cases).begins_with("Aucun dossier"), "rien à signaler une fois le dossier traité")
+	check(Veritas.terminal_reply(GameState.get_condition_state()).begins_with("Aucun dossier"), "rien à signaler une fois le dossier traité")
 	check(GameState.decisions[0].veritas_agreed == true, "accord avec VERITAS mémorisé")
+
+
+# --- Dossier 51307 (ORLIK) ---------------------------------------------------
+
+## Joue le dossier 40921 avec une décision donnée, puis passe au lendemain.
+func _play_first_case(decision_id: String, establish_contradiction: bool) -> void:
+	GameState.new_game()
+	if establish_contradiction:
+		GameState.confront_facts("40921", "f_report_presence", "f_log_trip")
+	if decision_id != "":
+		GameState.apply_decision("40921", decision_id)
+	GameState.end_day()
+
+
+func _visible_document_ids(case_id: String) -> Array:
+	return GameState.get_case_view(case_id).documents.map(func(d: Dictionary) -> String: return d.id)
+
+
+func test_case_51307_depends_on_first_case() -> void:
+	var base := ["identity", "certificates", "clock_log", "anonymous"]
+	var scenarios := [
+		["", false, []],
+		["investigate", true, ["orlik_hearing"]],
+		["investigate", false, []],
+		["arrest", true, ["sedlar_interrogation"]],
+		["close", false, ["kremer_note"]],
+		["close", true, []],
+	]
+	for scenario in scenarios:
+		_play_first_case(scenario[0], scenario[1])
+		var ids := _visible_document_ids("51307")
+		var expected: Array = base.duplicate()
+		var extra: Array = scenario[2]
+		for document_id in ["orlik_hearing", "sedlar_interrogation", "kremer_note"]:
+			if document_id in extra:
+				expected.append(document_id)
+		check(ids == expected, "40921 « %s » (contradiction : %s) > pièces %s" % [scenario[0], scenario[1], ids])
+	check(CaseLibrary.get_case("51307").documents.size() == 7, "le dossier complet garde ses 7 pièces")
+
+
+func test_case_51307_contradictions_and_veritas() -> void:
+	var case_data := CaseLibrary.get_case("51307")
+	check(CaseLibrary.confront(case_data, "f_cert_reason", "f_clock_ok") == "clock.status.october",
+			"« panne de l'horloge » contre relevé technique : contradiction")
+	check(CaseLibrary.confront(case_data, "f_hearing_clock", "f_clock_ok") != "", "les déclarations d'ORLIK contredisent le relevé")
+	check(CaseLibrary.confront(case_data, "f_hearing_motive", "f_anon_motive") == "orlik.motive",
+			"« jamais rien vendu » contre « un paquet de café » : contradiction")
+	check(CaseLibrary.confront(case_data, "f_sedlar_motive", "f_anon_motive") == "", "SEDLAR confirme la lettre anonyme")
+	check(CaseLibrary.confront(case_data, "f_anon_petras", "f_cert_petras") == "", "les jeudis de PETRAS se recoupent")
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "close" and advice.confidence == 71, "VERITAS recommande le classement à 71 %")
+
+
+func test_case_51307_consequences() -> void:
+	var scenarios := [
+		["arrest", "51307_milice_hostile", "milice.enemy"],
+		["close", "51307_milice_grateful", "milice.ally"],
+		["demote", "51307_demoted", "51307.orlik_demoted"],
+	]
+	for scenario in scenarios:
+		_play_first_case("investigate", true)
+		GameState.confront_facts("51307", "f_cert_reason", "f_clock_ok")
+		var result := GameState.apply_decision("51307", scenario[0])
+		check(result.response_id == scenario[0] + "_found", "51307 %s : réponse %s" % [scenario[0], result.response_id])
+		var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+		check(scenario[1] in ids, "51307 %s > %s le lendemain" % [scenario[0], scenario[1]])
+		check(GameState.flags.get(scenario[2]) == true, "drapeau persistant %s" % scenario[2])
+		check(not "51307_reminder" in ids, "pas de rappel après la décision")
+	_play_first_case("arrest", true)
+	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("51307_reminder" in ids, "rappel si le dossier 51307 traîne")
+
+
+func test_assessment() -> void:
+	var start := Assessment.describe(GameState.indicators, GameState.flags)
+	var texts: Array = start.lines.map(func(l: Dictionary) -> String: return l.text)
+	check(texts == ["conforme", "observation ordinaire", "agent sans appui"], "évaluation de départ : %s" % [texts])
+	check(start.notes.is_empty(), "aucune observation au départ")
+	for line in start.lines:
+		check(not line.text.is_valid_int(), "aucun chiffre affiché (%s)" % line.label)
+	var low := Assessment.describe({"loyalty": 0, "suspicion": 100, "influence": 0}, {})
+	check(low.lines[0].text == "douteuse" and low.lines[1].text == "enquête interne envisagée", "paliers extrêmes")
+	var high := Assessment.describe({"loyalty": 100, "suspicion": 0, "influence": 100}, {"milice.ally": true})
+	check(high.lines[0].text == "exemplaire" and high.lines[2].text == "agent influent", "paliers maximaux")
+	check(high.notes.size() == 1 and high.notes[0].contains("Milice"), "les drapeaux ajoutent des observations")
+	check(Assessment.level_text([{"below": 10, "text": "a"}, {"below": 101, "text": "b"}], 10) == "b", "borne exclusive")
 
 
 # --- Terminal ----------------------------------------------------------------
@@ -454,6 +548,10 @@ func test_desk_scene_flow() -> void:
 	desk.terminal.submit_command("archives")
 	check(desk.get_open_app() == "archives", "une seule fenêtre ouverte à la fois")
 
+	desk.get_node("%PersonnelButton").pressed.emit()
+	check(desk.get_open_app() == "personnel", "le bouton Dossier personnel ouvre l'évaluation")
+	var personnel_text: String = desk.windows.personnel.get_node("%PersonnelText").get_parsed_text()
+	check(personnel_text.contains("LOYAUTÉ ENVERS LE RÉGIME : conforme"), "l'évaluation est rédigée en mots")
 	desk.terminal.submit_command("commande_bidon")
 	check(desk.terminal.get_log_text().contains("COMMANDE INCONNUE"), "le terminal signale une commande inconnue")
 	desk.terminal.submit_command("ident")
@@ -571,5 +669,9 @@ func test_end_day_in_desk() -> void:
 	check(desk.get_node("%DayTransition").visible, "l'écran de transition s'affiche")
 	desk.terminal.submit_command("veritas")
 	check(desk.terminal.get_log_text().contains("VERITAS : Dossier 40921"), "VERITAS répond au terminal")
+	desk.terminal.submit_command("dossiers")
+	check(desk.windows.dossiers.get_node("%CaseList").get_child_count() == 2, "le nouveau dossier apparaît dans la liste")
+	desk.windows.dossiers.select_case("51307")
+	check(desk.windows.dossiers.get_node("%DocumentTabs").get_child_count() == 4, "pièces de base du dossier 51307")
 	desk.queue_free()
 	await get_tree().process_frame

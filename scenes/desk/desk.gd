@@ -12,6 +12,7 @@ const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 	"dossiers": %DossiersWindow,
 	"messages": %MessagesWindow,
 	"archives": %ArchivesWindow,
+	"personnel": %PersonnelWindow,
 }
 
 @onready var _date_label: Label = %DateLabel
@@ -37,6 +38,7 @@ func _ready() -> void:
 	%DossiersButton.pressed.connect(terminal.submit_command.bind("DOSSIERS"))
 	_messages_button.pressed.connect(terminal.submit_command.bind("MESSAGES"))
 	%ArchivesButton.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
+	%PersonnelButton.pressed.connect(terminal.submit_command.bind("PROFIL"))
 	%SaveButton.pressed.connect(terminal.submit_command.bind("SAUVER"))
 	%MenuButton.pressed.connect(terminal.submit_command.bind("MENU"))
 	%EndDayButton.pressed.connect(terminal.submit_command.bind("FIN"))

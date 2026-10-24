@@ -33,6 +33,9 @@ godot --headless --path . --import                     # après ajout de classes
 godot --headless --path . res://tests/test_runner.tscn # doit finir par 0 échec
 ```
 
+Une erreur de syntaxe dans `tests/run_tests.gd` empêche le script de se charger
+et Godot ne quitte pas : lancer les tests avec `timeout 120` devant la commande.
+
 - Ajouter des tests pour toute règle de décision ou changement d'état.
 - Les tests redirigent la sauvegarde vers `user://test_savegame.json`.
 - Pour vérifier le rendu : `tests/capture_screens.tscn` (sous Linux sans écran :

@@ -79,7 +79,7 @@ func submit_command(raw: String) -> void:
 			print_line("Fermeture de session...", COLOR_DIM)
 			menu_requested.emit()
 		TerminalCommands.Action.VERITAS:
-			print_line("%s : %s" % [Veritas.NAME, Veritas.terminal_reply(GameState.cases)])
+			print_line("%s : %s" % [Veritas.NAME, Veritas.terminal_reply(GameState.get_condition_state())])
 		TerminalCommands.Action.DEBUG_STATE:
 			if OS.is_debug_build():
 				print_line("[DEV] Loyauté %d  Suspicion %d  Influence %d" % [GameState.get_indicator("loyalty"),

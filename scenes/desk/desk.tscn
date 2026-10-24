@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/messages_window.tscn" id="4_messages"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/archives_window.tscn" id="5_archives"]
 [ext_resource type="Texture2D" path="res://icon.svg" id="6_icon"]
+[ext_resource type="PackedScene" path="res://scenes/ui/windows/personnel_window.tscn" id="7_personnel"]
 
 [node name="Desk" type="Control"]
 layout_mode = 3
@@ -145,6 +146,14 @@ focus_mode = 0
 text = "ARCHIVES"
 alignment = 0
 
+[node name="PersonnelButton" type="Button" parent="Main/Body/Columns/Side"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+focus_mode = 0
+text = "DOSSIER PERSONNEL"
+alignment = 0
+
 [node name="Spacer" type="Control" parent="Main/Body/Columns/Side"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -230,6 +239,10 @@ unique_name_in_owner = true
 layout_mode = 1
 
 [node name="ArchivesWindow" parent="WindowLayer" instance=ExtResource("5_archives")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="PersonnelWindow" parent="WindowLayer" instance=ExtResource("7_personnel")]
 unique_name_in_owner = true
 layout_mode = 1
 

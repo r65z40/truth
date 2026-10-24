@@ -24,10 +24,11 @@ data/ (JSON)  ──>  scripts/core (lecture, règles pures)  ──>  autoloads
 ```
 project.godot
 data/
-  cases/index.json            liste ordonnée des dossiers
+  cases/index.json            tous les dossiers + "starting_cases" (attribués au départ)
   cases/case_<id>.json        un dossier = un fichier
   messages/initial_messages.json
   events/events.json          événements différés (conséquences, rappels, bulletins)
+  assessment.json             paliers d'appréciation des indicateurs, observations
 scripts/
   autoload/
     game_state.gd             état de la partie + signal state_changed
@@ -41,12 +42,13 @@ scripts/
     decision_rules.gd         résolution d'une décision (issue, effets, réponse)
     event_rules.gd            événements dus au début d'une journée
     veritas.gd                VERITAS déterministe (remarques, recommandation)
+    assessment.gd             évaluation de l'agent en mots (data/assessment.json)
   ui/ministry_window.gd       cadre commun des fenêtres
 scenes/
   main_menu/                  menu principal
   desk/                       bureau de l'inspecteur (scène principale de jeu)
   ui/terminal/                terminal + interprète de commandes
-  ui/windows/                 Dossiers, Messages, Archives, Paramètres
+  ui/windows/                 Dossiers, Messages, Archives, Dossier personnel, Paramètres
   ui/crt_overlay/             filtre écran cathodique (autoload)
 ui/theme/ministry_theme.tres  thème global (couleurs, polices, styles)
 ui/shaders/crt.gdshader
@@ -87,6 +89,7 @@ tests/                        tests automatiques et captures d'écran
                 "forbidden_flags": [], "undecided_cases": []},
  "effects": {"influence": 2}, "set_flags": {"40921.orlik_confessed": true},
  "message": {"from": "...", "subject": "...", "body": "..."},
+ "assign_cases": ["51307"],                    // attribue un nouveau dossier
  "repeatable": false}
 ```
 
@@ -127,6 +130,12 @@ Un futur modèle de langage ne ferait que reformuler ces résultats, côté serv
   "truth": { ... }                             // vérité objective, jamais affichée
 }
 ```
+
+Une pièce peut porter `"conditions"` (même format que les événements) : elle
+n'apparaît que si elles sont remplies, par exemple
+`{"requires_flags": ["40921.orlik_confessed"]}`. L'interface passe toujours par
+`GameState.get_case_view(id)`, qui filtre les pièces ; les règles utilisent le
+dossier complet.
 
 Deux éléments qui portent sur la même `key` avec des `value` différentes se
 contredisent (`CaseLibrary.confront`). La clé et la valeur ne sont jamais

@@ -10,8 +10,9 @@ extends RefCounted
 ## - min_day          : jour minimal (day_index) de déclenchement.
 ## - requires_flags   : drapeaux qui doivent valoir true.
 ## - forbidden_flags  : drapeaux qui ne doivent pas valoir true.
-## - undecided_cases  : dossiers encore sans décision.
+## - undecided_cases  : dossiers attribués et encore sans décision.
 ## Un événement ne se déclenche qu'une fois, sauf "repeatable": true.
+## Effets possibles : effects (indicateurs), set_flags, message, assign_cases.
 
 const EVENTS_PATH := "res://data/events/events.json"
 
@@ -44,6 +45,6 @@ static func are_conditions_met(conditions: Dictionary, state: Dictionary) -> boo
 			return false
 	for case_id in conditions.get("undecided_cases", []):
 		var case_state: Dictionary = state.get("cases", {}).get(case_id, {})
-		if case_state.get("decision", "") != "":
+		if case_state.is_empty() or case_state.get("decision", "") != "":
 			return false
 	return true

@@ -33,13 +33,14 @@ static func recommendation(case_data: Dictionary) -> Dictionary:
 
 
 ## Réponse à la commande VERITAS du terminal, selon l'état des dossiers.
-## cases : GameState.cases (case_id -> état du dossier).
-static func terminal_reply(cases: Dictionary) -> String:
+## state : GameState.get_condition_state() (dossiers, drapeaux, jour).
+static func terminal_reply(state: Dictionary) -> String:
+	var cases: Dictionary = state.get("cases", {})
 	for case_id in cases:
 		var case_state: Dictionary = cases[case_id]
 		if case_state.get("decision", "") != "":
 			continue
-		var case_data := CaseLibrary.get_case(case_id)
+		var case_data := CaseLibrary.filter_case(CaseLibrary.get_case(case_id), state)
 		var unread := 0
 		for document in case_data.get("documents", []):
 			if not document.id in case_state.get("viewed_documents", []):

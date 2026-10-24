@@ -65,7 +65,7 @@ func _on_opened() -> void:
 
 ## Ouvre un dossier et affiche sa première pièce non consultée (ou la première).
 func select_case(case_id: String) -> void:
-	var case_data := CaseLibrary.get_case(case_id)
+	var case_data := GameState.get_case_view(case_id)
 	if case_data.is_empty():
 		return
 	if case_id != current_case_id:
@@ -86,7 +86,7 @@ func select_case(case_id: String) -> void:
 
 
 func select_document(document_id: String) -> void:
-	var case_data := CaseLibrary.get_case(current_case_id)
+	var case_data := GameState.get_case_view(current_case_id)
 	var document := CaseLibrary.get_document(case_data, document_id)
 	if document.is_empty():
 		return
@@ -209,7 +209,7 @@ static func _format_iso_date(iso: String) -> String:
 func _refresh_all() -> void:
 	if current_case_id == "":
 		return
-	var case_data := CaseLibrary.get_case(current_case_id)
+	var case_data := GameState.get_case_view(current_case_id)
 	var case_state := GameState.get_case_state(current_case_id)
 	var status_text: String = STATUS_LABELS.get(case_state.status, "?")
 	if case_state.decision != "":
@@ -249,7 +249,7 @@ func _refresh_notebook() -> void:
 	for child in _notebook_list.get_children():
 		_notebook_list.remove_child(child)
 		child.queue_free()
-	var case_data := CaseLibrary.get_case(current_case_id)
+	var case_data := GameState.get_case_view(current_case_id)
 	var case_state := GameState.get_case_state(current_case_id)
 	for fact_id in case_state.noted_facts:
 		var fact := CaseLibrary.get_fact(case_data, fact_id)
@@ -275,7 +275,7 @@ func _refresh_case_list() -> void:
 		_case_list.remove_child(child)
 		child.queue_free()
 	for case_id in GameState.cases:
-		var case_data := CaseLibrary.get_case(case_id)
+		var case_data := GameState.get_case_view(case_id)
 		if case_data.is_empty():
 			continue
 		var case_state := GameState.get_case_state(case_id)
