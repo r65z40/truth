@@ -73,6 +73,8 @@ func _capture_all() -> void:
 	await _snap("17_dossier_51307_interrogatoire")
 	desk.windows.dossiers.select_document("clock_log")
 	await _snap("18_dossier_51307_horloge")
+	desk.terminal.submit_command("profil")
+	await _snap("19_dossier_personnel")
 	get_tree().quit()
 
 

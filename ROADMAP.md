@@ -39,10 +39,10 @@
 - [x] Pression de la Milice (capitaine L. ORLIK) et voie de la corruption (classement = faveur due)
 - [x] Suites du 51307 : Milice hostile, Milice alliée, rétrogradation, rappel
 - [x] VERITAS recommande le classement (71 %) : il protège les informateurs
+- [x] Dossier personnel : évaluation de l'agent en mots, sans chiffres (choix de fen, 2026-10-24)
 
 ## Prochaine itération
 
-- [ ] Affichage des indicateurs (décision de fen en attente)
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
 - [ ] Utiliser les drapeaux `milice.ally` / `milice.enemy` dans un troisième dossier
 - [ ] Sons d'ambiance (terminal, tampon de signature)

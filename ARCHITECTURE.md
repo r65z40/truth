@@ -28,6 +28,7 @@ data/
   cases/case_<id>.json        un dossier = un fichier
   messages/initial_messages.json
   events/events.json          événements différés (conséquences, rappels, bulletins)
+  assessment.json             paliers d'appréciation des indicateurs, observations
 scripts/
   autoload/
     game_state.gd             état de la partie + signal state_changed
@@ -41,12 +42,13 @@ scripts/
     decision_rules.gd         résolution d'une décision (issue, effets, réponse)
     event_rules.gd            événements dus au début d'une journée
     veritas.gd                VERITAS déterministe (remarques, recommandation)
+    assessment.gd             évaluation de l'agent en mots (data/assessment.json)
   ui/ministry_window.gd       cadre commun des fenêtres
 scenes/
   main_menu/                  menu principal
   desk/                       bureau de l'inspecteur (scène principale de jeu)
   ui/terminal/                terminal + interprète de commandes
-  ui/windows/                 Dossiers, Messages, Archives, Paramètres
+  ui/windows/                 Dossiers, Messages, Archives, Dossier personnel, Paramètres
   ui/crt_overlay/             filtre écran cathodique (autoload)
 ui/theme/ministry_theme.tres  thème global (couleurs, polices, styles)
 ui/shaders/crt.gdshader

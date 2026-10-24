@@ -53,6 +53,12 @@ Toute affaire distingue :
 | Suspicion (`suspicion`) | Méfiance de la hiérarchie envers le joueur | 20 |
 | Influence (`influence`) | Poids institutionnel du joueur | 10 |
 
+Le joueur ne voit jamais les chiffres. La fenêtre **Dossier personnel** (commande
+`PROFIL`) traduit chaque indicateur en appréciation administrative (« loyauté :
+conforme », « attention de la hiérarchie : surveillance renforcée ») et ajoute des
+observations selon les drapeaux (note au dossier, relations avec la Milice).
+Paliers et textes : `data/assessment.json`. Décision de fen du 2026-10-24.
+
 Chaque indicateur doit produire des effets observables (ton des messages,
 dossiers confiés, promotions, enquêtes internes). Pas de variable décorative.
 
@@ -147,6 +153,8 @@ automatique (réputation, relations, résultats, choix, événements).
 
 ## Journal des décisions de design
 
+- 2026-10-24 : indicateurs cachés, mais évaluation en mots dans le Dossier
+  personnel (choix de fen).
 - 2026-10-24 : les conséquences récompensent l'instruction (contradiction établie)
   plus que la décision elle-même ; le joueur confronte des éléments par paires.
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par

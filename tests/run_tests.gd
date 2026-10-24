@@ -45,6 +45,7 @@ func _run() -> void:
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
+		"test_assessment",
 		"test_terminal_command_parsing",
 		"test_main_menu_scene",
 		"test_desk_scene_flow",
@@ -468,6 +469,21 @@ func test_case_51307_consequences() -> void:
 	check("51307_reminder" in ids, "rappel si le dossier 51307 traîne")
 
 
+func test_assessment() -> void:
+	var start := Assessment.describe(GameState.indicators, GameState.flags)
+	var texts: Array = start.lines.map(func(l: Dictionary) -> String: return l.text)
+	check(texts == ["conforme", "observation ordinaire", "agent sans appui"], "évaluation de départ : %s" % [texts])
+	check(start.notes.is_empty(), "aucune observation au départ")
+	for line in start.lines:
+		check(not line.text.is_valid_int(), "aucun chiffre affiché (%s)" % line.label)
+	var low := Assessment.describe({"loyalty": 0, "suspicion": 100, "influence": 0}, {})
+	check(low.lines[0].text == "douteuse" and low.lines[1].text == "enquête interne envisagée", "paliers extrêmes")
+	var high := Assessment.describe({"loyalty": 100, "suspicion": 0, "influence": 100}, {"milice.ally": true})
+	check(high.lines[0].text == "exemplaire" and high.lines[2].text == "agent influent", "paliers maximaux")
+	check(high.notes.size() == 1 and high.notes[0].contains("Milice"), "les drapeaux ajoutent des observations")
+	check(Assessment.level_text([{"below": 10, "text": "a"}, {"below": 101, "text": "b"}], 10) == "b", "borne exclusive")
+
+
 # --- Terminal ----------------------------------------------------------------
 
 func test_terminal_command_parsing() -> void:
@@ -532,6 +548,10 @@ func test_desk_scene_flow() -> void:
 	desk.terminal.submit_command("archives")
 	check(desk.get_open_app() == "archives", "une seule fenêtre ouverte à la fois")
 
+	desk.get_node("%PersonnelButton").pressed.emit()
+	check(desk.get_open_app() == "personnel", "le bouton Dossier personnel ouvre l'évaluation")
+	var personnel_text: String = desk.windows.personnel.get_node("%PersonnelText").get_parsed_text()
+	check(personnel_text.contains("LOYAUTÉ ENVERS LE RÉGIME : conforme"), "l'évaluation est rédigée en mots")
 	desk.terminal.submit_command("commande_bidon")
 	check(desk.terminal.get_log_text().contains("COMMANDE INCONNUE"), "le terminal signale une commande inconnue")
 	desk.terminal.submit_command("ident")

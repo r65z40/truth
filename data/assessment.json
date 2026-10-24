@@ -1,0 +1,43 @@
+{
+	"indicators": [
+		{
+			"id": "loyalty",
+			"label": "Loyauté envers le régime",
+			"levels": [
+				{"below": 25, "text": "douteuse"},
+				{"below": 45, "text": "à confirmer"},
+				{"below": 65, "text": "conforme"},
+				{"below": 80, "text": "affirmée"},
+				{"below": 101, "text": "exemplaire"}
+			]
+		},
+		{
+			"id": "suspicion",
+			"label": "Attention de la hiérarchie",
+			"levels": [
+				{"below": 15, "text": "aucune réserve"},
+				{"below": 30, "text": "observation ordinaire"},
+				{"below": 50, "text": "vigilance accrue"},
+				{"below": 70, "text": "surveillance renforcée"},
+				{"below": 101, "text": "enquête interne envisagée"}
+			]
+		},
+		{
+			"id": "influence",
+			"label": "Poids institutionnel",
+			"levels": [
+				{"below": 10, "text": "agent inconnu des services"},
+				{"below": 20, "text": "agent sans appui"},
+				{"below": 35, "text": "nom connu à l'étage"},
+				{"below": 55, "text": "avis écouté"},
+				{"below": 101, "text": "agent influent"}
+			]
+		}
+	],
+	"flag_notes": [
+		{"flag": "player.reprimanded", "text": "Note versée au dossier : « manque de discernement dans le traitement d'un dossier civil »."},
+		{"flag": "milice.ally", "text": "Relations : bénéficie de la bienveillance de la Milice du District 9."},
+		{"flag": "milice.enemy", "text": "Relations : objet d'une plainte de la Milice du District 9."},
+		{"flag": "40921.orlik_confessed", "text": "Mention : méthode d'instruction remarquée par la hiérarchie."}
+	]
+}
