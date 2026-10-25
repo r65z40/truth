@@ -16,6 +16,18 @@
 			}
 		},
 		{
+			"id": "features_day_2",
+			"conditions": {
+				"min_day": 1
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Vos habilitations",
+				"body": "Inspecteur,\n\nVotre période d'essai d'une journée est terminée. Vous disposez désormais de :\n\n- DEMANDER : une pièce complémentaire par dossier, transmise par le service concerné le lendemain (1 h de service).\n- CONSULTER : mon avis sur un dossier, une fois (1 h). N'en abusez pas.\n- ARCHIVES : les rapports que vous avez transmis.\n- DOSSIER PERSONNEL : votre évaluation par la Direction du personnel.\n\nVotre journée compte huit heures. Lire ne vous coûte rien ; agir, si.\n\nR. MAZUR"
+			}
+		},
+		{
 			"id": "51307_milice_plea",
 			"conditions": {
 				"min_day": 1

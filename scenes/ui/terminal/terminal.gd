@@ -17,6 +17,8 @@ const COLOR_TEXT := "#e8e4d8"
 const CHARS_PER_SECOND := 400.0
 
 const QUICK_COMMANDS := ["AIDE", "DOSSIERS", "MESSAGES", "VERITAS", "IDENT", "EFFACER"]
+## Raccourcis masqués tant que la fonction « terminal_advanced » n'est pas débloquée.
+const ADVANCED_COMMANDS := ["VERITAS", "IDENT", "EFFACER"]
 const QUICK_TOOLTIPS := {
 	"AIDE": "Liste des commandes du terminal.",
 	"DOSSIERS": "Ouvrir les dossiers qui vous sont assignés.",
@@ -42,8 +44,16 @@ func _ready() -> void:
 		button.custom_minimum_size = Vector2(0, 44)
 		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(submit_command.bind(command))
+		button.set_meta("command", command)
 		_quick_bar.add_child(button)
 	_output.text = ""
+
+
+## Affiche ou masque les raccourcis avancés (première journée simplifiée).
+func set_advanced_visible(show_advanced: bool) -> void:
+	for button in _quick_bar.get_children():
+		if button.get_meta("command", "") in ADVANCED_COMMANDS:
+			button.visible = show_advanced
 
 
 ## Séquence d'ouverture de session affichée à l'arrivée au bureau.

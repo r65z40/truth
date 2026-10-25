@@ -107,6 +107,21 @@ Paramètres (`gameplay/guidance`). Les fenêtres émettent `notify(text)` ; le b
 affiche ces notifications brèves (toast). Les sauvegardes contiennent un résumé
 (`summary` : date, grade) lu par le menu sans charger la partie.
 
+## Accueil du joueur
+
+- **Introduction** (`scenes/intro/`, `data/intro.json`) : quatre pages illustrées
+  entre « Nouvelle partie » et le bureau ; dessins en code (`IntroArt`).
+- **Bulle d'aide** (`scenes/ui/coach/`) : `Guidance.next_step()` renvoie aussi
+  `part` (endroit dans la fenêtre : `case`, `tab:<pièce>`, `facts`, `notebook`,
+  `conclusion`), `case_id` et `coach` (texte). Le bureau résout le contrôle
+  visé (`coach_target()`, `MinistryWindow.get_guide_target()`) ; la bulle le
+  suit à chaque image et ne bloque jamais les clics. Un dossier peut préciser
+  ses conseils dans un bloc `"guide"` (le 40921 sert de tutoriel).
+- **Fonctions débloquées** (`data/rules/features.json`, `Features`) : le premier
+  jour n'affiche ni DEMANDER, ni CONSULTER, ni Archives, ni Dossier personnel ;
+  MAZUR les annonce le lendemain. Les règles de `GameState` vérifient aussi ces
+  conditions.
+
 ## VERITAS
 
 `scripts/core/veritas.gd` ne lit que les données et les pièces visibles par

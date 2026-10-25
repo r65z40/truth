@@ -165,6 +165,11 @@ func confront_facts(case_id: String, fact_a_id: String, fact_b_id: String) -> St
 	return key
 
 
+## Fonction débloquée à ce stade de la partie (voir Features).
+func is_feature_unlocked(feature: String) -> bool:
+	return Features.is_unlocked(feature, get_condition_state())
+
+
 # --- Horloge de service ------------------------------------------------------
 
 func get_clock_text() -> String:
@@ -192,7 +197,8 @@ func is_overtime_today() -> bool:
 func request_document(case_id: String, document_id: String) -> bool:
 	var document := CaseLibrary.get_document(CaseLibrary.get_case(case_id), document_id)
 	var case_state := get_case_state(case_id)
-	if not document.has("request") or case_state.requested_documents.has(document_id):
+	if not document.has("request") or case_state.requested_documents.has(document_id) \
+			or not is_feature_unlocked("request_document"):
 		return false
 	if not spend_time("request_document"):
 		return false
@@ -221,7 +227,8 @@ func get_requestable_documents(case_id: String) -> Array:
 func consult_superior(case_id: String) -> bool:
 	var consultation: Dictionary = CaseLibrary.get_case(case_id).get("consultation", {})
 	var case_state := get_case_state(case_id)
-	if consultation.is_empty() or case_state.consulted or not can_decide(case_id):
+	if consultation.is_empty() or case_state.consulted or not can_decide(case_id) \
+			or not is_feature_unlocked("consult_superior"):
 		return false
 	if not spend_time("consult_superior"):
 		return false

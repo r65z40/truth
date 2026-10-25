@@ -248,6 +248,9 @@ func _refresh_all() -> void:
 # --- Actions qui coûtent du temps --------------------------------------------
 
 func _refresh_actions(can_decide: bool) -> void:
+	# Première journée : seulement lire, confronter, conclure.
+	_request_button.visible = GameState.is_feature_unlocked("request_document")
+	_consult_button.visible = GameState.is_feature_unlocked("consult_superior")
 	var requestable := GameState.get_requestable_documents(current_case_id)
 	var pending := _pending_requests()
 	_request_button.disabled = not can_decide or requestable.is_empty() \
@@ -360,6 +363,7 @@ func _refresh_case_list() -> void:
 		button.toggle_mode = true
 		button.set_pressed_no_signal(case_id == current_case_id)
 		button.custom_minimum_size = Vector2(0, 64)
+		button.set_meta("case_id", case_id)
 		button.pressed.connect(select_case.bind(case_id))
 		_case_list.add_child(button)
 
@@ -389,6 +393,35 @@ func _show_case_view(has_case: bool) -> void:
 	_footer.visible = has_case
 	_notebook.visible = has_case
 	_empty_hint.visible = not has_case
+
+
+## Bulle d'aide : l'onglet à lire, les éléments à noter, le carnet ou le bouton
+## de conclusion (parties définies par Guidance).
+func get_guide_target(part: String, case_id := "") -> Control:
+	if case_id != "" and (case_id != current_case_id or part == "case"):
+		for button in _case_list.get_children():
+			if not button.is_queued_for_deletion() and button.get_meta("case_id", "") == case_id:
+				return button
+		return null
+	if _conclusion_panel.visible:
+		return _conclusion_panel
+	if part.begins_with("tab:"):
+		for tab in _document_tabs.get_children():
+			if not tab.is_queued_for_deletion() and tab.get_meta("document_id") == part.substr(4):
+				return tab
+		return _document_tabs_scroll
+	match part:
+		"facts":
+			for button in _facts_list.get_children():
+				if button is Button and not button.disabled and not button.is_queued_for_deletion():
+					return button
+			# Rien à noter sur cette pièce : les autres onglets.
+			return _document_tabs_scroll
+		"notebook":
+			return _confront_button if selected_facts.size() == MAX_SELECTED_FACTS else _notebook_list
+		"conclusion":
+			return _conclusion_button
+	return null
 
 
 ## Fait défiler la ligne d'onglets jusqu'à l'onglet, s'il existe encore

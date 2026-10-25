@@ -25,6 +25,7 @@ const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 @onready var _day_transition_label: Label = %DayTransitionLabel
 @onready var evening_screen: EveningScreen = %EveningScreen
 @onready var act_review_screen: ActReviewScreen = %ActReviewScreen
+@onready var coach: CoachOverlay = %CoachOverlay
 @onready var _objective_bar: Control = %ObjectiveBar
 @onready var _objective_text: Label = %ObjectiveText
 @onready var _objective_hint: Label = %ObjectiveHint
@@ -83,6 +84,7 @@ func _ready() -> void:
 	_scrim.hide()
 	_scrim.gui_input.connect(_on_scrim_input)
 	_day_transition.hide()
+	coach.target_provider = coach_target
 	_refresh_header()
 	_boot_terminal()
 	has_unsaved_changes = false
@@ -226,6 +228,9 @@ func _refresh_header() -> void:
 	%DossiersButton.text = "DOSSIERS\n" + ("%d dossier(s) à traiter" % pending if pending > 0 else "aucun dossier en attente")
 	%ArchivesButton.text = "ARCHIVES\n%d rapport(s) transmis" % GameState.decisions.size()
 	%PersonnelButton.text = "DOSSIER PERSONNEL\nvotre évaluation"
+	%ArchivesButton.visible = GameState.is_feature_unlocked("archives")
+	%PersonnelButton.visible = GameState.is_feature_unlocked("personnel")
+	terminal.set_advanced_visible(GameState.is_feature_unlocked("terminal_advanced"))
 	_refresh_objective()
 
 
@@ -235,6 +240,7 @@ func _refresh_objective() -> void:
 	_objective_bar.visible = Settings.guidance
 	_objective_text.text = current_step.text
 	_objective_hint.text = current_step.hint
+	coach.visible = Settings.guidance
 	if _pulse_tween:
 		_pulse_tween.kill()
 	for button: Control in _target_buttons.values():
@@ -244,6 +250,24 @@ func _refresh_objective() -> void:
 		_pulse_tween = create_tween().set_loops()
 		_pulse_tween.tween_property(target, "modulate", Color(0.6, 1.4, 0.8), 0.7)
 		_pulse_tween.tween_property(target, "modulate", Color.WHITE, 0.7)
+
+
+## Contrôle que la bulle d'aide signale pour l'étape en cours : le bouton de
+## l'application, l'endroit précis dans la fenêtre ouverte, ou le bouton FERMER
+## d'une autre fenêtre restée ouverte.
+func coach_target() -> Control:
+	if evening_screen.visible or act_review_screen.visible or _day_transition.visible:
+		return null
+	var app: String = current_step.get("target", "")
+	var open := get_open_app()
+	if open == "":
+		coach.text = current_step.get("coach", "")
+		return _target_buttons.get(app)
+	if open == app:
+		coach.text = current_step.get("coach", "")
+		return windows[open].get_guide_target(current_step.get("part", ""), current_step.get("case_id", ""))
+	coach.text = "Fermez cette fenêtre pour passer à l'étape suivante."
+	return windows[open].get_close_button()
 
 
 ## Après la signature d'un rapport : la réponse du supérieur s'affiche aussitôt.

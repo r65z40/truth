@@ -26,6 +26,14 @@ func select_message(message_id: String) -> void:
 		return
 
 
+## Bulle d'aide : le premier message non lu de la liste.
+func get_guide_target(_part: String, _case_id := "") -> Control:
+	for button in _message_list.get_children():
+		if button is Button and not button.is_queued_for_deletion() and button.text.begins_with("[NOUVEAU]"):
+			return button
+	return null
+
+
 func _refresh_list() -> void:
 	for child in _message_list.get_children():
 		child.queue_free()

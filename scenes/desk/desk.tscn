@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/personnel_window.tscn" id="7_personnel"]
 [ext_resource type="PackedScene" path="res://scenes/evening/evening_screen.tscn" id="8_evening"]
 [ext_resource type="PackedScene" path="res://scenes/act_end/act_review_screen.tscn" id="9_act_review"]
+[ext_resource type="PackedScene" path="res://scenes/ui/coach/coach_overlay.tscn" id="10_coach"]
 
 [node name="Desk" type="Control"]
 layout_mode = 3
@@ -274,6 +275,9 @@ layout_mode = 1
 [node name="PersonnelWindow" parent="WindowLayer" instance=ExtResource("7_personnel")]
 unique_name_in_owner = true
 layout_mode = 1
+
+[node name="CoachOverlay" parent="." instance=ExtResource("10_coach")]
+unique_name_in_owner = true
 
 [node name="Toast" type="PanelContainer" parent="."]
 unique_name_in_owner = true

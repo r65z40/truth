@@ -23,6 +23,13 @@ func _capture_all() -> void:
 	menu.get_node("%SettingsButton").pressed.emit()
 	await _snap("02_parametres")
 	menu.queue_free()
+	var intro: Node = load("res://scenes/intro/intro.tscn").instantiate()
+	get_tree().root.add_child(intro)
+	for page in intro.pages.size():
+		await _snap("02%s_introduction" % "abcd"[page])
+		if page < intro.pages.size() - 1:
+			intro.next_page()
+	intro.queue_free()
 
 	var desk: Node = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
