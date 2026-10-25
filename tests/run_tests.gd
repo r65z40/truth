@@ -80,6 +80,7 @@ func _run() -> void:
 		"test_desktop_windows",
 		"test_pixel_icons",
 		"test_document_windows",
+		"test_document_passages",
 		"test_time_in_desk",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
@@ -152,6 +153,33 @@ func test_document_rendering_escapes_bbcode() -> void:
 	check(bbcode.contains("[lb]Fin de l'appel]"), "les crochets du texte sont échappés")
 	var log := CaseLibrary.get_document(CaseLibrary.get_case("40921"), "travel_log")
 	check(dossiers_script.render_document_bbcode(log).contains("[table=5]"), "le registre est rendu en tableau")
+
+
+## Passages à noter : chaque citation existe dans le texte de sa pièce, balisée une fois.
+func test_document_passages() -> void:
+	var all_found := true
+	for case_id in CaseLibrary.get_case_ids():
+		for document in CaseLibrary.get_case(case_id).documents:
+			var bbcode := DossiersWindow.render_document_bbcode(document, {"noted": [], "link": "8e1f1f", "highlight": "edc76b"})
+			for fact in DossiersWindow.quoted_facts(document):
+				var found: bool = bbcode.count("[url=fact:%s]" % fact.id) == 1
+				if not found:
+					print("  citation introuvable : %s/%s/%s" % [case_id, document.id, fact.id])
+				all_found = all_found and found
+	check(all_found, "chaque citation se trouve une fois dans le texte de sa pièce")
+	var intercept := CaseLibrary.get_document(CaseLibrary.get_case("40921"), "intercept")
+	var plain := DossiersWindow.render_document_bbcode(intercept)
+	check(not plain.contains("[url="), "sans réglage : texte simple, sans lien")
+	var marked := DossiersWindow.render_document_bbcode(intercept, {"noted": ["f_intercept_papers"], "link": "8e1f1f", "highlight": "edc76b"})
+	check(marked.contains("[url=fact:f_intercept_papers][bgcolor=#edc76b]Apporte les papiers de maman. Tous.[/bgcolor][/url]"),
+			"élément noté : passage surligné")
+	check(marked.contains("[url=fact:f_intercept_chief][color=#8e1f1f][u]"), "élément à noter : passage souligné")
+	check(marked.contains("[lb]Fin de l'appel]"), "le texte autour des passages reste échappé")
+	var quoted := 0
+	for case_id in CaseLibrary.get_case_ids():
+		for document in CaseLibrary.get_case(case_id).documents:
+			quoted += DossiersWindow.quoted_facts(document).size()
+	check(quoted >= 50, "les dossiers de l'acte 1 ont des passages à noter (%d)" % quoted)
 
 
 func test_calendar() -> void:
@@ -1217,22 +1245,28 @@ func test_investigation_and_conclusion_flow() -> void:
 			"la fiche d'identité affiche la photo du sujet")
 	dossiers.select_document("work_report")
 	check(not dossiers._photo.visible, "pas de photo sur un rapport")
-	var facts_list: Node = dossiers.get_node("%FactsList")
-	check(facts_list.get_child_count() == 2, "le rapport présente 2 éléments notables")
+	var doc_body: RichTextLabel = dossiers.get_node("%DocBody")
+	check(doc_body.text.contains("[url=fact:f_report_presence]") and doc_body.text.contains("[url=fact:f_report_author]"),
+			"le rapport présente 2 passages soulignés")
 	check(dossiers.get_node("%VeritasStrip").visible and dossiers.get_node("%VeritasRemark").text.begins_with("VERITAS >"),
 			"VERITAS commente la pièce affichée")
-	facts_list.get_node("Fact_f_report_presence").pressed.emit()
-	check(GameState.get_case_state("40921").noted_facts == ["f_report_presence"], "un clic note l'élément")
-	check(facts_list.get_node("Fact_f_report_presence").disabled, "un élément noté ne peut plus être noté")
+	doc_body.meta_clicked.emit("fact:f_report_presence")
+	check(GameState.get_case_state("40921").noted_facts == ["f_report_presence"], "un clic sur le passage note l'élément")
+	check(doc_body.text.contains("[url=fact:f_report_presence][bgcolor="), "le passage noté est surligné")
+	doc_body.meta_clicked.emit("fact:f_report_presence")
+	check(GameState.get_case_state("40921").noted_facts.size() == 1, "un élément noté ne peut plus être noté")
 	dossiers.select_document("travel_log")
-	dossiers.get_node("%FactsList").get_node("Fact_f_log_trip").pressed.emit()
-	dossiers.get_node("%FactsList").get_node("Fact_f_log_card").pressed.emit()
+	doc_body.meta_clicked.emit("fact:f_log_trip")
+	doc_body.meta_clicked.emit("fact:f_log_card")
 	var notebook: Node = dossiers.get_node("%NotebookList")
 	check(notebook.get_child_count() == 3, "trois éléments au carnet")
 	notebook.get_node("Noted_f_log_card").pressed.emit()
 	notebook = dossiers.get_node("%NotebookList")
 	notebook.get_node("Noted_f_report_presence").pressed.emit()
 	check(not dossiers.get_node("%ConfrontButton").disabled, "deux éléments sélectionnés : on peut confronter")
+	check(dossiers._can_drop_note(Vector2.ZERO, {"note": "f_log_card"}, "f_report_presence")
+			and not dossiers._can_drop_note(Vector2.ZERO, {"note": "f_log_card"}, "f_log_card"),
+			"on peut glisser une fiche sur une autre, pas sur elle-même")
 	dossiers.get_node("%ConfrontButton").pressed.emit()
 	check(dossiers.get_node("%ConfrontResult").text.begins_with("PAS DE CONTRADICTION"), "carte et présence : aucune incohérence")
 	dossiers.get_node("%NotebookList").get_node("Noted_f_report_presence").pressed.emit()
@@ -1485,7 +1519,8 @@ func test_friendly_desk() -> void:
 			"dans le dossier : l'onglet de la pièce suivante")
 	for document_id in ["work_report", "intercept", "travel_log"]:
 		desk.windows.dossiers.select_document(document_id)
-	check(desk.current_step.part == "facts" and desk.coach_target() is Button and desk.coach.text.contains("21 octobre"), "noter : conseil propre au premier dossier")
+	check(desk.current_step.part == "facts" and desk.coach_target() == desk.windows.dossiers.get_node("%DocBody") \
+			and desk.coach.text.contains("21 octobre"), "noter : la bulle montre le texte de la pièce, conseil propre au premier dossier")
 	desk.windows.dossiers.close()
 	GameState.new_game()
 	desk.queue_free()
@@ -1614,10 +1649,10 @@ func test_document_windows() -> void:
 	check(aside.get_node("%DocBody").get_parsed_text().contains("SEDLAR") and aside.window_title.contains("40921"),
 			"la fenêtre montre la pièce et son dossier")
 	check(desk.get_node("%TaskButtons").get_child_count() == 2, "la pièce a son bouton dans la barre des tâches")
-	aside.get_node("%FactsList").get_node("Fact_f_report_presence").pressed.emit()
+	aside.get_node("%DocBody").meta_clicked.emit("fact:f_report_presence")
 	check("f_report_presence" in GameState.get_case_state("40921").noted_facts, "on note un élément depuis la pièce à part")
 	check(dossiers.get_node("%NotebookList").has_node("Noted_f_report_presence"), "le carnet du dossier se met à jour")
-	check(aside.get_node("%FactsList").get_node("Fact_f_report_presence").disabled, "l'élément noté est grisé dans la pièce")
+	check(aside.get_node("%DocBody").text.contains("[url=fact:f_report_presence][bgcolor="), "le passage noté est surligné dans la pièce à part")
 	check(dossiers.get_node("%NotebookList").get_node("Noted_f_report_presence").tooltip_text.contains("Rapport"),
 			"le carnet rappelle la pièce d'où vient l'élément")
 	check(desk.open_document_window("40921", "work_report") == aside, "rouvrir la même pièce ramène sa fenêtre")

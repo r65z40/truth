@@ -87,7 +87,9 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Étape 2 : le dossier en classeur (pièces en liste à gauche, lues ou « à lire »,
       avancement en quatre étapes, éléments à noter en bas de la pièce, source rappelée
       dans le carnet) ; chaque pièce peut s'ouvrir dans sa propre fenêtre, pour comparer
-- [ ] Étape 3 : passages à surligner dans le texte (`quote`), carnet à fiches et glisser-déposer
+- [x] Étape 3 : passages soulignés dans le texte (`quote`), cliqués pour être notés puis
+      surlignés ; fiches du carnet à glisser l'une sur l'autre pour les confronter.
+      Le carnet reste dans la fenêtre du dossier (une fenêtre à part masquerait les pièces)
 - [ ] Étape 4 : Courrier, VERITAS, Archives, Dossier personnel au nouveau style ; aide en info-bulles
 
 ## En cours : le terrain (validé par fen le 25.10, `docs/design/TERRAIN.md`)

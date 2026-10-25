@@ -49,7 +49,7 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 					guide.get("read", "Lisez chaque pièce : cliquez sur la pièce signalée (%d/%d)." % [viewed, total])))
 		if case_state.get("noted_facts", []).size() < MIN_NOTED_FACTS:
 			return _case_step(case_id, _step("Noter les éléments importants du dossier n° %s dans votre carnet." % case_id,
-					"Boutons « + NOTER » sous chaque pièce.", "dossiers", "facts",
+					"Cliquez sur les passages soulignés du texte (ou « + NOTER »).", "dossiers", "facts",
 					guide.get("facts", "Sous la pièce, cliquez sur les éléments qui vous semblent importants : ils vont dans votre carnet.")))
 		if case_state.get("contradictions_found", []).is_empty():
 			return _case_step(case_id, _step("Confronter deux éléments du carnet, ou rédiger votre conclusion.",

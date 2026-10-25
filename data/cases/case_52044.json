@@ -61,7 +61,8 @@
 					"id": "f_kovac_role",
 					"key": "kovac.role",
 					"value": "Gérante depuis 1979",
-					"label": "Gérante de la Boulangerie d'État n° 12 depuis 1979"
+					"label": "Gérante de la Boulangerie d'État n° 12 depuis 1979",
+					"quote": "Gérante, Boulangerie d'État n° 12, District 4"
 				}
 			]
 		},
@@ -80,13 +81,15 @@
 					"id": "f_rep_expected",
 					"key": "sector.books",
 					"value": "1 080 carnets",
-					"label": "Rations attendues pour le secteur : 1 080 carnets (recensement)"
+					"label": "Rations attendues pour le secteur : 1 080 carnets (recensement)",
+					"quote": "Rations attendues pour le secteur en octobre, d'après le recensement : 1 080 carnets."
 				},
 				{
 					"id": "f_rep_authentic",
 					"key": "tickets.authentic",
 					"value": "Tickets authentiques",
-					"label": "Aucun faux ticket : tous portent le filigrane et le tampon du District 4"
+					"label": "Aucun faux ticket : tous portent le filigrane et le tampon du District 4",
+					"quote": "Les tickets contrôlés sont authentiques (papier filigrané, tampon du District 4). Aucun faux n'a été trouvé."
 				}
 			]
 		},
@@ -142,19 +145,22 @@
 					"id": "f_reg_total",
 					"key": "sector.books",
 					"value": "1 412 carnets",
-					"label": "1 412 carnets délivrés en octobre pour le secteur, tous visés P. DRAZEK"
+					"label": "1 412 carnets délivrés en octobre pour le secteur, tous visés P. DRAZEK",
+					"quote": "Total des carnets délivrés en octobre pour le secteur de la rue du Moulin : 1 412."
 				},
 				{
 					"id": "f_reg_horvat",
 					"key": "horvat.status",
 					"value": "Vivant, carnet délivré en octobre",
-					"label": "Carnet délivré le 02.10.1986 à HORVAT Milan, plus un second pour « perte »"
+					"label": "Carnet délivré le 02.10.1986 à HORVAT Milan, plus un second pour « perte »",
+					"quote": "HORVAT Milan (2e carnet, perte)"
 				},
 				{
 					"id": "f_reg_lenska",
 					"key": "lenska.status",
 					"value": "Vivante, carnet délivré en octobre",
-					"label": "Deux carnets délivrés le 06.10.1986 à LENSKA Ruth"
+					"label": "Deux carnets délivrés le 06.10.1986 à LENSKA Ruth",
+					"quote": "LENSKA Ruth (2e carnet, perte)"
 				}
 			]
 		},
@@ -194,19 +200,22 @@
 					"id": "f_death_horvat",
 					"key": "horvat.status",
 					"value": "Décédé le 14.08.1986",
-					"label": "HORVAT Milan, décédé le 14.08.1986"
+					"label": "HORVAT Milan, décédé le 14.08.1986",
+					"quote": "HORVAT Milan"
 				},
 				{
 					"id": "f_death_lenska",
 					"key": "lenska.status",
 					"value": "Décédée le 03.09.1986",
-					"label": "LENSKA Ruth, décédée le 03.09.1986"
+					"label": "LENSKA Ruth, décédée le 03.09.1986",
+					"quote": "LENSKA Ruth"
 				},
 				{
 					"id": "f_death_notice",
 					"key": "notice.sent",
 					"value": "Transmis sous huit jours",
-					"label": "Les avis de décès sont transmis au Bureau du ravitaillement"
+					"label": "Les avis de décès sont transmis au Bureau du ravitaillement",
+					"quote": "Les avis de décès sont transmis au Bureau du ravitaillement sous huit jours."
 				}
 			]
 		},
@@ -224,13 +233,15 @@
 					"id": "f_kov_new",
 					"key": "buyers.new",
 					"value": "Inconnus aux carnets neufs",
-					"label": "« Des gens que je ne connais pas, avec des carnets tout neufs »"
+					"label": "« Des gens que je ne connais pas, avec des carnets tout neufs »",
+					"quote": "il y a des gens que je ne connais pas. Ils paient avec des carnets tout neufs"
 				},
 				{
 					"id": "f_kov_warned",
 					"key": "kovac.warned",
 					"value": "Signalé en septembre",
-					"label": "Elle affirme avoir signalé le problème au contrôleur dès septembre"
+					"label": "Elle affirme avoir signalé le problème au contrôleur dès septembre",
+					"quote": "Je l'ai dit au contrôleur en septembre déjà."
 				}
 			]
 		},
@@ -253,7 +264,8 @@
 					"id": "f_pet_cemetery",
 					"key": "books.origin",
 					"value": "Vendus par un employé du Bureau",
-					"label": "« Les carnets du cimetière » apportés par un employé du Bureau du ravitaillement"
+					"label": "« Les carnets du cimetière » apportés par un employé du Bureau du ravitaillement",
+					"quote": "On les appelle les carnets du cimetière. C'est un type du Bureau du ravitaillement qui les apporte"
 				}
 			]
 		},
@@ -276,7 +288,8 @@
 					"id": "f_mil_bureau",
 					"key": "bureau.protected",
 					"value": "Service ami de la Milice",
-					"label": "La Milice demande de ne pas « déranger » le Bureau du ravitaillement"
+					"label": "La Milice demande de ne pas « déranger » le Bureau du ravitaillement",
+					"quote": "Le Bureau du ravitaillement est un service ami. Ne le dérangez pas pour une affaire de pain."
 				}
 			]
 		},
@@ -319,13 +332,15 @@
 					"id": "f_not_horvat",
 					"key": "horvat.status",
 					"value": "Décédé le 14.08.1986",
-					"label": "Avis de décès de HORVAT reçu et visé par P. DRAZEK le 20.08.1986"
+					"label": "Avis de décès de HORVAT reçu et visé par P. DRAZEK le 20.08.1986",
+					"quote": "20.08.1986"
 				},
 				{
 					"id": "f_not_drazek",
 					"key": "drazek.knew",
 					"value": "Avis visés par DRAZEK",
-					"label": "Les trois avis de décès ont été visés par P. DRAZEK lui-même"
+					"label": "Les trois avis de décès ont été visés par P. DRAZEK lui-même",
+					"quote": "P. DRAZEK"
 				}
 			]
 		},

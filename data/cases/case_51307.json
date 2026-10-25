@@ -64,13 +64,15 @@
 					"id": "f_orlik_party",
 					"key": "orlik.party",
 					"value": "Membre depuis 1961",
-					"label": "Membre du Parti depuis 1961, médaille du Travail"
+					"label": "Membre du Parti depuis 1961, médaille du Travail",
+					"quote": "Membre depuis 1961"
 				},
 				{
 					"id": "f_orlik_brother",
 					"key": "orlik.brother",
 					"value": "Capitaine de la Milice",
-					"label": "Frère : Lev ORLIK, capitaine de la Milice du District 9"
+					"label": "Frère : Lev ORLIK, capitaine de la Milice du District 9",
+					"quote": "Frère : Lev ORLIK, capitaine, Milice du District 9"
 				}
 			]
 		},
@@ -120,19 +122,22 @@
 					"id": "f_cert_reason",
 					"key": "clock.status.october",
 					"value": "En panne certains jours",
-					"label": "Motif invoqué deux fois : « panne de l'horloge » (16.10 et 21.10)"
+					"label": "Motif invoqué deux fois : « panne de l'horloge » (16.10 et 21.10)",
+					"quote": "Panne de l'horloge"
 				},
 				{
 					"id": "f_cert_count",
 					"key": "orlik.certificates",
 					"value": "4 en octobre",
-					"label": "4 certificats en octobre, aucun en septembre"
+					"label": "4 certificats en octobre, aucun en septembre",
+					"quote": "En septembre 1986 : aucun certificat signé par B. ORLIK."
 				},
 				{
 					"id": "f_cert_petras",
 					"key": "petras.days",
 					"value": "Deux jeudis",
-					"label": "PETRAS couvert deux fois, les jeudis 9 et 16 octobre"
+					"label": "PETRAS couvert deux fois, les jeudis 9 et 16 octobre",
+					"quote": "PETRAS V."
 				}
 			]
 		},
@@ -151,7 +156,8 @@
 					"id": "f_clock_ok",
 					"key": "clock.status.october",
 					"value": "En état de marche tout le mois",
-					"label": "Aucune panne signalée en octobre, horloge en état de marche"
+					"label": "Aucune panne signalée en octobre, horloge en état de marche",
+					"quote": "Aucun signalement de panne n'a été adressé au service technique en octobre."
 				}
 			]
 		},
@@ -169,13 +175,15 @@
 					"id": "f_anon_motive",
 					"key": "orlik.motive",
 					"value": "Contre des denrées",
-					"label": "« Un paquet de café ou une bouteille »"
+					"label": "« Un paquet de café ou une bouteille »",
+					"quote": "Un paquet de café ou une bouteille"
 				},
 				{
 					"id": "f_anon_petras",
 					"key": "petras.days",
 					"value": "Deux jeudis",
-					"label": "« Demandez à PETRAS où il passe ses jeudis »"
+					"label": "« Demandez à PETRAS où il passe ses jeudis »",
+					"quote": "Demandez à PETRAS où il passe ses jeudis."
 				}
 			]
 		},
@@ -198,13 +206,15 @@
 					"id": "f_hearing_motive",
 					"key": "orlik.motive",
 					"value": "Échange de services, rien de vendu",
-					"label": "« Je n'ai jamais rien vendu »"
+					"label": "« Je n'ai jamais rien vendu »",
+					"quote": "Je n'ai jamais rien vendu."
 				},
 				{
 					"id": "f_hearing_clock",
 					"key": "clock.status.october",
 					"value": "En panne certains jours",
-					"label": "« Elle tombe en panne tout le temps, cette horloge »"
+					"label": "« Elle tombe en panne tout le temps, cette horloge »",
+					"quote": "Elle tombe en panne tout le temps, cette horloge."
 				}
 			]
 		},
@@ -227,13 +237,15 @@
 					"id": "f_sedlar_motive",
 					"key": "orlik.motive",
 					"value": "Contre des denrées",
-					"label": "« Deux paquets de café pour le certificat »"
+					"label": "« Deux paquets de café pour le certificat »",
+					"quote": "deux paquets de café en échange du certificat de présence"
 				},
 				{
 					"id": "f_sedlar_duration",
 					"key": "interrogation.duration",
 					"value": "14 heures",
-					"label": "Interrogatoire de 14 heures"
+					"label": "Interrogatoire de 14 heures",
+					"quote": "Durée de l'interrogatoire : 14 heures."
 				}
 			]
 		},
@@ -256,7 +268,8 @@
 					"id": "f_kremer_informant",
 					"key": "orlik.informant",
 					"value": "Informateur de la Milice depuis 1979",
-					"label": "ORLIK, informateur de la Milice depuis 1979 (« CHAUDRON »)"
+					"label": "ORLIK, informateur de la Milice depuis 1979 (« CHAUDRON »)",
+					"quote": "B. ORLIK figure depuis 1979 au fichier des informateurs de la Milice du District 9, sous le nom de code « CHAUDRON »"
 				}
 			]
 		},
@@ -309,13 +322,15 @@
 					"id": "f_pet_thursdays",
 					"key": "petras.days",
 					"value": "Deux jeudis",
-					"label": "PETRAS non pointé les jeudis 9 et 16 octobre, couverts par certificat"
+					"label": "PETRAS non pointé les jeudis 9 et 16 octobre, couverts par certificat",
+					"quote": "non pointé"
 				},
 				{
 					"id": "f_pet_30",
 					"key": "petras.unpaid",
 					"value": "Absence du 30.10 non couverte",
-					"label": "Le 30 octobre, sans certificat, l'absence est déclarée injustifiée"
+					"label": "Le 30 octobre, sans certificat, l'absence est déclarée injustifiée",
+					"quote": "l'absence de PETRAS est inscrite comme « absence injustifiée »"
 				}
 			]
 		},
