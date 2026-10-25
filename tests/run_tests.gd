@@ -63,6 +63,7 @@ func _run() -> void:
 		"test_case_53402",
 		"test_case_53517",
 		"test_case_briefings",
+		"test_document_field_icons",
 		"test_tutorial_bubble_fades",
 		"test_coach_bubble_can_be_closed",
 		"test_case_51307_depends_on_first_case",
@@ -1223,6 +1224,17 @@ func test_coach_bubble_can_be_closed() -> void:
 	desk.queue_free()
 	GameState.new_game()
 	await get_tree().process_frame
+
+
+func test_document_field_icons() -> void:
+	check(DossiersWindow._field_icon_tag("Nom").contains("f_person.png"), "le champ Nom porte l'icône personne")
+	check(DossiersWindow._field_icon_tag("Né le").contains("f_date.png"), "le champ Né le porte l'icône date")
+	check(DossiersWindow._field_icon_tag("Adresse").contains("f_home.png"), "le champ Adresse porte l'icône domicile")
+	check(DossiersWindow._field_icon_tag("Famille hors district").contains("f_family.png"), "Famille passe avant district")
+	check(DossiersWindow._field_icon_tag("Antécédents").contains("f_warn.png"), "les antécédents portent l'icône d'alerte")
+	check(DossiersWindow._field_icon_tag("Observations diverses") == "", "un libellé inconnu n'a pas d'icône")
+	for entry in DossiersWindow.FIELD_ICONS:
+		check(ResourceLoader.exists("res://ui/icons/%s.png" % entry[0]), "le pictogramme %s existe" % entry[0])
 
 
 func test_case_briefings() -> void:

@@ -336,6 +336,28 @@ func _on_conclusion_submitted(decision_id: String) -> void:
 ## de registre), pour les distinguer des valeurs en encre pleine : la pièce se lit
 ## comme un vrai formulaire. Correspond à DocumentMeta du thème.
 const LABEL_COLOR := "5c4f3d"
+## Taille (px) des pictogrammes en ligne devant les libellés de champs.
+const FIELD_ICON_SIZE := 22
+## Mots-clés du libellé d'un champ -> pictogramme (res://ui/icons/<nom>.png).
+const FIELD_ICONS := [
+	["f_person", ["nom", "prénom", "prenom", "identité", "sujet", "citoyen :"]],
+	["f_date", ["né", "date", "naissance", "délivr", "émis"]],
+	["f_id", ["carte", "matricule", "numéro", "n°", "dossier", "permis"]],
+	["f_work", ["profession", "travail", "emploi", "poste", "fonction", "grade"]],
+	["f_family", ["situation", "famille", "conjoint", "enfant", "marié", "proche", "époux", "épouse"]],
+	["f_home", ["adresse", "domicile", "district", "résidence", "logement"]],
+	["f_warn", ["antécédent", "avertissement", "risque", "sanction", "mention", "alerte"]],
+]
+
+## Balise [img] du pictogramme correspondant au libellé, ou "" si aucun ne colle.
+static func _field_icon_tag(label: String) -> String:
+	var low := label.to_lower()
+	for entry in FIELD_ICONS:
+		for keyword in entry[1]:
+			if low.contains(keyword):
+				return "[img=%d]res://ui/icons/%s.png[/img]  " % [FIELD_ICON_SIZE, entry[0]]
+	return ""
+
 
 static func render_document_bbcode(document: Dictionary, passages := {}) -> String:
 	var marker := PassageMarker.new(document.get("facts", []) if not passages.is_empty() else [], passages)
@@ -343,8 +365,8 @@ static func render_document_bbcode(document: Dictionary, passages := {}) -> Stri
 	if document.has("fields"):
 		var table := "[table=2]"
 		for field in document.fields:
-			table += "[cell padding=0,4,24,4][color=%s][b]%s[/b][/color][/cell][cell padding=0,4,0,4]%s[/cell]" % [
-				LABEL_COLOR, _escape(field[0]).to_upper(), marker.mark(field[1])]
+			table += "[cell padding=0,4,24,4]%s[color=%s][b]%s[/b][/color][/cell][cell padding=0,4,0,4]%s[/cell]" % [
+				_field_icon_tag(field[0]), LABEL_COLOR, _escape(field[0]).to_upper(), marker.mark(field[1])]
 		parts.append(table + "[/table]")
 	if document.has("author"):
 		parts.append("[color=%s][b]Rédacteur :[/b][/color] %s" % [LABEL_COLOR, marker.mark(document.author)])
