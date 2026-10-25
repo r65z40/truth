@@ -50,6 +50,7 @@ scripts/
     assessment.gd             évaluation de l'agent en mots (data/assessment.json)
     guidance.gd               objectif du jour affiché au bureau (étape suivante)
     field_rules.gd            scènes de terrain (interrogatoires, perquisitions)
+    music_rules.gd            choix du morceau selon le moment et l'état de la partie
   ui/ministry_window.gd       cadre commun des fenêtres (titre, réduire, agrandir, fermer, déplacer)
   ui/window_manager.gd        zone de travail : ordre des fenêtres, premier plan, petit écran
   ui/pixel_icons.gd           icônes en pixels (grilles 16 x 16 aux couleurs du thème)
@@ -73,6 +74,7 @@ tests/                        tests automatiques et captures d'écran
 | `Settings` | Préférences d'affichage, appliquées au démarrage |
 | `GameState` | État de la partie ; toute modification émet `state_changed` |
 | `SaveManager` | `save_game()`, `load_game()`, `has_save()` ; format versionné |
+| `Music` | Musique : `play_context("desk")`, morceau choisi par `MusicRules` (`data/music.json`), fondus |
 | `CrtOverlay` | Filtre visuel global (CanvasLayer 100) |
 
 ## Flux principaux

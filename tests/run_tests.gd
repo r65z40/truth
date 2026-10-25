@@ -80,6 +80,8 @@ func _run() -> void:
 		"test_desktop_windows",
 		"test_pixel_icons",
 		"test_document_windows",
+		"test_music_rules",
+		"test_music_player",
 		"test_time_in_desk",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
@@ -1632,6 +1634,57 @@ func test_document_windows() -> void:
 	desk.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()
+
+
+## Choix du morceau selon le moment du jeu et l'état de la partie.
+func test_music_rules() -> void:
+	var state := {"day_index": 0, "flags": {}, "cases": {}, "indicators": {"suspicion": 10}}
+	check(MusicRules.track_for("menu", state) == "menu", "menu principal : morceau du menu")
+	check(MusicRules.track_for("desk", state) == "act1_desk", "bureau, acte 1")
+	state.day_index = 5
+	check(MusicRules.track_for("desk", state) == "act2_desk", "bureau, acte 2 (jour 6)")
+	state.day_index = 15
+	check(MusicRules.track_for("desk", state) == "act4_desk", "bureau, acte 4")
+	state.indicators.suspicion = 60
+	check(MusicRules.track_for("desk", state) == "desk_tension", "suspicion haute : bureau sous tension")
+	check(MusicRules.track_for("evening", state) == "evening", "soirée ordinaire")
+	state.flags["40921.sedlar_arrested"] = true
+	check(MusicRules.track_for("evening", state) == "evening_grief", "après l'arrestation de SEDLAR : autre soirée")
+	check(MusicRules.track_for("field_interrogation", state) == "field_interrogation", "terrain : audition")
+	check(MusicRules.track_for("inconnu", state) == "", "contexte inconnu : silence")
+	check(MusicRules.are_conditions_met({"max_indicator": {"loyalty": 30}}, {"indicators": {"loyalty": 40}}) == false,
+			"condition d'indicateur maximal")
+	var valid := true
+	for rule in MusicRules.data().rules:
+		valid = valid and MusicRules.get_track(rule.track).get("file", "").begins_with("res://assets/music/")
+	check(valid, "chaque règle désigne un morceau déclaré dans assets/music/")
+
+
+## Lecteur : contexte suivi, silence sans erreur si le fichier manque, volume.
+func test_music_player() -> void:
+	GameState.new_game()
+	Music.play_context("desk")
+	check(Music.current_context == "desk" and Music.current_track == "act1_desk", "le bureau demande le morceau de l'acte 1")
+	check(not Music.is_playing() or ResourceLoader.exists(MusicRules.get_track("act1_desk").file),
+			"fichier absent : silence, sans erreur")
+	GameState.indicators.suspicion = 70
+	GameState.state_changed.emit()
+	check(Music.current_track == "desk_tension", "la musique suit l'état de la partie")
+	var volume := Settings.music_volume
+	Settings.music_volume = 0.0
+	Music.apply_volume()
+	check(AudioServer.is_bus_mute(AudioServer.get_bus_index(Music.BUS)), "volume à zéro : musique coupée")
+	Settings.music_volume = volume
+	Music.apply_volume()
+	check(not AudioServer.is_bus_mute(AudioServer.get_bus_index(Music.BUS)), "volume rétabli")
+	var window: Node = load("res://scenes/ui/windows/settings_window.tscn").instantiate()
+	get_tree().root.add_child(window)
+	window.open()
+	check(window.get_node("%MusicOption").item_count == Settings.MUSIC_LEVELS.size(), "Paramètres : réglage du volume de la musique")
+	window.queue_free()
+	Music.stop()
+	GameState.new_game()
+	await get_tree().process_frame
 
 
 func test_time_in_desk() -> void:

@@ -13,6 +13,7 @@ const INTRO_SCENE := "res://scenes/intro/intro.tscn"
 
 
 func _ready() -> void:
+	Music.play_context("menu")
 	%NewGameButton.pressed.connect(_on_new_game_pressed)
 	_continue_button.pressed.connect(continue_game)
 	%SettingsButton.pressed.connect(open_settings)

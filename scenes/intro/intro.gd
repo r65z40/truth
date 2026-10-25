@@ -16,6 +16,7 @@ var page_index := 0
 
 
 func _ready() -> void:
+	Music.play_context("intro")
 	pages = DataLoader.load_json(DATA_PATH).get("pages", [])
 	%SkipButton.pressed.connect(finish)
 	_next_button.pressed.connect(next_page)

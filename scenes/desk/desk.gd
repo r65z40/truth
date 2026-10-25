@@ -109,6 +109,7 @@ func _ready() -> void:
 	field_screen.finished.connect(_on_field_finished)
 	_refresh_header()
 	_boot_terminal()
+	Music.play_context("desk")
 	has_unsaved_changes = false
 
 
@@ -168,10 +169,13 @@ func end_day() -> void:
 	close_start_menu()
 	window_manager.close_all()
 	if evening_screen.open():
+		Music.play_context("evening")
 		await evening_screen.finished
 	if act_review_screen.open():
+		Music.play_context("act_review")
 		await act_review_screen.finished
 	_start_next_day()
+	Music.play_context("desk")
 
 
 ## Passe au jour suivant, sauvegarde automatiquement et affiche la transition.
@@ -355,11 +359,13 @@ func open_document_window(case_id: String, document_id: String) -> DocumentWindo
 ## Part sur le terrain pour ce dossier (interrogatoire ou perquisition).
 func open_field(case_id: String) -> void:
 	if field_screen.open(case_id):
+		Music.play_context("field_" + field_screen.scene.get("type", "search"))
 		terminal.print_line("Départ sur le terrain : %s." % field_screen.scene.get("title", ""))
 
 
 ## Retour du terrain : le dossier se rouvre sur le procès-verbal.
 func _on_field_finished() -> void:
+	Music.play_context("desk")
 	open_app("dossiers")
 	windows.dossiers.select_case(field_screen.scene.case_id)
 	for document in GameState.get_case_view(field_screen.scene.case_id).documents:
