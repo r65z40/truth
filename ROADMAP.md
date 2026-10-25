@@ -85,7 +85,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Audition d'ORLIK (51307) : questions, éléments du carnet à présenter, procès-verbal versé au dossier
 - [x] Perquisition chez SEDLAR (40921) : endroits cliquables sur le dessin, rapport versé au dossier
 - [x] Indice L'HEURE JUSTE : l'horloge sans aiguilles (escalier, soirée 1, puis poêle de SEDLAR)
-- [ ] Scènes de 52044 (boulangerie ou agent DRAZEK) et 52310 (chez Karel BENES), après l'avis de fen
+- [x] Visite de la boulangerie n° 12 (52044) et perquisition chez Karel BENES (52310)
 - [ ] Soirées dans des lieux dessinés (cuisine, loge d'ADLER, cabine du hall)
 
 ## Prochaine itération

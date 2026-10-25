@@ -1,0 +1,118 @@
+{
+	"note": "Visite de la boulangerie n° 12 (docs/design/TERRAIN.md). spot : zone cliquable dans le dessin (repère 640 x 300). Chaque choix pose field.visit_52044.<id>.",
+	"id": "visit_52044",
+	"case_id": "52044",
+	"type": "search",
+	"button": "VISITE",
+	"title": "VISITE  //  BOULANGERIE D'ÉTAT N° 12, RUE DU MOULIN",
+	"time_action": "search_home",
+	"turns": 4,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"52044"
+			]
+		}
+	],
+	"start_flags": {
+		"52044.bakery_visited": true
+	},
+	"art": "bakery",
+	"verb": "Vous examinez : ",
+	"hint": "Cliquez sur un endroit du dessin pour l'examiner. Ce que vous relevez est versé au dossier.",
+	"turns_label": "%d endroit(s) à examiner",
+	"intro": "Sept heures. La file d'attente commence au coin de la rue du Moulin. Quand vous passez devant tout le monde avec votre carte, les conversations s'arrêtent.\n\nZora KOVAC essuie ses mains sur son tablier. « Vous venez pour les tickets. Allez-y. Je n'ai rien à cacher, et je n'ai pas le temps. »\n\nVous avez le temps de regarder quatre choses.",
+	"options": [
+		{
+			"id": "under_counter",
+			"label": "Sous le comptoir",
+			"spot": [
+				130,
+				190,
+				120,
+				40
+			],
+			"text": "Derrière les sacs de papier, un cahier d'écolier. Zora y note depuis le 15 septembre les clients qu'elle ne connaît pas : vingt-trois noms, tous avec des carnets neufs, tous le jeudi. « Je voulais qu'on me croie. »",
+			"note": [
+				"f_vis_notebook"
+			]
+		},
+		{
+			"id": "cash_box",
+			"label": "La caisse aux tickets",
+			"spot": [
+				300,
+				130,
+				70,
+				40
+			],
+			"text": "Les tickets du jour sont classés par carnet, avec une rigueur de comptable. Une souche attire votre œil : carnet n° 4-1187, HORVAT Milan, bloc 3, app. 12. Encaissé le 16 octobre.",
+			"note": [
+				"f_vis_horvat_ticket"
+			]
+		},
+		{
+			"id": "queue",
+			"label": "La file d'attente",
+			"spot": [
+				480,
+				60,
+				140,
+				110
+			],
+			"text": "Vous sortez. Une vieille femme vous parle sans vous regarder, comme on parle au trottoir : « Ce sont les carnets du cimetière. Un petit, avec des lunettes, du Bureau. Il les vend le jeudi au marché couvert. Tout le monde le sait. Personne ne vous le dira deux fois. »",
+			"note": [
+				"f_vis_queue"
+			],
+			"set_flags": {
+				"52044.queue_talked": true
+			}
+		},
+		{
+			"id": "back_room",
+			"label": "L'arrière-boutique",
+			"spot": [
+				20,
+				60,
+				70,
+				140
+			],
+			"text": "Des sacs de farine, un four encore chaud. Sous un torchon, deux pains mis de côté, avec une étiquette : « Brezno ». Zora ne baisse pas les yeux. « Ma sœur. Elle a trois enfants. Arrêtez-moi pour ça si vous voulez. »",
+			"note": [
+				"f_vis_bread"
+			],
+			"set_flags": {
+				"52044.kovac_bread": true
+			}
+		},
+		{
+			"id": "visit_book",
+			"label": "Le cahier de visite",
+			"spot": [
+				350,
+				50,
+				45,
+				60
+			],
+			"text": "Accroché à un clou, le cahier des contrôles. Au 18 septembre, le contrôleur a écrit « RAS » et signé. En dessous, d'une autre écriture : « Signalé des clients inconnus. Réponse : pas votre travail. Z. K. »",
+			"note": [
+				"f_vis_control"
+			]
+		},
+		{
+			"id": "son_letter",
+			"label": "La lettre sur l'étagère",
+			"spot": [
+				405,
+				60,
+				45,
+				45
+			],
+			"text": "Une lettre de Tomas, de la caserne. Il demande des chaussettes et dit qu'on mange bien. Zora vous la reprend des mains, devant toute la file qui regarde par la vitrine. Elle ne dit rien. Le quartier, lui, s'en souviendra.",
+			"set_flags": {
+				"52044.family_humiliated": true
+			}
+		}
+	],
+	"outro": "Quand vous ressortez, la file s'écarte pour vous laisser passer. Personne ne vous regarde, et tout le monde vous a vu."
+}

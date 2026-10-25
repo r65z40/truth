@@ -37,8 +37,8 @@ func open(case_id: String) -> bool:
 	_art.subject = scene.get("subject", {}).get("photo", {})
 	_art.scene = "interrogation" if scene.type == "interrogation" else scene.get("art", "")
 	_log = [scene.get("intro", "")]
-	_hint_label.text = "Les éléments obtenus vont dans votre carnet et au dossier." if scene.type == "interrogation" \
-			else "Cliquez sur un endroit du dessin pour le fouiller. Ce que vous trouvez est versé au dossier."
+	_hint_label.text = scene.get("hint", "Les éléments obtenus vont dans votre carnet et au dossier." if scene.type == "interrogation" \
+			else "Cliquez sur un endroit du dessin pour le fouiller. Ce que vous trouvez est versé au dossier.")
 	show()
 	_refresh()
 	return true
@@ -54,7 +54,7 @@ func choose(option_id: String) -> void:
 	var result := GameState.field_choose(scene.id, option_id)
 	if result.is_empty():
 		return
-	_append(("> " if is_interrogation() else "Vous fouillez : ") + option.get("label", ""), result)
+	_append(scene.get("verb", "> " if is_interrogation() else "Vous fouillez : ") + option.get("label", ""), result)
 
 
 ## Présente un élément du carnet (interrogatoire).
@@ -87,7 +87,7 @@ func _refresh() -> void:
 	var done: bool = scene_state.get("finished", true)
 	var left := FieldRules.turns_left(scene, scene_state)
 	_turns_label.text = "TERMINÉ" if done else \
-			("%d question(s) restante(s)" if is_interrogation() else "%d fouille(s) restante(s)") % left
+			scene.get("turns_label", "%d question(s) restante(s)" if is_interrogation() else "%d fouille(s) restante(s)") % left
 	_log_label.text = "\n\n".join(_log)
 	_scroll_log_to_end.call_deferred()
 	for child in _options_box.get_children():

@@ -197,6 +197,10 @@ table : le bon élément fait changer sa version. La perquisition chez SEDLAR
 (40921) se joue en endroits cliquables : fouiller les affaires de Vera ou de
 l'enfant humilie la famille. Ce qui est obtenu devient un procès-verbal au
 dossier. Le poêle de SEDLAR cache le premier vrai indice de L'HEURE JUSTE.
+La visite de la boulangerie n° 12 (52044) et la perquisition chez Karel BENES
+(52310) donnent d'autres chemins vers les mêmes vérités (un ticket de mort
+encaissé, un bail au nom d'un autre homme) mais préviennent ceux qu'on
+soupçonne : DRAZEK écrit, la Section 7 pose les scellés.
 Détails : `docs/design/TERRAIN.md`.
 
 ## Carrière

@@ -5,7 +5,8 @@ extends Control
 ## to_local_rect() convertit une zone du repère (les "spot" des perquisitions)
 ## en coordonnées du contrôle.
 ## scene : "interrogation" (le sujet de l'autre côté de la table, d'après subject)
-## ou "sedlar_flat" (l'appartement des SEDLAR).
+## ou un lieu : "sedlar_flat" (appartement des SEDLAR), "bakery" (boulangerie
+## n° 12), "benes_flat" (appartement 40 du quai des Tanneurs).
 ## Couleurs : type de thème "IntroArt" (même palette que l'introduction).
 
 const CANVAS := Vector2(640, 300)
@@ -52,15 +53,22 @@ func _draw() -> void:
 		"interrogation":
 			draw_rect(Rect2(Vector2.ZERO, size), _c("sky"))
 			draw_rect(Rect2(0, 0, size.x, _offset().y + 200.0 * get_canvas_scale()), _c("building_far"))
-		"sedlar_flat":
+		"sedlar_flat", "benes_flat":
 			draw_rect(Rect2(0, 0, size.x, horizon), _c("paper_dark").darkened(0.45))
 			draw_rect(Rect2(0, horizon, size.x, size.y - horizon), _c("wood"))
+		"bakery":
+			draw_rect(Rect2(0, 0, size.x, horizon), _c("paper").darkened(0.55))
+			draw_rect(Rect2(0, horizon, size.x, size.y - horizon), _c("ink").lightened(0.12))
 	draw_set_transform(_offset(), 0.0, Vector2.ONE * get_canvas_scale())
 	match scene:
 		"interrogation":
 			_draw_interrogation()
 		"sedlar_flat":
 			_draw_sedlar_flat()
+		"bakery":
+			_draw_bakery()
+		"benes_flat":
+			_draw_benes_flat()
 	draw_set_transform(Vector2.ZERO)
 
 
@@ -171,6 +179,95 @@ func _draw_sedlar_flat() -> void:
 	# Vera, debout près de la porte, de dos à la lumière.
 	draw_rect(Rect2(300, 130, 40, 100), _c("building"))
 	draw_circle(Vector2(320, 118), 14, _c("building"))
+
+
+## Boulangerie d'État n° 12 : étagères presque vides, comptoir, caisse, la gérante,
+## la porte de l'arrière-boutique à gauche et la file d'attente derrière la vitrine.
+func _draw_bakery() -> void:
+	draw_rect(Rect2(Vector2.ZERO, CANVAS), _c("paper").darkened(0.55))
+	draw_rect(Rect2(0, 230, CANVAS.x, 70), _c("ink").lightened(0.12))
+	for x in range(0, int(CANVAS.x), 32):
+		draw_line(Vector2(x, 230), Vector2(x, 300), Color(_c("ink"), 0.5), 1.0)
+	# Porte de l'arrière-boutique, entrouverte sur la lueur du four.
+	draw_rect(Rect2(20, 50, 70, 180), _c("wood").darkened(0.2))
+	draw_rect(Rect2(26, 56, 30, 168), Color(_c("window"), 0.25))
+	# Étagères à pain : trois miches pour tout le quartier.
+	for i in 3:
+		var y := 40 + i * 40
+		draw_rect(Rect2(110, y + 26, 210, 6), _c("wood"))
+	for loaf in [Vector2(140, 58), Vector2(260, 98), Vector2(180, 138)]:
+		draw_colored_polygon(_ellipse(loaf, Vector2(22, 10)), _c("folder"))
+	# Affiche des rations et cahier de visite accroché à son clou.
+	draw_rect(Rect2(350, 50, 45, 60), _c("paper"))
+	for i in 5:
+		draw_rect(Rect2(356, 60 + i * 9, 32, 3), Color(_c("ink"), 0.5))
+	# Photo du fils et sa lettre.
+	draw_rect(Rect2(405, 60, 30, 38), _c("wood"))
+	draw_rect(Rect2(409, 64, 22, 30), _c("paper_dark"))
+	draw_circle(Vector2(420, 74), 5, _c("ink").lightened(0.3))
+	draw_rect(Rect2(428, 84, 22, 16), _c("paper"))
+	# Vitrine sur la rue : la file d'attente.
+	draw_rect(Rect2(470, 30, 160, 150), _c("sky_low"))
+	for i in 6:
+		var x := 490 + i * 24
+		draw_circle(Vector2(x, 100 + (i % 2) * 6), 9, _c("building"))
+		draw_rect(Rect2(x - 10, 110 + (i % 2) * 6, 20, 70), _c("building"))
+	draw_rect(Rect2(470, 30, 160, 150), _c("wood"), false, 5.0)
+	draw_string(get_theme_default_font(), Vector2(492, 52), "PAIN  //  N° 12", HORIZONTAL_ALIGNMENT_LEFT, -1, 14,
+			Color(_c("paper"), 0.6))
+	# La gérante derrière le comptoir.
+	draw_rect(Rect2(205, 110, 50, 70), _c("paper"))
+	draw_circle(Vector2(230, 96), 15, get_theme_color("skin", "IdPhoto"))
+	draw_colored_polygon(_ellipse_arc(Vector2(230, 94), Vector2(17, 17), 0.2), _c("paper_dark").darkened(0.3))
+	# Comptoir, caisse aux tickets, sacs sous le comptoir.
+	draw_rect(Rect2(90, 165, 370, 65), _c("wood"))
+	draw_rect(Rect2(90, 165, 370, 6), _c("wood").lightened(0.2))
+	draw_rect(Rect2(305, 138, 60, 28), _c("cloth"))
+	draw_rect(Rect2(312, 132, 46, 8), _c("paper"))
+	draw_rect(Rect2(135, 195, 110, 30), _c("wood").darkened(0.35))
+	draw_rect(Rect2(145, 198, 36, 24), _c("paper_dark"))
+
+
+## Appartement 40, quai des Tanneurs : étagère vidée, bureau de correcteur,
+## boîte à photos, armoire, et une latte de plancher qui bouge.
+func _draw_benes_flat() -> void:
+	draw_rect(Rect2(Vector2.ZERO, CANVAS), _c("paper_dark").darkened(0.5))
+	draw_rect(Rect2(0, 230, CANVAS.x, 70), _c("wood"))
+	for y in [245, 262, 280]:
+		draw_line(Vector2(0, y), Vector2(CANVAS.x, y), Color(_c("ink"), 0.35), 1.0)
+	draw_rect(Rect2(275, 252, 120, 10), _c("wood").darkened(0.3))
+	# Étagère vide, les traces de poussière des livres enlevés.
+	draw_rect(Rect2(40, 40, 150, 160), _c("wood").darkened(0.15), false, 6.0)
+	for i in 4:
+		var y := 75 + i * 40
+		draw_rect(Rect2(40, y, 150, 5), _c("wood"))
+		for j in 9:
+			draw_rect(Rect2(48 + j * 15, y - 30, 11, 30), Color(_c("paper"), 0.07))
+	draw_rect(Rect2(172, 125, 10, 30), _c("alert").darkened(0.4))
+	# Fenêtre sur le canal.
+	draw_rect(Rect2(400, 30, 90, 80), _c("sky_low"))
+	draw_rect(Rect2(400, 30, 90, 80), _c("wood"), false, 4.0)
+	# Bureau du correcteur : lampe, courrier, épreuves.
+	draw_rect(Rect2(200, 160, 190, 10), _c("wood").lightened(0.1))
+	draw_rect(Rect2(210, 170, 10, 60), _c("wood"))
+	draw_rect(Rect2(370, 170, 10, 60), _c("wood"))
+	draw_rect(Rect2(210, 140, 50, 18), _c("paper_dark"))
+	draw_rect(Rect2(290, 136, 80, 22), _c("paper"))
+	for i in 3:
+		draw_line(Vector2(296, 142 + i * 5), Vector2(360, 142 + i * 5), Color(_c("accent"), 0.6), 1.0)
+	draw_line(Vector2(270, 160), Vector2(270, 110), _c("ink"), 2.0)
+	draw_colored_polygon(PackedVector2Array([Vector2(258, 112), Vector2(282, 112), Vector2(276, 100), Vector2(264, 100)]),
+			_c("cloth"))
+	# Chaise et boîte à photos.
+	draw_rect(Rect2(420, 225, 60, 8), _c("wood"))
+	draw_rect(Rect2(420, 200, 60, 28), _c("folder"))
+	# Armoire, Irena BENES à côté.
+	draw_rect(Rect2(520, 40, 100, 190), _c("wood").lightened(0.05))
+	draw_line(Vector2(570, 44), Vector2(570, 226), _c("ink"), 2.0)
+	draw_circle(Vector2(562, 135), 3, _c("paper_dark"))
+	draw_circle(Vector2(578, 135), 3, _c("paper_dark"))
+	draw_rect(Rect2(486, 120, 30, 110), _c("cloth").darkened(0.3))
+	draw_circle(Vector2(501, 108), 12, get_theme_color("skin", "IdPhoto").darkened(0.2))
 
 
 func _ellipse(center: Vector2, radius: Vector2, steps := 32) -> PackedVector2Array:

@@ -213,7 +213,8 @@ Un dossier rattache une scène par `"field_scene"`. Une scène a un `type`
 `start_flags`/`start_effects`, `options` {id, label, conditions, text, note,
 set_flags, effects, ends, spot [x, y, l, h] pour une perquisition} et, pour un
 interrogatoire, `presentations` {id, facts, text, note, ...} et
-`present_default`. Chaque choix pose `field.<scène>.<choix>`. Le procès-verbal
+`present_default`. Textes d'interface facultatifs : `verb` (« Vous examinez : »),
+`hint`, `turns_label`. Décors : `art` (`sedlar_flat`, `bakery`, `benes_flat`). Chaque choix pose `field.<scène>.<choix>`. Le procès-verbal
 est une pièce ordinaire du dossier dont les éléments portent des `conditions`
 sur ces drapeaux : `CaseLibrary.filter_case` filtre aussi les éléments. Logique
 dans `FieldRules`, état dans `GameState.field_scenes`, écran
