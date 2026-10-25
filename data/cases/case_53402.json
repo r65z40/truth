@@ -3,6 +3,10 @@
 	"title": "Citoyen n° 53402",
 	"subject_name": "VRABEC, Marek",
 	"summary": "Signalement de la Direction de la ligne Velmira–Halvek : retards nocturnes anormaux consignés par l'aiguilleur du poste de Brenec, à proximité de la frontière.",
+	"briefing": {
+		"objective": "Établir pourquoi l'aiguilleur VRABEC retarde le train 2241 certaines nuits, près de la frontière de Halvek.",
+		"context": "La Direction de la ligne signale des retards anormaux. Depuis le décret 86-31, toute exposition frontalière est traitée avec la plus grande sévérité."
+	},
 	"priority": "prioritaire",
 	"field_scene": "audition_53402",
 	"documents": [

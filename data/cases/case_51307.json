@@ -3,6 +3,10 @@
 	"title": "Citoyen n° 51307",
 	"subject_name": "ORLIK, Bohdan",
 	"summary": "Signalement de la Direction de la Centrale thermique n° 3 : nombre anormal de certificats de présence signés par un chef d'équipe.",
+	"briefing": {
+		"objective": "Établir si les certificats de présence signés par B. ORLIK couvrent de vraies absences, et pourquoi.",
+		"context": "La Direction de la Centrale n° 3 signale un volume anormal de certificats. ORLIK est chef d'équipe, membre du Parti décoré ; son frère est capitaine de la Milice."
+	},
 	"priority": "ordinaire",
 	"documents": [
 		{

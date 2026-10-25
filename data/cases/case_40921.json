@@ -3,6 +3,10 @@
 	"title": "Citoyen n° 40921",
 	"subject_name": "SEDLAR, Anton Pavel",
 	"summary": "Signalement transmis par le Bureau des transports. Écart possible entre la présence déclarée au travail et les déplacements enregistrés.",
+	"briefing": {
+		"objective": "Déterminer si Anton SEDLAR était à son poste le 21 octobre, ou s'il s'est déplacé sans le déclarer.",
+		"context": "Le Bureau des transports signale un écart entre sa présence déclarée à l'usine et ses déplacements enregistrés. SEDLAR est technicien à la Centrale n° 3, non-membre du Parti."
+	},
 	"priority": "ordinaire",
 	"guide": {
 		"note": "Conseils de la bulle d'aide : ce premier dossier sert de tutoriel.",

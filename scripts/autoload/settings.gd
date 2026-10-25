@@ -5,10 +5,16 @@ signal changed
 
 const PATH := "user://settings.cfg"
 const UI_SCALES := [1.0, 1.15, 1.3]
+## Résolutions proposées pour la fenêtre (en mode fenêtré).
+const WINDOW_SIZES: Array[Vector2i] = [
+	Vector2i(1280, 720), Vector2i(1366, 768), Vector2i(1600, 900), Vector2i(1920, 1080),
+]
 ## Crans du volume de la musique proposés dans Paramètres.
 const MUSIC_LEVELS := [0.0, 0.25, 0.5, 0.8, 1.0]
 
 var fullscreen := false
+## Résolution de la fenêtre en mode fenêtré.
+var window_size := Vector2i(1280, 720)
 var crt_effect := true
 ## Affiche l'objectif conseillé en haut du bureau.
 var guidance := true
@@ -32,6 +38,7 @@ func load_settings() -> void:
 	if config.load(PATH) != OK:
 		return
 	fullscreen = config.get_value("display", "fullscreen", fullscreen)
+	window_size = config.get_value("display", "window_size", window_size)
 	crt_effect = config.get_value("display", "crt_effect", crt_effect)
 	guidance = config.get_value("gameplay", "guidance", guidance)
 	ui_scale = config.get_value("display", "ui_scale", ui_scale)
@@ -43,6 +50,7 @@ func load_settings() -> void:
 func save_settings() -> void:
 	var config := ConfigFile.new()
 	config.set_value("display", "fullscreen", fullscreen)
+	config.set_value("display", "window_size", window_size)
 	config.set_value("display", "crt_effect", crt_effect)
 	config.set_value("gameplay", "guidance", guidance)
 	config.set_value("display", "ui_scale", ui_scale)
@@ -58,12 +66,22 @@ func apply() -> void:
 		var mode := DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
 		if DisplayServer.window_get_mode() != mode:
 			DisplayServer.window_set_mode(mode)
+		# En mode fenêtré, appliquer la résolution choisie et recentrer la fenêtre.
+		if not fullscreen and DisplayServer.window_get_size() != window_size:
+			DisplayServer.window_set_size(window_size)
+			var screen := DisplayServer.screen_get_size(DisplayServer.window_get_current_screen())
+			DisplayServer.window_set_position((screen - window_size) / 2)
 	get_tree().root.content_scale_factor = ui_scale
 	changed.emit()
 
 
 func set_fullscreen(value: bool) -> void:
 	fullscreen = value
+	_commit()
+
+
+func set_window_size(value: Vector2i) -> void:
+	window_size = value
 	_commit()
 
 

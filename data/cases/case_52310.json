@@ -3,6 +3,10 @@
 	"title": "Citoyen n° 52310",
 	"subject_name": "VARGA, Teodor",
 	"summary": "Signalement du Service de la censure : un poème du recueil « Les Saisons de Velmira » contiendrait un message codé désignant la zone frontalière.",
+	"briefing": {
+		"objective": "Vérifier si le poème de T. VARGA contient réellement un message codé visant la zone frontalière.",
+		"context": "Le Service de la censure a transmis le signalement. VARGA est un poète âgé, publié bien avant le durcissement du régime."
+	},
 	"priority": "prioritaire",
 	"documents": [
 		{

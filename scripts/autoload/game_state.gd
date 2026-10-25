@@ -253,6 +253,16 @@ func can_decide(case_id: String) -> bool:
 	return get_case_state(case_id).decision == ""
 
 
+## Nombre de dossiers déjà conclus (avec décision signée). Sert à estomper
+## l'aide pas à pas une fois que le joueur a pris la main.
+func concluded_case_count() -> int:
+	var count := 0
+	for case_id in cases:
+		if get_case_state(case_id).decision != "":
+			count += 1
+	return count
+
+
 ## Applique une décision : indicateurs, statut, drapeaux, historique, message du supérieur.
 ## Renvoie le résultat de DecisionRules.resolve(), ou {} si la décision est impossible.
 func apply_decision(case_id: String, decision_id: String) -> Dictionary:

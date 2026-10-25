@@ -108,6 +108,20 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(180, 44)
 layout_mode = 2
 
+[node name="ResolutionRow" type="HBoxContainer" parent="Layout/Content/Options"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ResolutionLabel" type="Label" parent="Layout/Content/Options/ResolutionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Résolution de la fenêtre"
+
+[node name="ResolutionOption" type="OptionButton" parent="Layout/Content/Options/ResolutionRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+
 [node name="MusicRow" type="HBoxContainer" parent="Layout/Content/Options"]
 layout_mode = 2
 

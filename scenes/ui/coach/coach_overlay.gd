@@ -57,18 +57,33 @@ func _place_bubble() -> void:
 	_bubble.reset_size()
 	var bubble_size := _bubble.get_combined_minimum_size()
 	bubble_size.x = BUBBLE_WIDTH
-	var below := _target_rect.end.y + GAP
-	var y := below
-	if below + bubble_size.y > size.y - MARGIN:
-		y = _target_rect.position.y - GAP - bubble_size.y
-	# Cible trop haute et trop basse : bulle à gauche ou à droite.
-	var x := _target_rect.get_center().x - bubble_size.x / 2.0
-	if y < MARGIN:
-		y = clampf(_target_rect.get_center().y - bubble_size.y / 2.0, MARGIN, size.y - bubble_size.y - MARGIN)
+	var x := 0.0
+	var y := 0.0
+	# Une cible collée à un bord vertical (barre latérale, icônes) : la bulle se
+	# pose à côté, centrée sur la cible, pour ne pas recouvrir le contenu central
+	# (p. ex. la liste des pièces d'un dossier ouvert).
+	var room_right := size.x - _target_rect.end.x - GAP - MARGIN
+	var room_left := _target_rect.position.x - GAP - MARGIN
+	if _target_rect.get_center().x < size.x * 0.25 and room_right >= bubble_size.x:
+		x = _target_rect.end.x + GAP
+		y = _target_rect.get_center().y - bubble_size.y / 2.0
+	elif _target_rect.get_center().x > size.x * 0.75 and room_left >= bubble_size.x:
 		x = _target_rect.position.x - GAP - bubble_size.x
-		if x < MARGIN:
-			x = _target_rect.end.x + GAP
+		y = _target_rect.get_center().y - bubble_size.y / 2.0
+	else:
+		# Sinon : sous la cible, ou au-dessus si le bas manque de place.
+		y = _target_rect.end.y + GAP
+		if y + bubble_size.y > size.y - MARGIN:
+			y = _target_rect.position.y - GAP - bubble_size.y
+		x = _target_rect.get_center().x - bubble_size.x / 2.0
+		# Cible trop haute et trop basse : bulle sur le côté.
+		if y < MARGIN:
+			y = _target_rect.get_center().y - bubble_size.y / 2.0
+			x = _target_rect.position.x - GAP - bubble_size.x
+			if x < MARGIN:
+				x = _target_rect.end.x + GAP
 	x = clampf(x, MARGIN, size.x - bubble_size.x - MARGIN)
+	y = clampf(y, MARGIN, size.y - bubble_size.y - MARGIN)
 	_bubble.position = Vector2(x, y)
 	_bubble.size = bubble_size
 
