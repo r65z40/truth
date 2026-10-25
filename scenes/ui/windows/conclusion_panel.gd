@@ -4,6 +4,8 @@ extends PanelContainer
 
 signal submitted(decision_id: String)
 signal cancelled
+## L'agent demande l'avis de VERITAS sur ce dossier (le programme s'ouvre à côté).
+signal veritas_requested(case_id: String)
 
 var case_id := ""
 var selected_decision := ""
@@ -15,11 +17,13 @@ var _choice_group := ButtonGroup.new()
 @onready var _sign_button: Button = %SignButton
 @onready var _veritas_box: Control = %VeritasBox
 @onready var _veritas_advice: Label = %VeritasAdvice
+@onready var _veritas_button: Button = %VeritasButton
 
 
 func _ready() -> void:
 	_sign_button.pressed.connect(func() -> void: submitted.emit(selected_decision))
 	%CancelButton.pressed.connect(func() -> void: cancelled.emit())
+	_veritas_button.pressed.connect(func() -> void: veritas_requested.emit(case_id))
 
 
 ## Prépare le formulaire pour un dossier.
@@ -30,13 +34,9 @@ func setup(new_case_id: String) -> void:
 	var case_state := GameState.get_case_state(case_id)
 	_title.text = "RAPPORT DE CONCLUSION  //  DOSSIER N° %s" % case_id
 	_summary.text = build_summary_bbcode(case_data, case_state)
-	var advice := Veritas.recommendation(case_data, case_state)
-	_veritas_box.visible = not advice.is_empty()
-	if not advice.is_empty():
-		var show_multipliers: bool = GameState.flags.get(Veritas.PARAMS_FLAG, false) == true
-		var factors := Veritas.explain(case_data, case_state, show_multipliers)
-		_veritas_advice.text = "%s RECOMMANDE : %s  (indice de conformité %d)\n%s\nFacteurs principaux :\n- %s\nLa responsabilité de la conclusion incombe à l'agent signataire." % [
-			Veritas.NAME, advice.label.to_upper(), advice.confidence, advice.rationale, "\n- ".join(factors)]
+	# VERITAS n'est plus affiché d'office : l'agent lance le programme s'il le veut.
+	_veritas_box.visible = not Veritas.recommendation(case_data, case_state, GameState.flags).is_empty()
+	_veritas_advice.text = "%s peut analyser ce dossier avant votre signature." % Veritas.NAME
 	for child in _choices.get_children():
 		_choices.remove_child(child)
 		child.queue_free()

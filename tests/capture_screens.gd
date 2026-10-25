@@ -35,6 +35,9 @@ func _capture_all() -> void:
 	get_tree().root.add_child(desk)
 	await _wait(1.5)
 	await _snap("03_bureau", 1.0)
+	desk.open_news()
+	await _snap("03c_journal")
+	desk.windows.news.close()
 	desk.get_node("%StartButton").button_pressed = true
 	await _snap("03b_menu_ministere")
 	desk.close_start_menu()
@@ -73,6 +76,10 @@ func _capture_all() -> void:
 	dossiers.get_node("%ConclusionPanel").get_node("%Choices").get_child(0).button_pressed = true
 	dossiers.get_node("%ConclusionPanel").select_decision("arrest")
 	await _snap("11_conclusion")
+	desk.windows.veritas.analysis_time = 0.0
+	dossiers.get_node("%ConclusionPanel").get_node("%VeritasButton").pressed.emit()
+	await _snap("11b_veritas")
+	desk.windows.veritas.close()
 	dossiers.get_node("%ConclusionPanel").get_node("%SignButton").pressed.emit()
 	await _snap("12_reponse_superieur")
 	desk.terminal.submit_command("archives")
@@ -89,6 +96,9 @@ func _capture_all() -> void:
 	desk.evening_screen.get_node("%ContinueButton").pressed.emit()
 	await _snap("14c_fin_de_service", 0.8)
 	await _wait(2.5)
+	desk.open_news()
+	await _snap("14d_journal_lendemain")
+	desk.windows.news.close()
 	desk.terminal.submit_command("messages")
 	desk.windows.messages.select_message(GameState.messages[-2].id)
 	await _snap("15_lettre_famille")
@@ -118,6 +128,10 @@ func _capture_all() -> void:
 	await _snap("22_dossier_52310_poeme")
 	desk.windows.dossiers.open_conclusion()
 	await _snap("23_dossier_52310_veritas")
+	desk.windows.veritas.analysis_time = 0.6
+	desk.open_veritas("52310")
+	await _snap("23b_veritas_calcul", 0.3)
+	desk.windows.veritas.close()
 	desk.windows.dossiers.close()
 	# Fin de l'acte 1 : dossiers conclus avec contradictions, promotion proposée.
 	for case_id in ["51307", "52044", "52310"]:
@@ -169,6 +183,48 @@ func _capture_all() -> void:
 	desk.open_field("52310")
 	desk.field_screen.choose("floorboard")
 	await _snap("33_perquisition_benes")
+	desk.field_screen.hide()
+	# Acte 2 : dossier 53118 La Chorale (RACCORDEMENT + comparaison avec l'archive).
+	GameState.day_index = 6
+	GameState.assign_case("53118")
+	GameState.get_case_state("53118").requested_documents["archive_parish"] = 5
+	desk.open_app("dossiers")
+	desk.windows.dossiers.select_case("53118")
+	desk.windows.dossiers.select_document("veritas_link")
+	await _snap("34_dossier_53118_raccordement")
+	desk.windows.dossiers.select_document("archive_parish")
+	await _snap("35_dossier_53118_archive")
+	desk.windows.dossiers.open_conclusion()
+	await _snap("36_dossier_53118_veritas")
+	desk.windows.dossiers.close()
+	# Acte 2 : dossier 53402 Le Cheminot (frontière + décret 86-31, audition de terrain).
+	GameState.day_index = 7
+	GameState.flags["decret_86_31"] = true
+	GameState.assign_case("53402")
+	desk.open_field("53402")
+	await _snap("37_audition_cheminot")
+	desk.field_screen.choose("q_passengers")
+	GameState.note_fact("53402", "f_dispatch_ontime")
+	desk.field_screen.present("f_dispatch_ontime")
+	await _snap("38_cheminot_aveu")
+	desk.field_screen.hide()
+	desk.open_app("dossiers")
+	desk.windows.dossiers.select_case("53402")
+	desk.windows.dossiers.select_document("veritas_link")
+	await _snap("39_cheminot_raccordement")
+	desk.windows.dossiers.open_conclusion()
+	await _snap("40_cheminot_veritas")
+	desk.windows.dossiers.close()
+	desk.queue_free()
+	# Socle de traduction : l'interface bascule en anglais (contenu des dossiers en repli FR).
+	Localization.set_locale("en")
+	var menu_en: Node = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu_en)
+	await _snap("41_main_menu_english")
+	menu_en.get_node("%SettingsButton").pressed.emit()
+	await _snap("42_settings_english")
+	menu_en.queue_free()
+	Localization.set_locale("fr")
 	get_tree().quit()
 
 

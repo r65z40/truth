@@ -1,0 +1,111 @@
+{
+	"note": "Audition de M. VRABEC (docs/design/TERRAIN.md). Chaque choix pose le drapeau field.audition_53402.<id> ; les éléments du procès-verbal vrabec_audition en dépendent.",
+	"id": "audition_53402",
+	"case_id": "53402",
+	"type": "interrogation",
+	"button": "INTERROGER",
+	"title": "AUDITION  //  SALLE N° 3, SOUS-SOL DU MINISTÈRE",
+	"time_action": "interrogate",
+	"turns": 5,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"53402"
+			]
+		}
+	],
+	"start_flags": {
+		"frontier.vrabec_questioned": true
+	},
+	"subject": {
+		"name": "M. VRABEC",
+		"photo": {
+			"face": "long",
+			"hair": "short",
+			"gray": true,
+			"facial_hair": "mustache",
+			"mark": "none"
+		}
+	},
+	"intro": "La même table de formica, la même lampe. Marek VRABEC a gardé sa veste de cheminot. Ses mains sont noires de graisse ; il les tient à plat sur la table, comme on lui a dit.\n\n« On m'a fait monter de Brenec cette nuit. Trois heures de train pour l'aiguilleur qui, paraît-il, retarde les trains. »",
+	"options": [
+		{
+			"id": "q_delays",
+			"label": "« Vos cinq retards d'octobre, tous « signalisation ». »",
+			"text": "« La signalisation gèle, l'hiver, au km 47. Ça s'enraye, il faut descendre, dégager l'aiguille à la main. Je note ce que je vois. Qu'est-ce que je devrais noter d'autre ? »",
+			"note": [
+				"f_vaud_delays"
+			]
+		},
+		{
+			"id": "q_passengers",
+			"label": "« Qui monte dans le 2241 à Brenec, la nuit ? »",
+			"text": "Il hésite. « Qui voulez-vous qui monte à Brenec la nuit ? Des gens du village. Ceux qui travaillent de l'autre côté, ceux qui ont de la famille à Halvek. Ce n'est pas un crime de prendre le train. »",
+			"note": [
+				"f_vaud_passengers"
+			]
+		},
+		{
+			"id": "q_son",
+			"label": "« Parlez-moi de votre fils. »",
+			"conditions": {
+				"requires_noted_any": [
+					"f_vrabec_son"
+				]
+			},
+			"text": "Les mains se crispent. « Pavel est parti en 81. Par cette voie, oui, celle que je garde. Vous vouliez l'entendre ? Voilà, c'est dit. Je connais ceux qui restent de ce côté, et ce que c'est, d'attendre quelqu'un de l'autre. »",
+			"note": [
+				"f_vaud_son"
+			]
+		},
+		{
+			"id": "q_threat",
+			"label": "« Vous savez ce que le décret prévoit, pour la frontière ? »",
+			"text": "VRABEC relève la tête. « Je sais lire les bulletins, inspecteur. Le décret, la sévérité, les agents de l'étranger. » Il écarte les mains. « Faites votre travail. Moi j'ai fait le mien pendant trente ans : tenir la voie ouverte. » Vous n'obtenez rien de plus."
+		}
+	],
+	"presentations": [
+		{
+			"id": "p_dispatch",
+			"facts": [
+				"f_dispatch_ontime"
+			],
+			"text": "Il lit le relevé du régulateur longtemps. Puis il pose la feuille, très doucement.\n\n« ... Bon. La signalisation n'a pas lâché. J'ai tenu le 2241 douze minutes, les bonnes nuits. Le temps qu'ils descendent, qu'ils embrassent les leurs au quai de Halvek, qu'ils remontent. Douze minutes. Écrivez-le. »",
+			"note": [
+				"f_vaud_admits"
+			],
+			"set_flags": {
+				"53402.vrabec_admitted": true
+			}
+		},
+		{
+			"id": "p_manifest",
+			"facts": [
+				"f_manifest_residents"
+			],
+			"text": "« Vous avez les noms. Irena, Stefan... des voisins. » Il hausse les épaules. « Et vous cherchez quoi, au bout de la liste ? Mon compte en banque ? Je n'ai jamais pris un sou. Pas une pièce, pas un œuf. Demandez à Brenec. »",
+			"note": [
+				"f_vaud_nothing"
+			]
+		},
+		{
+			"id": "p_link",
+			"facts": [
+				"f_link_network"
+			],
+			"text": "Il lit le mot « filière » et quelque chose se casse dans son visage — pas de la peur, de la fatigue.\n\n« Une filière. » Il rit sans bruit. « Ce sont des mères et des fils, inspecteur, pas des espions. Il n'y a pas de chef, pas d'argent, pas d'étranger. Il y a une frontière au milieu d'un village, et un train qui passe une fois par nuit. C'est tout ce qu'il y a. »",
+			"note": [
+				"f_vaud_no_network"
+			]
+		},
+		{
+			"id": "p_border",
+			"facts": [
+				"f_border_group"
+			],
+			"text": "« Un groupe non identifié. » Il secoue la tête. « Le 23, oui. Les permis venaient d'être annulés, le 20. Alors ils sont montés quand même, parce que de l'autre côté une vieille femme ne passera pas l'hiver. Votre groupe non identifié, c'étaient quatre personnes qui savaient déjà qu'elles ne reviendraient pas. »"
+		}
+	],
+	"present_default": "VRABEC regarde le papier, puis vous. « Je ne vois pas ce que vous voulez que j'en dise, inspecteur. »",
+	"outro": "Le planton raccompagne VRABEC. Sur le seuil, il se retourne : « Le 2241 part à 22h40. S'il part à l'heure cette nuit, c'est que personne n'attendait. » Il ne vous souhaite pas bonne continuation."
+}

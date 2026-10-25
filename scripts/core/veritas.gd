@@ -45,10 +45,15 @@ static func params() -> Dictionary:
 ## Un facteur ne compte que si sa pièce est visible (case_data déjà filtré) et,
 ## s'il exige une contradiction, si l'agent l'a établie.
 ## Renvoie {decision_id: {score, factors: [facteur + {multiplier, contribution, document_title}]}}.
-static func scores(case_data: Dictionary, case_state: Dictionary = {}) -> Dictionary:
+## flags : drapeaux de la partie, pour les surcharges conditionnelles de
+## multiplicateurs (ex. décret 86-31 qui durcit la frontière). case_state peut
+## porter "contested_factors" : les facteurs marqués "contestable" que l'agent a
+## écartés via VERITAS PARAMETRES. Rien n'est invité : tout vient des données.
+static func scores(case_data: Dictionary, case_state: Dictionary = {}, flags: Dictionary = {}) -> Dictionary:
 	var settings := params()
-	var categories: Dictionary = settings.get("categories", {})
+	var categories := _effective_categories(settings, flags)
 	var found: Array = case_state.get("contradictions_found", [])
+	var contested: Array = case_state.get("contested_factors", [])
 	var result := {}
 	for decision in case_data.get("decisions", []):
 		result[decision.id] = {"score": float(settings.get("base", 40)), "factors": []}
@@ -64,8 +69,13 @@ static func scores(case_data: Dictionary, case_state: Dictionary = {}) -> Dictio
 		if factor.has("requires_contradiction") and not factor.requires_contradiction in found:
 			continue
 		var multiplier := float(categories.get(factor.category, {}).get("multiplier", 1.0))
+		# Un facteur contestable écarté par l'agent ne pèse plus dans l'indice.
+		var is_contested: bool = factor.get("contestable", false) and factor.id in contested
+		if is_contested:
+			multiplier = 0.0
 		var entry: Dictionary = factor.duplicate()
 		entry["multiplier"] = multiplier
+		entry["contested"] = is_contested
 		entry["contribution"] = float(factor.weight) * multiplier
 		entry["document_title"] = document_title
 		result[factor.decision].score += entry.contribution
@@ -76,12 +86,30 @@ static func scores(case_data: Dictionary, case_state: Dictionary = {}) -> Dictio
 	return result
 
 
+## Multiplicateurs effectifs par catégorie : les valeurs de base, puis les
+## surcharges déclarées dans "overrides" dont le drapeau est actif (ex. le décret
+## 86-31 qui fait passer la frontière de x2 à x3). Déterministe : données + flags.
+static func _effective_categories(settings: Dictionary, flags: Dictionary) -> Dictionary:
+	var effective := {}
+	for category in settings.get("categories", {}):
+		effective[category] = (settings.categories[category] as Dictionary).duplicate()
+	for override in settings.get("overrides", []):
+		if flags.get(override.get("flag", ""), false) != true:
+			continue
+		for category in override.get("categories", {}):
+			if not effective.has(category):
+				effective[category] = {}
+			for key in override.categories[category]:
+				effective[category][key] = override.categories[category][key]
+	return effective
+
+
 ## Recommandation : la décision au plus fort indice (la première en cas d'égalité).
 ## {decision_id, label, confidence, rationale, factors}, ou {} sans facteurs.
-static func recommendation(case_data: Dictionary, case_state: Dictionary = {}) -> Dictionary:
+static func recommendation(case_data: Dictionary, case_state: Dictionary = {}, flags: Dictionary = {}) -> Dictionary:
 	if case_data.get("veritas", {}).get("factors", []).is_empty():
 		return {}
-	var all_scores := scores(case_data, case_state)
+	var all_scores := scores(case_data, case_state, flags)
 	var best := ""
 	for decision in case_data.get("decisions", []):
 		if best == "" or all_scores[decision.id].score > all_scores[best].score:
@@ -98,8 +126,8 @@ static func recommendation(case_data: Dictionary, case_state: Dictionary = {}) -
 
 ## Les facteurs qui pèsent le plus dans la recommandation, en lignes lisibles.
 ## Les multiplicateurs ne sont montrés que si show_multipliers est vrai.
-static func explain(case_data: Dictionary, case_state: Dictionary = {}, show_multipliers := false) -> PackedStringArray:
-	var advice := recommendation(case_data, case_state)
+static func explain(case_data: Dictionary, case_state: Dictionary = {}, show_multipliers := false, flags: Dictionary = {}) -> PackedStringArray:
+	var advice := recommendation(case_data, case_state, flags)
 	var lines := PackedStringArray()
 	if advice.is_empty():
 		return lines
@@ -107,16 +135,42 @@ static func explain(case_data: Dictionary, case_state: Dictionary = {}, show_mul
 	factors.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return absf(a.contribution) > absf(b.contribution))
 	for factor in factors.slice(0, EXPLAIN_COUNT):
 		var source := " (%s)" % factor.document_title if factor.document_title != "" else ""
+		var mark := "  — contesté (écarté du calcul)" if factor.get("contested", false) else ""
 		if show_multipliers:
-			lines.append("%s%s : poids %s x %s = %s" % [factor.label, source, _number(factor.weight),
-					_number(factor.multiplier), _number(factor.contribution)])
+			lines.append("%s%s : poids %s x %s = %s%s" % [factor.label, source, _number(factor.weight),
+					_number(factor.multiplier), _number(factor.contribution), mark])
 		else:
-			lines.append("%s%s : poids %s" % [factor.label, source, _number(factor.weight)])
+			lines.append("%s%s : poids %s%s" % [factor.label, source, _number(factor.weight), mark])
 	return lines
 
 
 static func _number(value: float) -> String:
 	return str(int(value)) if is_equal_approx(value, roundf(value)) else str(value)
+
+
+## Étapes affichées pendant le calcul, dans le programme VERITAS (pur décor).
+static func analysis_steps() -> PackedStringArray:
+	return PackedStringArray(params().get("analysis_steps", []))
+
+
+## Nombre de pièces du dossier que l'agent n'a pas encore ouvertes.
+static func unread_count(case_data: Dictionary, case_state: Dictionary) -> int:
+	var unread := 0
+	for document in case_data.get("documents", []):
+		if not document.id in case_state.get("viewed_documents", []):
+			unread += 1
+	return unread
+
+
+## Rapport d'analyse d'un dossier pour le programme VERITAS :
+## {unread, advice (voir recommendation), factors (lignes lisibles)}.
+## case_data doit être la vue filtrée du dossier (ce que l'agent a sous les yeux).
+static func case_report(case_data: Dictionary, case_state: Dictionary, show_multipliers := false, flags: Dictionary = {}) -> Dictionary:
+	return {
+		"unread": unread_count(case_data, case_state),
+		"advice": recommendation(case_data, case_state, flags),
+		"factors": explain(case_data, case_state, show_multipliers, flags),
+	}
 
 
 ## Réponse à la commande VERITAS du terminal, selon l'état des dossiers.
@@ -130,18 +184,16 @@ static func terminal_reply(state: Dictionary, args: PackedStringArray = PackedSt
 		if case_state.get("decision", "") != "":
 			continue
 		var case_data := CaseLibrary.filter_case(CaseLibrary.get_case(case_id), state)
-		var unread := 0
-		for document in case_data.get("documents", []):
-			if not document.id in case_state.get("viewed_documents", []):
-				unread += 1
+		var unread := unread_count(case_data, case_state)
 		if unread > 0:
 			return "Dossier %s : %d pièce(s) non consultée(s). Je recommande une lecture complète avant toute conclusion." % [case_id, unread]
-		var advice := recommendation(case_data, case_state)
+		var flags: Dictionary = state.get("flags", {})
+		var advice := recommendation(case_data, case_state, flags)
 		if not advice.is_empty():
 			var reply := "Dossier %s : je recommande « %s ». Indice de conformité : %d." % [case_id, advice.label, advice.confidence]
 			if why:
-				var show: bool = state.get("flags", {}).get(PARAMS_FLAG, false) == true
-				reply += "\nFacteurs principaux :\n- " + "\n- ".join(explain(case_data, case_state, show))
+				var show: bool = flags.get(PARAMS_FLAG, false) == true
+				reply += "\nFacteurs principaux :\n- " + "\n- ".join(explain(case_data, case_state, show, flags))
 			else:
 				reply += "\nTapez VERITAS POURQUOI pour le détail."
 			return reply

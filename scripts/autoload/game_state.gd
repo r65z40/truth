@@ -48,6 +48,9 @@ var overtime_days: Array = []
 var evenings: Dictionary = {}
 ## Scènes de terrain commencées : {"<scène>": {turns_used, chosen, finished}} (voir FieldRules).
 var field_scenes: Dictionary = {}
+## Mémoire institutionnelle : dossier administratif secret nourri par les actions de
+## l'agent, {jour, tag, reading} (voir MinistryRecord). Graine du dossier 54100.
+var ministry_record: Array = []
 
 
 func _ready() -> void:
@@ -75,6 +78,7 @@ func new_game() -> void:
 	overtime_days = []
 	evenings = {}
 	field_scenes = {}
+	ministry_record = []
 	state_changed.emit()
 
 
@@ -207,7 +211,7 @@ func request_document(case_id: String, document_id: String) -> bool:
 		return false
 	case_state.requested_documents[document_id] = day_index
 	var request: Dictionary = document.request
-	flags.merge(request.get("flags", {}), true)
+	_merge_flags(request.get("flags", {}))
 	for indicator in request.get("effects", {}):
 		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(request.effects[indicator]),
 				INDICATOR_MIN, INDICATOR_MAX)
@@ -236,7 +240,7 @@ func consult_superior(case_id: String) -> bool:
 	if not spend_time("consult_superior"):
 		return false
 	case_state.consulted = true
-	flags["%s.consulted_superior" % case_id] = true
+	_set_flag("%s.consulted_superior" % case_id, true)
 	var message := consultation.duplicate()
 	message["id"] = "%s.consultation" % case_id
 	message["date_label"] = get_date_short()
@@ -262,7 +266,7 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 		if WorkTime.is_overtime(hours_used) and not day_index in overtime_days:
 			overtime_days.append(day_index)
 	# Avis de VERITAS sur le dossier tel que l'agent l'a vu, avant la décision.
-	var advice := Veritas.recommendation(get_case_view(case_id), case_state)
+	var advice := Veritas.recommendation(get_case_view(case_id), case_state, flags)
 	var result := DecisionRules.resolve(CaseLibrary.get_case(case_id), case_state, decision_id)
 	if result.is_empty():
 		push_error("GameState: décision inconnue %s pour le dossier %s" % [decision_id, case_id])
@@ -272,7 +276,7 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 				INDICATOR_MIN, INDICATOR_MAX)
 	case_state.status = result.status_after
 	case_state.decision = decision_id
-	flags.merge(result.flags, true)
+	_merge_flags(result.flags)
 	# On garde la trace de l'accord avec VERITAS : le système s'en souviendra.
 	decisions.append({"case_id": case_id, "decision_id": decision_id, "day_index": day_index,
 			"outcome": result.response_id, "veritas_agreed": advice.get("decision_id", "") == decision_id})
@@ -311,8 +315,8 @@ func start_field(case_id: String) -> Dictionary:
 	if not can_start_field(case_id) or not spend_time(scene.get("time_action", "interrogate")):
 		return {}
 	field_scenes[scene.id] = {"turns_used": 0, "chosen": [], "finished": false}
-	flags[FieldRules.flag_for(scene, "started")] = true
-	flags.merge(scene.get("start_flags", {}), true)
+	_set_flag(FieldRules.flag_for(scene, "started"), true)
+	_merge_flags(scene.get("start_flags", {}))
 	_apply_effects(scene.get("start_effects", {}))
 	state_changed.emit()
 	return scene
@@ -359,8 +363,8 @@ func _apply_field_result(scene: Dictionary, result: Dictionary) -> Dictionary:
 	scene_state.turns_used += 1
 	if result.get("id", "") != "":
 		scene_state.chosen.append(result.id)
-		flags[FieldRules.flag_for(scene, result.id)] = true
-	flags.merge(result.get("set_flags", {}), true)
+		_set_flag(FieldRules.flag_for(scene, result.id), true)
+	_merge_flags(result.get("set_flags", {}))
 	_apply_effects(result.get("effects", {}))
 	# Les éléments obtenus vont directement dans le carnet.
 	var noted: Array = []
@@ -398,10 +402,10 @@ func choose_evening_action(action_id: String) -> Dictionary:
 	var action := EveningRules.get_action(evening, action_id)
 	if action.is_empty() or not get_evening_actions().any(func(a: Dictionary) -> bool: return a.id == action_id):
 		return {}
-	flags.merge(evening.get("set_flags", {}), true)
+	_merge_flags(evening.get("set_flags", {}))
 	var result := EveningRules.resolve(action, get_condition_state())
 	_apply_effects(result.effects)
-	flags.merge(result.set_flags, true)
+	_merge_flags(result.set_flags)
 	evenings[str(day_index)] = {"action": action_id, "kind": action.get("kind", "")}
 	state_changed.emit()
 	return result
@@ -412,8 +416,8 @@ func lose_evening() -> String:
 	if not has_evening_pending():
 		return ""
 	var overtime: Dictionary = EveningRules.get_data().get("overtime", {})
-	flags.merge(get_evening().get("set_flags", {}), true)
-	flags.merge(overtime.get("set_flags", {}), true)
+	_merge_flags(get_evening().get("set_flags", {}))
+	_merge_flags(overtime.get("set_flags", {}))
 	evenings[str(day_index)] = {"action": "", "kind": ""}
 	state_changed.emit()
 	return overtime.get("text", "")
@@ -471,19 +475,19 @@ func complete_act_review(accept: bool) -> String:
 		return ""
 	var rules := Career.act_rules(review.act)
 	var prefix := "career.act%d" % review.act
-	flags["act%d.reviewed" % review.act] = true
+	_set_flag("act%d.reviewed" % review.act, true)
 	var text := ""
 	if not review.evaluation.eligible:
-		flags[prefix + "_denied"] = true
+		_set_flag(prefix + "_denied", true)
 	elif accept:
 		player["rank"] = int(rules.to_rank)
-		flags[prefix + "_promoted"] = true
+		_set_flag(prefix + "_promoted", true)
 		if review.evaluation.bought:
-			flags["career.promotion_bought"] = true
+			_set_flag("career.promotion_bought", true)
 		text = rules.accepted
 	else:
-		flags[prefix + "_refused"] = true
-		flags["career.refused_promotion"] = true
+		_set_flag(prefix + "_refused", true)
+		_set_flag("career.refused_promotion", true)
 		text = rules.refused
 	state_changed.emit()
 	return text
@@ -529,7 +533,7 @@ func end_day() -> Array:
 		for indicator in event.get("effects", {}):
 			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(event.effects[indicator]),
 					INDICATOR_MIN, INDICATOR_MAX)
-		flags.merge(event.get("set_flags", {}), true)
+		_merge_flags(event.get("set_flags", {}))
 		if event.has("message"):
 			var message: Dictionary = event.message.duplicate()
 			message["id"] = "event.%s.%d" % [event.id, day_index]
@@ -543,6 +547,34 @@ func end_day() -> Array:
 
 
 # --- Sérialisation (utilisée par SaveManager) ---------------------------------
+
+## Pose un drapeau et, s'il est suivi, enrichit la mémoire institutionnelle.
+func _set_flag(key: String, value: Variant) -> void:
+	flags[key] = value
+	if value == true:
+		_record_ministry(key)
+
+
+## Fusionne des drapeaux (écrase les existants) et met à jour la mémoire.
+func _merge_flags(new_flags: Dictionary) -> void:
+	flags.merge(new_flags, true)
+	for key in new_flags:
+		if new_flags[key] == true:
+			_record_ministry(key)
+
+
+## Ajoute une entrée à la mémoire institutionnelle si ce drapeau y est associé et
+## que le fait n'a pas déjà été consigné (un même "tag" n'est noté qu'une fois).
+func _record_ministry(flag: String) -> void:
+	var rule := MinistryRecord.rule_for(flag)
+	if rule.is_empty():
+		return
+	var tag: String = rule.get("tag", flag)
+	for entry in ministry_record:
+		if entry.get("tag", "") == tag:
+			return
+	ministry_record.append({"day": day_index, "tag": tag, "reading": rule.get("reading", "")})
+
 
 func to_dict() -> Dictionary:
 	return {
@@ -558,6 +590,7 @@ func to_dict() -> Dictionary:
 		"overtime_days": overtime_days.duplicate(),
 		"evenings": evenings.duplicate(true),
 		"field_scenes": field_scenes.duplicate(true),
+		"ministry_record": ministry_record.duplicate(true),
 	}
 
 
@@ -589,6 +622,9 @@ func from_dict(data: Dictionary) -> void:
 	field_scenes = data.get("field_scenes", {})
 	for scene_state: Dictionary in field_scenes.values():
 		scene_state["turns_used"] = int(scene_state.get("turns_used", 0))
+	ministry_record = data.get("ministry_record", [])
+	for entry: Dictionary in ministry_record:
+		entry["day"] = int(entry.get("day", 0))
 	state_changed.emit()
 
 

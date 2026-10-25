@@ -18,6 +18,8 @@ var ui_scale := 1.0
 var field_3d := true
 ## Volume de la musique, de 0 (coupée) à 1.
 var music_volume := 0.8
+## Langue de l'interface et des dossiers ("fr" ou "en").
+var language := "fr"
 
 
 func _ready() -> void:
@@ -35,6 +37,7 @@ func load_settings() -> void:
 	ui_scale = config.get_value("display", "ui_scale", ui_scale)
 	field_3d = config.get_value("display", "field_3d", field_3d)
 	music_volume = config.get_value("audio", "music_volume", music_volume)
+	language = config.get_value("general", "language", language)
 
 
 func save_settings() -> void:
@@ -45,6 +48,7 @@ func save_settings() -> void:
 	config.set_value("display", "ui_scale", ui_scale)
 	config.set_value("display", "field_3d", field_3d)
 	config.set_value("audio", "music_volume", music_volume)
+	config.set_value("general", "language", language)
 	config.save(PATH)
 
 
@@ -85,6 +89,13 @@ func set_music_volume(value: float) -> void:
 
 func set_ui_scale(value: float) -> void:
 	ui_scale = value
+	_commit()
+
+
+## Change la langue (Localization l'applique à TranslationServer).
+func set_language(code: String) -> void:
+	language = code
+	Localization.set_locale(code)
 	_commit()
 
 

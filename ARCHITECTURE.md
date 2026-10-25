@@ -59,8 +59,8 @@ scenes/
   main_menu/                  menu principal
   desk/                       bureau de l'inspecteur : fond, icônes, fenêtres, barre des tâches
   ui/terminal/                terminal + interprète de commandes
-  ui/windows/                 Dossiers, Messages, Archives, Dossier personnel, Paramètres,
-                              Terminal, pièce ouverte à part (DocumentWindow)
+  ui/windows/                 Dossiers, Courrier, VERITAS, Archives, Dossier personnel,
+                              Paramètres, Terminal, pièce ouverte à part (DocumentWindow)
   ui/crt_overlay/             filtre écran cathodique (autoload)
 ui/theme/ministry_theme.tres  thème global (couleurs, polices, styles)
 ui/shaders/crt.gdshader
@@ -151,11 +151,32 @@ calculée : pour chaque décision, **indice de conformité** = `base` + somme de
 (paramètres cachés dans `data/veritas.json`), borné entre 1 et 99. C'est un score
 institutionnel, pas une probabilité. Un facteur ne compte que si sa pièce est
 visible et, s'il a `requires_contradiction`, si l'agent a établi cette
-contradiction. `VERITAS POURQUOI` (terminal) et le formulaire de conclusion
-montrent les 3 facteurs principaux ; les multiplicateurs n'apparaissent qu'avec le
+contradiction. `VERITAS POURQUOI` (terminal) et le programme VERITAS
+(`VeritasWindow`, lancé depuis son icône ou par « CONSULTER VERITAS » dans le
+formulaire de conclusion) montrent les 3 facteurs principaux via
+`Veritas.case_report()`. Le calcul affiché (`analysis_steps` de
+`data/veritas.json`) est un décor : il ne coûte pas d'heures et ne change rien ; les multiplicateurs n'apparaissent qu'avec le
 drapeau `veritas.params_known`. `veritas.note` est une note de scénario jamais
 affichée. Un futur modèle de langage ne ferait que reformuler ces résultats,
 côté serveur.
+
+Acte 2 (ajouts déterministes) : la catégorie `linked` (« donnée raccordée »)
+sert aux recoupements automatiques de VERITAS ; le bloc `overrides` de
+`data/veritas.json` remplace un multiplicateur quand un drapeau est actif (le
+décret 86-31 passe `border` de x2 à x3 via le drapeau `decret_86_31`) ; un
+facteur marqué `contestable` peut être écarté par l'agent en le listant dans
+`case_state.contested_factors` (son multiplicateur tombe à 0). `scores`,
+`recommendation` et `explain` prennent un argument `flags` pour ces surcharges.
+
+## Mémoire institutionnelle
+
+`scripts/core/ministry_record.gd` (`MinistryRecord`) lit `data/ministry_record.json`,
+qui associe des drapeaux (exacts ou par suffixe) à une entrée `{tag, reading}`. Quand
+un de ces drapeaux est posé, `GameState` ajoute `{jour, tag, reading}` à
+`ministry_record` (une fois par `tag`). `tag` est le fait objectif, `reading` la
+lecture biaisée du ministère : ce dossier administratif secret sera la graine du
+54100 à l'acte 3. Tous les drapeaux passent par `GameState._set_flag` /
+`_merge_flags`, qui alimentent cette mémoire. Aucune donnée réelle n'est collectée.
 
 ## Format d'un dossier (`data/cases/case_<id>.json`)
 
@@ -261,8 +282,9 @@ personnage (`docs/design/EXTENSIONS_PERSONNAGES.md`).
 Fichier `user://savegame.json` :
 `{save_version, game_version, saved_at, state}`. Pour changer le format :
 incrémenter `SAVE_VERSION` et ajouter une étape dans `SaveManager._migrate()`.
-Un chargement en échec ne modifie pas l'état courant. Version actuelle : 4
-(heures de service, pièces demandées, consultation, soirées, scènes de terrain).
+Un chargement en échec ne modifie pas l'état courant. Version actuelle : 5
+(v5 : mémoire institutionnelle `ministry_record` ; v4 : heures de service, pièces
+demandées, consultation, soirées, scènes de terrain).
 Emplacement de `user://` sous Windows : `%APPDATA%\Godot\app_userdata\Ministry of Truth\`.
 
 ## Compatibilité mobile

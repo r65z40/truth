@@ -57,6 +57,11 @@ func _run() -> void:
 		"test_act_review",
 		"test_veritas",
 		"test_veritas_model",
+		"test_veritas_acte2",
+		"test_ministry_record",
+		"test_case_53118",
+		"test_case_53402",
+		"test_case_53517",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -81,6 +86,9 @@ func _run() -> void:
 		"test_pixel_icons",
 		"test_document_windows",
 		"test_document_passages",
+		"test_desk_apps",
+		"test_news",
+		"test_localization",
 		"test_music_rules",
 		"test_music_player",
 		"test_time_in_desk",
@@ -158,6 +166,117 @@ func test_document_rendering_escapes_bbcode() -> void:
 
 
 ## Passages à noter : chaque citation existe dans le texte de sa pièce, balisée une fois.
+func test_localization() -> void:
+	# Le français est la langue source : clé = texte français.
+	Localization.set_locale("en")
+	check(TranslationServer.translate("NOUVELLE PARTIE") == "NEW GAME", "l'interface se traduit en anglais")
+	check(TranslationServer.translate("Texte sans traduction") == "Texte sans traduction", "une chaîne non traduite reste en français")
+	# Surcouche de dossier : fusion par id, repli sur le français.
+	var base := {"id": "x", "title": "Titre FR", "summary": "Résumé FR",
+			"documents": [{"id": "d1", "title": "Pièce FR", "facts": [{"id": "f1", "label": "FR"}]}]}
+	var overlay := {"title": "Title EN", "documents": [{"id": "d1", "facts": [{"id": "f1", "label": "EN"}]}]}
+	var merged: Dictionary = Localization._merge(base.duplicate(true), overlay)
+	check(merged.title == "Title EN" and merged.summary == "Résumé FR", "le titre est traduit, le résumé reste en français")
+	check(merged.documents[0].title == "Pièce FR" and merged.documents[0].facts[0].label == "EN",
+			"la fusion apparie les pièces et les éléments par id")
+	# Sans surcouche livrée, un dossier reste en français même en anglais.
+	check(CaseLibrary.get_case("40921").title == "Citoyen n° 40921", "sans surcouche, le dossier reste en français")
+	Localization.set_locale("fr")
+	check(CaseLibrary.get_case("40921").title == "Citoyen n° 40921" and not Localization.is_translated(),
+			"retour au français : langue source")
+
+
+func test_news() -> void:
+	var state := NewsWindow.current_state()
+	var first := NewsRules.edition(state)
+	check(first.articles.size() == NewsRules.MAX_ARTICLES, "une édition compte 3 articles")
+	check(first.articles[0].id == "d0_centrale_plan" and first.number == 311, "lundi : la une sur la Centrale n° 3, numéro 311")
+	check(NewsRules.edition(state).articles == first.articles, "le choix des articles est déterministe")
+	# Décision prise la veille : elle fait la une, à la manière du régime.
+	var decided := {"day_index": 1, "flags": {}, "cases": {}, "decisions": [{"case_id": "40921", "decision_id": "arrest", "day_index": 0}]}
+	var titles: Array = NewsRules.edition(decided).articles.map(func(a: Dictionary) -> String: return a.id)
+	check(titles[0] == "d1_40921_arrest", "l'arrestation de SEDLAR fait la une le lendemain")
+	decided.day_index = 2
+	titles = NewsRules.edition(decided).articles.map(func(a: Dictionary) -> String: return a.id)
+	check(not "d1_40921_arrest" in titles and "d2_horvat" in titles, "la nouvelle ne revient pas le surlendemain ; l'indice HORVAT paraît mercredi")
+	decided.decisions[0].decision_id = "close"
+	decided.day_index = 1
+	titles = NewsRules.edition(decided).articles.map(func(a: Dictionary) -> String: return a.id)
+	check(not "d1_40921_arrest" in titles and not "d1_40921_investigate" in titles, "dossier classé : le journal se tait")
+	check(NewsRules.are_conditions_met({"after_decision": {"case": "40921"}}, decided), "sans liste : n'importe quelle décision")
+	check(NewsRules.edition({"day_index": 30, "flags": {}, "cases": {}}).articles.size() == 2, "un jour sans actualité : les articles par défaut")
+	var ids := {}
+	for article in NewsRules.data().articles:
+		check(not ids.has(article.id) and article.get("headline", "") != "" and article.get("body", "") != "", "article %s complet et unique" % article.id)
+		ids[article.id] = true
+
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(desk.get_node("%NewsButton").badge == 1, "nouvelle édition : pastille sur le journal")
+	var hours := GameState.hours_used
+	desk.get_node("%NewsButton").pressed.emit()
+	check(desk.get_open_app() == "news" and desk.get_node("%NewsButton").badge == 0, "le journal s'ouvre et la pastille disparaît")
+	check(desk.windows.news.get_node("%Articles").get_node_or_null("Article_d0_centrale_plan") != null, "la une est affichée")
+	check(GameState.hours_used == hours, "lire le journal ne coûte pas d'heures")
+	desk.queue_free()
+	await get_tree().process_frame
+
+
+func test_desk_apps() -> void:
+	# VERITAS (logique pure) : rapport incomplet tant que des pièces restent à lire.
+	var view := GameState.get_case_view("40921")
+	var report := Veritas.case_report(view, GameState.get_case_state("40921"))
+	check(report.unread == view.documents.size() and not report.advice.is_empty(), "VERITAS compte les pièces non lues")
+	var text := VeritasWindow.report_bbcode(report)
+	check(text.begins_with("ANALYSE INCOMPLÈTE : %d pièce(s)" % report.unread) and text.contains("RECOMMANDATION :"),
+			"rapport incomplet : avertissement puis recommandation")
+	check(VeritasWindow.report_bbcode({"unread": 0, "advice": {}, "factors": []}).contains("ne formule pas"),
+			"sans facteur : pas de recommandation")
+	check(Veritas.analysis_steps().size() >= 3, "étapes du calcul lues dans data/veritas.json")
+	for icon in ["veritas", "mail_open", "lock"]:
+		check(PixelIcons.has_icon(icon), "icône %s dessinée" % icon)
+
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	var veritas: VeritasWindow = desk.windows.veritas
+	desk.get_node("%VeritasButton").pressed.emit()
+	check(desk.get_open_app() == "veritas", "l'icône VERITAS ouvre le programme")
+	check(veritas.get_node("%RunButton").disabled, "aucun dossier choisi : analyse impossible")
+	var list: VBoxContainer = veritas.get_node("%VeritasCaseList")
+	check(list.get_node_or_null("Case_40921") != null, "les dossiers en attente sont proposés")
+	list.get_node("Case_40921").pressed.emit()
+	check(not veritas.get_node("%RunButton").disabled, "dossier choisi : on peut lancer l'analyse")
+	var hours := GameState.hours_used
+	veritas.analysis_time = 0.2
+	veritas.get_node("%RunButton").pressed.emit()
+	check(veritas.is_running and veritas.get_node("%RunButton").disabled, "le calcul prend un instant")
+	await get_tree().create_timer(0.4).timeout
+	check(not veritas.is_running and veritas.get_node("%AnalysisLog").get_parsed_text().contains("ANALYSE INCOMPLÈTE"),
+			"le verdict s'affiche à la fin du calcul")
+	check(GameState.hours_used == hours, "VERITAS ne coûte pas d'heures")
+
+	# Courrier : enveloppes fermées pour les plis non lus.
+	desk.get_node("%MessagesButton").pressed.emit()
+	await get_tree().process_frame
+	var mail_list: VBoxContainer = desk.windows.messages.get_node("%MessageList")
+	var unread_buttons := mail_list.get_children().filter(func(b: Node) -> bool: return b.get_meta("unread", false))
+	check(unread_buttons.size() == GameState.get_unread_count(), "un pli non lu par message non lu")
+	check(desk.windows.messages.get_node("%ListTitle").text.contains("non lu") == (GameState.get_unread_count() > 0),
+			"le titre de la liste compte les plis non lus")
+	check(desk.windows.messages.get_guide_target("") == (unread_buttons[0] if not unread_buttons.is_empty() else null),
+			"la bulle d'aide pointe le premier pli non lu")
+
+	# Archives vides en début de partie, fonds historique verrouillé.
+	desk.get_node("%ArchivesButton").pressed.emit()
+	check(desk.windows.archives.get_node("%ArchiveEmpty").visible and ArchivesWindow.archived_cases().is_empty(),
+			"aucun rapport aux archives au départ")
+	check(desk.windows.archives.get_node("%ClearanceLabel").text.contains("NIVEAU 3"), "le fonds historique est verrouillé")
+	desk.queue_free()
+	await get_tree().process_frame
+
+
 func test_document_passages() -> void:
 	var all_found := true
 	for case_id in CaseLibrary.get_case_ids():
@@ -597,7 +716,7 @@ func test_evenings() -> void:
 
 
 func test_field_scenes_are_valid() -> void:
-	for case_id in ["40921", "51307", "52044", "52310"]:
+	for case_id in ["40921", "51307", "52044", "52310", "53402", "53517"]:
 		var case_data := CaseLibrary.get_case(case_id)
 		var scene := FieldRules.scene_for_case(case_data)
 		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
@@ -866,6 +985,206 @@ func test_veritas_model() -> void:
 		GameState.mark_document_viewed("40921", document_id)
 	var reply := Veritas.terminal_reply(GameState.get_condition_state(), PackedStringArray(["POURQUOI"]))
 	check(reply.contains("Facteurs principaux") and reply.contains("Famille résidant à Halvek"), "commande VERITAS POURQUOI")
+
+
+func test_veritas_acte2() -> void:
+	# Socle de l'acte 2 : catégorie « donnée raccordée », décret 86-31, facteurs contestables.
+	var case_data := {
+		"decisions": [{"id": "arrest", "label": "Arrêter"}, {"id": "release", "label": "Libérer"}],
+		"veritas": {
+			"recommendation": "arrest",
+			"rationale": "test",
+			"factors": [
+				{"id": "border1", "label": "Proximité frontalière", "category": "border", "weight": 10, "decision": "arrest"},
+				{"id": "link1", "label": "Raccordement voyageurs", "category": "linked", "weight": 5, "decision": "arrest", "contestable": true},
+				{"id": "risk1", "label": "Risque individuel", "category": "risk", "weight": 4, "decision": "arrest"},
+			],
+		},
+	}
+	# Base 40 + frontière 10x2 + raccordement 5x2 + risque 4x1 = 74.
+	var base_scores := Veritas.scores(case_data)
+	check(base_scores.arrest.score == 74, "indice de base avec une donnée raccordée (x2)")
+	check(base_scores.release.score == 40, "l'autre décision reste au score de base")
+	var link := _factor_by_id(base_scores.arrest.factors, "link1")
+	check(link.multiplier == 2.0 and link.contribution == 10.0, "la donnée raccordée pèse x2")
+	# Décret 86-31 : la frontière passe de x2 à x3, l'indice monte à 84.
+	var decret := Veritas.scores(case_data, {}, {"decret_86_31": true})
+	check(decret.arrest.score == 84, "le décret 86-31 durcit la frontière (x3)")
+	check(_factor_by_id(decret.arrest.factors, "border1").multiplier == 3.0, "le multiplicateur frontalier override vaut 3")
+	check(Veritas.recommendation(case_data, {}, {"decret_86_31": true}).confidence == 84, "la recommandation reflète le décret")
+	# Contestation : un facteur contestable écarté tombe à zéro (74 - 10 = 64).
+	var contested := Veritas.scores(case_data, {"contested_factors": ["link1"]})
+	check(contested.arrest.score == 64, "contester la donnée raccordée l'écarte du calcul")
+	var contested_link := _factor_by_id(contested.arrest.factors, "link1")
+	check(contested_link.contested and contested_link.contribution == 0.0, "le facteur contesté est marqué et neutralisé")
+	# Un facteur non contestable ne bouge pas même s'il est listé comme contesté.
+	var not_contestable := Veritas.scores(case_data, {"contested_factors": ["risk1"]})
+	check(not_contestable.arrest.score == 74 and not _factor_by_id(not_contestable.arrest.factors, "risk1").contested,
+			"un facteur non contestable résiste à la contestation")
+
+
+func test_ministry_record() -> void:
+	# Règles de données : correspondance exacte, par suffixe, et absence.
+	check(MinistryRecord.rule_for("heure_juste.sign_stove").get("tag", "") == "indice_heure_juste",
+			"un drapeau suivi renvoie sa règle")
+	check(MinistryRecord.rule_for("53118.consulted_superior").get("tag", "") == "sollicite_hierarchie",
+			"un drapeau par dossier correspond par suffixe")
+	check(MinistryRecord.rule_for("drapeau.inconnu").is_empty(), "un drapeau non suivi ne renvoie rien")
+	# Intégration : poser un drapeau suivi alimente la mémoire institutionnelle.
+	GameState.new_game()
+	check(GameState.ministry_record.is_empty(), "la mémoire institutionnelle démarre vide")
+	GameState._merge_flags({"heure_juste.sign_stove": true, "drapeau.inconnu": true})
+	check(GameState.ministry_record.size() == 1, "seul un drapeau suivi est consigné")
+	var entry: Dictionary = GameState.ministry_record[0]
+	check(entry.tag == "indice_heure_juste" and entry.reading != "" and entry.day == GameState.day_index,
+			"l'entrée porte le fait, la lecture biaisée et le jour")
+	# Un même fait (tag) n'est consigné qu'une fois, même via un autre drapeau.
+	GameState._merge_flags({"heure_juste.sign_stairs": true})
+	check(GameState.ministry_record.size() == 1, "un même fait n'est pas consigné deux fois")
+	GameState._set_flag("53118.consulted_superior", true)
+	check(GameState.ministry_record.size() == 2, "un nouveau fait ajoute une entrée")
+	# Un drapeau posé à false ne consigne rien.
+	GameState._set_flag("career.refused_promotion", false)
+	check(GameState.ministry_record.size() == 2, "un drapeau à false ne consigne rien")
+	# Sauvegarde : la mémoire survit à to_dict/from_dict (jour en entier).
+	var snapshot := GameState.to_dict()
+	GameState.new_game()
+	check(GameState.ministry_record.is_empty(), "nouvelle partie : mémoire réinitialisée")
+	GameState.from_dict(snapshot)
+	check(GameState.ministry_record.size() == 2 and typeof(GameState.ministry_record[0].day) == TYPE_INT,
+			"la mémoire est restaurée, le jour reconverti en entier")
+	# Rechargement d'une sauvegarde sans mémoire (ancien format) : liste vide.
+	var old := snapshot.duplicate(true)
+	old.erase("ministry_record")
+	GameState.from_dict(old)
+	check(GameState.ministry_record.is_empty(), "une sauvegarde sans mémoire repart sur une liste vide")
+
+
+func test_case_53118() -> void:
+	var case_data := CaseLibrary.get_case("53118")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 53118 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS pousse l'arrestation collective des onze.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "arrest_all" and advice.confidence == 93,
+			"VERITAS recommande les onze (indice %d)" % advice.confidence)
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# RACCORDEMENT : le facteur « donnée raccordée » est contestable et écartable.
+	var link := _factor_by_id(Veritas.scores(case_data).arrest_all.factors, "network")
+	check(link.category == "linked" and link.get("contestable", false), "le raccordement est une donnée raccordée contestable")
+	check(Veritas.scores(case_data, {"contested_factors": ["network"]}).arrest_all.score == 79,
+			"contester le raccordement baisse l'indice de 14")
+	check(Veritas.recommendation(case_data, {"contested_factors": ["network"]}).decision_id == "arrest_all",
+			"même contesté, VERITAS maintient l'arrestation (biais institutionnel)")
+	# L'archive contredit l'officiel sur le couvre-feu et sur le nombre.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("choir.curfew" in keys and "choir.list" in keys, "l'archive contredit le couvre-feu et le nombre")
+	# L'archive paroissiale n'existe qu'une fois demandée et livrée.
+	var state := GameState.get_condition_state()
+	state.cases = {"53118": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "archive_parish" in visible, "l'archive paroissiale est invisible avant la demande")
+	# Issues de décision selon les contradictions établies grâce à l'archive.
+	var with_permit := {"contradictions_found": ["choir.curfew"]}
+	var with_roster := {"contradictions_found": ["choir.list"]}
+	var blind := {"contradictions_found": []}
+	check(DecisionRules.resolve(case_data, with_permit, "clear").response_id == "clear_proved",
+			"classement justifié par le permis de veillée")
+	check(DecisionRules.resolve(case_data, blind, "clear").response_id == "clear_unfounded",
+			"classement sans preuve mal vu")
+	check(DecisionRules.resolve(case_data, with_roster, "restrict").response_id == "restrict_proved",
+			"liste réduite justifiée par le registre")
+	var knowing := DecisionRules.resolve(case_data, with_permit, "arrest_all")
+	check(knowing.response_id == "arrest_all_knowing" and knowing.flags.get("53118.innocents_condemned", false),
+			"arrêter malgré le permis condamne sciemment des innocents")
+
+
+func test_case_53402() -> void:
+	var case_data := CaseLibrary.get_case("53402")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 53402 est valide %s" % CaseLibrary.validate_case(case_data))
+	# Sans le décret, VERITAS penche déjà vers la transmission.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "arrest" and advice.confidence == 70,
+			"VERITAS recommande la frontière (indice %d)" % advice.confidence)
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# Le décret 86-31 durcit l'exposition frontalière (x2 -> x3).
+	var decree := {"decret_86_31": true}
+	check(Veritas.scores(case_data, {}, decree).arrest.score == 79,
+			"le décret fait monter l'indice d'arrestation à 79")
+	var frontier := _factor_by_id(Veritas.scores(case_data, {}, decree).arrest.factors, "frontier")
+	check(frontier.category == "border" and frontier.multiplier == 3.0, "sous le décret, la frontière pèse x3")
+	# Raccordement contestable : l'écarter ne suffit pas à renverser le décret.
+	var link := _factor_by_id(Veritas.scores(case_data, {}, decree).arrest.factors, "network")
+	check(link.category == "linked" and link.get("contestable", false), "le raccordement est une donnée raccordée contestable")
+	check(Veritas.recommendation(case_data, {"contested_factors": ["network"]}, decree).decision_id == "arrest",
+			"même sans le raccordement, le décret maintient la transmission")
+	# Les pièces établies par l'agent disculpent, mais pèsent peu face au décret.
+	check(Veritas.scores(case_data, {"contradictions_found": ["train.delays.october", "halvek.movements"]}, decree).arrest.score == 90,
+			"faux au registre + voyageurs identifiés : l'indice d'arrestation reste écrasant")
+	# Deux contradictions : le relevé central et le relevé des voyageurs.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("train.delays.october" in keys and "halvek.movements" in keys,
+			"le relevé central et le manifeste contredisent le dossier")
+	# Le manifeste n'existe qu'une fois demandé.
+	var state := GameState.get_condition_state()
+	state.cases = {"53402": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "manifest" in visible, "le relevé des voyageurs est invisible avant la demande")
+	# Issues de décision selon la contradiction établie grâce au manifeste.
+	var proved := {"contradictions_found": ["halvek.movements"]}
+	var blind := {"contradictions_found": []}
+	check(DecisionRules.resolve(case_data, proved, "arrest").response_id == "arrest_found",
+			"transmettre en connaissant les permis familiaux")
+	check(DecisionRules.resolve(case_data, blind, "arrest").response_id == "arrest_unfounded",
+			"transmettre sans avoir vérifié qui voyageait")
+	check(DecisionRules.resolve(case_data, proved, "clear").flags.get("halm.defied", false),
+			"classer une affaire de frontière sous le décret défie HALM")
+
+
+func test_case_53517() -> void:
+	var case_data := CaseLibrary.get_case("53517")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 53517 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS présume l'informateur fiable et pousse la transmission.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "transmit" and advice.confidence == 72,
+			"VERITAS recommande la transmission (indice %d)" % advice.confidence)
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# Raccordement contestable : l'écarter ne renverse pas la recommandation.
+	var link := _factor_by_id(Veritas.scores(case_data).transmit.factors, "network")
+	check(link.category == "linked" and link.get("contestable", false), "le raccordement est une donnée raccordée contestable")
+	check(Veritas.recommendation(case_data, {"contested_factors": ["network"]}).decision_id == "transmit",
+			"même sans le raccordement, VERITAS maintient la transmission")
+	# La perquisition disculpe (file du marché noir), mais pèse peu dans l'indice.
+	check(Veritas.scores(case_data, {"contradictions_found": ["petras.thursdays"]}).dismiss.score == 53,
+			"la perquisition fait monter le classement à 53, sous la transmission")
+	# Contradiction : le signalement contre le procès-verbal de perquisition.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("petras.thursdays" in keys, "le signalement et la perquisition se contredisent sur les jeudis")
+	# La fiche de l'informateur (CHAUDRON = ORLIK) n'existe qu'une fois demandée.
+	var state := GameState.get_condition_state()
+	state.cases = {"53517": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "informer_file" in visible, "la fiche de l'informateur est invisible avant la demande")
+	# Issues de décision selon la contradiction établie par la perquisition.
+	var proved := {"contradictions_found": ["petras.thursdays"]}
+	var blind := {"contradictions_found": []}
+	check(DecisionRules.resolve(case_data, blind, "transmit").response_id == "transmit_blind",
+			"transmettre sur la seule parole de l'informateur")
+	var knowing := DecisionRules.resolve(case_data, proved, "transmit")
+	check(knowing.response_id == "transmit_knowing" and knowing.flags.get("53517.innocent_condemned", false),
+			"transmettre malgré la perquisition condamne sciemment un innocent")
+	var turned := DecisionRules.resolve(case_data, proved, "turn")
+	check(turned.flags.get("53517.informer_reported", false) and turned.flags.get("milice.hostile", false),
+			"retourner le signalement vise l'informateur et fâche la Milice")
+
+
+func _factor_by_id(factors: Array, id: String) -> Dictionary:
+	for factor in factors:
+		if factor.get("id", "") == id:
+			return factor
+	return {}
 
 
 func _play_first_case(decision_id: String, establish_contradiction: bool) -> void:
@@ -1283,21 +1602,33 @@ func test_investigation_and_conclusion_flow() -> void:
 	check(conclusion.get_node("%ConclusionSummary").get_parsed_text().contains("Présent à son poste"),
 			"le formulaire rappelle la contradiction établie")
 	check(conclusion.get_node("%SignButton").disabled, "signature impossible sans choix")
-	check(conclusion.get_node("%VeritasAdvice").text.contains("indice de conformité 87")
-			and conclusion.get_node("%VeritasAdvice").text.contains("Facteurs principaux :\n- Déplacement non déclaré"),
-			"le formulaire affiche l'avis de VERITAS et ses facteurs")
+	check(not conclusion.get_node("%VeritasAdvice").text.contains("indice"), "VERITAS n'est plus affiché d'office")
+	var veritas: VeritasWindow = desk.windows.veritas
+	veritas.analysis_time = 0.0
+	conclusion.get_node("%VeritasButton").pressed.emit()
+	var veritas_log: String = veritas.get_node("%AnalysisLog").get_parsed_text()
+	check(desk.get_open_app() == "veritas" and veritas.current_case_id == "40921", "CONSULTER VERITAS lance le programme sur ce dossier")
+	check(veritas_log.contains("INDICE DE CONFORMITÉ : 87") and veritas_log.contains("FACTEURS PRINCIPAUX :\n- Déplacement non déclaré"),
+			"VERITAS donne son indice et ses facteurs")
+	check(veritas_log.contains("ANALYSE INCOMPLÈTE") == (Veritas.unread_count(GameState.get_case_view("40921"), GameState.get_case_state("40921")) > 0),
+			"VERITAS avertit seulement s'il reste des pièces non lues")
+	check(dossiers.get_node("%ConclusionPanel").visible, "le formulaire reste ouvert derrière")
 	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
 	conclusion.get_node("%SignButton").pressed.emit()
 	await get_tree().process_frame
 	check(desk.get_open_app() == "messages", "la réponse du supérieur s'affiche aussitôt")
 	check(desk.windows.messages.current_message_id == "40921.investigate_found", "c'est la bonne réponse")
-	check(desk.windows.messages.get_node("%MessageHeader").text.contains("enquête complémentaire accordée"),
+	check(desk.windows.messages.get_node("%MessageSubject").text.contains("enquête complémentaire accordée"),
 			"l'objet du message est affiché")
 	check(GameState.get_case_state("40921").status == GameState.CASE_UNDER_INVESTIGATION, "dossier en enquête complémentaire")
 	desk.terminal.submit_command("dossiers")
 	check(dossiers.get_node("%ConclusionButton").disabled, "on ne peut pas conclure deux fois")
 	desk.terminal.submit_command("archives")
-	check(desk.windows.archives.get_node("%ArchiveText").get_parsed_text().contains("40921"), "le rapport figure aux archives")
+	var archive: Button = desk.windows.archives.get_node("%ArchiveList").get_node_or_null("Archive_40921")
+	check(archive != null and archive.text.contains("en cours d'enquête"), "le rapport figure aux archives")
+	if archive:
+		archive.pressed.emit()
+		check(desk.get_open_app() == "dossiers" and dossiers.current_case_id == "40921", "un clic aux archives rouvre le dossier")
 	desk.queue_free()
 	await get_tree().process_frame
 

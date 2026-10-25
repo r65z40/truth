@@ -1,0 +1,101 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/windows/veritas_window.gd" id="1_script"]
+
+[node name="VeritasWindow" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = 60.0
+offset_right = -120.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+window_title = "VERITAS  //  SYSTÈME D'ANALYSE DU MINISTÈRE"
+app_icon = "veritas"
+task_title = "VERITAS"
+classification = "SECRET"
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Content" type="MarginContainer" parent="Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="Columns" type="HBoxContainer" parent="Layout/Content"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="CaseColumn" type="VBoxContainer" parent="Layout/Content/Columns"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CasesTitle" type="Label" parent="Layout/Content/Columns/CaseColumn"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "DOSSIERS EN ATTENTE"
+
+[node name="CaseScroll" type="ScrollContainer" parent="Layout/Content/Columns/CaseColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="VeritasCaseList" type="VBoxContainer" parent="Layout/Content/Columns/CaseColumn/CaseScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Notice" type="Label" parent="Layout/Content/Columns/CaseColumn"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 14
+text = "VERITAS conseille. L'agent signe et répond seul de sa conclusion."
+autowrap_mode = 3
+
+[node name="Screen" type="PanelContainer" parent="Layout/Content/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TerminalPanel"
+
+[node name="ScreenLayout" type="VBoxContainer" parent="Layout/Content/Columns/Screen"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="VeritasCaseTitle" type="Label" parent="Layout/Content/Columns/Screen/ScreenLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "AUCUN DOSSIER CHARGÉ"
+autowrap_mode = 3
+
+[node name="AnalysisProgress" type="ProgressBar" parent="Layout/Content/Columns/Screen/ScreenLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_type_variation = &"TimeGauge"
+show_percentage = false
+
+[node name="AnalysisLog" type="RichTextLabel" parent="Layout/Content/Columns/Screen/ScreenLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"TerminalText"
+bbcode_enabled = true
+selection_enabled = true
+
+[node name="RunButton" type="Button" parent="Layout/Content/Columns/Screen/ScreenLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+disabled = true
+text = "LANCER L'ANALYSE"

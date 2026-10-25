@@ -30,12 +30,58 @@ theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 14
 
-[node name="Panel" type="PanelContainer" parent="Layout/Content"]
+[node name="Rows" type="VBoxContainer" parent="Layout/Content"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Layout/Content/Rows"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "ARCHIVES CENTRALES  //  FONDS DE LA SECTION 4"
+
+[node name="ListTitle" type="Label" parent="Layout/Content/Rows"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "RAPPORTS TRANSMIS PAR L'AGENT (cliquez pour rouvrir le dossier)"
+autowrap_mode = 3
+
+[node name="Scroll" type="ScrollContainer" parent="Layout/Content/Rows"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ArchiveList" type="VBoxContainer" parent="Layout/Content/Rows/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="ArchiveEmpty" type="Label" parent="Layout/Content/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Aucun rapport transmis par cet agent."
+autowrap_mode = 3
+
+[node name="Locked" type="PanelContainer" parent="Layout/Content/Rows"]
 layout_mode = 2
 theme_type_variation = &"TerminalPanel"
 
-[node name="ArchiveText" type="RichTextLabel" parent="Layout/Content/Panel"]
+[node name="Row" type="HBoxContainer" parent="Layout/Content/Rows/Locked"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="LockIcon" type="TextureRect" parent="Layout/Content/Rows/Locked/Row"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 4
+stretch_mode = 3
+
+[node name="ClearanceLabel" type="Label" parent="Layout/Content/Rows/Locked/Row"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"TerminalText"
-bbcode_enabled = true
+size_flags_horizontal = 3
+theme_type_variation = &"StampLabel"
+autowrap_mode = 3

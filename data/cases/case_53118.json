@@ -1,0 +1,397 @@
+{
+	"id": "53118",
+	"title": "Dossier collectif n° 53118",
+	"subject_name": "TILL, Ewa (chef de chœur)",
+	"summary": "Signalement d'un informateur : la chorale de la paroisse Sainte-Agathe aurait chanté après le couvre-feu « en signe de défiance ». Onze noms sont transmis.",
+	"priority": "prioritaire",
+	"documents": [
+		{
+			"id": "signalement",
+			"type": "letter",
+			"title": "Signalement d'un informateur déclaré",
+			"source": "Bureau des signalements, District 2",
+			"reliability": "C",
+			"date": "1986-11-09",
+			"veritas_remark": "Source humaine unique. Onze noms concordants : rassemblement organisé probable.",
+			"body": "À l'attention de la Section 4.\n\nLe citoyen soussigné signale que le dimanche 9 novembre, après l'heure du couvre-feu, la chorale de la paroisse Sainte-Agathe a chanté dans l'église, portes closes, à la lumière des cierges. Ce n'étaient pas des chants religieux ordinaires, mais un rassemblement de défiance.\n\nÉtaient présents onze participants, dont je joins les noms. La nommée Ewa TILL, à l'orgue, dirigeait.\n\nJe reste un citoyen vigilant.\n\nI. KOLB",
+			"facts": [
+				{
+					"id": "f_sig_curfew",
+					"key": "choir.curfew",
+					"value": "Rassemblement non autorisé",
+					"label": "L'informateur présente la veillée comme un rassemblement non autorisé",
+					"quote": "après l'heure du couvre-feu"
+				},
+				{
+					"id": "f_sig_count",
+					"key": "choir.list",
+					"value": "Onze participants",
+					"label": "L'informateur dénonce onze participants",
+					"quote": "onze participants, dont je joins les noms"
+				},
+				{
+					"id": "f_sig_single",
+					"key": "choir.source",
+					"value": "Source unique : I. KOLB",
+					"label": "Les onze noms viennent d'un seul informateur, I. KOLB",
+					"quote": "Le citoyen soussigné signale"
+				}
+			]
+		},
+		{
+			"id": "patrol_report",
+			"type": "report",
+			"title": "Rapport de patrouille de nuit",
+			"source": "Milice populaire, District 2",
+			"reliability": "A",
+			"date": "1986-11-09",
+			"veritas_remark": "Confirmation matérielle d'un rassemblement après le couvre-feu. Source d'État.",
+			"author": "Brigadier T. HRON",
+			"body": "Dimanche 9 novembre, 22h30. Au cours de la ronde du quai Sainte-Agathe, des chants ont été entendus depuis l'église de la paroisse, dont les portes étaient closes et les fenêtres éclairées de l'intérieur.\n\nLa patrouille n'est pas entrée : ordre de ne pas troubler les lieux de culte sans réquisition. Les chants ont cessé vers 23h00. Plusieurs personnes sont sorties par la porte latérale.\n\nFait et signé, Brigadier HRON.",
+			"facts": [
+				{
+					"id": "f_pat_time",
+					"key": "choir.time",
+					"value": "Chants à 22h30",
+					"label": "Patrouille : chants entendus à 22h30, après le couvre-feu",
+					"quote": "22h30"
+				}
+			]
+		},
+		{
+			"id": "identity",
+			"type": "identity",
+			"title": "Fiche d'identité civile",
+			"source": "Registre central de la population",
+			"reliability": "A",
+			"date": "1986-11-09",
+			"veritas_remark": "Organiste de la paroisse depuis 1961. Fonction de rassemblement : facteur de risque.",
+			"photo": {
+				"caption": "Cliché du 03.11.1986",
+				"face": "long",
+				"hair": "bun",
+				"gray": true,
+				"glasses": true,
+				"facial_hair": "none",
+				"mark": "none"
+			},
+			"fields": [
+				["Nom", "TILL"],
+				["Prénoms", "Ewa"],
+				["Née le", "22.01.1929 à Velmira"],
+				["N° de citoyen", "53118"],
+				["Profession", "Organiste, paroisse Sainte-Agathe (depuis 1961)"],
+				["Adresse", "Bloc 3, app. 12, quai Sainte-Agathe, District 2"],
+				["Famille", "Veuve (Josef TILL, cheminot, décédé en 1980)"],
+				["Mention", "Autorisation de culte en règle (reg. dioc. n° 41)"]
+			],
+			"facts": [
+				{
+					"id": "f_id_organist",
+					"key": "till.role",
+					"value": "Organiste depuis 1961",
+					"label": "Ewa TILL, organiste de la paroisse depuis 1961",
+					"quote": "Organiste, paroisse Sainte-Agathe (depuis 1961)"
+				},
+				{
+					"id": "f_id_widow",
+					"key": "till.family",
+					"value": "Veuve d'un cheminot",
+					"label": "Veuve de Josef TILL, cheminot, décédé en 1980",
+					"quote": "Veuve (Josef TILL, cheminot, décédé en 1980)"
+				}
+			]
+		},
+		{
+			"id": "member_list",
+			"type": "register",
+			"title": "Liste des participants (établie par la Section 4)",
+			"source": "Section 4, d'après le signalement",
+			"reliability": "B",
+			"date": "1986-11-09",
+			"veritas_remark": "Liste reprise du signalement. Onze noms : ampleur d'un réseau.",
+			"columns": ["N°", "Nom", "Observation"],
+			"rows": [
+				["1", "TILL, Ewa", "Organiste, dirige"],
+				["2", "FALK, Roman", "81 ans, basse"],
+				["3", "NOWAK, Jan", "Cheminot, ténor"],
+				["4", "SAMEK, Olga", "Couturière"],
+				["5", "BREDA, Pavel", "Instituteur"],
+				["6", "LANG, Marta", "Infirmière"],
+				["7", "VITEK, Josef", "Retraité"],
+				["8", "DORN, Eliska", "Étudiante"],
+				["9", "HALLA, Petr", "Ouvrier"],
+				["10", "SIKORA, Anna", "Ménagère"],
+				["11", "REMES, Karel", "Sacristain"]
+			],
+			"facts": [
+				{
+					"id": "f_ml_count",
+					"key": "choir.list",
+					"value": "Onze participants",
+					"label": "Liste de la Section 4 : onze noms repris du signalement",
+					"quote": "FALK, Roman"
+				}
+			]
+		},
+		{
+			"id": "veritas_link",
+			"type": "report",
+			"title": "Note de raccordement VERITAS",
+			"source": "VERITAS, module de recoupement automatique",
+			"reliability": "A",
+			"date": "1986-11-09",
+			"veritas_remark": "Recoupement automatique des onze noms avec les signalements antérieurs.",
+			"body": "RACCORDEMENT AUTOMATIQUE — dossier 53118.\n\nSur les onze noms transmis, le système a recoupé des occurrences antérieures :\n\n- Quatre noms apparaissent dans des signalements de rassemblements religieux (processions, veillées) entre 1983 et 1986.\n- Deux noms sont rattachés à des foyers déjà visités par la Section 7.\n\nInterprétation du système : noyau récurrent, compatible avec un réseau structuré autour de la paroisse.\n\n[Note : le raccordement établit des coïncidences de fichiers, non des faits. Il ne distingue pas la fréquentation d'une même paroisse d'une appartenance à un réseau.]",
+			"facts": [
+				{
+					"id": "f_link_network",
+					"key": "choir.network",
+					"value": "Recoupement de fichiers",
+					"label": "Raccordement : quatre des onze noms figurent dans d'anciens signalements religieux",
+					"quote": "Quatre noms apparaissent dans des signalements de rassemblements religieux"
+				}
+			]
+		},
+		{
+			"id": "kremer_note",
+			"type": "letter",
+			"title": "Note manuscrite glissée dans le courrier interne",
+			"source": "H. KREMER, Section 2 (archives)",
+			"reliability": "C",
+			"date": "1986-11-10",
+			"veritas_remark": "Note interne non signée officiellement. Sans valeur probante.",
+			"body": "Inspecteur,\n\nUne chorale ne chante pas au hasard un dimanche soir : elle chante pour une fête. Demandez-vous laquelle, et si quelqu'un avait signé un papier pour l'autoriser.\n\nLa paroisse tient un registre de veillée, et le diocèse délivre des permis. Les originaux sont aux archives — là où l'on vient de m'envoyer. Demandez le fonds Sainte-Agathe.\n\nUn informateur qui donne onze noms d'un coup ne les a pas tous vus. Comptez ceux qui ont émargé.\n\nNe me nommez pas. K.",
+			"facts": []
+		},
+		{
+			"id": "archive_parish",
+			"type": "register",
+			"title": "Fonds paroissial Sainte-Agathe (archives, Section 2)",
+			"source": "Archives centrales, fonds diocésain (transmis par H. KREMER)",
+			"reliability": "B",
+			"date": "1986-11-10",
+			"request": {
+				"label": "Fonds paroissial Sainte-Agathe (archives centrales)",
+				"flags": {"53118.archive_requested": true},
+				"effects": {"suspicion": 2}
+			},
+			"veritas_remark": "Documents paroissiaux antérieurs au signalement. Valeur administrative limitée selon le système.",
+			"body": "Deux pièces du fonds Sainte-Agathe :\n\n1. PERMIS DE VEILLÉE n° 86/212, délivré le 14 octobre 1986 par le Bureau des cultes du District 2 : « Autorisation est donnée à la paroisse Sainte-Agathe de tenir une veillée de prière le soir de la Sainte-Agathe (9 novembre), au-delà de l'heure de fermeture habituelle. » Signé avant le durcissement du couvre-feu.\n\n2. REGISTRE DE VEILLÉE du 9 novembre : sept personnes ont émargé à l'entrée. En marge : « R. FALK excusé (hospitalisé depuis le 3). J. NOWAK excusé (poste de nuit). »",
+			"facts": [
+				{
+					"id": "f_arc_permit",
+					"key": "choir.curfew",
+					"value": "Veillée autorisée",
+					"label": "Permis de veillée n° 86/212 : la veillée de la Sainte-Agathe était autorisée",
+					"quote": "Autorisation est donnée à la paroisse Sainte-Agathe de tenir une veillée de prière"
+				},
+				{
+					"id": "f_arc_register",
+					"key": "choir.list",
+					"value": "Sept émargements",
+					"label": "Registre de veillée : sept personnes ont émargé, non onze",
+					"quote": "sept personnes ont émargé à l'entrée"
+				},
+				{
+					"id": "f_arc_absent",
+					"key": "choir.absent",
+					"value": "Deux noms absents",
+					"label": "FALK (hospitalisé) et NOWAK (poste de nuit) étaient absents ce soir-là",
+					"quote": "R. FALK excusé (hospitalisé depuis le 3). J. NOWAK excusé (poste de nuit)."
+				}
+			]
+		},
+		{
+			"id": "informer_file",
+			"type": "report",
+			"title": "Fiche de l'informateur I. KOLB",
+			"source": "Bureau des signalements, District 2",
+			"reliability": "B",
+			"date": "1986-11-10",
+			"request": {
+				"label": "Fiche de l'informateur I. KOLB (Bureau des signalements)",
+				"flags": {"53118.informer_checked": true},
+				"effects": {}
+			},
+			"veritas_remark": "Antécédents de l'informateur. Sans incidence sur la matérialité des faits.",
+			"body": "KOLB, Ignác, né en 1934. Marguillier de la paroisse Sainte-Agathe jusqu'en 1985.\n\nA présenté sa candidature au poste d'organiste titulaire en 1985, à la mort de l'ancien organiste. Le conseil de paroisse lui a préféré Mme Ewa TILL. M. KOLB a quitté ses fonctions la même année.\n\nAuteur, depuis, de quatre signalements visant des membres de la paroisse. Trois ont été classés sans suite.",
+			"facts": [
+				{
+					"id": "f_inf_motive",
+					"key": "choir.source",
+					"value": "Rival écarté du poste d'organiste",
+					"label": "KOLB a été écarté du poste d'organiste au profit de TILL en 1985",
+					"quote": "Le conseil de paroisse lui a préféré Mme Ewa TILL"
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "arrest_all",
+			"label": "Recommander l'arrestation des onze",
+			"description": "Rassemblement de défiance après le couvre-feu : transmission de la liste au service des interpellations.",
+			"archive": "Les onze membres de la chorale Sainte-Agathe sont arrêtés. La Section 7 évoque un « réseau paroissial ».",
+			"archive_truth": {
+				"requires_flags": ["53118.truth_known"],
+				"text": "La veillée était autorisée par un permis. Deux des onze n'étaient pas là. L'informateur avait été écarté du poste d'organiste."
+			},
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction:choir.curfew",
+					"effects": {"loyalty": 5, "suspicion": -2, "influence": 1},
+					"response": "arrest_all_knowing",
+					"flags": {"53118.choir_arrested": true, "53118.innocents_condemned": true, "53118.decided": true}
+				},
+				{
+					"when": "contradiction:choir.list",
+					"effects": {"loyalty": 5, "suspicion": -2, "influence": 1},
+					"response": "arrest_all_knowing",
+					"flags": {"53118.choir_arrested": true, "53118.innocents_condemned": true, "53118.decided": true}
+				},
+				{
+					"when": "default",
+					"effects": {"loyalty": 5, "suspicion": -2, "influence": 1},
+					"response": "arrest_all",
+					"flags": {"53118.choir_arrested": true, "53118.decided": true}
+				}
+			]
+		},
+		{
+			"id": "restrict",
+			"label": "Ne retenir que l'organisatrice",
+			"description": "Écarter les simples choristes et ne transmettre que le nom de la chef de chœur, comme responsable du rassemblement.",
+			"archive": "Seule Ewa TILL est arrêtée, comme organisatrice. Les autres noms sont rayés de la liste.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction:choir.list",
+					"effects": {"loyalty": 1, "suspicion": 2, "influence": 3},
+					"response": "restrict_proved",
+					"flags": {"53118.director_arrested": true, "53118.list_reduced": true, "53118.decided": true}
+				},
+				{
+					"when": "default",
+					"effects": {"loyalty": 0, "suspicion": 3, "influence": 0},
+					"response": "restrict_unfounded",
+					"flags": {"53118.director_arrested": true, "53118.decided": true}
+				}
+			]
+		},
+		{
+			"id": "clear",
+			"label": "Conclure à une veillée autorisée",
+			"description": "La veillée bénéficiait d'un permis. Le dossier est renvoyé au Bureau des cultes, sans suite.",
+			"archive": "Le dossier 53118 est classé sans suite : la veillée était autorisée. La chorale n'est pas inquiétée.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction:choir.curfew",
+					"effects": {"loyalty": -2, "suspicion": 5, "influence": 4},
+					"response": "clear_proved",
+					"flags": {"53118.choir_cleared": true, "kremer.contact": true, "53118.decided": true}
+				},
+				{
+					"when": "default",
+					"effects": {"loyalty": -3, "suspicion": 6, "influence": 0},
+					"response": "clear_unfounded",
+					"flags": {"53118.choir_cleared": true, "53118.decided": true}
+				}
+			]
+		}
+	],
+	"responses": {
+		"arrest_all": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53118 : interpellations",
+			"body": "Inspecteur,\n\nLes onze noms ont été transmis. Le Directeur HALM a eu sa conclusion avant le bulletin du soir, et la Section 7 tient son « réseau paroissial ».\n\nOnze arrestations pour un dimanche soir. On vous notera comme un inspecteur rapide.\n\nR. MAZUR"
+		},
+		"arrest_all_knowing": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53118 : interpellations",
+			"body": "Inspecteur,\n\nLes onze ont été interpellés. HALM est satisfait.\n\nVous aviez le permis de veillée et le registre sous les yeux. Vous saviez qu'ils étaient sept, et que la veillée était autorisée. Vous avez quand même signé les onze.\n\nJe classe vos notes. Personne ne les lira. Moi, je les ai lues.\n\nR. MAZUR"
+		},
+		"restrict_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53118 : liste réduite",
+			"body": "Inspecteur,\n\nVous avez rayé les absents et les simples choristes, et transmis le seul nom d'Ewa TILL. Le registre vous donnait raison sur le nombre : sept, pas onze.\n\nHALM a eu un nom à montrer, ce qui lui suffit. La Section 7 aurait préféré onze. Vous avez choisi le compromis : une arrestation au lieu de onze, mais une arrestation quand même.\n\nR. MAZUR"
+		},
+		"restrict_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53118 : liste réduite",
+			"body": "Inspecteur,\n\nVous ne retenez qu'un nom, sans rien opposer aux dix autres que votre intuition. La Section 7 note que vous avez « allégé » un dossier sans le justifier.\n\nEwa TILL a été arrêtée. Les dix autres restent sur une liste, quelque part.\n\nR. MAZUR"
+		},
+		"clear_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53118 : classement",
+			"body": "Inspecteur,\n\nUn permis de veillée signé le 14 octobre, un registre de sept noms, un informateur écarté du poste d'organiste. Vous avez tout versé au dossier, et conclu au classement.\n\nHALM voulait onze arrestations avant le bulletin. Il a eu un classement sans suite. Il a demandé qui était l'inspecteur. Je lui ai donné votre nom ; je n'avais pas le choix.\n\nLe Bureau des cultes, lui, vous remerciera en silence.\n\nR. MAZUR"
+		},
+		"clear_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53118 : classement",
+			"body": "Inspecteur,\n\nVous classez un rassemblement signalé par un informateur et confirmé par une patrouille, sans produire la moindre pièce contraire.\n\nLa Milice du District 2 a entendu les chants. HALM a lu votre classement à voix haute, en réunion. Ce n'était pas un compliment.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "arrest_all",
+		"rationale": "Rassemblement après le couvre-feu confirmé par la Milice. Chant de défiance signalé. Raccordement de quatre noms avec d'anciens signalements religieux. Hypothèse retenue : réseau paroissial.",
+		"factors": [
+			{
+				"id": "gathering",
+				"label": "Rassemblement après le couvre-feu (patrouille)",
+				"category": "state_source",
+				"weight": 8,
+				"decision": "arrest_all",
+				"document": "patrol_report"
+			},
+			{
+				"id": "defiance",
+				"label": "Chant de défiance signalé",
+				"category": "state_source",
+				"weight": 5,
+				"decision": "arrest_all",
+				"document": "signalement"
+			},
+			{
+				"id": "network",
+				"label": "Raccordement : quatre noms dans d'anciens signalements religieux",
+				"category": "linked",
+				"weight": 7,
+				"decision": "arrest_all",
+				"document": "veritas_link",
+				"contestable": true
+			},
+			{
+				"id": "permit",
+				"label": "Permis de veillée (fonds paroissial)",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "clear",
+				"document": "archive_parish",
+				"requires_contradiction": "choir.curfew"
+			},
+			{
+				"id": "roster",
+				"label": "Registre de veillée : sept présents, non onze",
+				"category": "established_fact",
+				"weight": 8,
+				"decision": "restrict",
+				"document": "archive_parish",
+				"requires_contradiction": "choir.list"
+			}
+		],
+		"note": "VERITAS surpondère la source d'État et le raccordement ; il range le permis et le registre parmi les faits « établis par l'agent », de faible poids. Il recommande l'arrestation même après la découverte des originaux."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "La chorale de Sainte-Agathe a tenu une veillée de prière le soir de la sainte patronne, autorisée par un permis de veillée signé le 14 octobre, avant le durcissement du couvre-feu. Sept personnes étaient présentes. L'informateur, Ignác KOLB, écarté du poste d'organiste au profit d'Ewa TILL en 1985, a dénoncé onze noms par rancune, dont deux absents (FALK hospitalisé, NOWAK au travail). Le ministère veut un exemple collectif pour la Sainte-Agathe.",
+		"involved": ["53118", "till_e", "kolb_i", "kremer_h"]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 53118 : votre question",
+		"body": "Inspecteur,\n\nOnze noms d'un seul informateur, c'est beaucoup pour un homme qui regardait de loin. Et une chorale qui chante un dimanche précis chante rarement sans raison.\n\nLes cultes signent des permis. Les paroisses tiennent des registres. On garde ces papiers quelque part. Je ne vous en dis pas plus.\n\nR. MAZUR"
+	}
+}

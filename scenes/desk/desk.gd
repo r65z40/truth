@@ -17,6 +17,8 @@ const DOCUMENT_CASCADE := Vector2(32, 32)
 	"messages": %MessagesWindow,
 	"archives": %ArchivesWindow,
 	"personnel": %PersonnelWindow,
+	"veritas": %VeritasWindow,
+	"news": %NewsWindow,
 	"terminal": %TerminalWindow,
 	"settings": %SettingsWindow,
 }
@@ -49,6 +51,9 @@ const DOCUMENT_CASCADE := Vector2(32, 32)
 var _end_day_armed := false
 ## Vrai après une première « DÉCONNEXION » sans sauvegarde : la seconde confirme.
 var _logout_armed := false
+## Jour de la dernière édition du journal ouverte (pastille « nouvelle édition »).
+## Non sauvegardé : après un chargement, la pastille revient, c'est sans conséquence.
+var news_read_day := -1
 ## Des changements ont eu lieu depuis la dernière sauvegarde.
 var has_unsaved_changes := false
 ## Objectif conseillé actuellement affiché (voir Guidance).
@@ -59,6 +64,8 @@ var _toast_tween: Tween
 const TOOLTIPS := {
 	"DossiersButton": "Consulter les dossiers qui vous sont assignés.",
 	"MessagesButton": "Lire le courrier interne et les réponses de la hiérarchie.",
+	"NewsButton": "Le journal du matin, La Voix de Velmira. Le lire ne coûte pas d'heures.",
+	"VeritasButton": "VERITAS, le système d'analyse : il recommande une conclusion pour un dossier.",
 	"ArchivesButton": "Voir les rapports que vous avez transmis.",
 	"PersonnelButton": "Votre évaluation par la Direction du personnel.",
 	"TerminalButton": "Le terminal du ministère, pour les commandes tapées au clavier.",
@@ -82,6 +89,8 @@ func _ready() -> void:
 	%ArchivesButton.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
 	%PersonnelButton.pressed.connect(terminal.submit_command.bind("PROFIL"))
 	%TerminalButton.pressed.connect(open_app.bind("terminal"))
+	%VeritasButton.pressed.connect(open_app.bind("veritas"))
+	%NewsButton.pressed.connect(open_news)
 	%SaveButton.pressed.connect(terminal.submit_command.bind("SAUVER"))
 	%MenuButton.pressed.connect(terminal.submit_command.bind("MENU"))
 	%EndDayButton.pressed.connect(terminal.submit_command.bind("FIN"))
@@ -106,6 +115,8 @@ func _ready() -> void:
 	coach.target_provider = coach_target
 	windows.dossiers.field_requested.connect(open_field)
 	windows.dossiers.document_window_requested.connect(open_document_window)
+	windows.dossiers.veritas_requested.connect(open_veritas)
+	windows.archives.case_requested.connect(open_case)
 	field_screen.finished.connect(_on_field_finished)
 	_refresh_header()
 	_boot_terminal()
@@ -273,6 +284,7 @@ func _refresh_header() -> void:
 	%DossiersButton.badge = pending
 	%DossiersButton.tooltip_text = "%s\n%s" % [TOOLTIPS.DossiersButton,
 			"%d dossier(s) à traiter." % pending if pending > 0 else "Aucun dossier en attente."]
+	%NewsButton.badge = 0 if news_read_day == GameState.day_index else 1
 	%ArchivesButton.visible = GameState.is_feature_unlocked("archives")
 	%PersonnelButton.visible = GameState.is_feature_unlocked("personnel")
 	%StartPersonnel.visible = %PersonnelButton.visible
@@ -354,6 +366,25 @@ func open_document_window(case_id: String, document_id: String) -> DocumentWindo
 	window.position = Vector2(window_manager.size.x - window.size.x - 16.0, 16.0) + DOCUMENT_CASCADE * (others % 5) * Vector2(-1, 1)
 	window.clamp_to_parent()
 	return window
+
+
+## Ouvre le journal du jour ; la pastille disparaît jusqu'au lendemain.
+func open_news() -> void:
+	news_read_day = GameState.day_index
+	open_app("news")
+	_refresh_header()
+
+
+## Lance VERITAS sur un dossier (depuis le formulaire de conclusion).
+func open_veritas(case_id: String) -> void:
+	open_app("veritas")
+	windows.veritas.run_analysis(case_id)
+
+
+## Ouvre le classeur des dossiers sur un dossier précis (depuis les archives).
+func open_case(case_id: String) -> void:
+	open_app("dossiers")
+	windows.dossiers.select_case(case_id)
 
 
 ## Part sur le terrain pour ce dossier (interrogatoire ou perquisition).

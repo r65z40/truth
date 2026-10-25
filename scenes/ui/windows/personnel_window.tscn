@@ -34,8 +34,52 @@ theme_override_constants/margin_bottom = 14
 layout_mode = 2
 theme_type_variation = &"DocumentPanel"
 
-[node name="PersonnelText" type="RichTextLabel" parent="Layout/Content/Paper"]
+[node name="Scroll" type="ScrollContainer" parent="Layout/Content/Paper"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Form" type="VBoxContainer" parent="Layout/Content/Paper/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Layout/Content/Paper/Scroll/Form"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="PersonnelIcon" type="TextureRect" parent="Layout/Content/Paper/Scroll/Form/Header"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 0
+stretch_mode = 3
+
+[node name="Titles" type="VBoxContainer" parent="Layout/Content/Paper/Scroll/Form/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Layout/Content/Paper/Scroll/Form/Header/Titles"]
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+theme_override_font_sizes/font_size = 22
+text = "FICHE D'ÉVALUATION DE L'AGENT"
+autowrap_mode = 3
+
+[node name="PersonnelIdentity" type="Label" parent="Layout/Content/Paper/Scroll/Form/Header/Titles"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentMeta"
+autowrap_mode = 3
+
+[node name="Stamp" type="Label" parent="Layout/Content/Paper/Scroll/Form/Header"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"StampLabel"
+text = "[ CONFIDENTIEL ]"
+
+[node name="PersonnelText" type="RichTextLabel" parent="Layout/Content/Paper/Scroll/Form"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"DocumentText"
 bbcode_enabled = true
+fit_content = true
