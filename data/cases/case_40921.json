@@ -239,6 +239,7 @@
 			"id": "arrest",
 			"label": "Recommander une arrestation",
 			"description": "Transmettre le dossier au service des interpellations.",
+			"archive": "Arrêté le 4.11.1986 pour franchissement non autorisé de la zone de Halvek. Détention provisoire, prison de la rue Sokol.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -272,6 +273,7 @@
 			"id": "close",
 			"label": "Clore le dossier",
 			"description": "Classer sans suite. Le citoyen n'est pas inquiété.",
+			"archive": "Dossier clos. Reprend son poste à l'atelier 2 de la Centrale n° 3.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -304,6 +306,7 @@
 			"id": "investigate",
 			"label": "Demander une enquête complémentaire",
 			"description": "Solliciter des vérifications supplémentaires avant toute décision.",
+			"archive": "Enquête complémentaire ordonnée. Maintenu à son poste sous surveillance.",
 			"status_after": "under_investigation",
 			"outcomes": [
 				{

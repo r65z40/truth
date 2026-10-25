@@ -314,6 +314,8 @@
 			"id": "arrest",
 			"label": "Recommander l'arrestation de l'auteur",
 			"description": "Message codé à destination d'un réseau de passage : transmission au service des interpellations.",
+			"archive": "« Teodor VARGA » arrêté au quai des Tanneurs. Procès public annoncé par la Section 7.",
+			"archive_truth": {"requires_flags": ["52310.truth_known"], "text": "L'homme arrêté s'appelle Karel BENES, correcteur. Le vrai VARGA est mort en détention en 1983."},
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -349,6 +351,7 @@
 			"id": "no_code",
 			"label": "Conclure à l'absence de message codé",
 			"description": "Le poème est une dédicace. Le dossier est renvoyé au Service de la censure.",
+			"archive": "Le poème est déclaré sans message codé. Le recueil reste retiré des bibliothèques.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -384,6 +387,7 @@
 			"id": "identity_error",
 			"label": "Signaler une erreur d'identité",
 			"description": "Le sujet de la fiche ne correspond pas à l'auteur de 1979. Demande de vérification à l'état civil.",
+			"archive": "Erreur d'identité signalée. La Section 7 conteste ; le dossier est suspendu.",
 			"status_after": "under_investigation",
 			"outcomes": [
 				{

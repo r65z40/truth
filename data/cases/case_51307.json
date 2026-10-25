@@ -325,6 +325,7 @@
 			"id": "arrest",
 			"label": "Recommander l'arrestation",
 			"description": "Faux certificats et trafic : transmission au service des interpellations.",
+			"archive": "Arrêté pour faux en écritures. Exclu du Parti. La Milice du District 9 n'a pas commenté.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -359,6 +360,7 @@
 			"id": "demote",
 			"label": "Proposer une sanction administrative",
 			"description": "Rétrogradation et retrait du droit de signature, sans poursuites.",
+			"archive": "Rétrogradé ouvrier qualifié, blâme inscrit au dossier du Parti.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -391,6 +393,7 @@
 			"id": "close",
 			"label": "Classer le dossier",
 			"description": "Aucune suite. Le chef d'équipe conserve son poste.",
+			"archive": "Dossier classé. Toujours chef d'équipe, toujours en bons termes avec la Milice.",
 			"status_after": "closed",
 			"outcomes": [
 				{

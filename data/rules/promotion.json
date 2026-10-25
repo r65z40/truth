@@ -1,0 +1,20 @@
+{
+	"note": "Revue de fin d'acte (docs/design/CARRIERE.md). Règle déterministe : tous les critères doivent être remplis ; une faveur de la Milice peut remplacer le critère de qualité des conclusions, et laisse une trace.",
+	"acts": [
+		{
+			"act": 1,
+			"cases": ["40921", "51307", "52044", "52310"],
+			"to_rank": 1,
+			"min_supported_conclusions": 2,
+			"min_loyalty": 45,
+			"max_suspicion": 49,
+			"bought_by_flags": ["milice.favor_owed"],
+			"unlocks": "Demander une archive confidentielle (une par jour).",
+			"offer": "Inspecteur,\n\nLa commission d'avancement a examiné vos premiers dossiers. Elle propose votre nomination au grade d'inspecteur de 2e classe, avec accès aux archives confidentielles.\n\nLa nomination prend effet lundi si vous l'acceptez. Une nomination refusée ne se représente pas avant longtemps.\n\nR. MAZUR",
+			"offer_bought": "Inspecteur,\n\nLa commission d'avancement propose votre nomination au grade d'inspecteur de 2e classe. Je dois vous dire que la recommandation du capitaine de la Milice du District 9 a pesé plus que vos dossiers.\n\nAcceptez si vous le voulez. Mais vous saurez à qui vous la devez, et lui aussi.\n\nR. MAZUR",
+			"denied": "Inspecteur,\n\nLa commission d'avancement a examiné vos premiers dossiers. Vous êtes maintenu au grade d'inspecteur de 3e classe.\n\nR. MAZUR",
+			"accepted": "Nomination enregistrée. Votre nouvelle carte vous attend lundi au secrétariat.",
+			"refused": "Vous signez la mention « décline la proposition ». MAZUR range la feuille sans un mot. En sortant, vous croisez KREMER dans l'escalier des archives ; il vous fait un signe de tête."
+		}
+	]
+}

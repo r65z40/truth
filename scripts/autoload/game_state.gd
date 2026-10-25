@@ -329,6 +329,70 @@ func _apply_effects(effects: Dictionary) -> void:
 				INDICATOR_MIN, INDICATOR_MAX)
 
 
+# --- Fin d'acte ---------------------------------------------------------------
+
+## Revue du dernier soir d'un acte : archive des sujets et commission
+## d'avancement. Renvoie {} si ce soir n'est pas une fin d'acte à examiner.
+func get_act_review() -> Dictionary:
+	var act := FictionalCalendar.act_for_day(day_index)
+	if act.is_empty() or FictionalCalendar.act_for_day(day_index + 1).get("number") == act.number:
+		return {}
+	var rules := Career.act_rules(int(act.number))
+	if rules.is_empty() or flags.get("act%d.reviewed" % int(act.number)) == true:
+		return {}
+	var subjects := []
+	for case_id in rules.cases:
+		var case_data := CaseLibrary.get_case(case_id)
+		var decision_id: String = cases.get(case_id, {}).get("decision", "")
+		var entry := {"case_id": case_id, "name": case_data.get("subject_name", case_id),
+				"decision": "Sans conclusion", "text": "Dossier réattribué à un autre inspecteur."}
+		for decision in case_data.get("decisions", []):
+			if decision.id == decision_id:
+				entry.decision = decision.label
+				entry.text = decision.get("archive", "")
+				var truth: Dictionary = decision.get("archive_truth", {})
+				if not truth.is_empty() and EventRules.are_conditions_met(truth, get_condition_state()):
+					entry.text += " " + truth.text
+		subjects.append(entry)
+	var evaluation := Career.evaluate(rules, {"indicators": indicators, "flags": flags, "cases": cases})
+	var letter: String = rules.denied
+	if evaluation.eligible:
+		letter = rules.offer_bought if evaluation.bought else rules.offer
+	return {"act": int(act.number), "title": act.title, "subjects": subjects, "evaluation": evaluation,
+			"letter": letter, "target_rank": Career.rank_title(int(rules.to_rank)),
+			"unlocks": rules.get("unlocks", "")}
+
+
+func has_act_review_pending() -> bool:
+	return not get_act_review().is_empty()
+
+
+## Clôt la revue de fin d'acte. accept : le joueur accepte la promotion
+## proposée (ignoré si elle ne l'est pas). Renvoie le texte de conclusion.
+func complete_act_review(accept: bool) -> String:
+	var review := get_act_review()
+	if review.is_empty():
+		return ""
+	var rules := Career.act_rules(review.act)
+	var prefix := "career.act%d" % review.act
+	flags["act%d.reviewed" % review.act] = true
+	var text := ""
+	if not review.evaluation.eligible:
+		flags[prefix + "_denied"] = true
+	elif accept:
+		player["rank"] = int(rules.to_rank)
+		flags[prefix + "_promoted"] = true
+		if review.evaluation.bought:
+			flags["career.promotion_bought"] = true
+		text = rules.accepted
+	else:
+		flags[prefix + "_refused"] = true
+		flags["career.refused_promotion"] = true
+		text = rules.refused
+	state_changed.emit()
+	return text
+
+
 # --- Messages ----------------------------------------------------------------
 
 func receive_message(message: Dictionary, notify := true) -> void:

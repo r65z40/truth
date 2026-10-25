@@ -189,9 +189,14 @@ supplémentaires fait perdre la soirée. Fils de l'acte 1 :
 
 ## Carrière
 
-Inspecteur > Analyste du renseignement > Chef de section > Directeur du
-renseignement > Ministre de la Sécurité > Haut dirigeant. Progression non
-automatique (réputation, relations, résultats, choix, événements).
+Inspecteur de 3e classe > 2e classe > Inspecteur principal > Chef de section
+adjoint > Directeur adjoint par intérim (puis ministre et haut dirigeant, hors
+campagne). Le dernier soir d'un acte, un écran archive le sort de chaque sujet
+et la commission d'avancement statue (`data/rules/promotion.json`) : tous les
+dossiers conclus, au moins 2 conclusions appuyées par une contradiction,
+loyauté conforme, pas de surveillance renforcée. Une faveur de la Milice peut
+remplacer la qualité des conclusions (et MAZUR le dit). Le joueur peut décliner :
+le refus est mémorisé (`career.refused_promotion`).
 
 ## Journal des décisions de design
 

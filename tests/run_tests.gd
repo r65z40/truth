@@ -46,6 +46,8 @@ func _run() -> void:
 		"test_request_and_consultation",
 		"test_evenings_file_is_valid",
 		"test_evenings",
+		"test_career_evaluation",
+		"test_act_review",
 		"test_veritas",
 		"test_veritas_model",
 		"test_case_51307_depends_on_first_case",
@@ -64,6 +66,7 @@ func _run() -> void:
 		"test_full_session_flow",
 		"test_investigation_and_conclusion_flow",
 		"test_end_day_in_desk",
+		"test_act_end_in_desk",
 		"test_friendly_desk",
 		"test_time_in_desk",
 	]
@@ -545,6 +548,74 @@ func test_evenings() -> void:
 	GameState.new_game()
 	GameState.from_dict(JSON.parse_string(JSON.stringify(saved)))
 	check(GameState.evenings.size() == 2 and GameState.evenings["3"].action == "lena_permit_call", "soirées sauvegardées")
+	GameState.new_game()
+
+
+func test_career_evaluation() -> void:
+	var rules := Career.act_rules(1)
+	check(rules.cases == ["40921", "51307", "52044", "52310"] and int(rules.to_rank) == Career.Rank.INSPECTOR_2ND, "règle de l'acte 1")
+	check(Career.act_rules(4).is_empty(), "pas encore de règle pour l'acte 4")
+	var cases := {}
+	for case_id in rules.cases:
+		cases[case_id] = {"decision": "x", "contradictions_found": []}
+	cases["40921"].contradictions_found = ["a"]
+	cases["52310"].contradictions_found = ["b"]
+	var state := {"indicators": {"loyalty": 50, "suspicion": 30}, "flags": {}, "cases": cases}
+	check(Career.evaluate(rules, state).eligible, "4 dossiers conclus, 2 appuyés, loyal, peu surveillé : promotion")
+	state.indicators.suspicion = 50
+	check(not Career.evaluate(rules, state).eligible, "surveillance renforcée : pas de promotion")
+	state.indicators.suspicion = 30
+	state.indicators.loyalty = 44
+	check(not Career.evaluate(rules, state).eligible, "loyauté à confirmer : pas de promotion")
+	state.indicators.loyalty = 50
+	cases["52310"].contradictions_found = []
+	var result := Career.evaluate(rules, state)
+	check(not result.eligible and not result.criteria[1].ok, "une seule conclusion appuyée : pas de promotion")
+	state.flags["milice.favor_owed"] = true
+	result = Career.evaluate(rules, state)
+	check(result.eligible and result.bought, "la faveur de la Milice achète la promotion")
+	cases["51307"].decision = ""
+	check(not Career.evaluate(rules, state).eligible, "un dossier sans conclusion : pas de promotion")
+
+
+func test_act_review() -> void:
+	GameState.new_game()
+	check(not GameState.has_act_review_pending(), "pas de revue le premier soir")
+	for day in 4:
+		GameState.end_day()
+	var review := GameState.get_act_review()
+	check(review.act == 1 and review.title == "LE ZÈLE" and review.subjects.size() == 4, "vendredi soir : revue de l'acte 1")
+	check(review.subjects[0].decision == "Sans conclusion" and not review.evaluation.eligible, "sans conclusion, pas de promotion")
+	check(review.letter.contains("maintenu"), "lettre de maintien au grade")
+	check(GameState.complete_act_review(true) == "" and GameState.player.rank == Career.Rank.INSPECTOR, "accepter n'a pas d'effet sans proposition")
+	check(GameState.flags.get("career.act1_denied") == true and not GameState.has_act_review_pending(), "revue close")
+	# Acte bien mené : promotion acceptée.
+	GameState.new_game()
+	GameState.confront_facts("40921", "f_report_presence", "f_log_trip")
+	GameState.apply_decision("40921", "arrest")
+	for day in 4:
+		GameState.end_day()
+	for case_id in ["51307", "52044", "52310"]:
+		GameState.get_case_state(case_id).contradictions_found.append("test")
+		GameState.apply_decision(case_id, CaseLibrary.get_case(case_id).decisions[0].id)
+	GameState.indicators.loyalty = 60
+	GameState.indicators.suspicion = 30
+	review = GameState.get_act_review()
+	check(review.evaluation.eligible and review.letter.contains("2e classe"), "promotion proposée")
+	check(review.subjects[0].text.contains("Arrêté le 4.11.1986"), "le sort du sujet est archivé")
+	var with_truth: bool = GameState.flags.get("52310.truth_known") == true
+	check(review.subjects[3].text.contains("Karel BENES") == with_truth, "la vérité sur VARGA n'apparaît que si elle est connue")
+	check(GameState.complete_act_review(true).contains("Nomination"), "promotion acceptée")
+	check(GameState.get_rank_title() == "Inspecteur de 2e classe", "nouveau grade")
+	var saved := GameState.to_dict()
+	GameState.from_dict(JSON.parse_string(JSON.stringify(saved)))
+	check(GameState.player.rank == Career.Rank.INSPECTOR_2ND, "grade sauvegardé")
+	# Promotion déclinée.
+	GameState.flags.erase("act1.reviewed")
+	GameState.player.rank = Career.Rank.INSPECTOR
+	check(GameState.complete_act_review(false).contains("KREMER"), "promotion déclinée")
+	check(GameState.flags.get("career.refused_promotion") == true and GameState.player.rank == Career.Rank.INSPECTOR,
+			"on reste en 3e classe, le refus est mémorisé")
 	GameState.new_game()
 
 
@@ -1045,6 +1116,32 @@ func test_end_day_in_desk() -> void:
 	check(desk.windows.dossiers.get_node("%DocumentTabs").get_child_count() == 4, "pièces de base du dossier 51307")
 	desk.queue_free()
 	await get_tree().process_frame
+
+
+func test_act_end_in_desk() -> void:
+	GameState.new_game()
+	for day in 4:
+		GameState.end_day()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.end_day()
+	check(desk.evening_screen.visible, "vendredi : la soirée d'abord")
+	desk.evening_screen.choose("adler_4")
+	desk.evening_screen.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
+	check(desk.act_review_screen.visible and GameState.day_index == 4, "puis la revue de fin d'acte")
+	check(desk.act_review_screen.get_node("%TitleLabel").text == "FIN DE L'ACTE 1  //  LE ZÈLE", "titre de l'acte")
+	check(desk.act_review_screen.get_node("%SubjectsBox").get_child_count() == 8, "quatre sujets archivés")
+	check(desk.act_review_screen.get_node("%ContinueButton").visible and not desk.act_review_screen.get_node("%AcceptButton").visible,
+			"sans promotion proposée, seulement CONTINUER")
+	desk.act_review_screen.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
+	check(GameState.day_index == 5 and GameState.flags.get("act1.reviewed") == true, "lundi 10 novembre, acte 2")
+	check(desk.get_node("%DayTransitionLabel").text.contains("3 jours plus tard"), "ellipse du week-end")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
 
 
 func test_friendly_desk() -> void:
