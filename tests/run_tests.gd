@@ -44,6 +44,8 @@ func _run() -> void:
 		"test_save_migration_from_v3",
 		"test_work_time",
 		"test_request_and_consultation",
+		"test_evenings_file_is_valid",
+		"test_evenings",
 		"test_veritas",
 		"test_veritas_model",
 		"test_case_51307_depends_on_first_case",
@@ -469,6 +471,81 @@ func test_request_and_consultation() -> void:
 	for case_id in ["40921", "51307", "52044", "52310"]:
 		var case_data := CaseLibrary.get_case(case_id)
 		check(CaseLibrary.validate_case(case_data).is_empty() and case_data.has("consultation"), "%s : consultation et pièce à demander" % case_id)
+
+
+func test_evenings_file_is_valid() -> void:
+	var data := EveningRules.get_data()
+	check(not data.get("overtime", {}).get("text", "").is_empty(), "texte de soirée perdue")
+	var days := []
+	for evening in data.evenings:
+		days.append(int(evening.day))
+		check(evening.get("intro", "") != "" and evening.actions.size() >= 2, "soirée %d : introduction et au moins 2 actions" % evening.day)
+		var unconditional := 0
+		for action in evening.actions:
+			check(action.has("id") and action.has("label") and action.has("kind") and not action.get("results", []).is_empty(),
+					"soirée %d, action %s complète" % [evening.day, action.get("id", "?")])
+			if not action.has("conditions"):
+				unconditional += 1
+			var last: Dictionary = action.results[-1]
+			check(not last.has("conditions"), "%s : la dernière variante est sans condition" % action.id)
+		check(unconditional >= 2, "soirée %d : au moins 2 actions toujours possibles" % evening.day)
+	check(days == [0, 1, 2, 3, 4], "une soirée par jour de l'acte 1 : %s" % [days])
+
+
+func test_evenings() -> void:
+	GameState.new_game()
+	check(GameState.has_evening_pending(), "une soirée est prévue le premier soir")
+	check(GameState.choose_evening_action("benes_visit").is_empty(), "action d'un autre soir refusée")
+	var result := GameState.choose_evening_action("lena_answer")
+	check(result.text.contains("brouillons"), "texte du résultat")
+	check(GameState.flags.get("lena.letter_answered") == true and GameState.flags.get("lena.asked_permit") == true,
+			"drapeaux de l'action et de la soirée")
+	check(not GameState.has_evening_pending() and GameState.choose_evening_action("radio_0").is_empty(), "une seule action par soir")
+	GameState.end_day()
+	check(not "sedlar_visit" in GameState.get_evening_actions().map(func(a: Dictionary) -> String: return a.id),
+			"pas de visite de Vera SEDLAR sans arrestation")
+	result = GameState.choose_evening_action("lena_call")
+	check(result.text.contains("Merci pour l'autorisation"), "la variante dépend de la lettre envoyée")
+	# La radio écoutée deux fois sans ménager le gardien : signalement.
+	GameState.new_game()
+	GameState.choose_evening_action("radio_0")
+	GameState.end_day()
+	var suspicion := GameState.get_indicator("suspicion")
+	result = GameState.choose_evening_action("radio_1")
+	check(GameState.flags.get("adler.reported_radio") == true and result.text.contains("porte du gardien"), "deuxième écoute : ADLER signale")
+	check(GameState.get_indicator("suspicion") == suspicion + 3, "le signalement coûte de la suspicion")
+	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("evening_radio_reported" in ids, "note de Mazur le lendemain")
+	# Avec ADLER ménagé, pas de signalement.
+	GameState.new_game()
+	GameState.choose_evening_action("adler_0")
+	GameState.end_day()
+	GameState.choose_evening_action("radio_1")
+	GameState.end_day()
+	GameState.choose_evening_action("radio_2")
+	check(GameState.flags.get("adler.reported_radio") != true, "le gardien ménagé ne signale pas")
+	# Heures supplémentaires : soirée perdue.
+	GameState.new_game()
+	GameState.hours_used = 9
+	GameState.overtime_days = [0]
+	check(GameState.choose_evening_action("lena_answer").is_empty(), "pas d'action après des heures supplémentaires")
+	check(GameState.lose_evening().contains("vingt heures") and not GameState.has_evening_pending(), "soirée perdue")
+	check(GameState.flags.get("lena.asked_permit") == true, "la lettre de Lena est quand même arrivée")
+	# Autorisation de stage pour Lena : conséquence vendredi et lundi.
+	GameState.new_game()
+	for day in 3:
+		GameState.end_day()
+	GameState.choose_evening_action("lena_permit_call")
+	GameState.end_day()
+	check(GameState.choose_evening_action("lena_news").text.contains("Avis favorable"), "Lena obtient son stage")
+	ids = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("evening_lena_permit_noted" in ids and GameState.flags.get("lena.leverage") == true, "la recommandation est notée au dossier")
+	# Sauvegarde.
+	var saved := GameState.to_dict()
+	GameState.new_game()
+	GameState.from_dict(JSON.parse_string(JSON.stringify(saved)))
+	check(GameState.evenings.size() == 2 and GameState.evenings["3"].action == "lena_permit_call", "soirées sauvegardées")
+	GameState.new_game()
 
 
 func test_veritas() -> void:
@@ -949,7 +1026,13 @@ func test_end_day_in_desk() -> void:
 	check(GameState.day_index == 0, "première demande : avertissement, pas de changement de jour")
 	check(desk.terminal.get_log_text().contains("sans conclusion : 40921"), "le terminal signale le dossier en attente")
 	desk.get_node("%EndDayButton").pressed.emit()
-	check(GameState.day_index == 1, "seconde demande : la journée se termine")
+	check(GameState.day_index == 0 and desk.evening_screen.visible, "seconde demande : la soirée commence")
+	check(desk.evening_screen.get_action_ids() == ["lena_answer", "radio_0", "adler_0"], "trois actions le premier soir")
+	desk.evening_screen.choose("radio_0")
+	check(desk.evening_screen.get_node("%ResultLabel").text.contains("Radio Aldria"), "le résultat de la soirée s'affiche")
+	desk.evening_screen.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
+	check(GameState.day_index == 1, "après la soirée, la journée se termine")
 	check(desk.get_node("%DateLabel").text.begins_with("MARDI 4 NOVEMBRE 1986\n08h00"), "la date de l'en-tête avance, l'horloge repart")
 	check(SaveManager.has_save(), "sauvegarde automatique en fin de journée")
 	check(desk.terminal.get_log_text().contains("MARDI 4 NOVEMBRE 1986"), "le terminal ouvre une nouvelle session")

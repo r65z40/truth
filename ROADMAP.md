@@ -66,7 +66,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Onglets des pièces sur une ligne défilante (dossiers de 8 pièces)
 - [ ] Fondations de la localisation (français, anglais)
 - [x] Horloge de service (8 h + 2 h), demander une pièce (livrée le lendemain), consulter Mazur
-- [ ] Soirées (Lena, radio d'Aldria)
+- [x] Soirées : 5 soirées de l'acte 1 (Lena, radio d'Aldria, M. ADLER, visites), perdues en heures supplémentaires
 - [x] Calendrier en 20 journées de service, ellipses entre les actes
 - [x] Profil du joueur dans `data/campaign.json` (préparation des extensions)
 - [ ] Écran de fin d'acte, promotion

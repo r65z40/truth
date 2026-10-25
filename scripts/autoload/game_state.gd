@@ -44,6 +44,8 @@ var fired_events: Array = []
 var hours_used: int = 0
 ## Journées où l'agent a fait des heures supplémentaires (soirée perdue).
 var overtime_days: Array = []
+## Soirées passées : {"<jour>": {"action": id, "kind": kind}} (voir EveningRules).
+var evenings: Dictionary = {}
 
 
 func _ready() -> void:
@@ -69,6 +71,7 @@ func new_game() -> void:
 	fired_events = []
 	hours_used = 0
 	overtime_days = []
+	evenings = {}
 	state_changed.emit()
 
 
@@ -114,7 +117,8 @@ func assign_case(case_id: String) -> void:
 
 ## État minimal utilisé pour évaluer des conditions (événements, pièces).
 func get_condition_state() -> Dictionary:
-	return {"day_index": day_index, "flags": flags, "cases": cases, "fired_events": fired_events}
+	return {"day_index": day_index, "flags": flags, "cases": cases, "fired_events": fired_events,
+			"evening_counts": EveningRules.counts(evenings)}
 
 
 ## Le dossier tel que le joueur le voit : seulement les pièces disponibles.
@@ -273,6 +277,58 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	return result
 
 
+# --- Soirées -----------------------------------------------------------------
+
+## Soirée prévue ce soir, ou {} s'il n'y en a pas.
+func get_evening() -> Dictionary:
+	return EveningRules.evening_for_day(day_index)
+
+
+## Vrai si une soirée est prévue ce soir et n'a pas encore eu lieu.
+func has_evening_pending() -> bool:
+	return not get_evening().is_empty() and not evenings.has(str(day_index))
+
+
+func get_evening_actions() -> Array:
+	return EveningRules.available_actions(get_evening(), get_condition_state())
+
+
+## Passe la soirée à l'action donnée. Renvoie {text, effects, set_flags},
+## ou {} si l'action n'est pas proposée ce soir.
+func choose_evening_action(action_id: String) -> Dictionary:
+	if not has_evening_pending() or is_overtime_today():
+		return {}
+	var evening := get_evening()
+	var action := EveningRules.get_action(evening, action_id)
+	if action.is_empty() or not get_evening_actions().any(func(a: Dictionary) -> bool: return a.id == action_id):
+		return {}
+	flags.merge(evening.get("set_flags", {}), true)
+	var result := EveningRules.resolve(action, get_condition_state())
+	_apply_effects(result.effects)
+	flags.merge(result.set_flags, true)
+	evenings[str(day_index)] = {"action": action_id, "kind": action.get("kind", "")}
+	state_changed.emit()
+	return result
+
+
+## Soirée perdue après des heures supplémentaires. Renvoie le texte à afficher.
+func lose_evening() -> String:
+	if not has_evening_pending():
+		return ""
+	var overtime: Dictionary = EveningRules.get_data().get("overtime", {})
+	flags.merge(get_evening().get("set_flags", {}), true)
+	flags.merge(overtime.get("set_flags", {}), true)
+	evenings[str(day_index)] = {"action": "", "kind": ""}
+	state_changed.emit()
+	return overtime.get("text", "")
+
+
+func _apply_effects(effects: Dictionary) -> void:
+	for indicator in effects:
+		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(effects[indicator]),
+				INDICATOR_MIN, INDICATOR_MAX)
+
+
 # --- Messages ----------------------------------------------------------------
 
 func receive_message(message: Dictionary, notify := true) -> void:
@@ -340,6 +396,7 @@ func to_dict() -> Dictionary:
 		"fired_events": fired_events.duplicate(),
 		"hours_used": hours_used,
 		"overtime_days": overtime_days.duplicate(),
+		"evenings": evenings.duplicate(true),
 	}
 
 
@@ -367,6 +424,7 @@ func from_dict(data: Dictionary) -> void:
 	fired_events = data.get("fired_events", [])
 	hours_used = int(data.get("hours_used", 0))
 	overtime_days = data.get("overtime_days", []).map(func(day) -> int: return int(day))
+	evenings = data.get("evenings", {})
 	state_changed.emit()
 
 

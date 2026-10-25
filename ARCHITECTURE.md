@@ -177,6 +177,17 @@ jamais, même à court d'heures. Le calendrier (`data/calendar.json`) liste les
 20 journées de service et les actes ; `FictionalCalendar.days_since_previous`
 sert aux ellipses (« N jours plus tard »).
 
+## Soirées (`data/evenings.json`)
+
+Une soirée par jour (champ `day`), avec `intro`, `set_flags` et 2 ou 3
+`actions` {id, kind, label, description, conditions, results, effects,
+set_flags, followups}. `results` est une liste de variantes : la première dont
+les conditions sont remplies est affichée (la dernière, sans condition, sert de
+défaut). Les conditions sont celles des événements, plus `min_count`
+(`{"radio": 2}` : nombre de soirées passées à ce `kind`). Logique dans
+`EveningRules`, état dans `GameState.evenings`, écran
+`scenes/evening/evening_screen.tscn` ouvert par le bureau avant le jour suivant.
+
 ## Campagne (`data/campaign.json`)
 
 Profil du personnage joué (nom, matricule, supérieur). Rien n'est écrit en dur
@@ -189,7 +200,7 @@ Fichier `user://savegame.json` :
 `{save_version, game_version, saved_at, state}`. Pour changer le format :
 incrémenter `SAVE_VERSION` et ajouter une étape dans `SaveManager._migrate()`.
 Un chargement en échec ne modifie pas l'état courant. Version actuelle : 4
-(heures de service, pièces demandées, consultation).
+(heures de service, pièces demandées, consultation, soirées).
 Emplacement de `user://` sous Windows : `%APPDATA%\Godot\app_userdata\Ministry of Truth\`.
 
 ## Compatibilité mobile

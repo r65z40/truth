@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/archives_window.tscn" id="5_archives"]
 [ext_resource type="Texture2D" path="res://icon.svg" id="6_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/personnel_window.tscn" id="7_personnel"]
+[ext_resource type="PackedScene" path="res://scenes/evening/evening_screen.tscn" id="8_evening"]
 
 [node name="Desk" type="Control"]
 layout_mode = 3
@@ -297,6 +298,9 @@ layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="EveningScreen" parent="." instance=ExtResource("8_evening")]
+unique_name_in_owner = true
 
 [node name="DayTransition" type="ColorRect" parent="."]
 unique_name_in_owner = true

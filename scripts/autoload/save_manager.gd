@@ -13,6 +13,7 @@ signal game_loaded
 ## 1 : prototype 0.1.
 ## 2 : carnet d'enquête (noted_facts, contradictions_found) dans chaque dossier.
 ## 3 : événements différés déjà déclenchés (fired_events).
+## 4 : horloge de service, pièces demandées, consultation, soirées.
 const SAVE_VERSION := 4
 const DEFAULT_PATH := "user://savegame.json"
 
@@ -106,7 +107,8 @@ func _migrate(payload: Dictionary) -> Dictionary:
 		payload.state["fired_events"] = payload.state.get("fired_events", [])
 		version = 3
 	if version == 3:
-		# v4 : horloge de service, pièces demandées, consultation du supérieur.
+		# v4 : horloge de service, pièces demandées, consultation du supérieur, soirées.
+		payload.state["evenings"] = payload.state.get("evenings", {})
 		payload.state["hours_used"] = payload.state.get("hours_used", 0)
 		payload.state["overtime_days"] = payload.state.get("overtime_days", [])
 		for case_state in payload.state.get("cases", {}).values():

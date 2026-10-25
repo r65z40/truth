@@ -23,6 +23,7 @@ const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 @onready var _scrim: ColorRect = %Scrim
 @onready var _day_transition: ColorRect = %DayTransition
 @onready var _day_transition_label: Label = %DayTransitionLabel
+@onready var evening_screen: EveningScreen = %EveningScreen
 @onready var _objective_bar: Control = %ObjectiveBar
 @onready var _objective_text: Label = %ObjectiveText
 @onready var _objective_hint: Label = %ObjectiveHint
@@ -127,12 +128,19 @@ func request_end_day() -> void:
 	end_day()
 
 
-## Passe au jour suivant, sauvegarde automatiquement et affiche la transition.
+## Quitte le poste : soirée s'il y en a une, puis jour suivant.
 func end_day() -> void:
 	_end_day_armed = false
 	for window: MinistryWindow in windows.values():
 		window.hide()
 	_scrim.hide()
+	if evening_screen.open():
+		await evening_screen.finished
+	_start_next_day()
+
+
+## Passe au jour suivant, sauvegarde automatiquement et affiche la transition.
+func _start_next_day() -> void:
 	var next_day := GameState.day_index + 1
 	var gap := FictionalCalendar.days_since_previous(next_day)
 	var ellipsis := "\n\n%d jours plus tard" % gap if gap > 2 else ""
