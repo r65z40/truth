@@ -9,6 +9,20 @@ extends MinistryWindow
 @onready var _articles: VBoxContainer = %Articles
 
 
+func _ready() -> void:
+	super()
+	# Emblème du journal, centré au-dessus du bandeau-titre (sur papier).
+	var emblem := TextureRect.new()
+	emblem.name = "Emblem"
+	emblem.texture = PixelIcons.get_icon("news", 4)
+	emblem.custom_minimum_size = Vector2(64, 64)
+	emblem.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	emblem.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	emblem.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_masthead.get_parent().add_child(emblem)
+	_masthead.get_parent().move_child(emblem, 0)
+
+
 func _on_opened() -> void:
 	refresh()
 
