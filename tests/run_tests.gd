@@ -58,6 +58,7 @@ func _run() -> void:
 		"test_veritas",
 		"test_veritas_model",
 		"test_veritas_acte2",
+		"test_ministry_record",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -903,6 +904,43 @@ func test_veritas_acte2() -> void:
 	var not_contestable := Veritas.scores(case_data, {"contested_factors": ["risk1"]})
 	check(not_contestable.arrest.score == 74 and not _factor_by_id(not_contestable.arrest.factors, "risk1").contested,
 			"un facteur non contestable résiste à la contestation")
+
+
+func test_ministry_record() -> void:
+	# Règles de données : correspondance exacte, par suffixe, et absence.
+	check(MinistryRecord.rule_for("heure_juste.sign_stove").get("tag", "") == "indice_heure_juste",
+			"un drapeau suivi renvoie sa règle")
+	check(MinistryRecord.rule_for("53118.consulted_superior").get("tag", "") == "sollicite_hierarchie",
+			"un drapeau par dossier correspond par suffixe")
+	check(MinistryRecord.rule_for("drapeau.inconnu").is_empty(), "un drapeau non suivi ne renvoie rien")
+	# Intégration : poser un drapeau suivi alimente la mémoire institutionnelle.
+	GameState.new_game()
+	check(GameState.ministry_record.is_empty(), "la mémoire institutionnelle démarre vide")
+	GameState._merge_flags({"heure_juste.sign_stove": true, "drapeau.inconnu": true})
+	check(GameState.ministry_record.size() == 1, "seul un drapeau suivi est consigné")
+	var entry: Dictionary = GameState.ministry_record[0]
+	check(entry.tag == "indice_heure_juste" and entry.reading != "" and entry.day == GameState.day_index,
+			"l'entrée porte le fait, la lecture biaisée et le jour")
+	# Un même fait (tag) n'est consigné qu'une fois, même via un autre drapeau.
+	GameState._merge_flags({"heure_juste.sign_stairs": true})
+	check(GameState.ministry_record.size() == 1, "un même fait n'est pas consigné deux fois")
+	GameState._set_flag("53118.consulted_superior", true)
+	check(GameState.ministry_record.size() == 2, "un nouveau fait ajoute une entrée")
+	# Un drapeau posé à false ne consigne rien.
+	GameState._set_flag("career.refused_promotion", false)
+	check(GameState.ministry_record.size() == 2, "un drapeau à false ne consigne rien")
+	# Sauvegarde : la mémoire survit à to_dict/from_dict (jour en entier).
+	var snapshot := GameState.to_dict()
+	GameState.new_game()
+	check(GameState.ministry_record.is_empty(), "nouvelle partie : mémoire réinitialisée")
+	GameState.from_dict(snapshot)
+	check(GameState.ministry_record.size() == 2 and typeof(GameState.ministry_record[0].day) == TYPE_INT,
+			"la mémoire est restaurée, le jour reconverti en entier")
+	# Rechargement d'une sauvegarde sans mémoire (ancien format) : liste vide.
+	var old := snapshot.duplicate(true)
+	old.erase("ministry_record")
+	GameState.from_dict(old)
+	check(GameState.ministry_record.is_empty(), "une sauvegarde sans mémoire repart sur une liste vide")
 
 
 func _factor_by_id(factors: Array, id: String) -> Dictionary:

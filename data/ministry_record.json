@@ -1,0 +1,16 @@
+{
+	"note": "Mémoire institutionnelle : quand un de ces drapeaux est posé, une entrée {jour, tag, reading} est ajoutée au dossier administratif secret de l'agent. 'tag' est le fait objectif ; 'reading' est la lecture biaisée du ministère, qui nourrira le dossier 54100. Uniquement des actions du jeu, jamais de données réelles.",
+	"entries": [
+		{"flag": "heure_juste.sign_stove", "tag": "indice_heure_juste", "reading": "Intérêt marqué pour les signes du réseau L'HEURE JUSTE."},
+		{"flag": "heure_juste.sign_stairs", "tag": "indice_heure_juste", "reading": "Intérêt marqué pour les signes du réseau L'HEURE JUSTE."},
+		{"flag": "benes.met", "tag": "contact_benes", "reading": "Contact établi avec un proche du milieu horloger."},
+		{"flag": "radio.halvek_heard", "tag": "ecoute_radio", "reading": "Exposition à la propagande d'une radio étrangère."},
+		{"flag": "radio.varga_heard", "tag": "ecoute_radio", "reading": "Exposition à la propagande d'une radio étrangère."},
+		{"flag": "radio.power_deal_heard", "tag": "ecoute_radio", "reading": "Exposition à la propagande d'une radio étrangère."},
+		{"flag": "adler.reported_radio", "tag": "signale_radio", "reading": "A signalé une écoute étrangère : vigilance conforme."},
+		{"flag": "lena.permit_helped", "tag": "favoritisme_proche", "reading": "A usé de sa position pour un proche (permis de Lena)."},
+		{"flag": "40921.family_humiliated", "tag": "zele_sedlar", "reading": "Zèle dans l'affaire Sedlar : fiabilité confirmée."},
+		{"flag": "career.refused_promotion", "tag": "refus_promotion", "reading": "A refusé une promotion : engagement incertain."},
+		{"flag_endswith": ".consulted_superior", "tag": "sollicite_hierarchie", "reading": "Sollicite sa hiérarchie plutôt que de trancher seul."}
+	]
+}

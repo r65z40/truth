@@ -165,6 +165,16 @@ facteur marqué `contestable` peut être écarté par l'agent en le listant dans
 `case_state.contested_factors` (son multiplicateur tombe à 0). `scores`,
 `recommendation` et `explain` prennent un argument `flags` pour ces surcharges.
 
+## Mémoire institutionnelle
+
+`scripts/core/ministry_record.gd` (`MinistryRecord`) lit `data/ministry_record.json`,
+qui associe des drapeaux (exacts ou par suffixe) à une entrée `{tag, reading}`. Quand
+un de ces drapeaux est posé, `GameState` ajoute `{jour, tag, reading}` à
+`ministry_record` (une fois par `tag`). `tag` est le fait objectif, `reading` la
+lecture biaisée du ministère : ce dossier administratif secret sera la graine du
+54100 à l'acte 3. Tous les drapeaux passent par `GameState._set_flag` /
+`_merge_flags`, qui alimentent cette mémoire. Aucune donnée réelle n'est collectée.
+
 ## Format d'un dossier (`data/cases/case_<id>.json`)
 
 ```jsonc
@@ -269,8 +279,9 @@ personnage (`docs/design/EXTENSIONS_PERSONNAGES.md`).
 Fichier `user://savegame.json` :
 `{save_version, game_version, saved_at, state}`. Pour changer le format :
 incrémenter `SAVE_VERSION` et ajouter une étape dans `SaveManager._migrate()`.
-Un chargement en échec ne modifie pas l'état courant. Version actuelle : 4
-(heures de service, pièces demandées, consultation, soirées, scènes de terrain).
+Un chargement en échec ne modifie pas l'état courant. Version actuelle : 5
+(v5 : mémoire institutionnelle `ministry_record` ; v4 : heures de service, pièces
+demandées, consultation, soirées, scènes de terrain).
 Emplacement de `user://` sous Windows : `%APPDATA%\Godot\app_userdata\Ministry of Truth\`.
 
 ## Compatibilité mobile
