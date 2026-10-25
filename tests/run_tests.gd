@@ -221,6 +221,8 @@ func test_news() -> void:
 	desk.get_node("%NewsButton").pressed.emit()
 	check(desk.get_open_app() == "news" and desk.get_node("%NewsButton").badge == 0, "le journal s'ouvre et la pastille disparaît")
 	check(desk.windows.news.get_node("%Articles").get_node_or_null("Article_d0_centrale_plan") != null, "la une est affichée")
+	var emblem := desk.windows.news._masthead.get_parent().get_node_or_null("Emblem") as TextureRect
+	check(emblem != null and emblem.texture == PixelIcons.get_icon("news", 4), "le journal affiche son emblème au-dessus du bandeau")
 	check(GameState.hours_used == hours, "lire le journal ne coûte pas d'heures")
 	desk.queue_free()
 	await get_tree().process_frame
