@@ -83,6 +83,7 @@ func _run() -> void:
 		"test_document_passages",
 		"test_desk_apps",
 		"test_news",
+		"test_localization",
 		"test_music_rules",
 		"test_music_player",
 		"test_time_in_desk",
@@ -160,6 +161,26 @@ func test_document_rendering_escapes_bbcode() -> void:
 
 
 ## Passages à noter : chaque citation existe dans le texte de sa pièce, balisée une fois.
+func test_localization() -> void:
+	# Le français est la langue source : clé = texte français.
+	Localization.set_locale("en")
+	check(TranslationServer.translate("NOUVELLE PARTIE") == "NEW GAME", "l'interface se traduit en anglais")
+	check(TranslationServer.translate("Texte sans traduction") == "Texte sans traduction", "une chaîne non traduite reste en français")
+	# Surcouche de dossier : fusion par id, repli sur le français.
+	var base := {"id": "x", "title": "Titre FR", "summary": "Résumé FR",
+			"documents": [{"id": "d1", "title": "Pièce FR", "facts": [{"id": "f1", "label": "FR"}]}]}
+	var overlay := {"title": "Title EN", "documents": [{"id": "d1", "facts": [{"id": "f1", "label": "EN"}]}]}
+	var merged: Dictionary = Localization._merge(base.duplicate(true), overlay)
+	check(merged.title == "Title EN" and merged.summary == "Résumé FR", "le titre est traduit, le résumé reste en français")
+	check(merged.documents[0].title == "Pièce FR" and merged.documents[0].facts[0].label == "EN",
+			"la fusion apparie les pièces et les éléments par id")
+	# Sans surcouche livrée, un dossier reste en français même en anglais.
+	check(CaseLibrary.get_case("40921").title == "Citoyen n° 40921", "sans surcouche, le dossier reste en français")
+	Localization.set_locale("fr")
+	check(CaseLibrary.get_case("40921").title == "Citoyen n° 40921" and not Localization.is_translated(),
+			"retour au français : langue source")
+
+
 func test_news() -> void:
 	var state := NewsWindow.current_state()
 	var first := NewsRules.edition(state)

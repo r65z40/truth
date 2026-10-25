@@ -9,6 +9,7 @@ extends MinistryWindow
 @onready var _field_3d_toggle: Button = %Field3dToggle
 @onready var _scale_option: OptionButton = %ScaleOption
 @onready var _music_option: OptionButton = %MusicOption
+@onready var _language_option: OptionButton = %LanguageOption
 
 
 func _ready() -> void:
@@ -31,6 +32,9 @@ func _ready() -> void:
 		_music_option.add_item("Coupée" if level == 0.0 else "%d %%" % roundi(level * 100))
 	_music_option.item_selected.connect(func(index: int) -> void: Settings.set_music_volume(Settings.MUSIC_LEVELS[index]))
 	_scale_option.item_selected.connect(func(index: int) -> void: Settings.set_ui_scale(Settings.UI_SCALES[index]))
+	for code in Localization.LOCALES:
+		_language_option.add_item(Localization.LOCALE_LABELS.get(code, code))
+	_language_option.item_selected.connect(func(index: int) -> void: Settings.set_language(Localization.LOCALES[index]))
 	%DoneButton.pressed.connect(close)
 
 
@@ -42,6 +46,7 @@ func _on_opened() -> void:
 	_field_3d_toggle.set_pressed_no_signal(Settings.field_3d)
 	_scale_option.select(maxi(Settings.UI_SCALES.find(Settings.ui_scale), 0))
 	_music_option.select(_closest_music_level())
+	_language_option.select(maxi(Localization.LOCALES.find(Settings.language), 0))
 	_refresh_toggle_labels()
 
 
