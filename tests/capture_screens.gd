@@ -169,6 +169,20 @@ func _capture_all() -> void:
 	desk.open_field("52310")
 	desk.field_screen.choose("floorboard")
 	await _snap("33_perquisition_benes")
+	desk.field_screen.hide()
+	# Acte 2 : dossier 53118 La Chorale (RACCORDEMENT + comparaison avec l'archive).
+	GameState.day_index = 6
+	GameState.assign_case("53118")
+	GameState.get_case_state("53118").requested_documents["archive_parish"] = 5
+	desk.open_app("dossiers")
+	desk.windows.dossiers.select_case("53118")
+	desk.windows.dossiers.select_document("veritas_link")
+	await _snap("34_dossier_53118_raccordement")
+	desk.windows.dossiers.select_document("archive_parish")
+	await _snap("35_dossier_53118_archive")
+	desk.windows.dossiers.open_conclusion()
+	await _snap("36_dossier_53118_veritas")
+	desk.windows.dossiers.close()
 	get_tree().quit()
 
 

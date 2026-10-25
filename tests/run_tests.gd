@@ -59,6 +59,7 @@ func _run() -> void:
 		"test_veritas_model",
 		"test_veritas_acte2",
 		"test_ministry_record",
+		"test_case_53118",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -941,6 +942,45 @@ func test_ministry_record() -> void:
 	old.erase("ministry_record")
 	GameState.from_dict(old)
 	check(GameState.ministry_record.is_empty(), "une sauvegarde sans mémoire repart sur une liste vide")
+
+
+func test_case_53118() -> void:
+	var case_data := CaseLibrary.get_case("53118")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 53118 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS pousse l'arrestation collective des onze.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "arrest_all" and advice.confidence == 93,
+			"VERITAS recommande les onze (indice %d)" % advice.confidence)
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# RACCORDEMENT : le facteur « donnée raccordée » est contestable et écartable.
+	var link := _factor_by_id(Veritas.scores(case_data).arrest_all.factors, "network")
+	check(link.category == "linked" and link.get("contestable", false), "le raccordement est une donnée raccordée contestable")
+	check(Veritas.scores(case_data, {"contested_factors": ["network"]}).arrest_all.score == 79,
+			"contester le raccordement baisse l'indice de 14")
+	check(Veritas.recommendation(case_data, {"contested_factors": ["network"]}).decision_id == "arrest_all",
+			"même contesté, VERITAS maintient l'arrestation (biais institutionnel)")
+	# L'archive contredit l'officiel sur le couvre-feu et sur le nombre.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("choir.curfew" in keys and "choir.list" in keys, "l'archive contredit le couvre-feu et le nombre")
+	# L'archive paroissiale n'existe qu'une fois demandée et livrée.
+	var state := GameState.get_condition_state()
+	state.cases = {"53118": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "archive_parish" in visible, "l'archive paroissiale est invisible avant la demande")
+	# Issues de décision selon les contradictions établies grâce à l'archive.
+	var with_permit := {"contradictions_found": ["choir.curfew"]}
+	var with_roster := {"contradictions_found": ["choir.list"]}
+	var blind := {"contradictions_found": []}
+	check(DecisionRules.resolve(case_data, with_permit, "clear").response_id == "clear_proved",
+			"classement justifié par le permis de veillée")
+	check(DecisionRules.resolve(case_data, blind, "clear").response_id == "clear_unfounded",
+			"classement sans preuve mal vu")
+	check(DecisionRules.resolve(case_data, with_roster, "restrict").response_id == "restrict_proved",
+			"liste réduite justifiée par le registre")
+	var knowing := DecisionRules.resolve(case_data, with_permit, "arrest_all")
+	check(knowing.response_id == "arrest_all_knowing" and knowing.flags.get("53118.innocents_condemned", false),
+			"arrêter malgré le permis condamne sciemment des innocents")
 
 
 func _factor_by_id(factors: Array, id: String) -> Dictionary:

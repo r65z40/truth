@@ -46,8 +46,9 @@ Proposition de design validée par fen (voir le document partagé du 25/10). Ord
 | --- | --- | --- |
 | 1 | Socle VERITAS : catégorie « donnée raccordée » (`linked`), overrides du décret 86-31 (frontière x2→x3), facteurs `contestable` | Codé, testé |
 | 2 | Mémoire institutionnelle (`ministry_record`, graine du 54100, +SAVE_VERSION) | Codé, testé |
-| 3 | Pression hiérarchique (message + choix + drapeaux) | À faire |
-| 4 | 4 dossiers (53118, 53402, 53517, 53760) + révélation du 40921 | À faire |
+| 3 | Pression hiérarchique | Première forme : directive de HALM (message + drapeau) sur 53118. Choix interactif à 4 branches : à venir |
+| 4a | Dossier 53118 La Chorale (+ incident de Halvek, décret 86-31) | Codé, testé |
+| 4b | Dossiers 53402, 53517, 53760 + révélation du 40921 | À faire |
 | 5 | Bonus : audit VERITAS contestable à l'écran, radio étrangère | À faire |
 
 Tout reste déterministe : les facteurs (dont `linked`) sont écrits à la main dans

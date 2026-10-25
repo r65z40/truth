@@ -577,6 +577,115 @@
 				"subject": "Quai des Tanneurs",
 				"body": "Inspecteur VOSK,\n\nVous avez perquisitionné hier le domicile déclaré du sujet 52310 sans en informer la Section 7, qui instruit l'affaire principale. Je suppose que c'est un excès de zèle.\n\nLe domicile est désormais placé sous scellés. Ce que vous y avez trouvé appartient au dossier de la Section 7, pas à vos impressions.\n\nM. DUBEK"
 			}
+		},
+		{
+			"id": "assign_53118",
+			"conditions": {
+				"min_day": 5
+			},
+			"assign_cases": [
+				"53118"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier prioritaire : n° 53118",
+				"body": "Inspecteur,\n\nUn informateur du District 2 signale que la chorale de la paroisse Sainte-Agathe a chanté après le couvre-feu. Onze noms sont joints.\n\nLe dossier 53118 vous est attribué. Onze personnes pour une chorale, cela fait beaucoup de monde. Ou pas. Lisez avant de compter.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "halm_pressure_53118",
+			"conditions": {
+				"min_day": 5
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"halm.pressure_53118": true
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "COMMUNICATION INTERNE — PRIORITÉ ABSOLUE",
+				"body": "Message du Directeur HALM.\n\nL'affaire de la chorale Sainte-Agathe doit être conclue avant le bulletin de 19 heures. Le Parti attend une liste de responsables, pas une liste de questions.\n\nUn rassemblement religieux après le couvre-feu, la veille d'une visite de délégation : la fermeté est attendue. Un inspecteur qui comprend l'époque transmet les onze noms.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "daily_bulletin_5",
+			"conditions": {
+				"min_day": 5
+			},
+			"effects": {},
+			"message": {
+				"from": "Service central d'information",
+				"subject": "Bulletin intérieur du 10 novembre",
+				"body": "SÉCURITÉ : les rassemblements nocturnes non déclarés, y compris religieux, relèvent désormais de la Section 4. La vigilance des citoyens est saluée.\n\nFRONTIÈRE : des mouvements « irréguliers » sont signalés du côté de Halvek. Le ministère dément toute tension.\n\nARCHIVES : la réorganisation des services d'archives est effective. Les fonds anciens restent consultables sur demande motivée.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		},
+		{
+			"id": "halvek_incident_decret",
+			"conditions": {
+				"min_day": 6
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"decret_86_31": true,
+				"world.halvek_incident": true
+			},
+			"message": {
+				"from": "Service central d'information",
+				"subject": "Bulletin intérieur du 11 novembre — DÉCRET 86-31",
+				"body": "FRONTIÈRE : un incident a opposé cette nuit des gardes-frontières à un groupe non identifié près de Halvek. Aucune victime du côté de l'État.\n\nDÉCRET : le décret 86-31 relatif aux « agents de l'étranger » entre en vigueur ce jour. Toute affaire présentant une exposition frontalière est désormais traitée avec la plus grande sévérité.\n\nVERITAS : le module de conformité intègre le décret. Le facteur d'exposition frontalière est réévalué à la hausse.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		},
+		{
+			"id": "53118_reminder",
+			"conditions": {
+				"min_day": 6,
+				"undecided_cases": [
+					"53118"
+				]
+			},
+			"effects": {
+				"suspicion": 4
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "Dossier 53118 : toujours pas de conclusion",
+				"body": "Inspecteur,\n\nLe bulletin d'hier soir est passé sans votre chorale. Le Directeur HALM l'a remarqué.\n\nOnze noms attendent une signature. Chaque jour sans conclusion est lu comme une hésitation. Les hésitations, en ce moment, coûtent cher.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "53118_condemned_letter",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"53118.innocents_condemned"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Requête de la famille FALK",
+				"body": "Monsieur l'Inspecteur,\n\nOn est venu arrêter mon père, Roman FALK, à l'hôpital, dans son lit. Il a quatre-vingt-un ans et il n'a pas quitté le service de pneumologie depuis le 3 novembre. Il n'était pas à l'église ce soir-là : il ne tient plus debout.\n\nSon nom était sur une liste. On m'a dit que la liste était signée.\n\nAnezka FALK\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "53118_cleared_note",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"53118.choir_cleared"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
+				"subject": "(sans objet)",
+				"body": "Vous avez demandé le fonds Sainte-Agathe, et vous avez compté les émargements. Sept, pas onze. Et un permis signé avant qu'on ne durcisse le couvre-feu.\n\nLe Bureau des cultes ne vous remerciera pas tout haut, mais la veuve TILL joue encore de l'orgue ce dimanche grâce à vous.\n\nFaites attention. Un inspecteur qui classe ce que HALM voulait voir pendre se fait remarquer, lui aussi. Ne me nommez pas. K."
+			}
 		}
 	]
 }
