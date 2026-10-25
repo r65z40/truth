@@ -106,7 +106,7 @@ func select_document(document_id: String) -> void:
 	for tab: Button in _document_tabs.get_children():
 		tab.set_pressed_no_signal(tab.get_meta("document_id") == document_id)
 		if tab.get_meta("document_id") == document_id:
-			_document_tabs_scroll.ensure_control_visible.call_deferred(tab)
+			_scroll_to_tab.call_deferred(tab)
 	_doc_title.text = document.title.to_upper()
 	_doc_meta.text = "Source : %s\nFiabilité : %s     Date : %s" % [
 		document.source,
@@ -389,3 +389,10 @@ func _show_case_view(has_case: bool) -> void:
 	_footer.visible = has_case
 	_notebook.visible = has_case
 	_empty_hint.visible = not has_case
+
+
+## Fait défiler la ligne d'onglets jusqu'à l'onglet, s'il existe encore
+## (changer de dossier reconstruit les onglets avant l'appel différé).
+func _scroll_to_tab(tab: Button) -> void:
+	if is_instance_valid(tab) and _document_tabs_scroll.is_ancestor_of(tab):
+		_document_tabs_scroll.ensure_control_visible(tab)
