@@ -225,6 +225,14 @@ func _capture_all() -> void:
 	await _snap("42_settings_english")
 	menu_en.queue_free()
 	Localization.set_locale("fr")
+
+	# Outil de visite des scènes : la galerie, puis un aperçu de terrain.
+	var gallery: Node = load("res://scenes/debug/scene_gallery.tscn").instantiate()
+	get_tree().root.add_child(gallery)
+	await _snap("43_galerie_scenes")
+	gallery._open_field("51307")
+	await _snap("44_galerie_apercu_terrain", 1.2)
+	gallery.queue_free()
 	get_tree().quit()
 
 

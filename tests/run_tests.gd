@@ -63,6 +63,7 @@ func _run() -> void:
 		"test_case_53402",
 		"test_case_53517",
 		"test_case_briefings",
+		"test_scene_gallery",
 		"test_document_field_icons",
 		"test_tutorial_bubble_fades",
 		"test_coach_bubble_can_be_closed",
@@ -1225,6 +1226,28 @@ func test_coach_bubble_can_be_closed() -> void:
 	check(desk.coach.visible, "la bulle revient à l'étape conseillée suivante")
 	desk.queue_free()
 	GameState.new_game()
+	await get_tree().process_frame
+
+
+func test_scene_gallery() -> void:
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	check(menu.get_node_or_null("%GalleryButton") != null, "le menu principal propose la visite des scènes")
+	menu.queue_free()
+	var gallery: Control = load("res://scenes/debug/scene_gallery.tscn").instantiate()
+	get_tree().root.add_child(gallery)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(gallery._list != null and gallery._list.get_child_count() > 0, "la galerie construit sa liste d'entrées")
+	gallery.queue_free()
+	# Aperçu d'une scène de terrain sans conditions ni coût en heures.
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(desk.field_screen.preview("51307"), "aperçu de terrain ouvert hors conditions de jeu")
+	desk.queue_free()
 	await get_tree().process_frame
 
 

@@ -36,9 +36,29 @@ func _ready() -> void:
 
 ## Commence la scène de terrain du dossier. Renvoie false si elle est impossible.
 func open(case_id: String) -> bool:
-	scene = GameState.start_field(case_id)
-	if scene.is_empty():
+	var new_scene := GameState.start_field(case_id)
+	if new_scene.is_empty():
 		return false
+	_show_scene(new_scene)
+	return true
+
+
+## Aperçu d'une scène de terrain sans conditions ni coût en heures (outil de
+## visite des scènes). Prépare un état de scène neuf pour que l'affichage et les
+## choix fonctionnent dans une partie bac à sable.
+func preview(case_id: String) -> bool:
+	var new_scene := GameState.get_field_scene(case_id)
+	if new_scene.is_empty():
+		return false
+	if not GameState.field_scenes.has(new_scene.id):
+		GameState.field_scenes[new_scene.id] = {"turns_used": 0, "chosen": [], "finished": false}
+	_show_scene(new_scene)
+	return true
+
+
+## Affiche une scène (décor, sujet, intro, indice) et rafraîchit les choix.
+func _show_scene(new_scene: Dictionary) -> void:
+	scene = new_scene
 	_presenting = false
 	_title_label.text = scene.get("title", "")
 	_art.subject = scene.get("subject", {}).get("photo", {})
@@ -51,7 +71,6 @@ func open(case_id: String) -> bool:
 			else "Cliquez sur un endroit du dessin pour le fouiller. Ce que vous trouvez est versé au dossier.")
 	show()
 	_refresh()
-	return true
 
 
 func is_3d() -> bool:
