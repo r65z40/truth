@@ -64,6 +64,7 @@ func _run() -> void:
 		"test_case_53517",
 		"test_case_briefings",
 		"test_tutorial_bubble_fades",
+		"test_coach_bubble_can_be_closed",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -1199,6 +1200,26 @@ func test_tutorial_bubble_fades() -> void:
 	check(GameState.concluded_case_count() == 2, "deux dossiers conclus")
 	desk._refresh_objective()
 	check(not desk.coach.visible, "la bulle d'aide s'estompe une fois le joueur rodé")
+	desk.queue_free()
+	GameState.new_game()
+	await get_tree().process_frame
+
+
+func test_coach_bubble_can_be_closed() -> void:
+	GameState.new_game()
+	Settings.guidance = true
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk._refresh_objective()
+	check(desk.coach.visible, "bulle d'astuce affichée au départ")
+	check(desk.coach.get_node("%CloseButton") != null, "la bulle a un bouton de fermeture")
+	desk.coach.dismissed.emit()
+	check(not desk.coach.visible, "la bulle se masque quand on la ferme")
+	# Elle réapparaît dès que l'étape conseillée change.
+	desk._coach_dismissed_step = "autre|etape|x"
+	desk._refresh_objective()
+	check(desk.coach.visible, "la bulle revient à l'étape conseillée suivante")
 	desk.queue_free()
 	GameState.new_game()
 	await get_tree().process_frame

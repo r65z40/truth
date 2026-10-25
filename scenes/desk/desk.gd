@@ -62,6 +62,9 @@ var news_read_day := -1
 var has_unsaved_changes := false
 ## Objectif conseillé actuellement affiché (voir Guidance).
 var current_step: Dictionary = {}
+## Étape dont le joueur a fermé la bulle d'astuce ; elle reste masquée tant que
+## l'étape conseillée ne change pas (voir CoachOverlay.dismissed).
+var _coach_dismissed_step := ""
 var _pulse_tween: Tween
 var _toast_tween: Tween
 
@@ -117,6 +120,7 @@ func _ready() -> void:
 	_toast.hide()
 	_day_transition.hide()
 	coach.target_provider = coach_target
+	coach.dismissed.connect(_on_coach_dismissed)
 	windows.dossiers.field_requested.connect(open_field)
 	windows.dossiers.document_window_requested.connect(open_document_window)
 	windows.dossiers.veritas_requested.connect(open_veritas)
@@ -299,9 +303,11 @@ func _refresh_header() -> void:
 ## Met à jour l'aide : la bulle et l'icône signalée clignotent doucement.
 func _refresh_objective() -> void:
 	current_step = Guidance.next_step(GameState.get_condition_state(), GameState.messages)
-	# La bulle détaillée s'estompe une fois le joueur rodé ; le repère clignotant
-	# sur l'icône reste tant que l'aide est activée.
-	coach.visible = Settings.guidance and GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED
+	# La bulle détaillée s'estompe une fois le joueur rodé ou s'il la ferme ; le
+	# repère clignotant sur l'icône reste tant que l'aide est activée.
+	coach.visible = Settings.guidance \
+			and GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED \
+			and _step_key(current_step) != _coach_dismissed_step
 	if _pulse_tween:
 		_pulse_tween.kill()
 	for button: Control in _target_buttons.values():
@@ -311,6 +317,18 @@ func _refresh_objective() -> void:
 		_pulse_tween = create_tween().set_loops()
 		_pulse_tween.tween_property(target, "modulate", Color(0.6, 1.4, 0.8), 0.7)
 		_pulse_tween.tween_property(target, "modulate", Color.WHITE, 0.7)
+
+
+## Identifiant stable de l'étape conseillée, pour retenir laquelle le joueur a
+## masquée (la bulle réapparaît dès que l'étape conseillée change).
+func _step_key(step: Dictionary) -> String:
+	return "%s|%s|%s" % [step.get("target", ""), step.get("part", ""), step.get("case_id", "")]
+
+
+## Le joueur a fermé la bulle d'astuce : on la masque pour l'étape en cours.
+func _on_coach_dismissed() -> void:
+	_coach_dismissed_step = _step_key(current_step)
+	_refresh_objective()
 
 
 ## Un bouton par fenêtre ouverte dans la barre des tâches ; enfoncé pour celle
