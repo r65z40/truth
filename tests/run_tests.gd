@@ -47,6 +47,9 @@ func _run() -> void:
 		"test_evenings_file_is_valid",
 		"test_evenings",
 		"test_career_evaluation",
+		"test_field_scenes_are_valid",
+		"test_field_interrogation",
+		"test_field_search",
 		"test_act_review",
 		"test_veritas",
 		"test_veritas_model",
@@ -67,6 +70,7 @@ func _run() -> void:
 		"test_investigation_and_conclusion_flow",
 		"test_end_day_in_desk",
 		"test_act_end_in_desk",
+		"test_field_in_desk",
 		"test_friendly_desk",
 		"test_time_in_desk",
 	]
@@ -554,6 +558,102 @@ func test_evenings() -> void:
 	GameState.new_game()
 
 
+func test_field_scenes_are_valid() -> void:
+	for case_id in ["40921", "51307"]:
+		var case_data := CaseLibrary.get_case(case_id)
+		var scene := FieldRules.scene_for_case(case_data)
+		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
+		check(WorkTime.cost(scene.time_action) == 2, "%s : 2 heures" % scene.id)
+		for result in scene.options + scene.get("presentations", []):
+			for fact_id in result.get("note", []):
+				var fact := CaseLibrary.get_fact(case_data, fact_id)
+				check(fact.get("conditions", {}).get("requires_flags", []) == [FieldRules.flag_for(scene, result.id)],
+						"%s : l'élément %s dépend du choix %s" % [scene.id, fact_id, result.id])
+			for fact_id in result.get("facts", []):
+				check(not CaseLibrary.get_fact(case_data, fact_id).is_empty(), "%s : élément présenté %s existant" % [scene.id, fact_id])
+			if result.has("spot"):
+				var area: Array = result.spot
+				check(area[0] >= 0 and area[1] >= 0 and area[0] + area[2] <= FieldArt.CANVAS.x and area[1] + area[3] <= FieldArt.CANVAS.y,
+						"%s : zone %s dans le dessin" % [scene.id, result.id])
+		check(CaseLibrary.validate_case(case_data).is_empty(), "%s : dossier toujours valide" % case_id)
+
+
+func test_field_interrogation() -> void:
+	GameState.new_game()
+	check(not GameState.can_start_field("40921"), "pas de terrain le premier jour")
+	GameState.end_day()
+	check(GameState.can_start_field("51307"), "audition d'ORLIK possible le deuxième jour")
+	var before := _visible_document_ids("51307")
+	check(not "orlik_audition" in before, "pas de procès-verbal avant l'audition")
+	check(not GameState.start_field("51307").is_empty() and GameState.hours_used == 2, "l'audition coûte 2 heures")
+	check(not GameState.can_start_field("51307"), "une seule audition")
+	check(GameState.flags.get("milice.orlik_questioned") == true, "la Milice saura")
+	var ids := func() -> Array: return GameState.get_field_options("audition_51307").map(func(o: Dictionary) -> String: return o.id)
+	check(not "q_petras" in ids.call(), "pas de question sur PETRAS sans élément noté")
+	var result := GameState.field_choose("audition_51307", "q_certificates")
+	check(result.text.contains("L'horloge tombe en panne") and "f_aud_clock" in GameState.get_case_state("51307").noted_facts,
+			"réponse notée dans le carnet")
+	var view := GameState.get_case_view("51307")
+	var audition := CaseLibrary.get_document(view, "orlik_audition")
+	check(audition.facts.map(func(f: Dictionary) -> String: return f.id) == ["f_aud_clock"], "le procès-verbal ne contient que ce qui a été dit")
+	check(GameState.field_present("audition_51307", "f_clock_ok").is_empty(), "on ne présente que des éléments notés")
+	GameState.note_fact("51307", "f_clock_ok")
+	result = GameState.field_present("audition_51307", "f_clock_ok")
+	check(result.text.contains("paquet de café") and GameState.flags.get("51307.orlik_admitted") == true, "le relevé fait céder ORLIK")
+	check(GameState.confront_facts("51307", "f_aud_clock", "f_clock_ok") == "clock.status.october", "sa première version se contredit")
+	result = GameState.field_present("audition_51307", "f_clock_ok")
+	check(result.text.contains("Je ne vois pas le rapport"), "une présentation ne marche qu'une fois")
+	GameState.note_fact("51307", "f_cert_petras")
+	check("q_petras" in ids.call(), "élément sur PETRAS noté : question possible")
+	result = GameState.field_choose("audition_51307", "q_petras")
+	check(not result.finished, "quatre tours sur cinq")
+	result = GameState.field_choose("audition_51307", "q_sedlar")
+	check(result.finished and GameState.get_field_options("audition_51307").is_empty(), "cinq tours, puis l'audition s'arrête")
+	check(GameState.confront_facts("51307", "f_aud_petras_once", "f_cert_petras") == "petras.days", "« une fois » contre deux certificats")
+	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("field_51307_brother" in fired, "le frère d'ORLIK écrit le lendemain")
+	# Le nom de code met fin à l'audition.
+	GameState.new_game()
+	GameState.end_day()
+	GameState.start_field("51307")
+	GameState.get_case_state("51307").noted_facts.append("f_kremer_informant")
+	var suspicion := GameState.get_indicator("suspicion")
+	result = GameState.field_present("audition_51307", "f_kremer_informant")
+	check(result.finished and GameState.get_indicator("suspicion") == suspicion + 2, "CHAUDRON : audition interrompue, suspicion")
+	var saved := GameState.to_dict()
+	GameState.new_game()
+	GameState.from_dict(JSON.parse_string(JSON.stringify(saved)))
+	check(GameState.get_field_state("audition_51307").finished and GameState.get_field_state("audition_51307").turns_used == 1,
+			"état du terrain sauvegardé")
+	GameState.new_game()
+
+
+func test_field_search() -> void:
+	GameState.new_game()
+	GameState.apply_decision("40921", "close")
+	GameState.end_day()
+	check(not GameState.can_start_field("40921"), "dossier clos sans arrestation : pas de perquisition")
+	GameState.new_game()
+	GameState.apply_decision("40921", "arrest")
+	GameState.end_day()
+	check(GameState.can_start_field("40921"), "après l'arrestation : perquisition d'usage")
+	var loyalty := GameState.get_indicator("loyalty")
+	GameState.start_field("40921")
+	check(GameState.get_indicator("loyalty") == loyalty + 1 and GameState.flags.get("40921.home_searched") == true, "le zèle est noté")
+	check(GameState.field_choose("40921_inconnu", "drawer").is_empty(), "scène inconnue refusée")
+	GameState.field_choose("search_40921", "stove")
+	check(GameState.flags.get("heure_juste.sign_stove") == true, "indice de L'HEURE JUSTE trouvé")
+	GameState.field_choose("search_40921", "child_bed")
+	check(GameState.flags.get("40921.family_humiliated") == true, "fouiller le lit de l'enfant humilie la famille")
+	check(GameState.field_leave("search_40921").contains("judas"), "on peut partir avant la fin")
+	check(GameState.get_field_options("search_40921").is_empty(), "plus rien à fouiller")
+	var found: Array = CaseLibrary.get_document(GameState.get_case_view("40921"), "search_report").facts.map(func(f: Dictionary) -> String: return f.id)
+	check(found == ["f_srch_clock_sign", "f_srch_drawing"], "procès-verbal : ce qui a été trouvé")
+	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("field_40921_neighbours" in fired, "Vera SEDLAR écrit")
+	GameState.new_game()
+
+
 func test_career_evaluation() -> void:
 	var rules := Career.act_rules(1)
 	check(rules.cases == ["40921", "51307", "52044", "52310"] and int(rules.to_rank) == Career.Rank.INSPECTOR_2ND, "règle de l'acte 1")
@@ -704,7 +804,7 @@ func test_case_51307_depends_on_first_case() -> void:
 			if document_id in extra:
 				expected.append(document_id)
 		check(ids == expected, "40921 « %s » (contradiction : %s) > pièces %s" % [scenario[0], scenario[1], ids])
-	check(CaseLibrary.get_case("51307").documents.size() == 8, "le dossier complet garde ses 8 pièces")
+	check(CaseLibrary.get_case("51307").documents.size() == 9, "le dossier complet garde ses 9 pièces")
 
 
 func test_case_51307_contradictions_and_veritas() -> void:
@@ -1148,6 +1248,39 @@ func test_act_end_in_desk() -> void:
 	await get_tree().process_frame
 	check(GameState.day_index == 5 and GameState.flags.get("act1.reviewed") == true, "lundi 10 novembre, acte 2")
 	check(desk.get_node("%DayTransitionLabel").text.contains("3 jours plus tard"), "ellipse du week-end")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+func test_field_in_desk() -> void:
+	GameState.new_game()
+	GameState.end_day()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.terminal.submit_command("dossiers")
+	desk.windows.dossiers.select_case("51307")
+	var field_button: Button = desk.windows.dossiers.get_node("%FieldButton")
+	check(field_button.visible and field_button.text == "INTERROGER (2 h)" and not field_button.disabled, "bouton INTERROGER")
+	field_button.pressed.emit()
+	var screen: FieldScreen = desk.field_screen
+	check(screen.visible and screen.get_node("%TurnsLabel").text == "5 question(s) restante(s)", "l'écran d'audition s'ouvre")
+	check(screen.get_choice_ids() == ["q_certificates", "q_sedlar", "q_brother", "q_threat", "present"], "questions proposées")
+	screen.choose("q_sedlar")
+	check(screen.get_node("%LogLabel").text.contains("NOTÉ DANS LE CARNET"), "le compte rendu signale l'élément noté")
+	screen.show_presentation_list(true)
+	check("f_aud_sedlar" in screen.get_choice_ids(), "le carnet est proposé")
+	screen.get_node("%LeaveButton").pressed.emit()
+	check(screen.get_node("%LeaveButton").text == "RETOUR AU BUREAU", "partir termine l'audition")
+	screen.get_node("%LeaveButton").pressed.emit()
+	check(not screen.visible and desk.windows.dossiers.visible and desk.windows.dossiers.current_document_id == "orlik_audition",
+			"retour au dossier, sur le procès-verbal")
+	check(field_button.text == "INTERROGER : FAIT" and field_button.disabled, "audition faite")
+	# Perquisition : les endroits sont des boutons sur le dessin.
+	GameState.apply_decision("40921", "investigate")
+	desk.windows.dossiers.select_case("40921")
+	check(field_button.disabled, "dossier conclu sans arrestation : pas de perquisition")
 	desk.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()

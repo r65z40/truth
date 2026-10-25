@@ -9,6 +9,7 @@
 		"consult_superior": 1,
 		"verify_archive": 2,
 		"interrogate": 2,
-		"meet_informant": 2
+		"meet_informant": 2,
+		"search_home": 2
 	}
 }

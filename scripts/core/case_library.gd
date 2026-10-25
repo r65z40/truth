@@ -33,6 +33,8 @@ static func get_starting_case_ids() -> Array:
 ## Une pièce peut porter des "conditions" (même format que les événements) :
 ## par exemple, un procès-verbal qui n'existe que si une audition a eu lieu.
 ## state : {day_index, flags, cases}
+## Un élément ("facts") peut lui aussi porter des "conditions" : il n'apparaît
+## qu'une fois obtenu sur le terrain (voir FieldRules).
 ## Une pièce qui porte "request" n'existe qu'une fois demandée par l'agent, à partir
 ## du lendemain de la demande (requested_documents de l'état du dossier).
 static func filter_case(case_data: Dictionary, state: Dictionary) -> Dictionary:
@@ -44,8 +46,16 @@ static func filter_case(case_data: Dictionary, state: Dictionary) -> Dictionary:
 		if document.has("request"):
 			if not requested.has(document.id) or int(requested[document.id]) >= int(state.get("day_index", 0)):
 				continue
-		if EventRules.are_conditions_met(document.get("conditions", {}), state):
-			documents.append(document)
+		if not EventRules.are_conditions_met(document.get("conditions", {}), state):
+			continue
+		# Un élément peut aussi porter des conditions (procès-verbaux de terrain).
+		var shown: Dictionary = document
+		var facts: Array = document.get("facts", [])
+		if facts.any(func(fact: Dictionary) -> bool: return fact.has("conditions")):
+			shown = document.duplicate()
+			shown["facts"] = facts.filter(func(fact: Dictionary) -> bool:
+				return EventRules.are_conditions_met(fact.get("conditions", {}), state))
+		documents.append(shown)
 	view["documents"] = documents
 	return view
 

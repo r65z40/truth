@@ -187,6 +187,18 @@ supplémentaires fait perdre la soirée. Fils de l'acte 1 :
 - **Visites** selon les décisions : Vera SEDLAR après l'arrestation de son
   mari, Irena BENES après celle de « VARGA ».
 
+## Le terrain (0.6)
+
+Depuis le dossier, à partir du deuxième jour, l'inspecteur peut sortir du
+bureau une fois par dossier (2 h) : **audition** ou **perquisition**, en scènes
+dessinées à la première personne, avec un nombre de tours limité. L'audition
+d'ORLIK (51307) se joue en questions et en éléments du carnet posés sur la
+table : le bon élément fait changer sa version. La perquisition chez SEDLAR
+(40921) se joue en endroits cliquables : fouiller les affaires de Vera ou de
+l'enfant humilie la famille. Ce qui est obtenu devient un procès-verbal au
+dossier. Le poêle de SEDLAR cache le premier vrai indice de L'HEURE JUSTE.
+Détails : `docs/design/TERRAIN.md`.
+
 ## Carrière
 
 Inspecteur de 3e classe > 2e classe > Inspecteur principal > Chef de section
@@ -206,5 +218,6 @@ le refus est mémorisé (`career.refused_promotion`).
   plus que la décision elle-même ; le joueur confronte des éléments par paires.
 - 2026-10-24 : conception V2 validée par fen (`docs/design/`).
 - 2026-10-25 : soirées, une action par soir, perdue en heures supplémentaires.
+- 2026-10-25 : terrain en scènes 2D fixes et cliquables (pas de 3D), validé par fen.
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

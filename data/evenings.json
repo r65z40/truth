@@ -40,6 +40,7 @@
 		{
 			"day": 1,
 			"intro": "Il pleut sur le District 2. Dans l'escalier, quelqu'un a gratté au clou, sur la peinture verte, le dessin d'une horloge sans aiguilles. Au matin, le peintre de l'immeuble l'aura recouvert.",
+			"set_flags": {"heure_juste.sign_stairs": true},
 			"actions": [
 				{
 					"id": "sedlar_visit",

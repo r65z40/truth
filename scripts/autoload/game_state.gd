@@ -46,6 +46,8 @@ var hours_used: int = 0
 var overtime_days: Array = []
 ## Soirées passées : {"<jour>": {"action": id, "kind": kind}} (voir EveningRules).
 var evenings: Dictionary = {}
+## Scènes de terrain commencées : {"<scène>": {turns_used, chosen, finished}} (voir FieldRules).
+var field_scenes: Dictionary = {}
 
 
 func _ready() -> void:
@@ -72,6 +74,7 @@ func new_game() -> void:
 	hours_used = 0
 	overtime_days = []
 	evenings = {}
+	field_scenes = {}
 	state_changed.emit()
 
 
@@ -284,6 +287,92 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	return result
 
 
+# --- Terrain : interrogatoires et perquisitions ------------------------------
+
+## Scène de terrain du dossier, ou {}.
+func get_field_scene(case_id: String) -> Dictionary:
+	return FieldRules.scene_for_case(CaseLibrary.get_case(case_id))
+
+
+func get_field_state(scene_id: String) -> Dictionary:
+	return field_scenes.get(scene_id, {})
+
+
+## Vrai si la scène du dossier peut commencer maintenant (sans compter les heures).
+func can_start_field(case_id: String) -> bool:
+	var scene := get_field_scene(case_id)
+	return is_feature_unlocked("field_work") \
+			and FieldRules.is_available(scene, get_field_state(scene.get("id", "")), get_condition_state())
+
+
+## Commence la scène de terrain du dossier (coûte ses heures). Renvoie la scène, ou {}.
+func start_field(case_id: String) -> Dictionary:
+	var scene := get_field_scene(case_id)
+	if not can_start_field(case_id) or not spend_time(scene.get("time_action", "interrogate")):
+		return {}
+	field_scenes[scene.id] = {"turns_used": 0, "chosen": [], "finished": false}
+	flags[FieldRules.flag_for(scene, "started")] = true
+	flags.merge(scene.get("start_flags", {}), true)
+	_apply_effects(scene.get("start_effects", {}))
+	state_changed.emit()
+	return scene
+
+
+## Choix encore possibles dans la scène en cours.
+func get_field_options(scene_id: String) -> Array:
+	var scene := FieldRules.get_scene(scene_id)
+	return FieldRules.available_options(scene, get_field_state(scene_id), get_condition_state(),
+			get_case_state(scene.get("case_id", "")).noted_facts)
+
+
+## Pose une question ou fouille un endroit. Renvoie {text, noted, finished}, ou {}.
+func field_choose(scene_id: String, option_id: String) -> Dictionary:
+	if not get_field_options(scene_id).any(func(o: Dictionary) -> bool: return o.id == option_id):
+		return {}
+	var scene := FieldRules.get_scene(scene_id)
+	return _apply_field_result(scene, FieldRules.get_option(scene, option_id))
+
+
+## Présente un élément du carnet au sujet (interrogatoire). Renvoie {text, noted, finished}, ou {}.
+func field_present(scene_id: String, fact_id: String) -> Dictionary:
+	var scene := FieldRules.get_scene(scene_id)
+	var scene_state := get_field_state(scene_id)
+	var case_id: String = scene.get("case_id", "")
+	if scene_state.is_empty() or scene_state.finished or FieldRules.turns_left(scene, scene_state) == 0 \
+			or not fact_id in get_case_state(case_id).noted_facts:
+		return {}
+	return _apply_field_result(scene, FieldRules.presentation_for(scene, scene_state, fact_id))
+
+
+## Quitte la scène avant la fin des tours. Renvoie le texte de sortie.
+func field_leave(scene_id: String) -> String:
+	var scene_state := get_field_state(scene_id)
+	if scene_state.is_empty():
+		return ""
+	scene_state.finished = true
+	state_changed.emit()
+	return FieldRules.get_scene(scene_id).get("outro", "")
+
+
+func _apply_field_result(scene: Dictionary, result: Dictionary) -> Dictionary:
+	var scene_state: Dictionary = field_scenes[scene.id]
+	scene_state.turns_used += 1
+	if result.get("id", "") != "":
+		scene_state.chosen.append(result.id)
+		flags[FieldRules.flag_for(scene, result.id)] = true
+	flags.merge(result.get("set_flags", {}), true)
+	_apply_effects(result.get("effects", {}))
+	# Les éléments obtenus vont directement dans le carnet.
+	var noted: Array = []
+	for fact_id in result.get("note", []):
+		note_fact(scene.case_id, fact_id)
+		noted.append(CaseLibrary.get_fact(CaseLibrary.get_case(scene.case_id), fact_id).get("label", fact_id))
+	if result.get("ends", false) or FieldRules.turns_left(scene, scene_state) == 0:
+		scene_state.finished = true
+	state_changed.emit()
+	return {"text": result.get("text", ""), "noted": noted, "finished": scene_state.finished}
+
+
 # --- Soirées -----------------------------------------------------------------
 
 ## Soirée prévue ce soir, ou {} s'il n'y en a pas.
@@ -468,6 +557,7 @@ func to_dict() -> Dictionary:
 		"hours_used": hours_used,
 		"overtime_days": overtime_days.duplicate(),
 		"evenings": evenings.duplicate(true),
+		"field_scenes": field_scenes.duplicate(true),
 	}
 
 
@@ -496,6 +586,9 @@ func from_dict(data: Dictionary) -> void:
 	hours_used = int(data.get("hours_used", 0))
 	overtime_days = data.get("overtime_days", []).map(func(day) -> int: return int(day))
 	evenings = data.get("evenings", {})
+	field_scenes = data.get("field_scenes", {})
+	for scene_state: Dictionary in field_scenes.values():
+		scene_state["turns_used"] = int(scene_state.get("turns_used", 0))
 	state_changed.emit()
 
 
