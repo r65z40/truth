@@ -262,7 +262,7 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 		if WorkTime.is_overtime(hours_used) and not day_index in overtime_days:
 			overtime_days.append(day_index)
 	# Avis de VERITAS sur le dossier tel que l'agent l'a vu, avant la décision.
-	var advice := Veritas.recommendation(get_case_view(case_id), case_state)
+	var advice := Veritas.recommendation(get_case_view(case_id), case_state, flags)
 	var result := DecisionRules.resolve(CaseLibrary.get_case(case_id), case_state, decision_id)
 	if result.is_empty():
 		push_error("GameState: décision inconnue %s pour le dossier %s" % [decision_id, case_id])

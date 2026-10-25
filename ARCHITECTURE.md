@@ -157,6 +157,14 @@ drapeau `veritas.params_known`. `veritas.note` est une note de scénario jamais
 affichée. Un futur modèle de langage ne ferait que reformuler ces résultats,
 côté serveur.
 
+Acte 2 (ajouts déterministes) : la catégorie `linked` (« donnée raccordée »)
+sert aux recoupements automatiques de VERITAS ; le bloc `overrides` de
+`data/veritas.json` remplace un multiplicateur quand un drapeau est actif (le
+décret 86-31 passe `border` de x2 à x3 via le drapeau `decret_86_31`) ; un
+facteur marqué `contestable` peut être écarté par l'agent en le listant dans
+`case_state.contested_factors` (son multiplicateur tombe à 0). `scores`,
+`recommendation` et `explain` prennent un argument `flags` pour ces surcharges.
+
 ## Format d'un dossier (`data/cases/case_<id>.json`)
 
 ```jsonc

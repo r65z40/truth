@@ -38,6 +38,22 @@ puis 7-8-9 si la gestion du temps est validée, puis 5, 10, 11, 13, 14.
 - Traduction anglaise complète, sons, polices libres embarquées, export Windows,
   tests de tous les embranchements (outil de drapeaux orphelins).
 
+## Acte 2 — en cours (RACCORDEMENT + décret 86-31)
+
+Proposition de design validée par fen (voir le document partagé du 25/10). Ordre :
+
+| # | Étape | Statut |
+| --- | --- | --- |
+| 1 | Socle VERITAS : catégorie « donnée raccordée » (`linked`), overrides du décret 86-31 (frontière x2→x3), facteurs `contestable` | Codé, testé |
+| 2 | Mémoire institutionnelle (`ministry_record`, graine du 54100, +SAVE_VERSION) | À faire |
+| 3 | Pression hiérarchique (message + choix + drapeaux) | À faire |
+| 4 | 4 dossiers (53118, 53402, 53517, 53760) + révélation du 40921 | À faire |
+| 5 | Bonus : audit VERITAS contestable à l'écran, radio étrangère | À faire |
+
+Tout reste déterministe : les facteurs (dont `linked`) sont écrits à la main dans
+les dossiers ; le décret agit par un drapeau ; une contestation n'écarte un facteur
+que s'il est marqué `contestable`.
+
 ## Extensions futures
 
 - Acte 5 « Le pouvoir » ou suite (voir `ACTE5_FAISABILITE.md`).

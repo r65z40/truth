@@ -57,6 +57,7 @@ func _run() -> void:
 		"test_act_review",
 		"test_veritas",
 		"test_veritas_model",
+		"test_veritas_acte2",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -866,6 +867,49 @@ func test_veritas_model() -> void:
 		GameState.mark_document_viewed("40921", document_id)
 	var reply := Veritas.terminal_reply(GameState.get_condition_state(), PackedStringArray(["POURQUOI"]))
 	check(reply.contains("Facteurs principaux") and reply.contains("Famille résidant à Halvek"), "commande VERITAS POURQUOI")
+
+
+func test_veritas_acte2() -> void:
+	# Socle de l'acte 2 : catégorie « donnée raccordée », décret 86-31, facteurs contestables.
+	var case_data := {
+		"decisions": [{"id": "arrest", "label": "Arrêter"}, {"id": "release", "label": "Libérer"}],
+		"veritas": {
+			"recommendation": "arrest",
+			"rationale": "test",
+			"factors": [
+				{"id": "border1", "label": "Proximité frontalière", "category": "border", "weight": 10, "decision": "arrest"},
+				{"id": "link1", "label": "Raccordement voyageurs", "category": "linked", "weight": 5, "decision": "arrest", "contestable": true},
+				{"id": "risk1", "label": "Risque individuel", "category": "risk", "weight": 4, "decision": "arrest"},
+			],
+		},
+	}
+	# Base 40 + frontière 10x2 + raccordement 5x2 + risque 4x1 = 74.
+	var base_scores := Veritas.scores(case_data)
+	check(base_scores.arrest.score == 74, "indice de base avec une donnée raccordée (x2)")
+	check(base_scores.release.score == 40, "l'autre décision reste au score de base")
+	var link := _factor_by_id(base_scores.arrest.factors, "link1")
+	check(link.multiplier == 2.0 and link.contribution == 10.0, "la donnée raccordée pèse x2")
+	# Décret 86-31 : la frontière passe de x2 à x3, l'indice monte à 84.
+	var decret := Veritas.scores(case_data, {}, {"decret_86_31": true})
+	check(decret.arrest.score == 84, "le décret 86-31 durcit la frontière (x3)")
+	check(_factor_by_id(decret.arrest.factors, "border1").multiplier == 3.0, "le multiplicateur frontalier override vaut 3")
+	check(Veritas.recommendation(case_data, {}, {"decret_86_31": true}).confidence == 84, "la recommandation reflète le décret")
+	# Contestation : un facteur contestable écarté tombe à zéro (74 - 10 = 64).
+	var contested := Veritas.scores(case_data, {"contested_factors": ["link1"]})
+	check(contested.arrest.score == 64, "contester la donnée raccordée l'écarte du calcul")
+	var contested_link := _factor_by_id(contested.arrest.factors, "link1")
+	check(contested_link.contested and contested_link.contribution == 0.0, "le facteur contesté est marqué et neutralisé")
+	# Un facteur non contestable ne bouge pas même s'il est listé comme contesté.
+	var not_contestable := Veritas.scores(case_data, {"contested_factors": ["risk1"]})
+	check(not_contestable.arrest.score == 74 and not _factor_by_id(not_contestable.arrest.factors, "risk1").contested,
+			"un facteur non contestable résiste à la contestation")
+
+
+func _factor_by_id(factors: Array, id: String) -> Dictionary:
+	for factor in factors:
+		if factor.get("id", "") == id:
+			return factor
+	return {}
 
 
 func _play_first_case(decision_id: String, establish_contradiction: bool) -> void:
