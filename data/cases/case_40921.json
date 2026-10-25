@@ -8,7 +8,7 @@
 		"note": "Conseils de la bulle d'aide : ce premier dossier sert de tutoriel.",
 		"open": "Votre premier dossier : Anton SEDLAR, technicien à la Centrale n° 3. Ouvrez-le.",
 		"read": "Un dossier se compose de pièces. Cliquez sur la pièce signalée, marquée « à lire ».",
-		"facts": "Sous chaque pièce, les éléments à noter. Cliquez dessus pour les copier dans votre carnet. Le rapport de présence et le registre de déplacements parlent tous deux du 21 octobre.",
+		"facts": "Les passages soulignés en rouge sont des éléments. Cliquez dessus pour les copier dans votre carnet. Le rapport de présence et le registre de déplacements parlent tous deux du 21 octobre.",
 		"notebook": "Votre carnet est à gauche. Sélectionnez deux éléments qui se contredisent, puis cliquez sur CONFRONTER.",
 		"notebook_retry": "Ces deux éléments peuvent être vrais en même temps. Où était SEDLAR le 21 octobre ? Notez sa présence dans le rapport de présence, puis confrontez-la au trajet du registre de déplacements.",
 		"conclusion": "Contradiction établie : vous avez de quoi conclure. Cliquez sur RÉDIGER LA CONCLUSION, choisissez, signez. Il n'y a pas de bonne réponse imposée."
@@ -68,19 +68,22 @@
 					"id": "f_identity_card",
 					"key": "sedlar.work_card",
 					"value": "KT-55-1902",
-					"label": "Carte de travail n° KT-55-1902"
+					"label": "Carte de travail n° KT-55-1902",
+					"quote": "KT-55-1902"
 				},
 				{
 					"id": "f_identity_family",
 					"key": "sedlar.family",
 					"value": "Mère et sœur à Halvek",
-					"label": "Mère et sœur résident à Halvek (zone frontalière)"
+					"label": "Mère et sœur résident à Halvek (zone frontalière)",
+					"quote": "Mère : Irena SEDLAR, Halvek (zone frontalière). Sœur : Mira DOLAN, Halvek"
 				},
 				{
 					"id": "f_identity_record",
 					"key": "sedlar.record",
 					"value": "Avertissement 1984",
-					"label": "Un avertissement pour absentéisme (1984)"
+					"label": "Un avertissement pour absentéisme (1984)",
+					"quote": "Un avertissement pour absentéisme (1984)"
 				}
 			],
 			"veritas_remark": "Famille résidant en zone frontalière. Facteur de risque : élevé.",
@@ -107,13 +110,15 @@
 					"id": "f_report_presence",
 					"key": "sedlar.location.1986-10-21",
 					"value": "Centrale thermique n° 3, Velmira (06h00 - 14h00)",
-					"label": "Présent à son poste le 21.10.1986, de 06h00 à 14h00"
+					"label": "Présent à son poste le 21.10.1986, de 06h00 à 14h00",
+					"quote": "présent à son poste, en équipe de jour (06h00 - 14h00), les 20, 21 et 22 octobre 1986"
 				},
 				{
 					"id": "f_report_author",
 					"key": "report.author",
 					"value": "B. ORLIK",
-					"label": "Présence certifiée par le chef d'équipe B. ORLIK"
+					"label": "Présence certifiée par le chef d'équipe B. ORLIK",
+					"quote": "B. ORLIK, chef d'équipe, atelier des chaudières"
 				}
 			],
 			"veritas_remark": "Document certifié par un supérieur hiérarchique. Concordance avec les attentes : élevée."
@@ -131,25 +136,29 @@
 					"id": "f_intercept_trip",
 					"key": "sedlar.planned_trip",
 					"value": "Halvek, mardi, premier train",
-					"label": "« Je serai là mardi, comme convenu. Le premier train. »"
+					"label": "« Je serai là mardi, comme convenu. Le premier train. »",
+					"quote": "je serai là mardi, comme convenu. Le premier train."
 				},
 				{
 					"id": "f_intercept_chief",
 					"key": "chief.arrangement",
 					"value": "Le chef couvre en échange d'un service",
-					"label": "« Il s'en occupe. Je lui ai rendu service, il me rend service. »"
+					"label": "« Il s'en occupe. Je lui ai rendu service, il me rend service. »",
+					"quote": "Il s'en occupe. Je lui ai rendu service, il me rend service."
 				},
 				{
 					"id": "f_intercept_papers",
 					"key": "sedlar.papers",
 					"value": "Papiers de la mère",
-					"label": "« Apporte les papiers de maman. Tous. »"
+					"label": "« Apporte les papiers de maman. Tous. »",
+					"quote": "Apporte les papiers de maman. Tous."
 				},
 				{
 					"id": "f_intercept_voice",
 					"key": "intercept.voice",
 					"value": "Non identifiée",
-					"label": "Voix masculine non identifiée formellement"
+					"label": "Voix masculine non identifiée formellement",
+					"quote": "voix masculine non identifiée formellement"
 				}
 			],
 			"veritas_remark": "Correspondance vocale probable avec le citoyen 40921 : 72 %. Vocabulaire évocateur d'une organisation préalable."
@@ -197,19 +206,22 @@
 					"id": "f_log_card",
 					"key": "sedlar.work_card",
 					"value": "KT-55-1902",
-					"label": "Carte KT-55-1902 présentée à chaque contrôle"
+					"label": "Carte KT-55-1902 présentée à chaque contrôle",
+					"quote": "KT-55-1902"
 				},
 				{
 					"id": "f_log_trip",
 					"key": "sedlar.location.1986-10-21",
 					"value": "Train Velmira > Halvek (06h05), retour 21h40",
-					"label": "21.10.1986 : train Velmira > Halvek à 06h05, retour à 21h40"
+					"label": "21.10.1986 : train Velmira > Halvek à 06h05, retour à 21h40",
+					"quote": "Velmira > Halvek"
 				},
 				{
 					"id": "f_log_photo",
 					"key": "control.photo",
 					"value": "Non systématique",
-					"label": "La photographie de la carte n'est pas toujours contrôlée"
+					"label": "La photographie de la carte n'est pas toujours contrôlée",
+					"quote": "La photographie n'est pas systématiquement contrôlée."
 				}
 			],
 			"veritas_remark": "Source de fiabilité A. Déplacement vers une zone frontalière un jour ouvré."
@@ -232,13 +244,15 @@
 					"id": "f_med_visit",
 					"key": "sedlar.motive",
 					"value": "Visite à sa mère malade",
-					"label": "Visite d'Anton SEDLAR à sa mère le 21.10.1986, de 09h00 à 19h00"
+					"label": "Visite d'Anton SEDLAR à sa mère le 21.10.1986, de 09h00 à 19h00",
+					"quote": "Visite de son fils Anton le 21.10.1986, de 09h00 à 19h00."
 				},
 				{
 					"id": "f_med_refused",
 					"key": "sedlar.care",
 					"value": "Soins à l'étranger refusés",
-					"label": "Soins en Aldria refusés le 02.10.1986 par la commission régionale"
+					"label": "Soins en Aldria refusés le 02.10.1986 par la commission régionale",
+					"quote": "Une demande de soins à l'étranger (Aldria) a été refusée le 02.10.1986 par la commission régionale."
 				}
 			]
 		},

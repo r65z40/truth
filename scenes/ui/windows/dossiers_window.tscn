@@ -213,6 +213,7 @@ theme_override_constants/separation = 6
 [node name="FactsTitle" type="Label" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent/FactsPanel/FactsLayout"]
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
+unique_name_in_owner = true
 text = "À NOTER : cliquez sur un élément pour le copier dans votre carnet"
 autowrap_mode = 3
 

@@ -169,7 +169,10 @@ côté serveur.
     "columns": [...], "rows": [[...]],         // optionnel : registre
     "author": "...", "body": "texte",          // optionnel
     "facts": [{"id": "f_log_trip", "key": "sujet.lieu.date", "value": "...",
-               "label": "texte montré au joueur"}]   // éléments notables
+               "label": "texte montré au joueur",
+               "quote": "extrait exact du texte"}]   // éléments notables
+    // `quote` (facultatif) : passage du texte souligné et cliquable ; une fois
+    // l'élément noté, il est surligné. Sans `quote`, un bouton « + NOTER » reste.
   }],
   "decisions": [{
     "id": "arrest", "label": "...", "description": "...",

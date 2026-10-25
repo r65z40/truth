@@ -23,6 +23,7 @@ func _ready() -> void:
 	_doc_title.add_sibling(_photo)
 	_photo.hide()
 	GameState.state_changed.connect(_refresh_facts)
+	_doc_body.meta_clicked.connect(func(meta: Variant) -> void: on_passage_clicked(str(meta), note_fact))
 
 
 ## Affiche la pièce ; à appeler avant open().
@@ -37,7 +38,6 @@ func setup(new_case_id: String, new_document_id: String) -> void:
 	_doc_icon.texture = PixelIcons.document_icon(document.get("type", ""), 3)
 	_doc_title.text = document.get("title", "").to_upper()
 	_doc_meta.text = describe_source(document)
-	_doc_body.text = DossiersWindow.render_document_bbcode(document)
 	_photo.photo = document.get("photo", {})
 	_photo.visible = document.has("photo")
 	_refresh_facts()
@@ -50,6 +50,32 @@ static func describe_source(document: Dictionary) -> String:
 		DossiersWindow.RELIABILITY_LABELS.get(document.get("reliability", ""), document.get("reliability", "?")),
 		DossiersWindow.format_iso_date(document.get("date", "")),
 	]
+
+
+## Éléments à noter sous la pièce : un bouton pour ceux qui n'ont pas de passage
+## dans le texte, et une consigne pour les passages soulignés.
+static func fill_facts(list: Container, title: Label, document: Dictionary, noted: Array, on_note: Callable) -> void:
+	for child in list.get_children():
+		list.remove_child(child)
+		child.queue_free()
+	var quoted := DossiersWindow.quoted_facts(document)
+	var left := quoted.filter(func(fact: Dictionary) -> bool: return not fact.id in noted).size()
+	for fact in document.get("facts", []):
+		if fact.get("quote", "") == "":
+			list.add_child(make_fact_button(fact, fact.id in noted, on_note))
+	if quoted.is_empty():
+		title.text = "À NOTER : cliquez sur un élément pour le copier dans votre carnet"
+	elif left > 0:
+		title.text = "PASSAGES SOULIGNÉS : cliquez dessus dans le texte pour les noter (%d à noter)" % left
+	else:
+		title.text = "Tous les passages soulignés de cette pièce sont dans votre carnet."
+	list.visible = list.get_child_count() > 0
+
+
+## Clic sur un passage souligné (lien « fact:<id> ») : l'élément est noté.
+static func on_passage_clicked(meta: String, on_note: Callable) -> void:
+	if meta.begins_with("fact:"):
+		on_note.call(meta.substr(5))
 
 
 ## Bouton « + élément » (ou « NOTÉ : élément ») commun au dossier et aux pièces.
@@ -69,6 +95,9 @@ static func make_fact_button(fact: Dictionary, is_noted: bool, on_pressed: Calla
 
 
 func note_fact(fact_id: String) -> void:
+	if fact_id in GameState.get_case_state(case_id).noted_facts:
+		notify.emit("Déjà dans votre carnet.")
+		return
 	GameState.note_fact(case_id, fact_id)
 	notify.emit("Élément noté dans votre carnet.")
 
@@ -80,12 +109,8 @@ func _document() -> Dictionary:
 func _refresh_facts() -> void:
 	if case_id == "" or not is_inside_tree():
 		return
-	for child in _facts_list.get_children():
-		_facts_list.remove_child(child)
-		child.queue_free()
-	var facts: Array = _document().get("facts", [])
+	var document := _document()
 	var noted: Array = GameState.get_case_state(case_id).noted_facts
-	for fact in facts:
-		_facts_list.add_child(make_fact_button(fact, fact.id in noted, note_fact))
-	_facts_title.visible = not facts.is_empty()
-	_facts_list.visible = not facts.is_empty()
+	_doc_body.text = DossiersWindow.render_document_bbcode(document, DossiersWindow.passage_style(_doc_body, noted))
+	fill_facts(_facts_list, _facts_title, document, noted, note_fact)
+	_facts_title.visible = not document.get("facts", []).is_empty()

@@ -108,6 +108,7 @@ func _ready() -> void:
 	_open_aside_button.pressed.connect(open_current_aside)
 	_document_tabs_scroll.add_sibling(_open_aside_button)
 	_show_case_view(false)
+	_doc_body.meta_clicked.connect(func(meta: Variant) -> void: DocumentWindow.on_passage_clicked(str(meta), note_fact))
 	# Un élément noté depuis une pièce ouverte à part apparaît aussitôt au carnet.
 	GameState.state_changed.connect(func() -> void:
 		if is_open():
@@ -156,7 +157,6 @@ func select_document(document_id: String) -> void:
 	_doc_title.text = document.title.to_upper()
 	_doc_icon.texture = PixelIcons.document_icon(document.get("type", ""), 3)
 	_doc_meta.text = DocumentWindow.describe_source(document)
-	_doc_body.text = render_document_bbcode(document)
 	_photo.photo = document.get("photo", {})
 	_photo.visible = document.has("photo")
 	var remark := Veritas.document_remark(document)
@@ -176,6 +176,9 @@ func open_current_aside() -> void:
 # --- Carnet d'enquête ----------------------------------------------------------
 
 func note_fact(fact_id: String) -> void:
+	if fact_id in GameState.get_case_state(current_case_id).noted_facts:
+		notify.emit("Déjà dans votre carnet.")
+		return
 	GameState.note_fact(current_case_id, fact_id)
 	notify.emit("Élément noté dans votre carnet.")
 	_refresh_all()
@@ -210,6 +213,35 @@ func confront_selected() -> void:
 		notify.emit("CONTRADICTION ÉTABLIE")
 	selected_facts.clear()
 	_refresh_all()
+
+
+## Confronte directement deux éléments du carnet (fiche glissée sur une autre).
+func confront_pair(fact_a: String, fact_b: String) -> void:
+	if fact_a == fact_b:
+		return
+	selected_facts.assign([fact_a, fact_b])
+	confront_selected()
+
+
+func _get_note_drag(_at: Vector2, fact_id: String, button: Button) -> Variant:
+	var card := PanelContainer.new()
+	card.theme_type_variation = &"DocumentPanel"
+	card.custom_minimum_size = Vector2(minf(button.size.x, 280.0), 0)
+	var label := Label.new()
+	label.theme_type_variation = &"DocumentLabel"
+	label.text = button.text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	card.add_child(label)
+	button.set_drag_preview(card)
+	return {"note": fact_id}
+
+
+func _can_drop_note(_at: Vector2, data: Variant, fact_id: String) -> bool:
+	return data is Dictionary and data.get("note", fact_id) != fact_id
+
+
+func _drop_note(_at: Vector2, data: Variant, fact_id: String) -> void:
+	confront_pair(data.note, fact_id)
 
 
 ## Verdict sous le carnet ; un échec s'affiche en rouge pour ne pas passer inaperçu.
@@ -257,16 +289,21 @@ func _on_conclusion_submitted(decision_id: String) -> void:
 
 ## Convertit une pièce en BBCode pour RichTextLabel. Statique pour pouvoir être testée.
 ## Un document peut combiner : fields (fiche), columns/rows (registre), author, body (texte).
-static func render_document_bbcode(document: Dictionary) -> String:
+##
+## Avec passages (voir passage_style()), chaque élément qui a une citation
+## (« quote ») devient un lien souligné dans le texte (« fact:<id> ») ; un
+## élément déjà noté est surligné.
+static func render_document_bbcode(document: Dictionary, passages := {}) -> String:
+	var marker := PassageMarker.new(document.get("facts", []) if not passages.is_empty() else [], passages)
 	var parts: PackedStringArray = []
 	if document.has("fields"):
 		var table := "[table=2]"
 		for field in document.fields:
 			table += "[cell padding=0,4,24,4][b]%s[/b][/cell][cell padding=0,4,0,4]%s[/cell]" % [
-				_escape(field[0]).to_upper(), _escape(field[1])]
+				_escape(field[0]).to_upper(), marker.mark(field[1])]
 		parts.append(table + "[/table]")
 	if document.has("author"):
-		parts.append("[b]Rédacteur :[/b] %s" % _escape(document.author))
+		parts.append("[b]Rédacteur :[/b] %s" % marker.mark(document.author))
 	if document.has("rows"):
 		var columns: Array = document.get("columns", [])
 		var table := "[table=%d]" % maxi(columns.size(), 1)
@@ -274,15 +311,70 @@ static func render_document_bbcode(document: Dictionary) -> String:
 			table += "[cell padding=0,4,20,6][b]%s[/b][/cell]" % _escape(column).to_upper()
 		for row in document.rows:
 			for value in row:
-				table += "[cell padding=0,4,20,4]%s[/cell]" % _escape(value)
+				table += "[cell padding=0,4,20,4]%s[/cell]" % marker.mark(str(value))
 		parts.append(table + "[/table]")
 	if document.has("body"):
-		parts.append(_escape(document.body))
+		parts.append(marker.mark(document.body))
 	return "\n\n".join(parts)
+
+
+## Réglages de rendu des passages : éléments notés et couleurs du thème.
+static func passage_style(control: Control, noted: Array) -> Dictionary:
+	return {
+		"noted": noted,
+		"link": control.get_theme_color(&"passage", &"DocumentText").to_html(false),
+		"highlight": control.get_theme_color(&"highlight", &"DocumentText").to_html(false),
+	}
+
+
+## Éléments de la pièce qui se notent en cliquant sur leur passage.
+static func quoted_facts(document: Dictionary) -> Array:
+	return document.get("facts", []).filter(func(fact: Dictionary) -> bool: return fact.get("quote", "") != "")
 
 
 static func _escape(text: String) -> String:
 	return text.replace("[", "[lb]")
+
+
+## Repère les citations des éléments dans les morceaux de texte d'une pièce :
+## chaque citation est balisée une seule fois (à sa première apparition).
+class PassageMarker:
+	var _facts: Array
+	var _style: Dictionary
+	var _used := {}
+
+	func _init(facts: Array, style: Dictionary) -> void:
+		_facts = facts
+		_style = style
+
+	func mark(text: String) -> String:
+		var spans := []
+		for fact in _facts:
+			var quote: String = fact.get("quote", "")
+			if quote == "" or _used.has(fact.id):
+				continue
+			var at := text.find(quote)
+			if at == -1:
+				continue
+			var overlaps := false
+			for span in spans:
+				overlaps = overlaps or (at < span[1] and at + quote.length() > span[0])
+			if overlaps:
+				continue
+			_used[fact.id] = true
+			spans.append([at, at + quote.length(), fact.id])
+		spans.sort_custom(func(x: Array, y: Array) -> bool: return x[0] < y[0])
+		var out := ""
+		var cursor := 0
+		for span in spans:
+			out += DossiersWindow._escape(text.substr(cursor, span[0] - cursor))
+			var inner := DossiersWindow._escape(text.substr(span[0], span[1] - span[0]))
+			if span[2] in _style.get("noted", []):
+				out += "[url=fact:%s][bgcolor=#%s]%s[/bgcolor][/url]" % [span[2], _style.highlight, inner]
+			else:
+				out += "[url=fact:%s][color=#%s][u]%s[/u][/color][/url]" % [span[2], _style.link, inner]
+			cursor = span[1]
+		return out + DossiersWindow._escape(text.substr(cursor))
 
 
 static func format_iso_date(iso: String) -> String:
@@ -396,13 +488,11 @@ func consult_superior() -> void:
 
 
 func _refresh_facts(case_data: Dictionary) -> void:
-	for child in _facts_list.get_children():
-		_facts_list.remove_child(child)
-		child.queue_free()
 	var document := CaseLibrary.get_document(case_data, current_document_id)
 	var noted: Array = GameState.get_case_state(current_case_id).noted_facts
-	for fact in document.get("facts", []):
-		_facts_list.add_child(DocumentWindow.make_fact_button(fact, fact.id in noted, note_fact))
+	_doc_body.text = render_document_bbcode(document, passage_style(_doc_body, noted))
+	DocumentWindow.fill_facts(_facts_list, %FactsTitle, document, noted, note_fact)
+	_facts_panel.visible = not document.get("facts", []).is_empty() and not _conclusion_panel.visible
 
 
 func _refresh_notebook() -> void:
@@ -427,10 +517,12 @@ func _refresh_notebook() -> void:
 		button.add_theme_font_size_override("font_size", 15)
 		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(toggle_fact_selection.bind(fact_id))
+		# Glisser une fiche sur une autre les confronte (à la souris comme au doigt).
+		button.set_drag_forwarding(_get_note_drag.bind(fact_id, button), _can_drop_note.bind(fact_id), _drop_note.bind(fact_id))
 		_notebook_list.add_child(button)
 	_confront_button.disabled = selected_facts.size() != MAX_SELECTED_FACTS
 	if case_state.noted_facts.is_empty() and _confront_result.text == "":
-		_set_confront_result("Notez des éléments sous chaque pièce, puis sélectionnez-en deux ici pour les confronter.")
+		_set_confront_result("Notez des éléments dans les pièces, puis sélectionnez-en deux ici (ou glissez l'un sur l'autre) pour les confronter.")
 	elif selected_facts.size() == 1:
 		_set_confront_result("Sélectionnez un second élément à confronter.")
 
@@ -546,7 +638,13 @@ func get_guide_target(part: String, case_id := "") -> Control:
 						_guide_scrolled_document = current_document_id
 						_doc_scroll.ensure_control_visible.call_deferred(button)
 					return button
-			# Rien à noter sur cette pièce : les autres onglets.
+			# Passages soulignés encore à noter : le texte de la pièce.
+			var document := CaseLibrary.get_document(GameState.get_case_view(current_case_id), current_document_id)
+			var noted: Array = GameState.get_case_state(current_case_id).noted_facts
+			for fact in quoted_facts(document):
+				if not fact.id in noted:
+					return _doc_body
+			# Rien à noter sur cette pièce : les autres pièces.
 			return _document_tabs_scroll
 		"notebook":
 			return _confront_button if selected_facts.size() == MAX_SELECTED_FACTS else _notebook_list
