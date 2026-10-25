@@ -20,9 +20,11 @@ changements de `GAME_DESIGN_V2.md` (section 13).
 | — | Références (jeux, films, livres, son) | [REFERENCES.md](REFERENCES.md) |
 | — | Extensions : incarner un autre personnage | [EXTENSIONS_PERSONNAGES.md](EXTENSIONS_PERSONNAGES.md) |
 | — | Le terrain : interrogatoires, perquisitions, indices | [TERRAIN.md](TERRAIN.md) |
+| — | Décors 3D : modèles et images à fournir | [ASSETS_3D.md](ASSETS_3D.md) |
 
 ## Décisions
 
 - 2026-10-24 : fen valide les dix changements du canon et la gestion du temps.
 - 2026-10-24 : fen demande de prévoir des extensions jouant un autre personnage de l'histoire.
 - 2026-10-25 : fen valide le terrain (audition, perquisition) en scènes dessinées.
+- 2026-10-25 : fen demande des décors de terrain en 3D, avec ses modèles (ChatGPT, Blender) et des ressources CC0.

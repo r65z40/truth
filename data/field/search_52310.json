@@ -1,0 +1,115 @@
+{
+	"note": "Perquisition chez Karel BENES, au domicile déclaré de VARGA (docs/design/TERRAIN.md). Chaque choix pose field.search_52310.<id>.",
+	"id": "search_52310",
+	"case_id": "52310",
+	"type": "search",
+	"button": "PERQUISITION",
+	"title": "PERQUISITION  //  BLOC 11, APP. 40, QUAI DES TANNEURS",
+	"time_action": "search_home",
+	"turns": 4,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"52310"
+			]
+		}
+	],
+	"start_flags": {
+		"52310.home_searched": true
+	},
+	"art": "benes_flat",
+	"intro": "Le domicile déclaré de Teodor VARGA. C'est une femme d'une cinquantaine d'années qui vous ouvre, un torchon à la main.\n\n« Irena BENES. Mon mari est à l'imprimerie. VARGA ? Il n'habite plus ici depuis cinq ans. On nous a donné l'appartement en 1982. »\n\nElle s'écarte pour vous laisser entrer. Vous avez le temps de fouiller quatre endroits.",
+	"options": [
+		{
+			"id": "shelf",
+			"label": "L'étagère vide",
+			"spot": [
+				40,
+				40,
+				150,
+				140
+			],
+			"text": "Les planches sont propres, mais la poussière a gardé la forme des livres qui étaient là : une bibliothèque entière, enlevée d'un coup. Au fond, coincé contre le mur, un volume oublié : « Les Saisons de Velmira », 1979. Dédicace : « Pour H. »",
+			"note": [
+				"f_bns_book"
+			]
+		},
+		{
+			"id": "desk",
+			"label": "Le bureau de travail",
+			"spot": [
+				280,
+				130,
+				100,
+				40
+			],
+			"text": "Des épreuves de l'Imprimerie n° 2, corrigées à l'encre verte et paraphées « K. B. ». Dessous, le bail de l'appartement : Karel BENES, correcteur, locataire depuis le 1er juin 1982.",
+			"note": [
+				"f_bns_lease"
+			]
+		},
+		{
+			"id": "mail",
+			"label": "Le courrier",
+			"spot": [
+				200,
+				130,
+				70,
+				40
+			],
+			"text": "Une enveloppe de la Section 7, ouverte, adressée à « T. VARGA » à cette adresse. Une convocation pour le 29 octobre, pour « mise à jour de la fiche d'identité ». Irena : « Karel y est allé. Ils ont dit que c'était une formalité. Ils l'ont photographié. »",
+			"note": [
+				"f_bns_summons"
+			],
+			"set_flags": {
+				"52310.summons_found": true
+			}
+		},
+		{
+			"id": "photo_box",
+			"label": "La boîte à photos",
+			"spot": [
+				415,
+				190,
+				70,
+				45
+			],
+			"text": "Des photos de famille des BENES et, à part, glissée sous le carton, une photo qui n'est pas à eux : un homme et une femme sur un quai de gare, « T. et H., 1977 ». L'homme a une cicatrice sur la joue droite. « On l'a trouvée en emménageant. Je n'ai pas eu le cœur de la jeter. »",
+			"note": [
+				"f_bns_photo"
+			]
+		},
+		{
+			"id": "floorboard",
+			"label": "La latte du plancher",
+			"spot": [
+				270,
+				245,
+				130,
+				45
+			],
+			"text": "Une latte bouge sous votre pied. Dessous, enveloppées dans du papier journal de 1981, des feuilles manuscrites : « Novembre », daté de décembre 1978, raturé, recopié. Les initiales des vers, de la main de l'auteur : H, A, L, I, N, A. Irena est devenue très pâle. « Karel l'a trouvé en posant le parquet. Il disait que ça ne nous appartenait pas. »",
+			"note": [
+				"f_bns_manuscript"
+			],
+			"set_flags": {
+				"52310.manuscript_found": true
+			}
+		},
+		{
+			"id": "wardrobe",
+			"label": "L'armoire",
+			"spot": [
+				520,
+				40,
+				100,
+				180
+			],
+			"text": "Les chemises de Karel, repassées. Sa veste du dimanche, la seule. Une robe de mariée dans une housse. Vous fouillez les poches une à une sous les yeux d'Irena BENES. Il n'y a rien. Elle replie chaque chose derrière vous.",
+			"set_flags": {
+				"52310.family_humiliated": true
+			}
+		}
+	],
+	"outro": "Sur le palier, Irena BENES vous demande seulement : « Qu'est-ce que je dis à Karel, ce soir ? » Vous ne répondez pas. Dans l'escalier, quelqu'un descend derrière vous, sans se presser."
+}

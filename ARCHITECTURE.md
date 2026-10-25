@@ -29,6 +29,10 @@ data/
   messages/initial_messages.json
   events/events.json          événements différés (conséquences, rappels, bulletins)
   field/<scène>.json          scènes de terrain (audition, perquisition)
+  field/stages/<décor>.json   décors 3D des scènes de terrain (caméra, lumières, objets)
+assets/
+  models/field/, textures/field/  modèles .glb et images des décors 3D (facultatifs)
+  LICENCES.md                 origine et licence de chaque fichier
   assessment.json             paliers d'appréciation des indicateurs, observations
 scripts/
   autoload/
@@ -213,11 +217,21 @@ Un dossier rattache une scène par `"field_scene"`. Une scène a un `type`
 `start_flags`/`start_effects`, `options` {id, label, conditions, text, note,
 set_flags, effects, ends, spot [x, y, l, h] pour une perquisition} et, pour un
 interrogatoire, `presentations` {id, facts, text, note, ...} et
-`present_default`. Chaque choix pose `field.<scène>.<choix>`. Le procès-verbal
+`present_default`. Textes d'interface facultatifs : `verb` (« Vous examinez : »),
+`hint`, `turns_label`. Décors : `art` (`sedlar_flat`, `bakery`, `benes_flat`). Chaque choix pose `field.<scène>.<choix>`. Le procès-verbal
 est une pièce ordinaire du dossier dont les éléments portent des `conditions`
 sur ces drapeaux : `CaseLibrary.filter_case` filtre aussi les éléments. Logique
 dans `FieldRules`, état dans `GameState.field_scenes`, écran
 `scenes/field/field_screen.tscn`, décors dessinés par `FieldArt`.
+
+Décor 3D (`FieldStage3D`, réglage `Settings.field_3d`) : si
+`data/field/stages/<décor>.json` existe, l'écran l'affiche à la place du dessin.
+Chaque objet charge son `model` (.glb) s'il existe, sinon ses `parts` (boîte,
+cylindre, sphère, capsule ; couleurs du thème `IntroArt`, `texture` facultative).
+Un objet avec `option` est cliquable (rayon contre sa boîte englobante, sans
+physique) et émet `spot_pressed` ; `present` ouvre la liste du carnet.
+Le sujet d'un interrogatoire (`role: subject`) prend `subject.model` de la scène.
+Cahier des charges des modèles : `docs/design/ASSETS_3D.md`.
 
 ## Campagne (`data/campaign.json`)
 

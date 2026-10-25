@@ -78,6 +78,12 @@
 					"key": "varga.file_redone",
 					"value": "Fiche refaite par la Section 7",
 					"label": "Fiche refaite le 30.10.1986 à la demande de la Section 7"
+				},
+				{
+					"id": "f_var_address",
+					"key": "apt40.occupant",
+					"value": "Teodor VARGA",
+					"label": "Domicile déclaré : bloc 11, app. 40, quai des Tanneurs"
 				}
 			]
 		},
@@ -307,6 +313,78 @@
 					"label": "Note au crayon : VARGA T. écroué le 14.03.1981"
 				}
 			]
+		},
+		{
+			"id": "search_report",
+			"type": "report",
+			"title": "Procès-verbal de perquisition, bloc 11, app. 40",
+			"source": "Section 4, perquisition conduite par l'inspecteur A. VOSK",
+			"reliability": "A",
+			"date": "1986-11-06",
+			"conditions": {
+				"requires_flags": [
+					"field.search_52310.started"
+				]
+			},
+			"veritas_remark": "Domicile déclaré du sujet. Pièces antérieures à 1986 : sans incidence sur l'analyse de l'édition revue.",
+			"body": "Perquisition au domicile déclaré du citoyen VARGA, en présence de Mme Irena BENES, occupante. Objets relevés :",
+			"facts": [
+				{
+					"id": "f_bns_book",
+					"key": "varga.wife",
+					"value": "Halina, décédée en 1978",
+					"label": "Exemplaire oublié de l'édition de 1979, dédié « Pour H. »",
+					"conditions": {
+						"requires_flags": [
+							"field.search_52310.shelf"
+						]
+					}
+				},
+				{
+					"id": "f_bns_lease",
+					"key": "apt40.occupant",
+					"value": "Karel BENES, depuis 1982",
+					"label": "Bail de l'app. 40 au nom de Karel BENES, correcteur, depuis le 01.06.1982",
+					"conditions": {
+						"requires_flags": [
+							"field.search_52310.desk"
+						]
+					}
+				},
+				{
+					"id": "f_bns_summons",
+					"key": "varga.file_redone",
+					"value": "Fiche refaite par la Section 7",
+					"label": "Convocation de la Section 7 pour « T. VARGA », remise à K. BENES : photographié le 29.10",
+					"conditions": {
+						"requires_flags": [
+							"field.search_52310.mail"
+						]
+					}
+				},
+				{
+					"id": "f_bns_photo",
+					"key": "varga.mark",
+					"value": "Cicatrice à la joue droite depuis 1951",
+					"label": "Photo laissée par l'ancien occupant : « T. et H., 1977 », cicatrice à la joue droite",
+					"conditions": {
+						"requires_flags": [
+							"field.search_52310.photo_box"
+						]
+					}
+				},
+				{
+					"id": "f_bns_manuscript",
+					"key": "poem.acrostic",
+					"value": "HALINA",
+					"label": "Manuscrit de « Novembre », décembre 1978 : initiales H-A-L-I-N-A",
+					"conditions": {
+						"requires_flags": [
+							"field.search_52310.floorboard"
+						]
+					}
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -315,7 +393,12 @@
 			"label": "Recommander l'arrestation de l'auteur",
 			"description": "Message codé à destination d'un réseau de passage : transmission au service des interpellations.",
 			"archive": "« Teodor VARGA » arrêté au quai des Tanneurs. Procès public annoncé par la Section 7.",
-			"archive_truth": {"requires_flags": ["52310.truth_known"], "text": "L'homme arrêté s'appelle Karel BENES, correcteur. Le vrai VARGA est mort en détention en 1983."},
+			"archive_truth": {
+				"requires_flags": [
+					"52310.truth_known"
+				],
+				"text": "L'homme arrêté s'appelle Karel BENES, correcteur. Le vrai VARGA est mort en détention en 1983."
+			},
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -405,6 +488,20 @@
 					}
 				},
 				{
+					"when": "contradiction:apt40.occupant",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 8,
+						"influence": 6
+					},
+					"response": "identity_proved_lease",
+					"flags": {
+						"52310.identity_questioned": true,
+						"kremer.contact": true,
+						"52310.decided": true
+					}
+				},
+				{
 					"when": "default",
 					"effects": {
 						"loyalty": -2,
@@ -449,6 +546,11 @@
 			"from": "R. MAZUR, Directeur adjoint, Section 4",
 			"subject": "Dossier 52310 : vérification d'identité",
 			"body": "Inspecteur,\n\nVous contestez l'identité d'un sujet sans le moindre élément. L'état civil a confirmé la fiche en dix minutes.\n\nJe vous conseille de vous en tenir aux dossiers tels qu'on vous les donne.\n\nR. MAZUR"
+		},
+		"identity_proved_lease": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 52310 : vérification d'identité",
+			"body": "Inspecteur,\n\nVotre demande de vérification a été transmise à l'état civil à 10h12. À 11h00, la Section 7 a retiré le dossier 52310 de votre liste et de la mienne.\n\nUn bail au nom d'un autre homme, à l'adresse du suspect, depuis 1982. Vous êtes allé le chercher vous-même. Ne l'écrivez nulle part ailleurs.\n\nR. MAZUR"
 		}
 	},
 	"veritas": {
@@ -523,5 +625,6 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 52310 : votre question",
 		"body": "Inspecteur,\n\nJe ne lis pas de poésie. Mais je sais qu'une édition « revue » a toujours été revue par quelqu'un. Demandez-vous qui, et pourquoi on ne vous l'a pas dit.\n\nEt si vous trouvez la réponse, réfléchissez longtemps avant de l'écrire.\n\nR. MAZUR"
-	}
+	},
+	"field_scene": "search_52310"
 }

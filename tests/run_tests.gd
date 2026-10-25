@@ -50,6 +50,10 @@ func _run() -> void:
 		"test_field_scenes_are_valid",
 		"test_field_interrogation",
 		"test_field_search",
+		"test_field_bakery_visit",
+		"test_field_benes_search",
+		"test_field_stages_are_valid",
+		"test_field_stage_3d",
 		"test_act_review",
 		"test_veritas",
 		"test_veritas_model",
@@ -560,7 +564,7 @@ func test_evenings() -> void:
 
 
 func test_field_scenes_are_valid() -> void:
-	for case_id in ["40921", "51307"]:
+	for case_id in ["40921", "51307", "52044", "52310"]:
 		var case_data := CaseLibrary.get_case(case_id)
 		var scene := FieldRules.scene_for_case(case_data)
 		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
@@ -652,6 +656,64 @@ func test_field_search() -> void:
 	check(found == ["f_srch_clock_sign", "f_srch_drawing"], "procès-verbal : ce qui a été trouvé")
 	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
 	check("field_40921_neighbours" in fired, "Vera SEDLAR écrit")
+	GameState.new_game()
+
+
+## Fait passer les journées jusqu'à l'attribution du dossier.
+func _advance_until_assigned(case_id: String) -> void:
+	for i in 6:
+		if GameState.cases.has(case_id):
+			return
+		GameState.end_day()
+
+
+func test_field_bakery_visit() -> void:
+	GameState.new_game()
+	_advance_until_assigned("52044")
+	check(GameState.can_start_field("52044"), "visite de la boulangerie possible")
+	GameState.start_field("52044")
+	check(GameState.flags.get("52044.bakery_visited") == true, "la visite est connue")
+	GameState.field_choose("visit_52044", "cash_box")
+	GameState.field_choose("visit_52044", "back_room")
+	check(GameState.flags.get("52044.kovac_bread") == true, "le pain mis de côté est relevé")
+	var notebook: Array = GameState.get_case_state("52044").noted_facts
+	check("f_vis_horvat_ticket" in notebook and "f_vis_bread" in notebook, "trouvailles notées dans le carnet")
+	check(GameState.confront_facts("52044", "f_vis_horvat_ticket", "f_death_horvat") == "horvat.status",
+			"le ticket d'un mort contredit le registre des décès")
+	GameState.apply_decision("52044", "report_bureau")
+	check(GameState.flags.get("52044.drazek_exposed") == true, "la visite suffit à mettre en cause le Bureau")
+	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check(not "field_52044_drazek" in fired, "DRAZEK n'écrit plus une fois mis en cause")
+	GameState.new_game()
+	_advance_until_assigned("52044")
+	GameState.start_field("52044")
+	GameState.field_choose("visit_52044", "son_letter")
+	check(GameState.flags.get("52044.family_humiliated") == true, "lire la lettre du fils humilie la gérante")
+	fired = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("field_52044_drazek" in fired and GameState.flags.get("52044.drazek_alerted") == true, "DRAZEK est prévenu de la visite")
+	GameState.new_game()
+
+
+func test_field_benes_search() -> void:
+	GameState.new_game()
+	_advance_until_assigned("52310")
+	check(GameState.can_start_field("52310"), "perquisition quai des Tanneurs possible")
+	var suspicion := GameState.get_indicator("suspicion")
+	GameState.start_field("52310")
+	GameState.field_choose("search_52310", "desk")
+	GameState.field_choose("search_52310", "floorboard")
+	check(GameState.flags.get("52310.manuscript_found") == true, "le manuscrit de VARGA est trouvé")
+	var found: Array = CaseLibrary.get_document(GameState.get_case_view("52310"), "search_report").facts.map(func(f: Dictionary) -> String: return f.id)
+	check(found == ["f_bns_lease", "f_bns_manuscript"], "procès-verbal : le bail et le manuscrit")
+	check(GameState.confront_facts("52310", "f_var_address", "f_bns_lease") == "apt40.occupant",
+			"le bail contredit le domicile déclaré")
+	check(GameState.confront_facts("52310", "f_bns_manuscript", "f_cen_acrostic") == "poem.acrostic",
+			"le manuscrit contredit l'analyse de la censure")
+	GameState.apply_decision("52310", "identity_error")
+	check(GameState.flags.get("52310.identity_questioned") == true and GameState.flags.get("kremer.contact") == true,
+			"le bail suffit à prouver l'erreur d'identité")
+	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("field_52310_section7" in fired and GameState.get_indicator("suspicion") >= suspicion + 2, "la Section 7 sait")
 	GameState.new_game()
 
 
@@ -931,7 +993,8 @@ func test_case_52310_structure() -> void:
 	var case_data := CaseLibrary.get_case("52310")
 	check(CaseLibrary.validate_case(case_data).is_empty(), "52310 : dossier valide %s" % [CaseLibrary.validate_case(case_data)])
 	var keys := CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
-	check(keys.size() == 2 and "poem.acrostic" in keys and "varga.mark" in keys, "52310 : 2 contradictions (%s)" % [keys])
+	check(keys.size() == 3 and "poem.acrostic" in keys and "varga.mark" in keys and "apt40.occupant" in keys,
+			"52310 : 3 contradictions, dont le bail trouvé en perquisition (%s)" % [keys])
 	check(CaseLibrary.confront(case_data, "f_p86_acrostic", "f_p79_acrostic") == "poem.acrostic", "52310 : HALVEK contre HALINA")
 	check(CaseLibrary.confront(case_data, "f_cen_acrostic", "f_p86_acrostic") == "", "52310 : le rapport et l'édition de 1986 concordent")
 	check(CaseLibrary.confront(case_data, "f_var_mark", "f_rc_mark") == "varga.mark", "52310 : la cicatrice a disparu")
@@ -1311,6 +1374,67 @@ func test_failed_confrontation_feedback() -> void:
 	check(not window.last_confront_failed and result.text.begins_with("CONTRADICTION ÉTABLIE") and window.get_guide_text("notebook", "40921") == "",
 			"contradiction établie : retour au conseil normal")
 	desk.queue_free()
+
+
+func test_field_stages_are_valid() -> void:
+	for scene_id in ["audition_51307", "search_40921"]:
+		var scene := FieldRules.get_scene(scene_id)
+		var art: String = "interrogation" if scene.type == "interrogation" else scene.art
+		check(FieldStage3D.has_stage(art), "%s : décor 3D %s" % [scene_id, art])
+		var stage := DataLoader.load_json(FieldStage3D.stage_path(art))
+		var option_ids: Array = scene.options.map(func(o: Dictionary) -> String: return o.id)
+		var spots := []
+		for prop: Dictionary in stage.props:
+			check(prop.has("id") and (prop.has("parts") or prop.get("role", "") == "subject"), "%s : objet %s constructible" % [art, prop.get("id", "?")])
+			if prop.has("option"):
+				spots.append(prop.option)
+				check(prop.option in option_ids or (prop.option == "present" and scene.type == "interrogation"),
+						"%s : l'objet %s correspond à un choix" % [art, prop.id])
+		if scene.type == "search":
+			check(spots.size() == option_ids.size(), "%s : chaque endroit a son objet 3D" % art)
+
+
+func test_field_stage_3d() -> void:
+	var stage := FieldStage3D.new()
+	stage.size = Vector2(640, 300)
+	get_tree().root.add_child(stage)
+	var received := []
+	stage.spot_pressed.connect(func(id: String) -> void: received.append(id))
+	check(not stage.load_stage("inexistant"), "décor inconnu refusé")
+	check(stage.load_stage("sedlar_flat"), "décor de l'appartement chargé")
+	check(stage.get_spot_ids().size() == 6, "six objets à fouiller")
+	await get_tree().process_frame
+	stage.set_active_spots(["stove", "drawer"])
+	var point := stage.spot_screen_position("stove")
+	check(Rect2(Vector2.ZERO, stage.size).has_point(point), "le poêle est dans le champ de la caméra (%s)" % point)
+	check(stage.spot_at(point) == "stove", "viser le poêle le désigne")
+	check(stage.spot_at(stage.spot_screen_position("satchel")) == "", "un endroit déjà fouillé ne réagit plus")
+	stage.press_spot("satchel")
+	stage.press_spot("stove")
+	check(received == ["stove"], "seul l'endroit encore possible est signalé")
+	check(stage.load_stage("interrogation", {"model": "res://assets/models/field/characters/absent.glb"}),
+			"modèle absent : formes de secours")
+	check(stage.get_spot_ids() == ["present"], "le dossier sur la table sert à présenter un élément")
+	stage.queue_free()
+	await get_tree().process_frame
+	# Dans l'écran de terrain : 3D si le réglage est actif, sinon dessin.
+	GameState.new_game()
+	GameState.apply_decision("40921", "arrest")
+	GameState.end_day()
+	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	Settings.field_3d = true
+	screen.open("40921")
+	check(screen.is_3d() and screen.get_stage().active_spots.size() == 6, "perquisition en 3D")
+	screen.get_stage().press_spot("stove")
+	check(GameState.flags.get("heure_juste.sign_stove") == true, "cliquer sur le poêle en 3D le fouille")
+	check(not "stove" in screen.get_stage().active_spots, "le poêle n'est plus proposé")
+	GameState.end_day()
+	Settings.field_3d = false
+	screen.open("51307")
+	check(not screen.is_3d() and screen.get_node("%Art").visible, "réglage 2D : décor dessiné")
+	Settings.field_3d = true
+	screen.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()
 

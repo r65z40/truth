@@ -197,6 +197,10 @@ table : le bon élément fait changer sa version. La perquisition chez SEDLAR
 (40921) se joue en endroits cliquables : fouiller les affaires de Vera ou de
 l'enfant humilie la famille. Ce qui est obtenu devient un procès-verbal au
 dossier. Le poêle de SEDLAR cache le premier vrai indice de L'HEURE JUSTE.
+La visite de la boulangerie n° 12 (52044) et la perquisition chez Karel BENES
+(52310) donnent d'autres chemins vers les mêmes vérités (un ticket de mort
+encaissé, un bail au nom d'un autre homme) mais préviennent ceux qu'on
+soupçonne : DRAZEK écrit, la Section 7 pose les scellés.
 Détails : `docs/design/TERRAIN.md`.
 
 ## Carrière
@@ -219,5 +223,6 @@ le refus est mémorisé (`career.refused_promotion`).
 - 2026-10-24 : conception V2 validée par fen (`docs/design/`).
 - 2026-10-25 : soirées, une action par soir, perdue en heures supplémentaires.
 - 2026-10-25 : terrain en scènes 2D fixes et cliquables (pas de 3D), validé par fen.
+- 2026-10-25 : fen demande ensuite des décors 3D (caméra fixe, objets cliquables), la 2D restant en réglage.
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

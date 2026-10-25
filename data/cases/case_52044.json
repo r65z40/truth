@@ -328,6 +328,78 @@
 					"label": "Les trois avis de décès ont été visés par P. DRAZEK lui-même"
 				}
 			]
+		},
+		{
+			"id": "visit_report",
+			"type": "report",
+			"title": "Compte rendu de visite, Boulangerie d'État n° 12",
+			"source": "Section 4, visite conduite par l'inspecteur A. VOSK",
+			"reliability": "B",
+			"date": "1986-11-05",
+			"conditions": {
+				"requires_flags": [
+					"field.visit_52044.started"
+				]
+			},
+			"veritas_remark": "Témoignages recueillis au point de vente : fiabilité limitée. La gérante reste la seule personne qui manipule les tickets.",
+			"body": "Visite du point de vente, rue du Moulin, en présence de la gérante Z. KOVAC. Éléments relevés :",
+			"facts": [
+				{
+					"id": "f_vis_notebook",
+					"key": "buyers.day",
+					"value": "Le jeudi",
+					"label": "Cahier de la gérante : 23 inconnus aux carnets neufs depuis le 15.09, tous le jeudi",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_52044.under_counter"
+						]
+					}
+				},
+				{
+					"id": "f_vis_horvat_ticket",
+					"key": "horvat.status",
+					"value": "Ticket encaissé le 16.10.1986",
+					"label": "Souche du carnet de HORVAT Milan encaissée le 16.10.1986",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_52044.cash_box"
+						]
+					}
+				},
+				{
+					"id": "f_vis_queue",
+					"key": "books.origin",
+					"value": "Vendus par un employé du Bureau",
+					"label": "Une cliente : « les carnets du cimetière », vendus le jeudi par un petit à lunettes du Bureau",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_52044.queue"
+						]
+					}
+				},
+				{
+					"id": "f_vis_bread",
+					"key": "kovac.bread",
+					"value": "Deux pains mis de côté",
+					"label": "Arrière-boutique : deux pains mis de côté chaque jour pour sa sœur à Brezno",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_52044.back_room"
+						]
+					}
+				},
+				{
+					"id": "f_vis_control",
+					"key": "kovac.warned",
+					"value": "Signalé en septembre",
+					"label": "Cahier de visite, 18.09 : « RAS » du contrôleur ; la gérante y a noté son signalement",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_52044.visit_book"
+						]
+					}
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -335,7 +407,7 @@
 			"id": "arrest_baker",
 			"label": "Recommander l'arrestation de la gérante",
 			"description": "Détournement de tickets au point de vente : transmission au service des interpellations.",
-			"archive": "Arrêtée pour détournement de rations. Boulangerie n° 14 fermée, gérance confiée au Bureau du ravitaillement.",
+			"archive": "Arrêtée pour détournement de rations. Boulangerie n° 12 fermée, gérance confiée au Bureau du ravitaillement.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -564,5 +636,6 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 52044 : votre question",
 		"body": "Inspecteur,\n\nQuand un registre est trop propre, comparez-le avec le registre d'un autre service. Les services ne se parlent jamais : c'est leur faiblesse, et parfois la nôtre.\n\nUne chose encore : mettre en cause un bureau du ministère sans preuve, c'est se mettre en cause soi-même.\n\nR. MAZUR"
-	}
+	},
+	"field_scene": "visit_52044"
 }

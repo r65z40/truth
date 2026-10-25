@@ -537,6 +537,46 @@
 				"subject": "(sans objet)",
 				"body": "Vous avez fouillé le cartable de mes élèves et le lit de mon fils. Il a huit ans. Depuis, il range ses dessins dans ses chaussures.\n\nLes voisins ne nous disent plus bonjour. Je ne vous en veux pas : c'est votre travail. Je voulais seulement que vous le sachiez.\n\nV. S."
 			}
+				},
+		{
+			"id": "field_52044_drazek",
+			"conditions": {
+				"requires_flags": [
+					"52044.bakery_visited"
+				],
+				"forbidden_flags": [
+					"52044.drazek_exposed",
+					"52044.drazek_transferred"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"52044.drazek_alerted": true
+			},
+			"message": {
+				"from": "P. DRAZEK, préposé, Bureau du ravitaillement du District 4",
+				"subject": "Votre visite rue du Moulin",
+				"body": "Inspecteur,\n\nOn me dit que vous êtes passé hier à la Boulangerie d'État n° 12. Je me permets de vous écrire pour vous faciliter le travail.\n\nNotre registre des carnets est tenu avec le plus grand soin et reste à votre entière disposition. Si la gérante vous a parlé de « clients inconnus », sachez qu'elle a de la famille à la campagne et qu'elle met du pain de côté. Tout le quartier le sait.\n\nRespectueusement,\n\nP. DRAZEK"
+			}
+		},
+		{
+			"id": "field_52310_section7",
+			"conditions": {
+				"requires_flags": [
+					"52310.home_searched"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"section7.noticed_search": true
+			},
+			"message": {
+				"from": "M. DUBEK, analyste principal, Section 7",
+				"subject": "Quai des Tanneurs",
+				"body": "Inspecteur VOSK,\n\nVous avez perquisitionné hier le domicile déclaré du sujet 52310 sans en informer la Section 7, qui instruit l'affaire principale. Je suppose que c'est un excès de zèle.\n\nLe domicile est désormais placé sous scellés. Ce que vous y avez trouvé appartient au dossier de la Section 7, pas à vos impressions.\n\nM. DUBEK"
+			}
 		}
 	]
 }
