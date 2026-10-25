@@ -107,7 +107,7 @@ func _finish() -> void:
 	_progress.value = 100
 	var show_multipliers: bool = GameState.flags.get(Veritas.PARAMS_FLAG, false) == true
 	var report := Veritas.case_report(GameState.get_case_view(current_case_id),
-			GameState.get_case_state(current_case_id), show_multipliers)
+			GameState.get_case_state(current_case_id), show_multipliers, GameState.flags)
 	_log.text = report_bbcode(report, get_theme_color(&"font_color", &"StampLabel").to_html(false))
 	notify.emit("VERITAS : analyse du dossier %s terminée." % current_case_id)
 

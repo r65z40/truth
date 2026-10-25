@@ -38,6 +38,25 @@ puis 7-8-9 si la gestion du temps est validée, puis 5, 10, 11, 13, 14.
 - Traduction anglaise complète, sons, polices libres embarquées, export Windows,
   tests de tous les embranchements (outil de drapeaux orphelins).
 
+## Acte 2 — en cours (RACCORDEMENT + décret 86-31)
+
+Proposition de design validée par fen (voir le document partagé du 25/10). Ordre :
+
+| # | Étape | Statut |
+| --- | --- | --- |
+| 1 | Socle VERITAS : catégorie « donnée raccordée » (`linked`), overrides du décret 86-31 (frontière x2→x3), facteurs `contestable` | Codé, testé |
+| 2 | Mémoire institutionnelle (`ministry_record`, graine du 54100, +SAVE_VERSION) | Codé, testé |
+| 3 | Pression hiérarchique | Première forme : directive de HALM (message + drapeau) sur 53118. Choix interactif à 4 branches : à venir |
+| 4a | Dossier 53118 La Chorale (+ incident de Halvek, décret 86-31) | Codé, testé |
+| 4b | Dossier 53402 Le Cheminot (frontière, décret 86-31, audition de terrain) | Codé, testé |
+| 4c | Dossier 53517 L'Informateur (recoupement 51307, perquisition, CHAUDRON = ORLIK) | Codé, testé |
+| 4d | Dossier 53760 L'Archive + révélation du 40921 | À faire |
+| 5 | Bonus : audit VERITAS contestable à l'écran, radio étrangère | À faire |
+
+Tout reste déterministe : les facteurs (dont `linked`) sont écrits à la main dans
+les dossiers ; le décret agit par un drapeau ; une contestation n'écarte un facteur
+que s'il est marqué `contestable`.
+
 ## Extensions futures
 
 - Acte 5 « Le pouvoir » ou suite (voir `ACTE5_FAISABILITE.md`).

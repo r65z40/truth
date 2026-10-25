@@ -14,7 +14,8 @@ signal game_loaded
 ## 2 : carnet d'enquête (noted_facts, contradictions_found) dans chaque dossier.
 ## 3 : événements différés déjà déclenchés (fired_events).
 ## 4 : horloge de service, pièces demandées, consultation, soirées, terrain.
-const SAVE_VERSION := 4
+## 5 : mémoire institutionnelle (ministry_record).
+const SAVE_VERSION := 5
 const DEFAULT_PATH := "user://savegame.json"
 
 ## Fichier utilisé quand aucun chemin n'est précisé (les tests le redirigent).
@@ -116,5 +117,9 @@ func _migrate(payload: Dictionary) -> Dictionary:
 			case_state["requested_documents"] = case_state.get("requested_documents", {})
 			case_state["consulted"] = case_state.get("consulted", false)
 		version = 4
+	if version == 4:
+		# v5 : mémoire institutionnelle (dossier administratif secret de l'agent).
+		payload.state["ministry_record"] = payload.state.get("ministry_record", [])
+		version = 5
 	payload.save_version = version
 	return payload

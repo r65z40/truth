@@ -537,7 +537,7 @@
 				"subject": "(sans objet)",
 				"body": "Vous avez fouillé le cartable de mes élèves et le lit de mon fils. Il a huit ans. Depuis, il range ses dessins dans ses chaussures.\n\nLes voisins ne nous disent plus bonjour. Je ne vous en veux pas : c'est votre travail. Je voulais seulement que vous le sachiez.\n\nV. S."
 			}
-				},
+		},
 		{
 			"id": "field_52044_drazek",
 			"conditions": {
@@ -576,6 +576,273 @@
 				"from": "M. DUBEK, analyste principal, Section 7",
 				"subject": "Quai des Tanneurs",
 				"body": "Inspecteur VOSK,\n\nVous avez perquisitionné hier le domicile déclaré du sujet 52310 sans en informer la Section 7, qui instruit l'affaire principale. Je suppose que c'est un excès de zèle.\n\nLe domicile est désormais placé sous scellés. Ce que vous y avez trouvé appartient au dossier de la Section 7, pas à vos impressions.\n\nM. DUBEK"
+			}
+		},
+		{
+			"id": "assign_53118",
+			"conditions": {
+				"min_day": 5
+			},
+			"assign_cases": [
+				"53118"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier prioritaire : n° 53118",
+				"body": "Inspecteur,\n\nUn informateur du District 2 signale que la chorale de la paroisse Sainte-Agathe a chanté après le couvre-feu. Onze noms sont joints.\n\nLe dossier 53118 vous est attribué. Onze personnes pour une chorale, cela fait beaucoup de monde. Ou pas. Lisez avant de compter.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "halm_pressure_53118",
+			"conditions": {
+				"min_day": 5
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"halm.pressure_53118": true
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "COMMUNICATION INTERNE — PRIORITÉ ABSOLUE",
+				"body": "Message du Directeur HALM.\n\nL'affaire de la chorale Sainte-Agathe doit être conclue avant le bulletin de 19 heures. Le Parti attend une liste de responsables, pas une liste de questions.\n\nUn rassemblement religieux après le couvre-feu, la veille d'une visite de délégation : la fermeté est attendue. Un inspecteur qui comprend l'époque transmet les onze noms.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "daily_bulletin_5",
+			"conditions": {
+				"min_day": 5
+			},
+			"effects": {},
+			"message": {
+				"from": "Service central d'information",
+				"subject": "Bulletin intérieur du 10 novembre",
+				"body": "SÉCURITÉ : les rassemblements nocturnes non déclarés, y compris religieux, relèvent désormais de la Section 4. La vigilance des citoyens est saluée.\n\nFRONTIÈRE : des mouvements « irréguliers » sont signalés du côté de Halvek. Le ministère dément toute tension.\n\nARCHIVES : la réorganisation des services d'archives est effective. Les fonds anciens restent consultables sur demande motivée.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		},
+		{
+			"id": "halvek_incident_decret",
+			"conditions": {
+				"min_day": 6
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"decret_86_31": true,
+				"world.halvek_incident": true
+			},
+			"message": {
+				"from": "Service central d'information",
+				"subject": "Bulletin intérieur du 11 novembre — DÉCRET 86-31",
+				"body": "FRONTIÈRE : un incident a opposé cette nuit des gardes-frontières à un groupe non identifié près de Halvek. Aucune victime du côté de l'État.\n\nDÉCRET : le décret 86-31 relatif aux « agents de l'étranger » entre en vigueur ce jour. Toute affaire présentant une exposition frontalière est désormais traitée avec la plus grande sévérité.\n\nVERITAS : le module de conformité intègre le décret. Le facteur d'exposition frontalière est réévalué à la hausse.\n\nLA VIGILANCE EST UN DEVOIR CIVIQUE."
+			}
+		},
+		{
+			"id": "53118_reminder",
+			"conditions": {
+				"min_day": 6,
+				"undecided_cases": [
+					"53118"
+				]
+			},
+			"effects": {
+				"suspicion": 4
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "Dossier 53118 : toujours pas de conclusion",
+				"body": "Inspecteur,\n\nLe bulletin d'hier soir est passé sans votre chorale. Le Directeur HALM l'a remarqué.\n\nOnze noms attendent une signature. Chaque jour sans conclusion est lu comme une hésitation. Les hésitations, en ce moment, coûtent cher.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "53118_condemned_letter",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"53118.innocents_condemned"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Requête de la famille FALK",
+				"body": "Monsieur l'Inspecteur,\n\nOn est venu arrêter mon père, Roman FALK, à l'hôpital, dans son lit. Il a quatre-vingt-un ans et il n'a pas quitté le service de pneumologie depuis le 3 novembre. Il n'était pas à l'église ce soir-là : il ne tient plus debout.\n\nSon nom était sur une liste. On m'a dit que la liste était signée.\n\nAnezka FALK\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "53118_cleared_note",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"53118.choir_cleared"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
+				"subject": "(sans objet)",
+				"body": "Vous avez demandé le fonds Sainte-Agathe, et vous avez compté les émargements. Sept, pas onze. Et un permis signé avant qu'on ne durcisse le couvre-feu.\n\nLe Bureau des cultes ne vous remerciera pas tout haut, mais la veuve TILL joue encore de l'orgue ce dimanche grâce à vous.\n\nFaites attention. Un inspecteur qui classe ce que HALM voulait voir pendre se fait remarquer, lui aussi. Ne me nommez pas. K."
+			}
+		},
+		{
+			"id": "assign_53402",
+			"conditions": {
+				"min_day": 7
+			},
+			"assign_cases": [
+				"53402"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier prioritaire : n° 53402",
+				"body": "Inspecteur,\n\nLa Direction de la ligne Velmira–Halvek signale des retards nocturnes anormaux au poste de Brenec, à trois kilomètres de la frontière. L'aiguilleur s'appelle VRABEC.\n\nLe dossier 53402 vous est attribué. Depuis le décret 86-31, le mot « frontière » n'a plus le même poids. VERITAS l'a déjà raccordé. Lisez la ligne avant de lire le raccordement.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "halm_pressure_53402",
+			"conditions": {
+				"min_day": 7
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"halm.pressure_53402": true
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "COMMUNICATION INTERNE — DÉCRET 86-31",
+				"body": "Message du Directeur HALM.\n\nLe dossier 53402 relève de la frontière. Le décret 86-31 s'applique sans discussion : un agent de l'État qui retarde un convoi sur un secteur sensible est, jusqu'à preuve du contraire, un complice.\n\nLe bulletin de la frontière attend un nom cette semaine. Un inspecteur qui comprend l'époque transmet à la sûreté des frontières.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "53402_reminder",
+			"conditions": {
+				"min_day": 9,
+				"undecided_cases": [
+					"53402"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "Dossier 53402 : toujours en attente",
+				"body": "Inspecteur,\n\nLa garde-frontière a redemandé par écrit où en était l'affaire de Brenec. Le Directeur HALM n'aime pas qu'on lui réclame ses dossiers.\n\nUn dossier de frontière qui traîne, sous le décret, se lit comme une complaisance. Concluez.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "53402_arrested_note",
+			"conditions": {
+				"min_day": 8,
+				"requires_flags": [
+					"53402.vrabec_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Requête des habitants de Brenec",
+				"body": "Monsieur l'Inspecteur,\n\nOn a emmené M. VRABEC. C'est lui qui tenait le train assez longtemps pour qu'on monte voir les nôtres, à Halvek, de l'autre côté. Il n'a jamais rien demandé en échange.\n\nDepuis, le 2241 part à l'heure et ne s'arrête plus. Ma sœur est de l'autre côté. Je ne sais pas quand je la reverrai.\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "53402_cleared_note",
+			"conditions": {
+				"min_day": 8,
+				"requires_flags": [
+					"53402.line_cleared"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
+				"subject": "(sans objet)",
+				"body": "Vous avez classé Brenec pour « défaillance technique », en pleine période de décret. Je sais ce que ça veut dire : vous avez lu les permis, pas le raccordement.\n\nLe vieux garde sa voie et son train. Mais la garde-frontière a écrit à la Direction pour demander un nom. Quand ils ne l'obtiennent pas, ils le cherchent plus haut. Faites attention à votre propre dossier. Ne me nommez pas. K."
+			}
+		},
+		{
+			"id": "assign_53517",
+			"conditions": {
+				"min_day": 8
+			},
+			"assign_cases": [
+				"53517"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier : n° 53517",
+				"body": "Inspecteur,\n\nLa Milice du District 9 transmet le signalement d'un de ses informateurs contre un ouvrier de la Centrale thermique n° 3, un certain PETRAS. Absences hebdomadaires, « paquets », le tableau habituel.\n\nLe dossier 53517 vous est attribué. Le nom de la Centrale ne vous est pas inconnu. Lisez avant de conclure, et regardez qui signale.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "milice_pressure_53517",
+			"conditions": {
+				"min_day": 8
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"milice.pressure_53517": true
+			},
+			"message": {
+				"from": "Liaison Milice, District 9",
+				"subject": "Signalement CHAUDRON — suivi attendu",
+				"body": "Inspecteur,\n\nLe signalement contre l'ouvrier PETRAS vient d'un de nos informateurs réguliers. Nous attendons que la Section 4 lui donne la suite qu'il mérite.\n\nUn informateur qui voit ses signalements classés cesse de signaler. Nous comptons sur votre coopération.\n\nLiaison Milice, District 9"
+			}
+		},
+		{
+			"id": "53517_reminder",
+			"conditions": {
+				"min_day": 10,
+				"undecided_cases": [
+					"53517"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"message": {
+				"from": "Liaison Milice, District 9",
+				"subject": "Dossier 53517 : en attente de suite",
+				"body": "Inspecteur,\n\nLe signalement CHAUDRON est toujours sans réponse. La Milice n'apprécie pas que ses informateurs soient laissés sans suite.\n\nConcluez le dossier PETRAS.\n\nLiaison Milice, District 9"
+			}
+		},
+		{
+			"id": "53517_arrested_note",
+			"conditions": {
+				"min_day": 9,
+				"requires_flags": [
+					"53517.petras_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Requête de Marta PETRAS",
+				"body": "Monsieur l'Inspecteur,\n\nOn a emmené mon mari. Il ne faisait que faire la queue, le jeudi, pour mon médicament et pour que le petit mange autre chose que des pommes de terre.\n\nJe ne peux pas me lever. La pension d'invalidité est suspendue tant que dure « l'enquête ». Je ne sais pas comment nous allons tenir l'hiver.\n\nMarta PETRAS\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "53517_turned_note",
+			"conditions": {
+				"min_day": 9,
+				"requires_flags": [
+					"53517.informer_reported"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
+				"subject": "(sans objet)",
+				"body": "Vous avez retourné le signalement de CHAUDRON contre lui. Peu d'inspecteurs comprennent qu'un informateur ment aussi, surtout quand il a quelque chose à cacher.\n\nORLIK voulait noyer son propre dossier sous celui d'un pauvre bougre. Vous l'avez vu. Mais la Milice protège ses hommes : vous venez de vous faire un ennemi qui porte l'uniforme. Ne me nommez pas. K."
 			}
 		}
 	]

@@ -35,7 +35,7 @@ func setup(new_case_id: String) -> void:
 	_title.text = "RAPPORT DE CONCLUSION  //  DOSSIER N° %s" % case_id
 	_summary.text = build_summary_bbcode(case_data, case_state)
 	# VERITAS n'est plus affiché d'office : l'agent lance le programme s'il le veut.
-	_veritas_box.visible = not Veritas.recommendation(case_data, case_state).is_empty()
+	_veritas_box.visible = not Veritas.recommendation(case_data, case_state, GameState.flags).is_empty()
 	_veritas_advice.text = "%s peut analyser ce dossier avant votre signature." % Veritas.NAME
 	for child in _choices.get_children():
 		_choices.remove_child(child)

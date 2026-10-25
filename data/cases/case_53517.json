@@ -1,0 +1,460 @@
+{
+	"id": "53517",
+	"title": "Citoyen n° 53517",
+	"subject_name": "PETRAS, Vaclav",
+	"summary": "Signalement d'un informateur : un ouvrier de la Centrale thermique n° 3 s'absenterait chaque jeudi pour des réunions, revenant chargé de paquets.",
+	"priority": "ordinaire",
+	"field_scene": "search_53517",
+	"documents": [
+		{
+			"id": "identity",
+			"type": "identity",
+			"title": "Fiche d'identité civile",
+			"source": "Registre central de la population",
+			"reliability": "A",
+			"date": "1986-11-09",
+			"veritas_remark": "Ouvrier sans responsabilité. Épouse en longue maladie. Aucun antécédent politique.",
+			"photo": {
+				"caption": "Cliché du 20.05.1985",
+				"face": "square",
+				"hair": "short",
+				"gray": false,
+				"facial_hair": "none",
+				"mark": "none"
+			},
+			"fields": [
+				[
+					"Nom",
+					"PETRAS"
+				],
+				[
+					"Prénom",
+					"Vaclav"
+				],
+				[
+					"Né le",
+					"08.08.1949 à Velmira"
+				],
+				[
+					"N° de citoyen",
+					"53517"
+				],
+				[
+					"Profession",
+					"Ouvrier, atelier des chaudières, Centrale thermique n° 3"
+				],
+				[
+					"Adresse",
+					"Bloc 14, escalier D, app. 7, quai des Tanneurs, Velmira"
+				],
+				[
+					"Parti",
+					"Non-membre"
+				],
+				[
+					"Famille",
+					"Épouse : Marta PETRAS, invalide (affection cardiaque). Un fils, 6 ans."
+				]
+			],
+			"facts": [
+				{
+					"id": "f_pet_wife",
+					"key": "petras.wife",
+					"value": "Épouse invalide, cardiaque",
+					"label": "Épouse invalide, affection cardiaque, à charge",
+					"quote": "Épouse : Marta PETRAS, invalide (affection cardiaque)"
+				},
+				{
+					"id": "f_pet_workplace",
+					"key": "petras.workplace",
+					"value": "Centrale thermique n° 3",
+					"label": "Même atelier que le dossier 51307 (chaudières, Centrale n° 3)",
+					"quote": "Ouvrier, atelier des chaudières, Centrale thermique n° 3"
+				}
+			]
+		},
+		{
+			"id": "signalement",
+			"type": "letter",
+			"title": "Signalement d'informateur",
+			"source": "Bureau des signalements, Milice du District 9",
+			"reliability": "C",
+			"date": "1986-11-07",
+			"veritas_remark": "Signalement d'un informateur immatriculé. Les signalements d'informateurs sont réputés fiables par la Milice.",
+			"body": "Signalement transmis par l'informateur immatriculé « CHAUDRON ».\n\nLe nommé PETRAS, de l'atelier des chaudières, s'absente chaque jeudi. Il prétend être souffrant, mais on le voit revenir chargé de paquets. Ces réunions régulières méritent attention. Un homme qui disparaît toutes les semaines à heure fixe ne le fait pas pour rien.\n\nPour la vigilance. CHAUDRON.",
+			"facts": [
+				{
+					"id": "f_sig_meetings",
+					"key": "petras.thursdays",
+					"value": "Réunions clandestines",
+					"label": "« Réunions régulières » chaque jeudi, selon l'informateur",
+					"quote": "Ces réunions régulières méritent attention."
+				},
+				{
+					"id": "f_sig_code",
+					"key": "informer.code",
+					"value": "CHAUDRON",
+					"label": "Signalement signé de l'informateur « CHAUDRON »",
+					"quote": "l'informateur immatriculé « CHAUDRON »"
+				}
+			]
+		},
+		{
+			"id": "personnel_note",
+			"type": "register",
+			"title": "Relevé d'absences de V. PETRAS",
+			"source": "Direction du personnel, Centrale thermique n° 3",
+			"reliability": "A",
+			"date": "1986-11-08",
+			"veritas_remark": "Absences confirmées. Toutes déclarées « maladie » ou couvertes par certificat.",
+			"columns": [
+				"Date",
+				"Motif déclaré"
+			],
+			"rows": [
+				[
+					"09.10.1986 (jeudi)",
+					"Certificat (B. ORLIK)"
+				],
+				[
+					"16.10.1986 (jeudi)",
+					"Certificat (B. ORLIK)"
+				],
+				[
+					"30.10.1986 (jeudi)",
+					"Maladie déclarée"
+				],
+				[
+					"06.11.1986 (jeudi)",
+					"Maladie déclarée"
+				]
+			],
+			"body": "Les jeudis, PETRAS est absent pour maladie ou sur certificat. Aucune sanction : son travail à l'atelier est jugé satisfaisant.",
+			"facts": [
+				{
+					"id": "f_note_thursdays",
+					"key": "petras.thursdays",
+					"value": "Absent les jeudis",
+					"label": "Absences du jeudi, par certificat (ORLIK) ou maladie",
+					"quote": "Les jeudis, PETRAS est absent pour maladie ou sur certificat."
+				}
+			]
+		},
+		{
+			"id": "veritas_link",
+			"type": "report",
+			"title": "Note de raccordement VERITAS",
+			"source": "VERITAS, recoupement automatique",
+			"reliability": "B",
+			"date": "1986-11-09",
+			"veritas_remark": "Raccordement établi par le module. Hypothèse retenue : participation à un réseau du marché noir organisé.",
+			"body": "RACCORDEMENT AUTOMATIQUE — dossier 53517.\n\nLe module VERITAS relie les absences hebdomadaires de PETRAS, les « paquets » signalés et le signalement de l'informateur CHAUDRON. Il raccorde le dossier à la série « réseaux de marché parallèle ».\n\nHypothèse raccordée : PETRAS est un maillon d'un réseau de distribution clandestin.",
+			"facts": [
+				{
+					"id": "f_link_network",
+					"key": "petras.network",
+					"value": "Raccordé à un réseau de marché noir",
+					"label": "Raccordement : absences + paquets + signalement = « réseau parallèle »",
+					"quote": "PETRAS est un maillon d'un réseau de distribution clandestin"
+				}
+			]
+		},
+		{
+			"id": "informer_file",
+			"type": "report",
+			"title": "Fiche de l'informateur CHAUDRON",
+			"source": "Bureau des signalements (sur demande)",
+			"reliability": "B",
+			"date": "1986-11-10",
+			"request": {
+				"label": "Fiche de l'informateur immatriculé CHAUDRON",
+				"flags": {
+					"53517.informer_checked": true
+				},
+				"effects": {
+					"suspicion": 1
+				}
+			},
+			"veritas_remark": "Fiche d'informateur. L'identité réelle d'un informateur n'entre pas dans l'indice de conformité.",
+			"body": "Informateur immatriculé « CHAUDRON ».\n\nIdentité réelle : B. ORLIK, chef d'équipe de l'atelier des chaudières, Centrale thermique n° 3. Informateur de la Milice du District 9 depuis 1979.\n\nNote du Bureau : CHAUDRON est lui-même visé par le dossier 51307 (faux certificats de présence, dont deux au bénéfice de PETRAS). Un informateur sous enquête conserve le droit de signaler.",
+			"facts": [
+				{
+					"id": "f_file_chaudron",
+					"key": "informer.identity",
+					"value": "B. ORLIK (visé par le dossier 51307)",
+					"label": "CHAUDRON = B. ORLIK, le chef d'équipe du dossier 51307",
+					"quote": "Identité réelle : B. ORLIK, chef d'équipe de l'atelier des chaudières, Centrale thermique n° 3."
+				},
+				{
+					"id": "f_file_motive",
+					"key": "informer.motive",
+					"value": "A couvert PETRAS, puis le dénonce",
+					"label": "ORLIK a signé les certificats de PETRAS, puis le dénonce alors qu'il est lui-même visé",
+					"quote": "CHAUDRON est lui-même visé par le dossier 51307 (faux certificats de présence, dont deux au bénéfice de PETRAS)."
+				}
+			]
+		},
+		{
+			"id": "petras_search",
+			"type": "report",
+			"title": "Procès-verbal de votre perquisition chez PETRAS",
+			"source": "Section 4, perquisition du 10.11.1986",
+			"reliability": "B",
+			"date": "1986-11-10",
+			"conditions": {
+				"requires_flags": [
+					"field.search_53517.started"
+				]
+			},
+			"veritas_remark": "Éléments relevés au domicile. Portée sécuritaire : à apprécier.",
+			"body": "Sont versés au procès-verbal les éléments relevés au domicile de V. PETRAS, dans l'ordre où ils ont été trouvés.",
+			"facts": [
+				{
+					"id": "f_psrch_food",
+					"key": "petras.thursdays",
+					"value": "File du marché noir",
+					"label": "Denrées du marché parallèle et tickets de file du jeudi",
+					"conditions": {
+						"requires_flags": [
+							"field.search_53517.pantry"
+						]
+					}
+				},
+				{
+					"id": "f_psrch_prescription",
+					"key": "petras.wife",
+					"value": "Traitement introuvable à Velmira",
+					"label": "Ordonnance cardiaque pour Marta, médicament introuvable en pharmacie d'État",
+					"conditions": {
+						"requires_flags": [
+							"field.search_53517.drawer"
+						]
+					}
+				},
+				{
+					"id": "f_psrch_pawn",
+					"key": "petras.debt",
+					"value": "Objets au mont-de-piété",
+					"label": "Reçus du mont-de-piété : alliance, montre, engagés en octobre",
+					"conditions": {
+						"requires_flags": [
+							"field.search_53517.box"
+						]
+					}
+				},
+				{
+					"id": "f_psrch_clean",
+					"key": "petras.network",
+					"value": "Rien de subversif",
+					"label": "Aucun tract, aucune liste, aucun matériel : rien d'un réseau",
+					"conditions": {
+						"requires_flags": [
+							"field.search_53517.shelf"
+						]
+					}
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "transmit",
+			"label": "Transmettre le signalement",
+			"description": "Donner suite au signalement de l'informateur : interpellation pour activité clandestine.",
+			"archive": "Interpellé sur signalement d'informateur. Son épouse a perdu la pension d'invalidité le temps de l'enquête.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 5,
+						"suspicion": 4,
+						"influence": -2
+					},
+					"response": "transmit_knowing",
+					"flags": {
+						"53517.petras_arrested": true,
+						"53517.innocent_condemned": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 6,
+						"suspicion": 2,
+						"influence": 0
+					},
+					"response": "transmit_blind",
+					"flags": {
+						"53517.petras_arrested": true
+					}
+				}
+			]
+		},
+		{
+			"id": "dismiss",
+			"label": "Classer le signalement",
+			"description": "Aucune suite contre PETRAS. Le signalement reste au dossier de l'informateur.",
+			"archive": "Signalement classé. PETRAS a gardé son poste. L'informateur n'a pas été inquiété.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 1,
+						"suspicion": 2,
+						"influence": 2
+					},
+					"response": "dismiss_proved",
+					"flags": {
+						"53517.petras_cleared": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 3,
+						"influence": 1
+					},
+					"response": "dismiss_unproved",
+					"flags": {
+						"53517.petras_cleared": true
+					}
+				}
+			]
+		},
+		{
+			"id": "turn",
+			"label": "Signaler le faux signalement",
+			"description": "Retourner la procédure : signaler que l'informateur a dénoncé par intérêt, alors qu'il est lui-même visé.",
+			"archive": "Le signalement de CHAUDRON a été versé au dossier 51307 comme manœuvre. La Milice du District 9 l'a très mal pris.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -2,
+						"suspicion": 5,
+						"influence": 6
+					},
+					"response": "turn_proved",
+					"flags": {
+						"53517.petras_cleared": true,
+						"53517.informer_reported": true,
+						"milice.hostile": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -4,
+						"suspicion": 7,
+						"influence": 3
+					},
+					"response": "turn_unproved",
+					"flags": {
+						"53517.informer_reported": true,
+						"milice.hostile": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"transmit_knowing": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53517 : interpellation de V. PETRAS",
+			"body": "Inspecteur,\n\nVous aviez le procès-verbal de la perquisition : des reçus du mont-de-piété et une ordonnance, pas une liste ni un tract. Vous avez transmis quand même.\n\nPETRAS est interpellé. Sa femme attendra son médicament assise dans un couloir. Le signalement de l'informateur, lui, est validé : c'est peut-être ça que vous vouliez protéger.\n\nR. MAZUR"
+		},
+		"transmit_blind": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53517 : interpellation de V. PETRAS",
+			"body": "Inspecteur,\n\nPETRAS est interpellé sur la foi d'un signalement d'informateur, sans que vous ayez cherché à savoir qui le signalait, ni pourquoi.\n\nLa Milice est satisfaite. Un jour, vous saurez qui est CHAUDRON, et vous vous demanderez qui vous avez servi.\n\nR. MAZUR"
+		},
+		"dismiss_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53517 : classement",
+			"body": "Inspecteur,\n\nVous avez établi que les jeudis de PETRAS sont une file de marché noir pour nourrir une femme malade, pas un réseau. Vous classez. C'est juste, et c'est risqué.\n\nLe signalement vient d'un informateur de la Milice. Classer sa parole, c'est lui dire non. On s'en souviendra, des deux côtés.\n\nR. MAZUR"
+		},
+		"dismiss_unproved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53517 : classement",
+			"body": "Inspecteur,\n\nVous classez sans avoir vérifié grand-chose. Peut-être avez-vous raison, peut-être pas.\n\nLa Milice notera surtout que vous avez ignoré un de ses informateurs. C'est rarement gratuit.\n\nR. MAZUR"
+		},
+		"turn_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53517 : retournement du signalement",
+			"body": "Inspecteur,\n\nVous avez compris avant moi : CHAUDRON, c'est ORLIK, et il dénonce l'ouvrier qu'il couvrait pour faire oublier ses propres certificats. Vous l'avez écrit noir sur blanc et versé au dossier 51307.\n\nC'est du bon travail. C'est aussi une déclaration de guerre à la Milice du District 9. J'espère que vous dormez d'un sommeil léger.\n\nR. MAZUR"
+		},
+		"turn_unproved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53517 : retournement du signalement",
+			"body": "Inspecteur,\n\nVous accusez l'informateur de mauvaise foi sans avoir identifié sa manœuvre ni prouvé l'innocence de PETRAS. C'est une accusation, pas une démonstration.\n\nLa Milice la recevra comme une attaque, et vous n'aurez pas les pièces pour la soutenir. Imprudent.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "transmit",
+		"rationale": "Signalement d'un informateur immatriculé, confirmé par des absences hebdomadaires régulières et des paquets. Raccordement à un réseau de marché parallèle. Le régime présume l'informateur fiable.",
+		"factors": [
+			{
+				"id": "denunciation",
+				"label": "Signalement d'informateur : réunions hebdomadaires",
+				"category": "state_source",
+				"weight": 6,
+				"decision": "transmit",
+				"document": "signalement"
+			},
+			{
+				"id": "network",
+				"label": "Raccordement : maillon d'un réseau de marché parallèle",
+				"category": "linked",
+				"weight": 7,
+				"decision": "transmit",
+				"document": "veritas_link",
+				"contestable": true
+			},
+			{
+				"id": "exculpatory",
+				"label": "Perquisition : marché noir pour une épouse malade, rien de subversif",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "dismiss",
+				"document": "petras_search",
+				"requires_contradiction": "petras.thursdays"
+			},
+			{
+				"id": "informer_motive",
+				"label": "L'informateur (ORLIK) dénonce celui qu'il couvrait, étant lui-même visé",
+				"category": "established_fact",
+				"weight": 8,
+				"decision": "turn",
+				"document": "informer_file"
+			},
+			{
+				"id": "clean_record",
+				"label": "Ouvrier sans antécédent, épouse à charge",
+				"category": "risk",
+				"weight": 3,
+				"decision": "dismiss",
+				"document": "identity"
+			}
+		],
+		"note": "VERITAS présume l'informateur fiable (source d'État) et surpondère le raccordement ; il range la perquisition et l'identité réelle de l'informateur parmi les faits « établis par l'agent », de faible poids. Il recommande la transmission même une fois la dénonciation retournée."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "PETRAS fait la queue au marché noir chaque jeudi pour nourrir sa femme cardiaque et payer un traitement introuvable en pharmacie d'État ; il a engagé son alliance au mont-de-piété. Il n'y a pas de réseau. L'informateur CHAUDRON est B. ORLIK (dossier 51307), qui couvrait PETRAS par certificats et le dénonce maintenant pour détourner l'attention de ses propres faux. VERITAS a raccordé une misère ordinaire à une filière imaginaire.",
+		"involved": [
+			"53517",
+			"51307",
+			"petras_v",
+			"orlik_b"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 53517 : votre question",
+		"body": "Inspecteur,\n\nUn homme qui disparaît chaque jeudi cache quelque chose, c'est vrai. Reste à savoir quoi : un réseau, ou une file d'attente.\n\nEt demandez-vous pourquoi un informateur dénonce justement l'ouvrier dont il signait les absences. On ne trahit bien que ceux qu'on a d'abord protégés.\n\nR. MAZUR"
+	}
+}

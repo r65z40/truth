@@ -16,8 +16,13 @@
 		"network": {"label": "Stabilité des réseaux de renseignement", "multiplier": 2},
 		"risk": {"label": "Facteur de risque individuel", "multiplier": 1},
 		"established_fact": {"label": "Fait établi par l'agent", "multiplier": 1},
+		"linked": {"label": "Donnée raccordée (recoupement automatique)", "multiplier": 2},
 		"anonymous": {"label": "Source anonyme", "multiplier": 0.5},
 		"out_of_period": {"label": "Document hors période d'analyse", "multiplier": 0},
 		"directive": {"label": "Directive confidentielle", "multiplier": 1}
-	}
+	},
+	"overrides_note": "Surcharges conditionnelles : quand le drapeau est actif, ces multiplicateurs remplacent ceux des catégories. Le décret 86-31 (incident de Halvek, acte 2) durcit l'exposition frontalière de x2 à x3.",
+	"overrides": [
+		{"flag": "decret_86_31", "categories": {"border": {"label": "Exposition frontalière (décret 86-31)", "multiplier": 3}}}
+	]
 }
