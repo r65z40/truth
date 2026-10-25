@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://scenes/desk/desktop_icon.gd" id="15_icon"]
 [ext_resource type="Script" path="res://scripts/ui/window_manager.gd" id="16_window_manager"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/veritas_window.tscn" id="17_veritas"]
+[ext_resource type="PackedScene" path="res://scenes/ui/windows/news_window.tscn" id="18_news"]
 
 [node name="Desk" type="Control"]
 layout_mode = 3
@@ -78,6 +79,13 @@ text = "Courrier"
 script = ExtResource("15_icon")
 icon_name = "messages"
 
+[node name="NewsButton" type="Button" parent="Main/Body/Icons/List"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Journal"
+script = ExtResource("15_icon")
+icon_name = "news"
+
 [node name="VeritasButton" type="Button" parent="Main/Body/Icons/List"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -131,6 +139,10 @@ unique_name_in_owner = true
 layout_mode = 1
 
 [node name="VeritasWindow" parent="Main/Body/WindowLayer" instance=ExtResource("17_veritas")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="NewsWindow" parent="Main/Body/WindowLayer" instance=ExtResource("18_news")]
 unique_name_in_owner = true
 layout_mode = 1
 

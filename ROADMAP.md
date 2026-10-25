@@ -94,6 +94,9 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
       conclusion) ; Courrier en plis et lettres à en-tête ; Archives en chemises qui
       rouvrent le dossier, fonds historique verrouillé ; fiche d'évaluation du personnel.
       Les info-bulles et la bulle de R. MAZUR existaient déjà ; pas d'ancien bureau à supprimer
+- [x] Journal du matin « La Voix de Velmira » : 3 titres par jour, la version officielle,
+      dont les décisions de l'agent racontées à la manière du régime (data/news.json, NewsRules).
+      Première des pistes « un 1986 qui parle d'aujourd'hui » (GAME_DESIGN_V2 section 14)
 - [ ] Son à l'arrivée du courrier (quand fen fournira des sons)
 
 ## En cours : le terrain (validé par fen le 25.10, `docs/design/TERRAIN.md`)
