@@ -4,7 +4,10 @@ extends Node
 signal changed
 
 const PATH := "user://settings.cfg"
-const UI_SCALES := [1.0, 1.15, 1.3]
+## Facteurs de zoom de l'interface. L'affichage est en pixels (stretch
+## « disabled ») : un grand écran montre donc plus de contenu plutôt que de tout
+## agrandir. Ce zoom reste disponible pour la lisibilité (petits écrans, confort).
+const UI_SCALES := [0.9, 1.0, 1.15, 1.3, 1.5]
 ## Résolutions proposées pour la fenêtre (en mode fenêtré).
 const WINDOW_SIZES: Array[Vector2i] = [
 	Vector2i(1280, 720), Vector2i(1366, 768), Vector2i(1600, 900), Vector2i(1920, 1080),
