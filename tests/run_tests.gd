@@ -2005,7 +2005,7 @@ func test_pixel_icons() -> void:
 	var tab: Button = window.get_node("%DocumentTabs").get_child(0)
 	check(tab.icon == PixelIcons.document_icon("identity", 2), "l'onglet de la fiche d'identité porte son icône")
 	window.select_document("work_report")
-	check(window._doc_icon.texture == PixelIcons.document_icon("report", 3), "l'en-tête de la pièce montre l'icône du rapport")
+	check(window._doc_icon.texture == PixelIcons.document_icon("report", 4), "l'en-tête de la pièce montre l'icône du rapport")
 	window.queue_free()
 	await get_tree().process_frame
 

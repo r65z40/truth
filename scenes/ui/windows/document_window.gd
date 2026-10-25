@@ -35,7 +35,7 @@ func setup(new_case_id: String, new_document_id: String) -> void:
 	task_title = document.get("title", "")
 	app_icon = PixelIcons.DOCUMENT_ICONS.get(document.get("type", ""), "document")
 	refresh_title()
-	_doc_icon.texture = PixelIcons.document_icon(document.get("type", ""), 3)
+	_doc_icon.texture = PixelIcons.document_icon(document.get("type", ""), 4)
 	_doc_title.text = document.get("title", "").to_upper()
 	_doc_meta.text = describe_source(document)
 	_photo.photo = document.get("photo", {})
