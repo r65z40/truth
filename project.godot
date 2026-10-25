@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Settings="*res://scripts/autoload/settings.gd"
+Localization="*res://scripts/autoload/localization.gd"
 GameState="*res://scripts/autoload/game_state.gd"
 SaveManager="*res://scripts/autoload/save_manager.gd"
 Music="*res://scripts/autoload/music.gd"
@@ -48,3 +49,7 @@ pointing/emulate_touch_from_mouse=false
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 environment/defaults/default_clear_color=Color(0.043, 0.051, 0.047, 1)
+
+[internationalization]
+
+locale/fallback="fr"

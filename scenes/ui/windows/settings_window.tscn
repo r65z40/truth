@@ -121,6 +121,19 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(180, 44)
 layout_mode = 2
 
+[node name="LanguageRow" type="HBoxContainer" parent="Layout/Content/Options"]
+layout_mode = 2
+
+[node name="LanguageLabel" type="Label" parent="Layout/Content/Options/LanguageRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Langue"
+
+[node name="LanguageOption" type="OptionButton" parent="Layout/Content/Options/LanguageRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+
 [node name="DoneButton" type="Button" parent="Layout/Content/Options"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)

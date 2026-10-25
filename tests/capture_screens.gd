@@ -183,6 +183,16 @@ func _capture_all() -> void:
 	desk.open_field("52310")
 	desk.field_screen.choose("floorboard")
 	await _snap("33_perquisition_benes")
+	desk.queue_free()
+	# Socle de traduction : l'interface bascule en anglais (contenu des dossiers en repli FR).
+	Localization.set_locale("en")
+	var menu_en: Node = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu_en)
+	await _snap("34_main_menu_english")
+	menu_en.get_node("%SettingsButton").pressed.emit()
+	await _snap("35_settings_english")
+	menu_en.queue_free()
+	Localization.set_locale("fr")
 	get_tree().quit()
 
 
