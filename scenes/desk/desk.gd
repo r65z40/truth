@@ -17,6 +17,7 @@ const DOCUMENT_CASCADE := Vector2(32, 32)
 	"messages": %MessagesWindow,
 	"archives": %ArchivesWindow,
 	"personnel": %PersonnelWindow,
+	"veritas": %VeritasWindow,
 	"terminal": %TerminalWindow,
 	"settings": %SettingsWindow,
 }
@@ -59,6 +60,7 @@ var _toast_tween: Tween
 const TOOLTIPS := {
 	"DossiersButton": "Consulter les dossiers qui vous sont assignés.",
 	"MessagesButton": "Lire le courrier interne et les réponses de la hiérarchie.",
+	"VeritasButton": "VERITAS, le système d'analyse : il recommande une conclusion pour un dossier.",
 	"ArchivesButton": "Voir les rapports que vous avez transmis.",
 	"PersonnelButton": "Votre évaluation par la Direction du personnel.",
 	"TerminalButton": "Le terminal du ministère, pour les commandes tapées au clavier.",
@@ -82,6 +84,7 @@ func _ready() -> void:
 	%ArchivesButton.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
 	%PersonnelButton.pressed.connect(terminal.submit_command.bind("PROFIL"))
 	%TerminalButton.pressed.connect(open_app.bind("terminal"))
+	%VeritasButton.pressed.connect(open_app.bind("veritas"))
 	%SaveButton.pressed.connect(terminal.submit_command.bind("SAUVER"))
 	%MenuButton.pressed.connect(terminal.submit_command.bind("MENU"))
 	%EndDayButton.pressed.connect(terminal.submit_command.bind("FIN"))
@@ -106,6 +109,8 @@ func _ready() -> void:
 	coach.target_provider = coach_target
 	windows.dossiers.field_requested.connect(open_field)
 	windows.dossiers.document_window_requested.connect(open_document_window)
+	windows.dossiers.veritas_requested.connect(open_veritas)
+	windows.archives.case_requested.connect(open_case)
 	field_screen.finished.connect(_on_field_finished)
 	_refresh_header()
 	_boot_terminal()
@@ -354,6 +359,18 @@ func open_document_window(case_id: String, document_id: String) -> DocumentWindo
 	window.position = Vector2(window_manager.size.x - window.size.x - 16.0, 16.0) + DOCUMENT_CASCADE * (others % 5) * Vector2(-1, 1)
 	window.clamp_to_parent()
 	return window
+
+
+## Lance VERITAS sur un dossier (depuis le formulaire de conclusion).
+func open_veritas(case_id: String) -> void:
+	open_app("veritas")
+	windows.veritas.run_analysis(case_id)
+
+
+## Ouvre le classeur des dossiers sur un dossier précis (depuis les archives).
+func open_case(case_id: String) -> void:
+	open_app("dossiers")
+	windows.dossiers.select_case(case_id)
 
 
 ## Part sur le terrain pour ce dossier (interrogatoire ou perquisition).

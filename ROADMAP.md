@@ -90,7 +90,11 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Étape 3 : passages soulignés dans le texte (`quote`), cliqués pour être notés puis
       surlignés ; fiches du carnet à glisser l'une sur l'autre pour les confronter.
       Le carnet reste dans la fenêtre du dossier (une fenêtre à part masquerait les pièces)
-- [ ] Étape 4 : Courrier, VERITAS, Archives, Dossier personnel au nouveau style ; aide en info-bulles
+- [x] Étape 4 : VERITAS devient un programme qu'on lance (plus affiché d'office dans la
+      conclusion) ; Courrier en plis et lettres à en-tête ; Archives en chemises qui
+      rouvrent le dossier, fonds historique verrouillé ; fiche d'évaluation du personnel.
+      Les info-bulles et la bulle de R. MAZUR existaient déjà ; pas d'ancien bureau à supprimer
+- [ ] Son à l'arrivée du courrier (quand fen fournira des sons)
 
 ## En cours : le terrain (validé par fen le 25.10, `docs/design/TERRAIN.md`)
 

@@ -1,17 +1,22 @@
 extends MinistryWindow
-## Fenêtre « Dossier personnel » : l'évaluation de l'agent par sa hiérarchie,
-## en appréciations (jamais en chiffres).
+## Fenêtre « Dossier personnel » : la fiche d'évaluation de l'agent par sa
+## hiérarchie, en appréciations (jamais en chiffres).
 
+@onready var _icon: TextureRect = %PersonnelIcon
+@onready var _identity: Label = %PersonnelIdentity
 @onready var _text: RichTextLabel = %PersonnelText
 
 
+func _ready() -> void:
+	super()
+	_icon.texture = PixelIcons.get_icon("personnel", 4)
+
+
 func _on_opened() -> void:
+	_identity.text = "AGENT : %s     MATRICULE : %s\nGRADE : %s     AFFECTATION : Section 4\nÉVALUATION AU : %s" % [
+		GameState.player.name, GameState.player.badge, GameState.get_rank_title(), GameState.get_date_short()]
 	var assessment := Assessment.describe(GameState.indicators, GameState.flags)
-	var lines: PackedStringArray = []
-	lines.append("[b]AGENT :[/b] %s     [b]MATRICULE :[/b] %s" % [GameState.player.name, GameState.player.badge])
-	lines.append("[b]GRADE :[/b] %s     [b]AFFECTATION :[/b] Section 4" % GameState.get_rank_title())
-	lines.append("[b]ÉVALUATION AU :[/b] %s" % GameState.get_date_short())
-	lines.append("")
+	var lines: PackedStringArray = ["[b]APPRÉCIATIONS DE LA HIÉRARCHIE[/b]", ""]
 	for line in assessment.lines:
 		lines.append("[b]%s :[/b] %s" % [line.label.to_upper(), line.text])
 	lines.append("")

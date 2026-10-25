@@ -81,6 +81,7 @@ func _run() -> void:
 		"test_pixel_icons",
 		"test_document_windows",
 		"test_document_passages",
+		"test_desk_apps",
 		"test_music_rules",
 		"test_music_player",
 		"test_time_in_desk",
@@ -158,6 +159,60 @@ func test_document_rendering_escapes_bbcode() -> void:
 
 
 ## Passages à noter : chaque citation existe dans le texte de sa pièce, balisée une fois.
+func test_desk_apps() -> void:
+	# VERITAS (logique pure) : rapport incomplet tant que des pièces restent à lire.
+	var view := GameState.get_case_view("40921")
+	var report := Veritas.case_report(view, GameState.get_case_state("40921"))
+	check(report.unread == view.documents.size() and not report.advice.is_empty(), "VERITAS compte les pièces non lues")
+	var text := VeritasWindow.report_bbcode(report)
+	check(text.begins_with("ANALYSE INCOMPLÈTE : %d pièce(s)" % report.unread) and text.contains("RECOMMANDATION :"),
+			"rapport incomplet : avertissement puis recommandation")
+	check(VeritasWindow.report_bbcode({"unread": 0, "advice": {}, "factors": []}).contains("ne formule pas"),
+			"sans facteur : pas de recommandation")
+	check(Veritas.analysis_steps().size() >= 3, "étapes du calcul lues dans data/veritas.json")
+	for icon in ["veritas", "mail_open", "lock"]:
+		check(PixelIcons.has_icon(icon), "icône %s dessinée" % icon)
+
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	var veritas: VeritasWindow = desk.windows.veritas
+	desk.get_node("%VeritasButton").pressed.emit()
+	check(desk.get_open_app() == "veritas", "l'icône VERITAS ouvre le programme")
+	check(veritas.get_node("%RunButton").disabled, "aucun dossier choisi : analyse impossible")
+	var list: VBoxContainer = veritas.get_node("%VeritasCaseList")
+	check(list.get_node_or_null("Case_40921") != null, "les dossiers en attente sont proposés")
+	list.get_node("Case_40921").pressed.emit()
+	check(not veritas.get_node("%RunButton").disabled, "dossier choisi : on peut lancer l'analyse")
+	var hours := GameState.hours_used
+	veritas.analysis_time = 0.2
+	veritas.get_node("%RunButton").pressed.emit()
+	check(veritas.is_running and veritas.get_node("%RunButton").disabled, "le calcul prend un instant")
+	await get_tree().create_timer(0.4).timeout
+	check(not veritas.is_running and veritas.get_node("%AnalysisLog").get_parsed_text().contains("ANALYSE INCOMPLÈTE"),
+			"le verdict s'affiche à la fin du calcul")
+	check(GameState.hours_used == hours, "VERITAS ne coûte pas d'heures")
+
+	# Courrier : enveloppes fermées pour les plis non lus.
+	desk.get_node("%MessagesButton").pressed.emit()
+	await get_tree().process_frame
+	var mail_list: VBoxContainer = desk.windows.messages.get_node("%MessageList")
+	var unread_buttons := mail_list.get_children().filter(func(b: Node) -> bool: return b.get_meta("unread", false))
+	check(unread_buttons.size() == GameState.get_unread_count(), "un pli non lu par message non lu")
+	check(desk.windows.messages.get_node("%ListTitle").text.contains("non lu") == (GameState.get_unread_count() > 0),
+			"le titre de la liste compte les plis non lus")
+	check(desk.windows.messages.get_guide_target("") == (unread_buttons[0] if not unread_buttons.is_empty() else null),
+			"la bulle d'aide pointe le premier pli non lu")
+
+	# Archives vides en début de partie, fonds historique verrouillé.
+	desk.get_node("%ArchivesButton").pressed.emit()
+	check(desk.windows.archives.get_node("%ArchiveEmpty").visible and ArchivesWindow.archived_cases().is_empty(),
+			"aucun rapport aux archives au départ")
+	check(desk.windows.archives.get_node("%ClearanceLabel").text.contains("NIVEAU 3"), "le fonds historique est verrouillé")
+	desk.queue_free()
+	await get_tree().process_frame
+
+
 func test_document_passages() -> void:
 	var all_found := true
 	for case_id in CaseLibrary.get_case_ids():
@@ -1283,21 +1338,33 @@ func test_investigation_and_conclusion_flow() -> void:
 	check(conclusion.get_node("%ConclusionSummary").get_parsed_text().contains("Présent à son poste"),
 			"le formulaire rappelle la contradiction établie")
 	check(conclusion.get_node("%SignButton").disabled, "signature impossible sans choix")
-	check(conclusion.get_node("%VeritasAdvice").text.contains("indice de conformité 87")
-			and conclusion.get_node("%VeritasAdvice").text.contains("Facteurs principaux :\n- Déplacement non déclaré"),
-			"le formulaire affiche l'avis de VERITAS et ses facteurs")
+	check(not conclusion.get_node("%VeritasAdvice").text.contains("indice"), "VERITAS n'est plus affiché d'office")
+	var veritas: VeritasWindow = desk.windows.veritas
+	veritas.analysis_time = 0.0
+	conclusion.get_node("%VeritasButton").pressed.emit()
+	var veritas_log: String = veritas.get_node("%AnalysisLog").get_parsed_text()
+	check(desk.get_open_app() == "veritas" and veritas.current_case_id == "40921", "CONSULTER VERITAS lance le programme sur ce dossier")
+	check(veritas_log.contains("INDICE DE CONFORMITÉ : 87") and veritas_log.contains("FACTEURS PRINCIPAUX :\n- Déplacement non déclaré"),
+			"VERITAS donne son indice et ses facteurs")
+	check(veritas_log.contains("ANALYSE INCOMPLÈTE") == (Veritas.unread_count(GameState.get_case_view("40921"), GameState.get_case_state("40921")) > 0),
+			"VERITAS avertit seulement s'il reste des pièces non lues")
+	check(dossiers.get_node("%ConclusionPanel").visible, "le formulaire reste ouvert derrière")
 	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
 	conclusion.get_node("%SignButton").pressed.emit()
 	await get_tree().process_frame
 	check(desk.get_open_app() == "messages", "la réponse du supérieur s'affiche aussitôt")
 	check(desk.windows.messages.current_message_id == "40921.investigate_found", "c'est la bonne réponse")
-	check(desk.windows.messages.get_node("%MessageHeader").text.contains("enquête complémentaire accordée"),
+	check(desk.windows.messages.get_node("%MessageSubject").text.contains("enquête complémentaire accordée"),
 			"l'objet du message est affiché")
 	check(GameState.get_case_state("40921").status == GameState.CASE_UNDER_INVESTIGATION, "dossier en enquête complémentaire")
 	desk.terminal.submit_command("dossiers")
 	check(dossiers.get_node("%ConclusionButton").disabled, "on ne peut pas conclure deux fois")
 	desk.terminal.submit_command("archives")
-	check(desk.windows.archives.get_node("%ArchiveText").get_parsed_text().contains("40921"), "le rapport figure aux archives")
+	var archive: Button = desk.windows.archives.get_node("%ArchiveList").get_node_or_null("Archive_40921")
+	check(archive != null and archive.text.contains("en cours d'enquête"), "le rapport figure aux archives")
+	if archive:
+		archive.pressed.emit()
+		check(desk.get_open_app() == "dossiers" and dossiers.current_case_id == "40921", "un clic aux archives rouvre le dossier")
 	desk.queue_free()
 	await get_tree().process_frame
 

@@ -119,6 +119,31 @@ static func _number(value: float) -> String:
 	return str(int(value)) if is_equal_approx(value, roundf(value)) else str(value)
 
 
+## Étapes affichées pendant le calcul, dans le programme VERITAS (pur décor).
+static func analysis_steps() -> PackedStringArray:
+	return PackedStringArray(params().get("analysis_steps", []))
+
+
+## Nombre de pièces du dossier que l'agent n'a pas encore ouvertes.
+static func unread_count(case_data: Dictionary, case_state: Dictionary) -> int:
+	var unread := 0
+	for document in case_data.get("documents", []):
+		if not document.id in case_state.get("viewed_documents", []):
+			unread += 1
+	return unread
+
+
+## Rapport d'analyse d'un dossier pour le programme VERITAS :
+## {unread, advice (voir recommendation), factors (lignes lisibles)}.
+## case_data doit être la vue filtrée du dossier (ce que l'agent a sous les yeux).
+static func case_report(case_data: Dictionary, case_state: Dictionary, show_multipliers := false) -> Dictionary:
+	return {
+		"unread": unread_count(case_data, case_state),
+		"advice": recommendation(case_data, case_state),
+		"factors": explain(case_data, case_state, show_multipliers),
+	}
+
+
 ## Réponse à la commande VERITAS du terminal, selon l'état des dossiers.
 ## state : GameState.get_condition_state() (dossiers, drapeaux, jour).
 ## args : "POURQUOI" détaille les facteurs de la recommandation.
@@ -130,10 +155,7 @@ static func terminal_reply(state: Dictionary, args: PackedStringArray = PackedSt
 		if case_state.get("decision", "") != "":
 			continue
 		var case_data := CaseLibrary.filter_case(CaseLibrary.get_case(case_id), state)
-		var unread := 0
-		for document in case_data.get("documents", []):
-			if not document.id in case_state.get("viewed_documents", []):
-				unread += 1
+		var unread := unread_count(case_data, case_state)
 		if unread > 0:
 			return "Dossier %s : %d pièce(s) non consultée(s). Je recommande une lecture complète avant toute conclusion." % [case_id, unread]
 		var advice := recommendation(case_data, case_state)

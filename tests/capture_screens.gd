@@ -73,6 +73,10 @@ func _capture_all() -> void:
 	dossiers.get_node("%ConclusionPanel").get_node("%Choices").get_child(0).button_pressed = true
 	dossiers.get_node("%ConclusionPanel").select_decision("arrest")
 	await _snap("11_conclusion")
+	desk.windows.veritas.analysis_time = 0.0
+	dossiers.get_node("%ConclusionPanel").get_node("%VeritasButton").pressed.emit()
+	await _snap("11b_veritas")
+	desk.windows.veritas.close()
 	dossiers.get_node("%ConclusionPanel").get_node("%SignButton").pressed.emit()
 	await _snap("12_reponse_superieur")
 	desk.terminal.submit_command("archives")
@@ -118,6 +122,10 @@ func _capture_all() -> void:
 	await _snap("22_dossier_52310_poeme")
 	desk.windows.dossiers.open_conclusion()
 	await _snap("23_dossier_52310_veritas")
+	desk.windows.veritas.analysis_time = 0.6
+	desk.open_veritas("52310")
+	await _snap("23b_veritas_calcul", 0.3)
+	desk.windows.veritas.close()
 	desk.windows.dossiers.close()
 	# Fin de l'acte 1 : dossiers conclus avec contradictions, promotion proposée.
 	for case_id in ["51307", "52044", "52310"]:
