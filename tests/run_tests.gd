@@ -71,6 +71,7 @@ func _run() -> void:
 		"test_end_day_in_desk",
 		"test_act_end_in_desk",
 		"test_field_in_desk",
+		"test_failed_confrontation_feedback",
 		"test_friendly_desk",
 		"test_time_in_desk",
 	]
@@ -1165,7 +1166,7 @@ func test_investigation_and_conclusion_flow() -> void:
 	notebook.get_node("Noted_f_report_presence").pressed.emit()
 	check(not dossiers.get_node("%ConfrontButton").disabled, "deux éléments sélectionnés : on peut confronter")
 	dossiers.get_node("%ConfrontButton").pressed.emit()
-	check(dossiers.get_node("%ConfrontResult").text.begins_with("Aucune"), "carte et présence : aucune incohérence")
+	check(dossiers.get_node("%ConfrontResult").text.begins_with("PAS DE CONTRADICTION"), "carte et présence : aucune incohérence")
 	dossiers.get_node("%NotebookList").get_node("Noted_f_report_presence").pressed.emit()
 	dossiers.get_node("%NotebookList").get_node("Noted_f_log_trip").pressed.emit()
 	dossiers.get_node("%ConfrontButton").pressed.emit()
@@ -1281,6 +1282,34 @@ func test_field_in_desk() -> void:
 	GameState.apply_decision("40921", "investigate")
 	desk.windows.dossiers.select_case("40921")
 	check(field_button.disabled, "dossier conclu sans arrestation : pas de perquisition")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+func test_failed_confrontation_feedback() -> void:
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.open_app("dossiers")
+	var window = desk.windows.dossiers
+	window.select_case("40921")
+	for fact_id in ["f_log_card", "f_log_trip", "f_report_presence"]:
+		GameState.note_fact("40921", fact_id)
+	window.toggle_fact_selection("f_log_card")
+	window.toggle_fact_selection("f_log_trip")
+	window.confront_selected()
+	var result: Label = window.get_node("%ConfrontResult")
+	check(window.last_confront_failed and result.text.begins_with("PAS DE CONTRADICTION") and result.theme_type_variation == &"StampLabel",
+			"échec de confrontation affiché clairement, en rouge")
+	check(window.get_guide_text("notebook", "40921").contains("21 octobre"), "la bulle d'aide donne un conseil précis après un échec")
+	check(window.get_guide_text("facts", "40921") == "", "conseil réservé à l'étape du carnet")
+	window.toggle_fact_selection("f_report_presence")
+	window.toggle_fact_selection("f_log_trip")
+	window.confront_selected()
+	check(not window.last_confront_failed and result.text.begins_with("CONTRADICTION ÉTABLIE") and window.get_guide_text("notebook", "40921") == "",
+			"contradiction établie : retour au conseil normal")
 	desk.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()

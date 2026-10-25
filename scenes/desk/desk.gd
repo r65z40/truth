@@ -282,7 +282,8 @@ func coach_target() -> Control:
 		coach.text = current_step.get("coach", "")
 		return _target_buttons.get(app)
 	if open == app:
-		coach.text = current_step.get("coach", "")
+		var window_text: String = windows[open].get_guide_text(current_step.get("part", ""), current_step.get("case_id", ""))
+		coach.text = window_text if window_text != "" else current_step.get("coach", "")
 		return windows[open].get_guide_target(current_step.get("part", ""), current_step.get("case_id", ""))
 	coach.text = "Fermez cette fenêtre pour passer à l'étape suivante."
 	return windows[open].get_close_button()
