@@ -52,6 +52,8 @@ func _run() -> void:
 		"test_field_search",
 		"test_field_bakery_visit",
 		"test_field_benes_search",
+		"test_field_stages_are_valid",
+		"test_field_stage_3d",
 		"test_act_review",
 		"test_veritas",
 		"test_veritas_model",
@@ -1343,6 +1345,69 @@ func test_field_in_desk() -> void:
 	desk.windows.dossiers.select_case("40921")
 	check(field_button.disabled, "dossier conclu sans arrestation : pas de perquisition")
 	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+func test_field_stages_are_valid() -> void:
+	for scene_id in ["audition_51307", "search_40921"]:
+		var scene := FieldRules.get_scene(scene_id)
+		var art: String = "interrogation" if scene.type == "interrogation" else scene.art
+		check(FieldStage3D.has_stage(art), "%s : décor 3D %s" % [scene_id, art])
+		var stage := DataLoader.load_json(FieldStage3D.stage_path(art))
+		var option_ids: Array = scene.options.map(func(o: Dictionary) -> String: return o.id)
+		var spots := []
+		for prop: Dictionary in stage.props:
+			check(prop.has("id") and (prop.has("parts") or prop.get("role", "") == "subject"), "%s : objet %s constructible" % [art, prop.get("id", "?")])
+			if prop.has("option"):
+				spots.append(prop.option)
+				check(prop.option in option_ids or (prop.option == "present" and scene.type == "interrogation"),
+						"%s : l'objet %s correspond à un choix" % [art, prop.id])
+		if scene.type == "search":
+			check(spots.size() == option_ids.size(), "%s : chaque endroit a son objet 3D" % art)
+
+
+func test_field_stage_3d() -> void:
+	var stage := FieldStage3D.new()
+	stage.size = Vector2(640, 300)
+	get_tree().root.add_child(stage)
+	var received := []
+	stage.spot_pressed.connect(func(id: String) -> void: received.append(id))
+	check(not stage.load_stage("inexistant"), "décor inconnu refusé")
+	check(stage.load_stage("sedlar_flat"), "décor de l'appartement chargé")
+	check(stage.get_spot_ids().size() == 6, "six objets à fouiller")
+	await get_tree().process_frame
+	stage.set_active_spots(["stove", "drawer"])
+	var point := stage.spot_screen_position("stove")
+	check(Rect2(Vector2.ZERO, stage.size).has_point(point), "le poêle est dans le champ de la caméra (%s)" % point)
+	check(stage.spot_at(point) == "stove", "viser le poêle le désigne")
+	check(stage.spot_at(stage.spot_screen_position("satchel")) == "", "un endroit déjà fouillé ne réagit plus")
+	stage.press_spot("satchel")
+	stage.press_spot("stove")
+	check(received == ["stove"], "seul l'endroit encore possible est signalé")
+	check(stage.load_stage("interrogation", {"model": "res://assets/models/field/characters/absent.glb"}),
+			"modèle absent : formes de secours")
+	check(stage.get_spot_ids() == ["present"], "le dossier sur la table sert à présenter un élément")
+	stage.queue_free()
+	await get_tree().process_frame
+	# Dans l'écran de terrain : 3D si le réglage est actif, sinon dessin.
+	GameState.new_game()
+	GameState.apply_decision("40921", "arrest")
+	GameState.end_day()
+	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	Settings.field_3d = true
+	screen.open("40921")
+	check(screen.is_3d() and screen.get_stage().active_spots.size() == 6, "perquisition en 3D")
+	screen.get_stage().press_spot("stove")
+	check(GameState.flags.get("heure_juste.sign_stove") == true, "cliquer sur le poêle en 3D le fouille")
+	check(not "stove" in screen.get_stage().active_spots, "le poêle n'est plus proposé")
+	GameState.end_day()
+	Settings.field_3d = false
+	screen.open("51307")
+	check(not screen.is_3d() and screen.get_node("%Art").visible, "réglage 2D : décor dessiné")
+	Settings.field_3d = true
+	screen.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()
 

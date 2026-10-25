@@ -12,6 +12,8 @@ var crt_effect := true
 var guidance := true
 ## Agrandit toute l'interface (lisibilité, petits écrans).
 var ui_scale := 1.0
+## Scènes de terrain en 3D (sinon décors dessinés en 2D, plus légers).
+var field_3d := true
 
 
 func _ready() -> void:
@@ -27,6 +29,7 @@ func load_settings() -> void:
 	crt_effect = config.get_value("display", "crt_effect", crt_effect)
 	guidance = config.get_value("gameplay", "guidance", guidance)
 	ui_scale = config.get_value("display", "ui_scale", ui_scale)
+	field_3d = config.get_value("display", "field_3d", field_3d)
 
 
 func save_settings() -> void:
@@ -35,6 +38,7 @@ func save_settings() -> void:
 	config.set_value("display", "crt_effect", crt_effect)
 	config.set_value("gameplay", "guidance", guidance)
 	config.set_value("display", "ui_scale", ui_scale)
+	config.set_value("display", "field_3d", field_3d)
 	config.save(PATH)
 
 
@@ -60,6 +64,11 @@ func set_crt_effect(value: bool) -> void:
 
 func set_guidance(value: bool) -> void:
 	guidance = value
+	_commit()
+
+
+func set_field_3d(value: bool) -> void:
+	field_3d = value
 	_commit()
 
 

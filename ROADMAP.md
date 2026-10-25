@@ -87,6 +87,9 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Indice L'HEURE JUSTE : l'horloge sans aiguilles (escalier, soirée 1, puis poêle de SEDLAR)
 - [x] Visite de la boulangerie n° 12 (52044) et perquisition chez Karel BENES (52310)
 - [ ] Soirées dans des lieux dessinés (cuisine, loge d'ADLER, cabine du hall)
+- [x] Décors 3D (demande de fen du 25.10) : moteur `FieldStage3D`, audition d'ORLIK et appartement des SEDLAR en formes simples, réglage 2D/3D
+- [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
+- [ ] Décors 3D de la boulangerie n° 12 et de l'appartement 40
 
 ## Prochaine itération
 

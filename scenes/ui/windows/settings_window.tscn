@@ -80,6 +80,21 @@ layout_mode = 2
 toggle_mode = true
 text = "ACTIVÉ"
 
+[node name="Field3dRow" type="HBoxContainer" parent="Layout/Content/Options"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Layout/Content/Options/Field3dRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Scènes de terrain en 3D"
+
+[node name="Field3dToggle" type="Button" parent="Layout/Content/Options/Field3dRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+toggle_mode = true
+text = "ACTIVÉ"
+
 [node name="ScaleRow" type="HBoxContainer" parent="Layout/Content/Options"]
 layout_mode = 2
 

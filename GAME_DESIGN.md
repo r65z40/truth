@@ -223,5 +223,6 @@ le refus est mémorisé (`career.refused_promotion`).
 - 2026-10-24 : conception V2 validée par fen (`docs/design/`).
 - 2026-10-25 : soirées, une action par soir, perdue en heures supplémentaires.
 - 2026-10-25 : terrain en scènes 2D fixes et cliquables (pas de 3D), validé par fen.
+- 2026-10-25 : fen demande ensuite des décors 3D (caméra fixe, objets cliquables), la 2D restant en réglage.
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

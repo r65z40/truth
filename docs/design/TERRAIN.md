@@ -102,6 +102,14 @@ Six endroits, quatre fouilles.
 Conséquence : `52310.home_searched`. Le lendemain, M. DUBEK (Section 7) fait
 savoir qu'il sait et pose les scellés (suspicion +2, `section7.noticed_search`).
 
+## 2 bis. Décors en 3D (demande de fen du 2026-10-25)
+
+fen veut un visuel plus riche, « en 3D par exemple », avec des modèles qu'il
+générera ou trouvera en CC0. Les scènes restent fixes : caméra à hauteur
+d'yeux, on tourne un peu la tête, on ne se déplace pas ; les endroits à
+fouiller sont des objets cliquables. Les dessins 2D restent en secours
+(réglage). Liste des modèles et images attendus : `ASSETS_3D.md`.
+
 ## 3. La vie de tous les jours : les lieux
 
 Les soirées (`data/evenings.json`) restent une action par soir. Elles gagnent

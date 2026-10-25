@@ -6,6 +6,7 @@ extends MinistryWindow
 @onready var _fullscreen_toggle: Button = %FullscreenToggle
 @onready var _crt_toggle: Button = %CrtToggle
 @onready var _guidance_toggle: Button = %GuidanceToggle
+@onready var _field_3d_toggle: Button = %Field3dToggle
 @onready var _scale_option: OptionButton = %ScaleOption
 
 
@@ -22,6 +23,9 @@ func _ready() -> void:
 	_guidance_toggle.toggled.connect(func(on: bool) -> void:
 		Settings.set_guidance(on)
 		_refresh_toggle_labels())
+	_field_3d_toggle.toggled.connect(func(on: bool) -> void:
+		Settings.set_field_3d(on)
+		_refresh_toggle_labels())
 	_scale_option.item_selected.connect(func(index: int) -> void: Settings.set_ui_scale(Settings.UI_SCALES[index]))
 	%DoneButton.pressed.connect(close)
 
@@ -31,10 +35,11 @@ func _on_opened() -> void:
 	_fullscreen_toggle.set_pressed_no_signal(Settings.fullscreen)
 	_crt_toggle.set_pressed_no_signal(Settings.crt_effect)
 	_guidance_toggle.set_pressed_no_signal(Settings.guidance)
+	_field_3d_toggle.set_pressed_no_signal(Settings.field_3d)
 	_scale_option.select(maxi(Settings.UI_SCALES.find(Settings.ui_scale), 0))
 	_refresh_toggle_labels()
 
 
 func _refresh_toggle_labels() -> void:
-	for toggle: Button in [_fullscreen_toggle, _crt_toggle, _guidance_toggle]:
+	for toggle: Button in [_fullscreen_toggle, _crt_toggle, _guidance_toggle, _field_3d_toggle]:
 		toggle.text = "ACTIVÉ" if toggle.button_pressed else "DÉSACTIVÉ"

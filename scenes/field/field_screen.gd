@@ -2,8 +2,9 @@ class_name FieldScreen
 extends ColorRect
 ## Scène de terrain : interrogatoire ou perquisition, vue à la première personne.
 ##
-## À gauche, le décor dessiné (FieldArt) ; pour une perquisition, les endroits
-## à fouiller y sont des boutons. À droite, le compte rendu et les questions.
+## À gauche, le décor : en 3D (FieldStage3D) si le réglage est actif et que le
+## décor existe, sinon dessiné (FieldArt). Les endroits à fouiller y sont
+## cliquables, et rappelés en boutons à droite. À droite, le compte rendu et les questions.
 ## Toute la logique passe par GameState (voir FieldRules).
 
 signal finished
@@ -11,6 +12,7 @@ signal finished
 var scene: Dictionary = {}
 var _presenting := false
 var _log: PackedStringArray = []
+var _stage: FieldStage3D
 
 @onready var _title_label: Label = %TitleLabel
 @onready var _turns_label: Label = %TurnsLabel
@@ -25,6 +27,11 @@ var _log: PackedStringArray = []
 func _ready() -> void:
 	_leave_button.pressed.connect(_on_leave)
 	_art.resized.connect(_place_spots)
+	_stage = FieldStage3D.new()
+	_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_stage.hide()
+	_art.get_parent().add_child(_stage)
+	_stage.spot_pressed.connect(_on_stage_spot)
 
 
 ## Commence la scène de terrain du dossier. Renvoie false si elle est impossible.
@@ -36,12 +43,23 @@ func open(case_id: String) -> bool:
 	_title_label.text = scene.get("title", "")
 	_art.subject = scene.get("subject", {}).get("photo", {})
 	_art.scene = "interrogation" if scene.type == "interrogation" else scene.get("art", "")
+	var use_3d := Settings.field_3d and _stage.load_stage(_art.scene, scene.get("subject", {}))
+	_stage.visible = use_3d
+	_art.visible = not use_3d
 	_log = [scene.get("intro", "")]
 	_hint_label.text = scene.get("hint", "Les éléments obtenus vont dans votre carnet et au dossier." if scene.type == "interrogation" \
 			else "Cliquez sur un endroit du dessin pour le fouiller. Ce que vous trouvez est versé au dossier.")
 	show()
 	_refresh()
 	return true
+
+
+func is_3d() -> bool:
+	return _stage.visible
+
+
+func get_stage() -> FieldStage3D:
+	return _stage
 
 
 func is_interrogation() -> bool:
@@ -97,9 +115,13 @@ func _refresh() -> void:
 		_art.remove_child(child)
 		child.queue_free()
 	_leave_button.text = "RETOUR AU BUREAU" if done else "PARTIR"
+	var options := [] if done else GameState.get_field_options(scene.id)
+	var stage_spots: Array = options.map(func(o: Dictionary) -> String: return o.id)
+	if is_interrogation() and not done and not _presenting:
+		stage_spots.append("present")
+	_stage.set_active_spots(stage_spots)
 	if done:
 		return
-	var options := GameState.get_field_options(scene.id)
 	if not is_interrogation():
 		# Les endroits sont cliquables sur le dessin et rappelés en liste.
 		for option: Dictionary in options:
@@ -109,7 +131,10 @@ func _refresh() -> void:
 			spot.set_meta("option_id", option.id)
 			spot.set_meta("area", option.get("spot", [0, 0, 60, 44]))
 			spot.pressed.connect(choose.bind(option.id))
-			_art.add_child(spot)
+			if _art.visible:
+				_art.add_child(spot)
+			else:
+				spot.queue_free()
 			_add_option_button(option.label, choose.bind(option.id), option.id)
 		_place_spots()
 		return
@@ -153,6 +178,13 @@ func _place_spots() -> void:
 			var rect := _art.to_local_rect(spot.get_meta("area"))
 			spot.position = rect.position
 			spot.size = Vector2(rect.size.x, maxf(rect.size.y, 44.0))
+
+
+func _on_stage_spot(option_id: String) -> void:
+	if option_id == "present":
+		show_presentation_list(true)
+	else:
+		choose(option_id)
 
 
 func _scroll_log_to_end() -> void:
