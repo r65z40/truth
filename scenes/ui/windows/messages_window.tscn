@@ -33,41 +33,92 @@ theme_override_constants/margin_bottom = 14
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="ListScroll" type="ScrollContainer" parent="Layout/Content/Columns"]
+[node name="ListColumn" type="VBoxContainer" parent="Layout/Content/Columns"]
 custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ListTitle" type="Label" parent="Layout/Content/Columns/ListColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "PLIS REÇUS"
+
+[node name="ListScroll" type="ScrollContainer" parent="Layout/Content/Columns/ListColumn"]
+layout_mode = 2
+size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="MessageList" type="VBoxContainer" parent="Layout/Content/Columns/ListScroll"]
+[node name="MessageList" type="VBoxContainer" parent="Layout/Content/Columns/ListColumn/ListScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
-[node name="Reader" type="PanelContainer" parent="Layout/Content/Columns"]
+[node name="Reader" type="VBoxContainer" parent="Layout/Content/Columns"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"TerminalPanel"
 
-[node name="ReaderLayout" type="VBoxContainer" parent="Layout/Content/Columns/Reader"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="MessageHeader" type="Label" parent="Layout/Content/Columns/Reader/ReaderLayout"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"HeaderLabel"
-autowrap_mode = 3
-
-[node name="Rule" type="ColorRect" parent="Layout/Content/Columns/Reader/ReaderLayout"]
-custom_minimum_size = Vector2(0, 1)
-layout_mode = 2
-color = Color(0.122, 0.42, 0.247, 1)
-
-[node name="MessageBody" type="RichTextLabel" parent="Layout/Content/Columns/Reader/ReaderLayout"]
+[node name="Letter" type="PanelContainer" parent="Layout/Content/Columns/Reader"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_type_variation = &"TerminalText"
+theme_type_variation = &"DocumentPanel"
+
+[node name="LetterScroll" type="ScrollContainer" parent="Layout/Content/Columns/Reader/Letter"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="LetterContent" type="VBoxContainer" parent="Layout/Content/Columns/Reader/Letter/LetterScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Letterhead" type="HBoxContainer" parent="Layout/Content/Columns/Reader/Letter/LetterScroll/LetterContent"]
+layout_mode = 2
+
+[node name="Ministry" type="Label" parent="Layout/Content/Columns/Reader/Letter/LetterScroll/LetterContent/Letterhead"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"DocumentLabel"
+theme_override_font_sizes/font_size = 15
+text = "MINISTÈRE DE LA SÉCURITÉ NATIONALE
+Courrier interne  //  Section 4"
+
+[node name="Stamp" type="Label" parent="Layout/Content/Columns/Reader/Letter/LetterScroll/LetterContent/Letterhead"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"StampLabel"
+text = "[ DIFFUSION RESTREINTE ]"
+
+[node name="MessageHeader" type="Label" parent="Layout/Content/Columns/Reader/Letter/LetterScroll/LetterContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentMeta"
+autowrap_mode = 3
+
+[node name="MessageSubject" type="Label" parent="Layout/Content/Columns/Reader/Letter/LetterScroll/LetterContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+theme_override_font_sizes/font_size = 19
+autowrap_mode = 3
+
+[node name="MessageBody" type="RichTextLabel" parent="Layout/Content/Columns/Reader/Letter/LetterScroll/LetterContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentText"
 bbcode_enabled = true
+fit_content = true
 selection_enabled = true
+
+[node name="EmptyHint" type="Label" parent="Layout/Content/Columns/Reader"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"MutedLabel"
+text = "Aucun pli. Le courrier de la hiérarchie arrivera ici."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3

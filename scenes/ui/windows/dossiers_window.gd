@@ -26,6 +26,8 @@ const MAX_SELECTED_FACTS := 2
 signal field_requested(case_id: String)
 ## Le joueur veut poser une pièce à côté, dans sa propre fenêtre.
 signal document_window_requested(case_id: String, document_id: String)
+## Le formulaire de conclusion demande l'avis de VERITAS.
+signal veritas_requested(case_id: String)
 
 var current_case_id := ""
 var current_document_id := ""
@@ -82,6 +84,7 @@ func _ready() -> void:
 		button.add_theme_font_size_override("font_size", 14)
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
+	_conclusion_panel.veritas_requested.connect(veritas_requested.emit)
 	_conclusion_panel.hide()
 	# La photo d'identité s'affiche dans l'en-tête de la pièce, à droite du titre.
 	_doc_title.add_sibling(_photo)

@@ -3,6 +3,12 @@
 	"base": 40,
 	"min": 1,
 	"max": 99,
+	"analysis_steps": [
+		"Chargement du dossier et des pièces versées",
+		"Croisement avec les registres de l'État",
+		"Pondération des facteurs de risque",
+		"Calcul de l'indice de conformité"
+	],
 	"categories": {
 		"state_source": {"label": "Conformité de la source (service de l'État)", "multiplier": 3},
 		"border": {"label": "Exposition frontalière", "multiplier": 2},

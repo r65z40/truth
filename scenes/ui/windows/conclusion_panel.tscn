@@ -40,12 +40,24 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TerminalPanel"
 
-[node name="VeritasAdvice" type="Label" parent="Scroll/Form/VeritasBox"]
+[node name="VeritasRow" type="HBoxContainer" parent="Scroll/Form/VeritasBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="VeritasAdvice" type="Label" parent="Scroll/Form/VeritasBox/VeritasRow"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 15
 autowrap_mode = 3
+
+[node name="VeritasButton" type="Button" parent="Scroll/Form/VeritasBox/VeritasRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_vertical = 4
+text = "CONSULTER VERITAS"
 
 [node name="ChoicesTitle" type="Label" parent="Scroll/Form"]
 layout_mode = 2

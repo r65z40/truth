@@ -59,8 +59,8 @@ scenes/
   main_menu/                  menu principal
   desk/                       bureau de l'inspecteur : fond, icônes, fenêtres, barre des tâches
   ui/terminal/                terminal + interprète de commandes
-  ui/windows/                 Dossiers, Messages, Archives, Dossier personnel, Paramètres,
-                              Terminal, pièce ouverte à part (DocumentWindow)
+  ui/windows/                 Dossiers, Courrier, VERITAS, Archives, Dossier personnel,
+                              Paramètres, Terminal, pièce ouverte à part (DocumentWindow)
   ui/crt_overlay/             filtre écran cathodique (autoload)
 ui/theme/ministry_theme.tres  thème global (couleurs, polices, styles)
 ui/shaders/crt.gdshader
@@ -151,8 +151,11 @@ calculée : pour chaque décision, **indice de conformité** = `base` + somme de
 (paramètres cachés dans `data/veritas.json`), borné entre 1 et 99. C'est un score
 institutionnel, pas une probabilité. Un facteur ne compte que si sa pièce est
 visible et, s'il a `requires_contradiction`, si l'agent a établi cette
-contradiction. `VERITAS POURQUOI` (terminal) et le formulaire de conclusion
-montrent les 3 facteurs principaux ; les multiplicateurs n'apparaissent qu'avec le
+contradiction. `VERITAS POURQUOI` (terminal) et le programme VERITAS
+(`VeritasWindow`, lancé depuis son icône ou par « CONSULTER VERITAS » dans le
+formulaire de conclusion) montrent les 3 facteurs principaux via
+`Veritas.case_report()`. Le calcul affiché (`analysis_steps` de
+`data/veritas.json`) est un décor : il ne coûte pas d'heures et ne change rien ; les multiplicateurs n'apparaissent qu'avec le
 drapeau `veritas.params_known`. `veritas.note` est une note de scénario jamais
 affichée. Un futur modèle de langage ne ferait que reformuler ces résultats,
 côté serveur.
