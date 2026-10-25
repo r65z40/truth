@@ -3,6 +3,7 @@ extends Control
 
 const DESK_SCENE := "res://scenes/desk/desk.tscn"
 const INTRO_SCENE := "res://scenes/intro/intro.tscn"
+const GALLERY_SCENE := "res://scenes/debug/scene_gallery.tscn"
 
 @onready var _continue_button: Button = %ContinueButton
 @onready var _quit_button: Button = %QuitButton
@@ -17,6 +18,7 @@ func _ready() -> void:
 	%NewGameButton.pressed.connect(_on_new_game_pressed)
 	_continue_button.pressed.connect(continue_game)
 	%SettingsButton.pressed.connect(open_settings)
+	%GalleryButton.pressed.connect(func() -> void: get_tree().change_scene_to_file(GALLERY_SCENE))
 	_settings_window.closed.connect(_settings_layer.hide)
 	_quit_button.pressed.connect(func() -> void: get_tree().quit())
 	%ConfirmYesButton.pressed.connect(start_new_game)
