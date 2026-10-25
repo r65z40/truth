@@ -82,6 +82,7 @@ func _run() -> void:
 		"test_document_windows",
 		"test_document_passages",
 		"test_desk_apps",
+		"test_news",
 		"test_music_rules",
 		"test_music_player",
 		"test_time_in_desk",
@@ -159,6 +160,43 @@ func test_document_rendering_escapes_bbcode() -> void:
 
 
 ## Passages à noter : chaque citation existe dans le texte de sa pièce, balisée une fois.
+func test_news() -> void:
+	var state := NewsWindow.current_state()
+	var first := NewsRules.edition(state)
+	check(first.articles.size() == NewsRules.MAX_ARTICLES, "une édition compte 3 articles")
+	check(first.articles[0].id == "d0_centrale_plan" and first.number == 311, "lundi : la une sur la Centrale n° 3, numéro 311")
+	check(NewsRules.edition(state).articles == first.articles, "le choix des articles est déterministe")
+	# Décision prise la veille : elle fait la une, à la manière du régime.
+	var decided := {"day_index": 1, "flags": {}, "cases": {}, "decisions": [{"case_id": "40921", "decision_id": "arrest", "day_index": 0}]}
+	var titles: Array = NewsRules.edition(decided).articles.map(func(a: Dictionary) -> String: return a.id)
+	check(titles[0] == "d1_40921_arrest", "l'arrestation de SEDLAR fait la une le lendemain")
+	decided.day_index = 2
+	titles = NewsRules.edition(decided).articles.map(func(a: Dictionary) -> String: return a.id)
+	check(not "d1_40921_arrest" in titles and "d2_horvat" in titles, "la nouvelle ne revient pas le surlendemain ; l'indice HORVAT paraît mercredi")
+	decided.decisions[0].decision_id = "close"
+	decided.day_index = 1
+	titles = NewsRules.edition(decided).articles.map(func(a: Dictionary) -> String: return a.id)
+	check(not "d1_40921_arrest" in titles and not "d1_40921_investigate" in titles, "dossier classé : le journal se tait")
+	check(NewsRules.are_conditions_met({"after_decision": {"case": "40921"}}, decided), "sans liste : n'importe quelle décision")
+	check(NewsRules.edition({"day_index": 30, "flags": {}, "cases": {}}).articles.size() == 2, "un jour sans actualité : les articles par défaut")
+	var ids := {}
+	for article in NewsRules.data().articles:
+		check(not ids.has(article.id) and article.get("headline", "") != "" and article.get("body", "") != "", "article %s complet et unique" % article.id)
+		ids[article.id] = true
+
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(desk.get_node("%NewsButton").badge == 1, "nouvelle édition : pastille sur le journal")
+	var hours := GameState.hours_used
+	desk.get_node("%NewsButton").pressed.emit()
+	check(desk.get_open_app() == "news" and desk.get_node("%NewsButton").badge == 0, "le journal s'ouvre et la pastille disparaît")
+	check(desk.windows.news.get_node("%Articles").get_node_or_null("Article_d0_centrale_plan") != null, "la une est affichée")
+	check(GameState.hours_used == hours, "lire le journal ne coûte pas d'heures")
+	desk.queue_free()
+	await get_tree().process_frame
+
+
 func test_desk_apps() -> void:
 	# VERITAS (logique pure) : rapport incomplet tant que des pièces restent à lire.
 	var view := GameState.get_case_view("40921")

@@ -240,3 +240,37 @@ jumpscares, clichés de pirates, hologrammes, action militaire, caricature.
 9. Violence montrée en crescendo, avec option d'atténuation (section 6).
 10. Pourcentages de VERITAS remplacés par un « indice de conformité » calculé
     (`VERITAS.md`).
+
+## 14. Ajouts au canon (validés par fen le 2026-10-25)
+
+Le jeu reste dans un pays fictif en 1986 ; les débats d'aujourd'hui (surveillance
+de masse, lois d'exception, propagande) y entrent par des systèmes, sans nommer de
+pays réel. Proposition complète : [Un 1986 qui parle d'aujourd'hui](https://claude.ai/artifact/SYyV9mSpehvCyiaDgHHNqd).
+Rien n'est retiré ; les 7 fins ne changent pas.
+
+1. **Programme RACCORDEMENT** (acte 2, journée 6) : VERITAS reçoit le central
+   téléphonique, les passages des cartes KT, les carnets de rationnement et les
+   fiches de paie. Nouveau type de pièce « relevé automatique » (fiable en
+   apparence, parfois faux : carte prêtée, homonyme, cabine partagée), dossiers
+   ouverts par « signalement automatique » (dont un faux positif de routine),
+   catégorie cachée « donnée raccordée » (x2), décision « signaler une erreur de
+   raccordement » (sauve le sujet, suspicion en hausse).
+2. **Incident de Halvek** (11 novembre, journée 7) : un mort à la frontière ; le
+   bulletin accuse l'Aldria, Radio Aldria parle d'un passeur abattu dans le dos.
+   La vérité (le passeur) n'est accessible que par une pièce difficile à obtenir en
+   acte 3 ; la plupart des joueurs restent dans le doute.
+3. **Décret 86-31 sur les agents de l'étranger** (deux jours après) : exposition
+   frontalière x3 au lieu de x2 dans VERITAS, nouvelle décision « signaler comme
+   agent de l'étranger », famille ou courrier d'Aldria devient aggravant, écouter
+   Radio Aldria devient un délit, le 53402 devient une affaire de sécurité
+   nationale. Durci ou assoupli en acte 3 selon les négociations sur le crédit.
+4. **Journal du matin « La Voix de Velmira »** (dès l'acte 1) : trois titres par
+   jour, la version officielle, dont les décisions de l'agent déformées ; un
+   indice discret une ou deux fois par acte ; Radio Aldria en contrepoint le soir.
+   Titres écrits à la main (`data/news.json`), choisis par `NewsRules`.
+5. **PETRAS** (ouvrier du 51307) devient l'informateur du 53517.
+6. **Bilan de fin d'acte** : une ligne « Vous avez suivi VERITAS dans n dossiers
+   sur m ».
+7. **Traduction anglaise** : le socle (section 10) est posé avant l'écriture de
+   l'acte 2.
+

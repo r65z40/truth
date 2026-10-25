@@ -1,0 +1,192 @@
+{
+	"note": "Journal du matin « La Voix de Velmira » : version officielle des faits, parfois fausse. Le moteur choisit les articles (conditions des événements, plus « day » exact et « after_decision » : décision prise la veille sur un dossier) ; rien n'est généré. Les 3 articles de plus forte priorité forment l'édition du jour.",
+	"masthead": "LA VOIX DE VELMIRA",
+	"tagline": "Quotidien d'information  //  Tirage contrôlé",
+	"first_number": 311,
+	"articles": [
+		{
+			"id": "d0_centrale_plan",
+			"section": "À LA UNE",
+			"priority": 50,
+			"conditions": {"day": 0},
+			"headline": "La Centrale thermique n° 3 dépasse son plan d'octobre de 4 %",
+			"body": "Les équipes de l'atelier des chaudières ont battu le record de production du trimestre. La Direction salue « une discipline exemplaire, contrôlée heure par heure »."
+		},
+		{
+			"id": "d0_credit",
+			"section": "ÉTRANGER",
+			"priority": 40,
+			"conditions": {"day": 0},
+			"headline": "Crédit énergétique : la délégation velmirienne ferme et confiante",
+			"body": "Les négociations avec la République d'Aldria reprennent cette semaine. « Velmira ne demande rien, elle propose un partenariat », rappelle le ministère du Commerce extérieur."
+		},
+		{
+			"id": "d0_rations",
+			"section": "NATION",
+			"priority": 30,
+			"conditions": {"day": 0},
+			"headline": "Hiver : le Bureau du ravitaillement garantit les rations",
+			"body": "Aucune baisse n'est prévue avant le printemps. Le Bureau invite les citoyens à signaler toute irrégularité dans les points de vente."
+		},
+		{
+			"id": "d1_40921_arrest",
+			"section": "À LA UNE",
+			"priority": 60,
+			"conditions": {"after_decision": {"case": "40921", "decisions": ["arrest"]}},
+			"headline": "Halvek : une filière de sorties illégales démantelée",
+			"body": "Grâce à la vigilance du Ministère, un technicien de la Centrale n° 3 a été interpellé à l'aube. Il préparait, selon nos informations, le départ clandestin de sa famille vers l'Aldria."
+		},
+		{
+			"id": "d1_40921_investigate",
+			"section": "NATION",
+			"priority": 45,
+			"conditions": {"after_decision": {"case": "40921", "decisions": ["investigate"]}},
+			"headline": "Ligne Velmira > Halvek : les contrôles renforcés",
+			"body": "La Section 4 du Ministère multiplie les vérifications des cartes de transport. « Un voyage déclaré est un voyage serein », rappelle le Bureau des transports."
+		},
+		{
+			"id": "d1_radio",
+			"section": "NATION",
+			"priority": 35,
+			"conditions": {"day": 1},
+			"headline": "Stations étrangères : le Ministère appelle au discernement",
+			"body": "Certaines radios diffusent en langue velmirienne des informations « sans source ni signature ». Le Ministère rappelle que l'écoute de ces programmes n'est pas recommandée."
+		},
+		{
+			"id": "d1_commission",
+			"section": "ÉTRANGER",
+			"priority": 30,
+			"conditions": {"day": 1},
+			"headline": "Une commission d'Aldria visitera la Centrale n° 3 le 8 décembre",
+			"body": "La visite fait partie des négociations sur le crédit énergétique. « Nos installations n'ont rien à cacher », affirme la Direction de la Centrale."
+		},
+		{
+			"id": "d2_51307_arrest",
+			"section": "À LA UNE",
+			"priority": 60,
+			"conditions": {"after_decision": {"case": "51307", "decisions": ["arrest"]}},
+			"headline": "Centrale n° 3 : un chef d'équipe indélicat écarté",
+			"body": "Le trafic de certificats de présence a pris fin. La discipline est restaurée à l'atelier des chaudières, où les ouvriers ont salué « une décision juste »."
+		},
+		{
+			"id": "d2_51307_demote",
+			"section": "NATION",
+			"priority": 45,
+			"conditions": {"after_decision": {"case": "51307", "decisions": ["demote"]}},
+			"headline": "Réorganisation de l'atelier des chaudières",
+			"body": "La Direction de la Centrale n° 3 annonce un nouveau chef d'équipe et un contrôle renforcé des horloges de pointage."
+		},
+		{
+			"id": "d2_51307_close",
+			"section": "NATION",
+			"priority": 45,
+			"conditions": {"after_decision": {"case": "51307", "decisions": ["close"]}},
+			"headline": "Bohdan ORLIK, ouvrier décoré, cité en exemple",
+			"body": "Le chef d'équipe de l'atelier des chaudières recevra la médaille du Travail en décembre. Son frère, le capitaine L. ORLIK, assistera à la cérémonie."
+		},
+		{
+			"id": "d2_horvat",
+			"section": "CARNET",
+			"priority": 25,
+			"conditions": {"day": 2},
+			"headline": "Souvenir : Milan HORVAT, chaudronnier",
+			"body": "Il y a trois mois, le 14 août, disparaissait Milan HORVAT, du Bloc 3, rue du Moulin. Ses camarades d'atelier n'oublient pas trente années de service."
+		},
+		{
+			"id": "d2_credit",
+			"section": "ÉTRANGER",
+			"priority": 40,
+			"conditions": {"day": 2},
+			"headline": "Aldria retarde sa réponse : Velmira saura passer l'hiver",
+			"body": "Le gouvernement d'Aldria demande « des garanties supplémentaires ». Le ministère du Commerce extérieur dénonce une manœuvre et rappelle que le charbon national suffit."
+		},
+		{
+			"id": "d3_52044_baker",
+			"section": "À LA UNE",
+			"priority": 60,
+			"conditions": {"after_decision": {"case": "52044", "decisions": ["arrest_baker"]}},
+			"headline": "Fraude aux rations : une gérante arrêtée rue du Moulin",
+			"body": "La gérante de la Boulangerie d'État n° 12 revendait des carnets doublés. Le Bureau du ravitaillement remercie le Ministère : « Les rations des familles sont protégées »."
+		},
+		{
+			"id": "d3_52044_bureau",
+			"section": "NATION",
+			"priority": 20,
+			"conditions": {"after_decision": {"case": "52044", "decisions": ["report_bureau"]}},
+			"headline": "Un préposé suspendu pour négligence",
+			"body": "Un employé du Bureau du ravitaillement, District 4, a été suspendu à la suite d'erreurs d'écriture. Le Bureau précise qu'aucun citoyen n'a été lésé."
+		},
+		{
+			"id": "d3_52044_close",
+			"section": "NATION",
+			"priority": 40,
+			"conditions": {"after_decision": {"case": "52044", "decisions": ["close"]}},
+			"headline": "Rue du Moulin : une simple erreur de comptage",
+			"body": "Aucune fraude n'a été constatée dans le secteur, assure le Bureau du ravitaillement. Les registres sont tenus « avec une rigueur exemplaire »."
+		},
+		{
+			"id": "d3_halm",
+			"section": "NATION",
+			"priority": 35,
+			"conditions": {"day": 3},
+			"headline": "Le directeur HALM : « La vérité est un service public »",
+			"body": "Devant les cadres du Ministère, le directeur S. HALM a appelé à « des archives exactes, complètes et définitives ». La modernisation des services sera engagée dès la semaine prochaine."
+		},
+		{
+			"id": "d3_credit",
+			"section": "ÉTRANGER",
+			"priority": 30,
+			"conditions": {"day": 3},
+			"headline": "Halvek : les deux délégations se retrouvent lundi",
+			"body": "Les experts d'Aldria et de Velmira examineront les besoins de l'hiver. La presse d'Aldria parle d'un accord « possible, sous conditions »."
+		},
+		{
+			"id": "d4_52310_arrest",
+			"section": "À LA UNE",
+			"priority": 60,
+			"conditions": {"after_decision": {"case": "52310", "decisions": ["arrest"]}},
+			"headline": "Le « réseau des poètes » : un procès public en préparation",
+			"body": "L'auteur d'un recueil qui dissimulait des consignes de passage à Halvek a été interpellé quai des Tanneurs. La Section 7 parle d'une « affaire exemplaire »."
+		},
+		{
+			"id": "d4_52310_no_code",
+			"section": "CULTURE",
+			"priority": 40,
+			"conditions": {"after_decision": {"case": "52310", "decisions": ["no_code"]}},
+			"headline": "La censure rappelle ses règles aux éditeurs",
+			"body": "Toute réédition d'un texte doit être conforme à l'édition originale approuvée. Le Service de la censure annonce une vérification des fonds des bibliothèques."
+		},
+		{
+			"id": "d4_cheminots",
+			"section": "NATION",
+			"priority": 30,
+			"conditions": {"day": 4},
+			"headline": "Journée des cheminots : la ligne de Halvek à l'honneur",
+			"body": "Quatre-vingt-dix-huit pour cent des trains sont arrivés à l'heure en octobre. Les retards restants feront l'objet « d'une étude attentive »."
+		},
+		{
+			"id": "d4_weekend",
+			"section": "NATION",
+			"priority": 25,
+			"conditions": {"day": 4},
+			"headline": "Week-end : les marchés couverts ouverts samedi",
+			"body": "Le Bureau du ravitaillement rappelle que l'achat de carnets hors des guichets officiels est un délit."
+		},
+		{
+			"id": "default_vigilance",
+			"section": "NATION",
+			"priority": 1,
+			"conditions": {},
+			"headline": "La vigilance est un devoir civique",
+			"body": "Le Ministère remercie les citoyens qui, chaque jour, signalent ce qu'ils voient. « Un pays attentif est un pays tranquille »."
+		},
+		{
+			"id": "default_weather",
+			"section": "MÉTÉO",
+			"priority": 0,
+			"conditions": {},
+			"headline": "Temps froid et sec sur Velmira",
+			"body": "Gelées matinales attendues dans les districts du nord. Les chauffages collectifs fonctionnent normalement."
+		}
+	]
+}
