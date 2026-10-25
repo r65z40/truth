@@ -3,6 +3,10 @@
 	"title": "Citoyen n° 53517",
 	"subject_name": "PETRAS, Vaclav",
 	"summary": "Signalement d'un informateur : un ouvrier de la Centrale thermique n° 3 s'absenterait chaque jeudi pour des réunions, revenant chargé de paquets.",
+	"briefing": {
+		"objective": "Établir si les absences du jeudi de l'ouvrier PETRAS cachent une activité clandestine, ou autre chose.",
+		"context": "Un informateur de la Milice (« CHAUDRON ») l'a dénoncé pour des « réunions » hebdomadaires. PETRAS travaille à la Centrale n° 3 et a une épouse invalide."
+	},
 	"priority": "ordinaire",
 	"field_scene": "search_53517",
 	"documents": [

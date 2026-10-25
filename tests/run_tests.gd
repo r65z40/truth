@@ -62,6 +62,7 @@ func _run() -> void:
 		"test_case_53118",
 		"test_case_53402",
 		"test_case_53517",
+		"test_case_briefings",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -1180,6 +1181,14 @@ func test_case_53517() -> void:
 			"retourner le signalement vise l'informateur et fâche la Milice")
 
 
+## Chaque dossier doit expliquer ce qu'on cherche (OBJET) et pourquoi il est là.
+func test_case_briefings() -> void:
+	for case_id in CaseLibrary.get_case_ids():
+		var briefing: Dictionary = CaseLibrary.get_case(case_id).get("briefing", {})
+		check(briefing.get("objective", "") != "", "le dossier %s a un objet d'enquête" % case_id)
+		check(briefing.get("context", "") != "", "le dossier %s explique pourquoi il est là" % case_id)
+
+
 func _factor_by_id(factors: Array, id: String) -> Dictionary:
 	for factor in factors:
 		if factor.get("id", "") == id:
@@ -1594,7 +1603,7 @@ func test_investigation_and_conclusion_flow() -> void:
 	dossiers.get_node("%NotebookList").get_node("Noted_f_log_trip").pressed.emit()
 	dossiers.get_node("%ConfrontButton").pressed.emit()
 	check(dossiers.get_node("%ConfrontResult").text.begins_with("CONTRADICTION"), "présence et train : contradiction établie")
-	check(dossiers.get_node("%ProgressLabel").text.contains("Contradictions : 1"), "le compteur de contradictions s'affiche")
+	check(dossiers.get_node("%ProgressLabel").text.contains("1 contradiction établie"), "le compteur de contradictions s'affiche")
 
 	dossiers.get_node("%ConclusionButton").pressed.emit()
 	var conclusion: Node = dossiers.get_node("%ConclusionPanel")
@@ -1971,8 +1980,12 @@ func test_document_windows() -> void:
 	check(not tabs.get_node("Tab_identity").text.contains("à lire") and tabs.get_node("Tab_work_report").text.contains("(à lire)"),
 			"les pièces non lues sont marquées « à lire »")
 	check(tabs.get_node("Tab_work_report").theme_type_variation == &"DocumentTabNew", "pièce à lire mise en avant")
-	check(dossiers.get_node("%ProgressLabel").text.begins_with("[ ] Pièces lues : 1/4") \
-			and dossiers.get_node("%ProgressLabel").text.contains("[ ] Rapport"), "avancement en quatre étapes")
+	check(dossiers.get_node("%ProgressLabel").text.contains("1/4 pièces lues") \
+			and dossiers.get_node("%ProgressLabel").text.contains("0 contradiction"), "avancement lisible en une ligne")
+	check(dossiers.get_node("%ObjectiveLabel").visible \
+			and dossiers.get_node("%ObjectiveLabel").text.contains("OBJET DE L'ENQUÊTE"), "le briefing affiche l'objet de l'enquête")
+	check(dossiers.get_node("%ActionsHelp").visible \
+			and dossiers.get_node("%ActionsHelp").text.contains("confronter"), "les actions possibles sont expliquées sur les premières missions")
 
 	dossiers.select_document("work_report")
 	dossiers.open_current_aside()

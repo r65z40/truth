@@ -48,7 +48,9 @@ var _photo := IdPhoto.new()
 @onready var _confront_button: Button = %ConfrontButton
 @onready var _confront_result: Label = %ConfrontResult
 @onready var _case_header: Label = %CaseHeader
+@onready var _objective_label: Label = %ObjectiveLabel
 @onready var _case_summary: Label = %CaseSummary
+@onready var _actions_help: Label = %ActionsHelp
 ## Pièces du dossier, en liste verticale sous les dossiers (défile si besoin).
 @onready var _document_tabs: VBoxContainer = %DocumentTabs
 @onready var _document_tabs_scroll: ScrollContainer = %DocumentTabsScroll
@@ -134,7 +136,7 @@ func select_case(case_id: String) -> void:
 		_set_confront_result("")
 		last_confront_failed = false
 	current_case_id = case_id
-	_case_summary.text = case_data.get("summary", "")
+	_apply_briefing(case_data)
 	_build_document_tabs(case_data)
 	_conclusion_panel.hide()
 	_show_case_view(true)
@@ -145,6 +147,40 @@ func select_case(case_id: String) -> void:
 			first_document = document.id
 			break
 	select_document(first_document)
+
+
+## Briefing en tête du dossier : ce qu'on cherche (OBJET) et pourquoi ce dossier
+## arrive (CONTEXTE). À défaut de bloc "briefing", on retombe sur le résumé.
+func _apply_briefing(case_data: Dictionary) -> void:
+	var briefing: Dictionary = case_data.get("briefing", {})
+	var objective: String = briefing.get("objective", "")
+	var context: String = briefing.get("context", case_data.get("summary", ""))
+	_objective_label.text = "OBJET DE L'ENQUÊTE :  " + objective
+	_objective_label.visible = objective != ""
+	_case_summary.text = ("POURQUOI CE DOSSIER :  " + context) if context != "" else ""
+	_case_summary.visible = context != ""
+
+
+## Rappel des actions possibles, surtout utile sur les premières missions (acte 1).
+## Masqué ensuite pour alléger l'écran.
+func _refresh_actions_help() -> void:
+	if current_case_id == "" or GameState.day_index >= 5:
+		_actions_help.visible = false
+		return
+	var parts: PackedStringArray = [
+		"lire les pièces",
+		"cliquer les passages soulignés pour les noter",
+		"confronter deux éléments du carnet",
+	]
+	if GameState.is_feature_unlocked("request_document") and not GameState.get_requestable_documents(current_case_id).is_empty():
+		parts.append("DEMANDER une pièce complémentaire")
+	if GameState.is_feature_unlocked("consult_superior") and not CaseLibrary.get_case(current_case_id).get("consultation", {}).is_empty():
+		parts.append("CONSULTER votre supérieur")
+	var scene := GameState.get_field_scene(current_case_id)
+	if not scene.is_empty() and GameState.is_feature_unlocked("field_work"):
+		parts.append("vous rendre sur le terrain (%s)" % scene.get("button", "TERRAIN"))
+	_actions_help.text = "Vous pouvez : " + " · ".join(parts) + "."
+	_actions_help.visible = true
 
 
 func select_document(document_id: String) -> void:
@@ -399,6 +435,7 @@ func _refresh_all() -> void:
 	_progress_label.text = progress_text(case_data, case_state)
 	var can_decide := GameState.can_decide(current_case_id)
 	_refresh_actions(can_decide)
+	_refresh_actions_help()
 	_conclusion_button.disabled = not can_decide
 	_conclusion_button.text = "RÉDIGER LA CONCLUSION" if can_decide else "RAPPORT TRANSMIS"
 	_refresh_facts(case_data)
@@ -407,22 +444,20 @@ func _refresh_all() -> void:
 	_refresh_case_list()
 
 
-## Avancement de l'enquête en quatre étapes cochées : lire, noter, confronter, conclure.
+## Avancement de l'enquête, en une ligne lisible : lecture, carnet, contradictions.
 static func progress_text(case_data: Dictionary, case_state: Dictionary) -> String:
+	if case_state.decision != "":
+		return "Avancement : rapport transmis."
 	var read: int = case_state.viewed_documents.size()
 	var total: int = case_data.documents.size()
 	var noted: int = case_state.noted_facts.size()
 	var found: int = case_state.contradictions_found.size()
-	var steps := [
-		[read >= total, "Pièces lues : %d/%d" % [read, total]],
-		[noted > 0, "Éléments notés : %d" % noted],
-		[found > 0, "Contradictions : %d" % found],
-		[case_state.decision != "", "Rapport"],
+	var parts: PackedStringArray = [
+		"%d/%d pièces lues" % [read, total],
+		"%d élément%s noté%s" % [noted, "s" if noted > 1 else "", "s" if noted > 1 else ""],
+		"%d contradiction%s établie%s" % [found, "s" if found > 1 else "", "s" if found > 1 else ""],
 	]
-	var parts: PackedStringArray = []
-	for step in steps:
-		parts.append(("[x] " if step[0] else "[ ] ") + step[1])
-	return "   ".join(parts)
+	return "Avancement : " + "  ·  ".join(parts) + "."
 
 
 # --- Actions qui coûtent du temps --------------------------------------------
@@ -525,7 +560,7 @@ func _refresh_notebook() -> void:
 		_notebook_list.add_child(button)
 	_confront_button.disabled = selected_facts.size() != MAX_SELECTED_FACTS
 	if case_state.noted_facts.is_empty() and _confront_result.text == "":
-		_set_confront_result("Notez des éléments dans les pièces, puis sélectionnez-en deux ici (ou glissez l'un sur l'autre) pour les confronter.")
+		_set_confront_result("Notez des éléments (passages soulignés), puis sélectionnez-en deux à confronter.")
 	elif selected_facts.size() == 1:
 		_set_confront_result("Sélectionnez un second élément à confronter.")
 
@@ -606,7 +641,9 @@ func _refresh_tab_states() -> void:
 
 func _show_case_view(has_case: bool) -> void:
 	_case_header.visible = has_case
+	_objective_label.visible = has_case
 	_case_summary.visible = has_case
+	_actions_help.visible = has_case
 	_document_tabs_scroll.visible = has_case
 	_open_aside_button.visible = has_case
 	%PiecesTitle.visible = has_case

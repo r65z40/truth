@@ -3,6 +3,10 @@
 	"title": "Citoyenne n° 52044",
 	"subject_name": "KOVAC, Zora",
 	"summary": "Signalement de l'Inspection du commerce : la Boulangerie d'État n° 12 encaisse beaucoup plus de tickets de pain que le quartier ne compte d'habitants.",
+	"briefing": {
+		"objective": "Comprendre pourquoi la Boulangerie n° 12 encaisse plus de tickets de pain que le quartier ne compte d'habitants.",
+		"context": "L'Inspection du commerce a relevé l'écart. La gérante, Zora KOVAC, tient seule le commerce depuis des années."
+	},
 	"priority": "ordinaire",
 	"documents": [
 		{
