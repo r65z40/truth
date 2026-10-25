@@ -61,6 +61,7 @@ func _run() -> void:
 		"test_ministry_record",
 		"test_case_53118",
 		"test_case_53402",
+		"test_case_53517",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -601,7 +602,7 @@ func test_evenings() -> void:
 
 
 func test_field_scenes_are_valid() -> void:
-	for case_id in ["40921", "51307", "52044", "52310", "53402"]:
+	for case_id in ["40921", "51307", "52044", "52310", "53402", "53517"]:
 		var case_data := CaseLibrary.get_case(case_id)
 		var scene := FieldRules.scene_for_case(case_data)
 		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
@@ -1025,6 +1026,44 @@ func test_case_53402() -> void:
 			"transmettre sans avoir vérifié qui voyageait")
 	check(DecisionRules.resolve(case_data, proved, "clear").flags.get("halm.defied", false),
 			"classer une affaire de frontière sous le décret défie HALM")
+
+
+func test_case_53517() -> void:
+	var case_data := CaseLibrary.get_case("53517")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 53517 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS présume l'informateur fiable et pousse la transmission.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "transmit" and advice.confidence == 72,
+			"VERITAS recommande la transmission (indice %d)" % advice.confidence)
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# Raccordement contestable : l'écarter ne renverse pas la recommandation.
+	var link := _factor_by_id(Veritas.scores(case_data).transmit.factors, "network")
+	check(link.category == "linked" and link.get("contestable", false), "le raccordement est une donnée raccordée contestable")
+	check(Veritas.recommendation(case_data, {"contested_factors": ["network"]}).decision_id == "transmit",
+			"même sans le raccordement, VERITAS maintient la transmission")
+	# La perquisition disculpe (file du marché noir), mais pèse peu dans l'indice.
+	check(Veritas.scores(case_data, {"contradictions_found": ["petras.thursdays"]}).dismiss.score == 53,
+			"la perquisition fait monter le classement à 53, sous la transmission")
+	# Contradiction : le signalement contre le procès-verbal de perquisition.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("petras.thursdays" in keys, "le signalement et la perquisition se contredisent sur les jeudis")
+	# La fiche de l'informateur (CHAUDRON = ORLIK) n'existe qu'une fois demandée.
+	var state := GameState.get_condition_state()
+	state.cases = {"53517": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "informer_file" in visible, "la fiche de l'informateur est invisible avant la demande")
+	# Issues de décision selon la contradiction établie par la perquisition.
+	var proved := {"contradictions_found": ["petras.thursdays"]}
+	var blind := {"contradictions_found": []}
+	check(DecisionRules.resolve(case_data, blind, "transmit").response_id == "transmit_blind",
+			"transmettre sur la seule parole de l'informateur")
+	var knowing := DecisionRules.resolve(case_data, proved, "transmit")
+	check(knowing.response_id == "transmit_knowing" and knowing.flags.get("53517.innocent_condemned", false),
+			"transmettre malgré la perquisition condamne sciemment un innocent")
+	var turned := DecisionRules.resolve(case_data, proved, "turn")
+	check(turned.flags.get("53517.informer_reported", false) and turned.flags.get("milice.hostile", false),
+			"retourner le signalement vise l'informateur et fâche la Milice")
 
 
 func _factor_by_id(factors: Array, id: String) -> Dictionary:

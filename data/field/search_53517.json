@@ -1,0 +1,95 @@
+{
+	"note": "Perquisition chez PETRAS (docs/design/TERRAIN.md). Réutilise le décor benes_flat (appartement modeste). spot : zone cliquable (repère 640 x 300). Chaque choix pose field.search_53517.<id> ; les éléments du procès-verbal petras_search en dépendent.",
+	"id": "search_53517",
+	"case_id": "53517",
+	"type": "search",
+	"button": "PERQUISITION",
+	"title": "PERQUISITION  //  BLOC 14, ESCALIER D, APP. 7",
+	"time_action": "search_home",
+	"turns": 4,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"53517"
+			]
+		}
+	],
+	"start_flags": {
+		"53517.home_searched": true
+	},
+	"art": "benes_flat",
+	"intro": "Un logement d'une pièce, quai des Tanneurs. Marta PETRAS est allongée, le souffle court ; elle ne se lève pas. Le petit garçon se tient devant elle, comme pour la cacher.\n\n« Mon mari est à l'usine. Qu'est-ce que vous cherchez chez nous ? »\n\nVous avez le temps de fouiller quatre endroits.",
+	"options": [
+		{
+			"id": "pantry",
+			"label": "Le placard de cuisine",
+			"spot": [
+				40,
+				150,
+				130,
+				55
+			],
+			"text": "Derrière deux boîtes vides, des denrées sans étiquette d'État : du sucre, du café, de la farine, enveloppés dans du papier journal. Glissé au fond, un jeton numéroté de file d'attente, daté d'un jeudi.",
+			"note": [
+				"f_psrch_food"
+			]
+		},
+		{
+			"id": "drawer",
+			"label": "Le tiroir près du lit",
+			"spot": [
+				430,
+				170,
+				160,
+				50
+			],
+			"text": "Une ordonnance au nom de Marta PETRAS : un traitement cardiaque, avec la mention « non disponible en pharmacie d'État ». Le papier est usé d'avoir été montré.",
+			"note": [
+				"f_psrch_prescription"
+			]
+		},
+		{
+			"id": "box",
+			"label": "La boîte sur l'étagère",
+			"spot": [
+				205,
+				115,
+				75,
+				70
+			],
+			"text": "Des reçus du mont-de-piété de la rue Basse : une alliance et une montre d'homme, engagées les 10 et 24 octobre. Aucune n'a été dégagée.",
+			"note": [
+				"f_psrch_pawn"
+			]
+		},
+		{
+			"id": "shelf",
+			"label": "Sous le plancher, près du poêle",
+			"spot": [
+				280,
+				150,
+				90,
+				60
+			],
+			"text": "Vous soulevez la lame que le gamin regardait. Dessous : rien. Pas un tract, pas une liste, pas une adresse. Seulement de la poussière et un vieux jouet en fer-blanc.",
+			"note": [
+				"f_psrch_clean"
+			]
+		},
+		{
+			"id": "child",
+			"label": "Le coin du petit",
+			"spot": [
+				520,
+				95,
+				90,
+				80
+			],
+			"text": "Un cahier d'écolier et, dessus, une liste au crayon d'une main d'enfant : « pour maman : médicament, oranges, le train de papa ». L'enfant vous reprend le cahier des mains sans un mot.",
+			"set_flags": {
+				"53517.family_humiliated": true
+			}
+		}
+	],
+	"outro": "Marta PETRAS n'a pas bougé du lit. En partant, vous entendez le petit lui demander tout bas si on va revenir. Elle ne répond pas."
+}

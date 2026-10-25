@@ -49,7 +49,8 @@ Proposition de design validée par fen (voir le document partagé du 25/10). Ord
 | 3 | Pression hiérarchique | Première forme : directive de HALM (message + drapeau) sur 53118. Choix interactif à 4 branches : à venir |
 | 4a | Dossier 53118 La Chorale (+ incident de Halvek, décret 86-31) | Codé, testé |
 | 4b | Dossier 53402 Le Cheminot (frontière, décret 86-31, audition de terrain) | Codé, testé |
-| 4c | Dossiers 53517, 53760 + révélation du 40921 | À faire |
+| 4c | Dossier 53517 L'Informateur (recoupement 51307, perquisition, CHAUDRON = ORLIK) | Codé, testé |
+| 4d | Dossier 53760 L'Archive + révélation du 40921 | À faire |
 | 5 | Bonus : audit VERITAS contestable à l'écran, radio étrangère | À faire |
 
 Tout reste déterministe : les facteurs (dont `linked`) sont écrits à la main dans

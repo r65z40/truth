@@ -765,6 +765,85 @@
 				"subject": "(sans objet)",
 				"body": "Vous avez classé Brenec pour « défaillance technique », en pleine période de décret. Je sais ce que ça veut dire : vous avez lu les permis, pas le raccordement.\n\nLe vieux garde sa voie et son train. Mais la garde-frontière a écrit à la Direction pour demander un nom. Quand ils ne l'obtiennent pas, ils le cherchent plus haut. Faites attention à votre propre dossier. Ne me nommez pas. K."
 			}
+		},
+		{
+			"id": "assign_53517",
+			"conditions": {
+				"min_day": 8
+			},
+			"assign_cases": [
+				"53517"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier : n° 53517",
+				"body": "Inspecteur,\n\nLa Milice du District 9 transmet le signalement d'un de ses informateurs contre un ouvrier de la Centrale thermique n° 3, un certain PETRAS. Absences hebdomadaires, « paquets », le tableau habituel.\n\nLe dossier 53517 vous est attribué. Le nom de la Centrale ne vous est pas inconnu. Lisez avant de conclure, et regardez qui signale.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "milice_pressure_53517",
+			"conditions": {
+				"min_day": 8
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"milice.pressure_53517": true
+			},
+			"message": {
+				"from": "Liaison Milice, District 9",
+				"subject": "Signalement CHAUDRON — suivi attendu",
+				"body": "Inspecteur,\n\nLe signalement contre l'ouvrier PETRAS vient d'un de nos informateurs réguliers. Nous attendons que la Section 4 lui donne la suite qu'il mérite.\n\nUn informateur qui voit ses signalements classés cesse de signaler. Nous comptons sur votre coopération.\n\nLiaison Milice, District 9"
+			}
+		},
+		{
+			"id": "53517_reminder",
+			"conditions": {
+				"min_day": 10,
+				"undecided_cases": [
+					"53517"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"message": {
+				"from": "Liaison Milice, District 9",
+				"subject": "Dossier 53517 : en attente de suite",
+				"body": "Inspecteur,\n\nLe signalement CHAUDRON est toujours sans réponse. La Milice n'apprécie pas que ses informateurs soient laissés sans suite.\n\nConcluez le dossier PETRAS.\n\nLiaison Milice, District 9"
+			}
+		},
+		{
+			"id": "53517_arrested_note",
+			"conditions": {
+				"min_day": 9,
+				"requires_flags": [
+					"53517.petras_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Requête de Marta PETRAS",
+				"body": "Monsieur l'Inspecteur,\n\nOn a emmené mon mari. Il ne faisait que faire la queue, le jeudi, pour mon médicament et pour que le petit mange autre chose que des pommes de terre.\n\nJe ne peux pas me lever. La pension d'invalidité est suspendue tant que dure « l'enquête ». Je ne sais pas comment nous allons tenir l'hiver.\n\nMarta PETRAS\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "53517_turned_note",
+			"conditions": {
+				"min_day": 9,
+				"requires_flags": [
+					"53517.informer_reported"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
+				"subject": "(sans objet)",
+				"body": "Vous avez retourné le signalement de CHAUDRON contre lui. Peu d'inspecteurs comprennent qu'un informateur ment aussi, surtout quand il a quelque chose à cacher.\n\nORLIK voulait noyer son propre dossier sous celui d'un pauvre bougre. Vous l'avez vu. Mais la Milice protège ses hommes : vous venez de vous faire un ennemi qui porte l'uniforme. Ne me nommez pas. K."
+			}
 		}
 	]
 }
