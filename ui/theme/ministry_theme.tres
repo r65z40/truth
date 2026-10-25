@@ -1,5 +1,7 @@
 [gd_resource type="Theme" format=3]
 
+[ext_resource type="Script" path="res://scripts/ui/bevel_style_box.gd" id="bevel"]
+
 ; Palette (see ARCHITECTURE.md > Direction visuelle) :
 ;   fond        #0b0d0c   anthracite  #1b1f1e / #262b2a   bordure #3d4442
 ;   phosphore   #3ce07a   phosphore sombre #1f6b3f
@@ -300,6 +302,163 @@ content_margin_bottom = 6.0
 
 [sub_resource type="StyleBoxEmpty" id="sb_empty"]
 
+
+; Bureau à fenêtres : reliefs gris chaud et barres vert-de-gris (dessinés par BevelStyleBox).
+
+[sub_resource type="StyleBox" id="sb_desk_window"]
+script = ExtResource("bevel")
+face = Color(0.62, 0.6, 0.55, 1)
+light = Color(0.88, 0.86, 0.8, 1)
+shadow = Color(0.38, 0.37, 0.34, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+fill = Color(0.082, 0.094, 0.09, 1)
+frame_width = 4
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="sb_title_active"]
+bg_color = Color(0.17, 0.34, 0.3, 1)
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="sb_title_inactive"]
+bg_color = Color(0.36, 0.37, 0.35, 1)
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBox" id="sb_bevel_button"]
+script = ExtResource("bevel")
+face = Color(0.62, 0.6, 0.55, 1)
+light = Color(0.88, 0.86, 0.8, 1)
+shadow = Color(0.38, 0.37, 0.34, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBox" id="sb_bevel_button_hover"]
+script = ExtResource("bevel")
+face = Color(0.7, 0.68, 0.63, 1)
+light = Color(0.92, 0.9, 0.85, 1)
+shadow = Color(0.42, 0.41, 0.38, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBox" id="sb_bevel_button_pressed"]
+script = ExtResource("bevel")
+face = Color(0.62, 0.6, 0.55, 1)
+light = Color(0.88, 0.86, 0.8, 1)
+shadow = Color(0.38, 0.37, 0.34, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+sunken = true
+content_margin_left = 11.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 3.0
+
+[sub_resource type="StyleBox" id="sb_taskbar"]
+script = ExtResource("bevel")
+face = Color(0.62, 0.6, 0.55, 1)
+light = Color(0.88, 0.86, 0.8, 1)
+shadow = Color(0.38, 0.37, 0.34, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBox" id="sb_start_menu"]
+script = ExtResource("bevel")
+face = Color(0.62, 0.6, 0.55, 1)
+light = Color(0.88, 0.86, 0.8, 1)
+shadow = Color(0.38, 0.37, 0.34, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBox" id="sb_sunken_field"]
+script = ExtResource("bevel")
+face = Color(0.62, 0.6, 0.55, 1)
+light = Color(0.88, 0.86, 0.8, 1)
+shadow = Color(0.38, 0.37, 0.34, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+sunken = true
+content_margin_left = 10.0
+content_margin_top = 2.0
+content_margin_right = 10.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxEmpty" id="sb_flat_item"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="sb_flat_item_hover"]
+bg_color = Color(0.17, 0.34, 0.3, 1)
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxEmpty" id="sb_desktop_icon"]
+content_margin_left = 4.0
+content_margin_top = 6.0
+content_margin_right = 4.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="sb_desktop_icon_hover"]
+bg_color = Color(0.17, 0.34, 0.3, 0.6)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.88, 0.86, 0.8, 0.5)
+content_margin_left = 4.0
+content_margin_top = 6.0
+content_margin_right = 4.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="sb_icon_badge"]
+bg_color = Color(0.72, 0.16, 0.14, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.07, 0.07, 0.06, 1)
+content_margin_left = 5.0
+content_margin_top = 0.0
+content_margin_right = 5.0
+content_margin_bottom = 0.0
+
+[sub_resource type="StyleBoxFlat" id="sb_gauge_bg"]
+bg_color = Color(0.082, 0.094, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.38, 0.37, 0.34, 1)
+
+[sub_resource type="StyleBoxFlat" id="sb_gauge_fill"]
+bg_color = Color(0.17, 0.34, 0.3, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.082, 0.094, 0.09, 1)
+
 [resource]
 default_font = SubResource("font_mono")
 default_font_size = 19
@@ -418,3 +577,124 @@ TopBar/base_type = &"PanelContainer"
 TopBar/styles/panel = SubResource("sb_top_bar")
 WindowFrame/base_type = &"PanelContainer"
 WindowFrame/styles/panel = SubResource("sb_window")
+DesktopWindow/base_type = &"PanelContainer"
+DesktopWindow/styles/panel = SubResource("sb_desk_window")
+TitleBarActive/base_type = &"PanelContainer"
+TitleBarActive/styles/panel = SubResource("sb_title_active")
+TitleBarInactive/base_type = &"PanelContainer"
+TitleBarInactive/styles/panel = SubResource("sb_title_inactive")
+TitleLabel/base_type = &"Label"
+TitleLabel/colors/font_color = Color(0.95, 0.93, 0.87, 1)
+TitleLabel/fonts/font = SubResource("font_mono_bold")
+TitleLabel/font_sizes/font_size = 16
+TitleStamp/base_type = &"Label"
+TitleStamp/colors/font_color = Color(0.93, 0.6, 0.5, 1)
+TitleStamp/font_sizes/font_size = 13
+Taskbar/base_type = &"PanelContainer"
+Taskbar/styles/panel = SubResource("sb_taskbar")
+StartMenu/base_type = &"PanelContainer"
+StartMenu/styles/panel = SubResource("sb_start_menu")
+TaskbarLabel/base_type = &"Label"
+TaskbarLabel/colors/font_color = Color(0.1, 0.09, 0.08, 1)
+TaskbarLabel/font_sizes/font_size = 15
+TaskbarField/base_type = &"PanelContainer"
+TaskbarField/styles/panel = SubResource("sb_sunken_field")
+IconBadge/base_type = &"Label"
+IconBadge/colors/font_color = Color(0.95, 0.93, 0.87, 1)
+IconBadge/fonts/font = SubResource("font_mono_bold")
+IconBadge/font_sizes/font_size = 13
+IconBadge/styles/normal = SubResource("sb_icon_badge")
+TimeGauge/base_type = &"ProgressBar"
+TimeGauge/styles/background = SubResource("sb_gauge_bg")
+TimeGauge/styles/fill = SubResource("sb_gauge_fill")
+Desktop/colors/wallpaper = Color(0.12, 0.16, 0.145, 1)
+Desktop/colors/pattern = Color(0.15, 0.2, 0.18, 1)
+Desktop/colors/emblem = Color(0.2, 0.26, 0.235, 1)
+PixelIcon/colors/ink = Color(0.17, 0.14, 0.11, 1)
+PixelIcon/colors/paper = Color(0.86, 0.8, 0.68, 1)
+PixelIcon/colors/paper_dark = Color(0.7, 0.63, 0.5, 1)
+PixelIcon/colors/folder = Color(0.62, 0.5, 0.3, 1)
+PixelIcon/colors/wood = Color(0.27, 0.18, 0.12, 1)
+PixelIcon/colors/alert = Color(0.72, 0.16, 0.14, 1)
+PixelIcon/colors/accent = Color(0.235, 0.878, 0.478, 1)
+PixelIcon/colors/lamp = Color(0.93, 0.78, 0.42, 1)
+PixelIcon/colors/skin = Color(0.78, 0.68, 0.55, 1)
+PixelIcon/colors/cloth = Color(0.2, 0.25, 0.33, 1)
+PixelIcon/colors/metal = Color(0.43, 0.46, 0.44, 1)
+PixelIcon/colors/screen = Color(0.086, 0.106, 0.1, 1)
+TitleButton/base_type = &"Button"
+TitleButton/colors/font_color = Color(0.1, 0.09, 0.08, 1)
+TitleButton/colors/font_focus_color = Color(0.1, 0.09, 0.08, 1)
+TitleButton/colors/font_disabled_color = Color(0.1, 0.09, 0.08, 1)
+TitleButton/colors/font_hover_color = Color(0.1, 0.09, 0.08, 1)
+TitleButton/colors/font_pressed_color = Color(0.1, 0.09, 0.08, 1)
+TitleButton/colors/font_hover_pressed_color = Color(0.1, 0.09, 0.08, 1)
+TitleButton/font_sizes/font_size = 16
+TitleButton/fonts/font = SubResource("font_mono_bold")
+TitleButton/styles/normal = SubResource("sb_bevel_button")
+TitleButton/styles/hover = SubResource("sb_bevel_button_hover")
+TitleButton/styles/pressed = SubResource("sb_bevel_button_pressed")
+TitleButton/styles/hover_pressed = SubResource("sb_bevel_button_pressed")
+TitleButton/styles/disabled = SubResource("sb_bevel_button")
+TitleButton/styles/focus = SubResource("sb_empty")
+TaskButton/base_type = &"Button"
+TaskButton/colors/font_color = Color(0.1, 0.09, 0.08, 1)
+TaskButton/colors/font_focus_color = Color(0.1, 0.09, 0.08, 1)
+TaskButton/colors/font_disabled_color = Color(0.1, 0.09, 0.08, 1)
+TaskButton/colors/font_hover_color = Color(0.1, 0.09, 0.08, 1)
+TaskButton/colors/font_pressed_color = Color(0.1, 0.09, 0.08, 1)
+TaskButton/colors/font_hover_pressed_color = Color(0.1, 0.09, 0.08, 1)
+TaskButton/font_sizes/font_size = 15
+TaskButton/styles/normal = SubResource("sb_bevel_button")
+TaskButton/styles/hover = SubResource("sb_bevel_button_hover")
+TaskButton/styles/pressed = SubResource("sb_bevel_button_pressed")
+TaskButton/styles/hover_pressed = SubResource("sb_bevel_button_pressed")
+TaskButton/styles/disabled = SubResource("sb_bevel_button")
+TaskButton/styles/focus = SubResource("sb_empty")
+StartButton/base_type = &"Button"
+StartButton/colors/font_color = Color(0.1, 0.09, 0.08, 1)
+StartButton/colors/font_focus_color = Color(0.1, 0.09, 0.08, 1)
+StartButton/colors/font_disabled_color = Color(0.1, 0.09, 0.08, 1)
+StartButton/colors/font_hover_color = Color(0.1, 0.09, 0.08, 1)
+StartButton/colors/font_pressed_color = Color(0.1, 0.09, 0.08, 1)
+StartButton/colors/font_hover_pressed_color = Color(0.1, 0.09, 0.08, 1)
+StartButton/font_sizes/font_size = 15
+StartButton/fonts/font = SubResource("font_mono_bold")
+StartButton/styles/normal = SubResource("sb_bevel_button")
+StartButton/styles/hover = SubResource("sb_bevel_button_hover")
+StartButton/styles/pressed = SubResource("sb_bevel_button_pressed")
+StartButton/styles/hover_pressed = SubResource("sb_bevel_button_pressed")
+StartButton/styles/disabled = SubResource("sb_bevel_button")
+StartButton/styles/focus = SubResource("sb_empty")
+StartItem/base_type = &"Button"
+StartItem/colors/font_color = Color(0.1, 0.09, 0.08, 1)
+StartItem/colors/font_focus_color = Color(0.1, 0.09, 0.08, 1)
+StartItem/colors/font_disabled_color = Color(0.1, 0.09, 0.08, 1)
+StartItem/colors/font_hover_color = Color(0.95, 0.93, 0.87, 1)
+StartItem/colors/font_pressed_color = Color(0.95, 0.93, 0.87, 1)
+StartItem/colors/font_hover_pressed_color = Color(0.95, 0.93, 0.87, 1)
+StartItem/font_sizes/font_size = 16
+StartItem/styles/normal = SubResource("sb_flat_item")
+StartItem/styles/hover = SubResource("sb_flat_item_hover")
+StartItem/styles/pressed = SubResource("sb_flat_item_hover")
+StartItem/styles/hover_pressed = SubResource("sb_flat_item_hover")
+StartItem/styles/disabled = SubResource("sb_flat_item")
+StartItem/styles/focus = SubResource("sb_empty")
+DesktopIcon/base_type = &"Button"
+DesktopIcon/colors/font_color = Color(0.95, 0.93, 0.87, 1)
+DesktopIcon/colors/font_focus_color = Color(0.95, 0.93, 0.87, 1)
+DesktopIcon/colors/font_disabled_color = Color(0.95, 0.93, 0.87, 1)
+DesktopIcon/colors/font_hover_color = Color(0.95, 0.93, 0.87, 1)
+DesktopIcon/colors/font_pressed_color = Color(0.95, 0.93, 0.87, 1)
+DesktopIcon/colors/font_hover_pressed_color = Color(0.95, 0.93, 0.87, 1)
+DesktopIcon/font_sizes/font_size = 15
+DesktopIcon/styles/normal = SubResource("sb_desktop_icon")
+DesktopIcon/styles/hover = SubResource("sb_desktop_icon_hover")
+DesktopIcon/styles/pressed = SubResource("sb_desktop_icon_hover")
+DesktopIcon/styles/hover_pressed = SubResource("sb_desktop_icon_hover")
+DesktopIcon/styles/disabled = SubResource("sb_desktop_icon")
+DesktopIcon/styles/focus = SubResource("sb_empty")
+DesktopIcon/colors/font_outline_color = Color(0.04, 0.05, 0.045, 1)
+DesktopIcon/constants/outline_size = 5
+DesktopIcon/constants/icon_max_width = 0
+DesktopIcon/constants/h_separation = 2

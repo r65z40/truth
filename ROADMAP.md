@@ -77,7 +77,16 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Introduction illustrée en 4 pages
 - [x] Bulle d'aide de MAZUR qui montre où cliquer, conseils propres au premier dossier
 - [x] Première journée allégée, fonctions débloquées le lendemain
-- [ ] Écran principal plus visuel (bureau dessiné ou terminal allégé : choix de fen)
+- [x] Écran principal plus visuel : remplacé par la refonte « bureau à fenêtres » ci-dessous
+
+## En cours : interface « bureau à fenêtres » (validée par fen le 25.10, proposition `interface_v2.md` du projet)
+
+- [x] Étape 1 : fond à l'emblème, icônes (pastilles), fenêtres déplaçables, superposables,
+      réductibles et agrandissables, barre des tâches, menu MINISTÈRE, terminal en fenêtre,
+      plein écran sur petit écran, icônes en pixels par type de pièce
+- [ ] Étape 2 : le dossier en classeur, chaque pièce dans sa propre fenêtre
+- [ ] Étape 3 : passages à surligner dans le texte (`quote`), carnet à fiches et glisser-déposer
+- [ ] Étape 4 : Courrier, VERITAS, Archives, Dossier personnel au nouveau style ; aide en info-bulles
 
 ## En cours : le terrain (validé par fen le 25.10, `docs/design/TERRAIN.md`)
 

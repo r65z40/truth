@@ -14,6 +14,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 window_title = "ARCHIVES  //  CONSULTATION"
+app_icon = "archives"
+task_title = "Archives"
 classification = "SECRET"
 
 [node name="Layout" type="VBoxContainer" parent="."]

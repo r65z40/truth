@@ -1,16 +1,19 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/desk/desk.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://scenes/ui/terminal/terminal.tscn" id="2_terminal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/dossiers_window.tscn" id="3_dossiers"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/messages_window.tscn" id="4_messages"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/archives_window.tscn" id="5_archives"]
-[ext_resource type="Texture2D" path="res://icon.svg" id="6_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/personnel_window.tscn" id="7_personnel"]
 [ext_resource type="PackedScene" path="res://scenes/evening/evening_screen.tscn" id="8_evening"]
 [ext_resource type="PackedScene" path="res://scenes/act_end/act_review_screen.tscn" id="9_act_review"]
 [ext_resource type="PackedScene" path="res://scenes/ui/coach/coach_overlay.tscn" id="10_coach"]
 [ext_resource type="PackedScene" path="res://scenes/field/field_screen.tscn" id="11_field"]
+[ext_resource type="PackedScene" path="res://scenes/ui/windows/terminal_window.tscn" id="12_terminal_window"]
+[ext_resource type="PackedScene" path="res://scenes/ui/windows/settings_window.tscn" id="13_settings"]
+[ext_resource type="Script" path="res://scenes/desk/desktop_wallpaper.gd" id="14_wallpaper"]
+[ext_resource type="Script" path="res://scenes/desk/desktop_icon.gd" id="15_icon"]
+[ext_resource type="Script" path="res://scripts/ui/window_manager.gd" id="16_window_manager"]
 
 [node name="Desk" type="Control"]
 layout_mode = 3
@@ -21,7 +24,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Wallpaper" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,7 +32,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.067, 0.075, 0.071, 1)
+script = ExtResource("14_wallpaper")
 
 [node name="Main" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -38,244 +41,236 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/separation = 0
 
-[node name="TopBar" type="PanelContainer" parent="Main"]
-layout_mode = 2
-theme_type_variation = &"TopBar"
-
-[node name="Row" type="HBoxContainer" parent="Main/TopBar"]
-layout_mode = 2
-theme_override_constants/separation = 24
-
-[node name="Emblem" type="TextureRect" parent="Main/TopBar/Row"]
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 2
-texture = ExtResource("6_icon")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Ministry" type="VBoxContainer" parent="Main/TopBar/Row"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 0
-
-[node name="MinistryName" type="Label" parent="Main/TopBar/Row/Ministry"]
-layout_mode = 2
-theme_type_variation = &"HeaderLabel"
-text = "MINISTÈRE DE LA SÉCURITÉ NATIONALE"
-clip_text = true
-
-[node name="Section" type="Label" parent="Main/TopBar/Row/Ministry"]
-layout_mode = 2
-theme_type_variation = &"MutedLabel"
-text = "Section 4  //  Inspection des dossiers civils"
-clip_text = true
-
-[node name="Agent" type="VBoxContainer" parent="Main/TopBar/Row"]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="AgentLabel" type="Label" parent="Main/TopBar/Row/Agent"]
-unique_name_in_owner = true
-layout_mode = 2
-horizontal_alignment = 2
-
-[node name="RankLabel" type="Label" parent="Main/TopBar/Row/Agent"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"MutedLabel"
-horizontal_alignment = 2
-
-[node name="Separator" type="ColorRect" parent="Main/TopBar/Row"]
-custom_minimum_size = Vector2(2, 0)
-layout_mode = 2
-color = Color(0.239, 0.267, 0.259, 1)
-
-[node name="DateLabel" type="Label" parent="Main/TopBar/Row"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"HeaderLabel"
-theme_override_font_sizes/font_size = 19
-horizontal_alignment = 2
-
-[node name="ObjectiveBar" type="PanelContainer" parent="Main"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"ObjectiveBar"
-
-[node name="Row" type="HBoxContainer" parent="Main/ObjectiveBar"]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="ObjectiveTag" type="Label" parent="Main/ObjectiveBar/Row"]
-layout_mode = 2
-theme_type_variation = &"HeaderLabel"
-text = "OBJECTIF >"
-
-[node name="ObjectiveText" type="Label" parent="Main/ObjectiveBar/Row"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-clip_text = true
-
-[node name="ObjectiveHint" type="Label" parent="Main/ObjectiveBar/Row"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"MutedLabel"
-clip_text = true
-
-[node name="Body" type="MarginContainer" parent="Main"]
+[node name="Body" type="HBoxContainer" parent="Main"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 18
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="Icons" type="MarginContainer" parent="Main/Body"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 12
 
-[node name="Columns" type="HBoxContainer" parent="Main/Body"]
+[node name="List" type="VBoxContainer" parent="Main/Body/Icons"]
 layout_mode = 2
-theme_override_constants/separation = 18
+mouse_filter = 2
+theme_override_constants/separation = 6
 
-[node name="Terminal" parent="Main/Body/Columns" instance=ExtResource("2_terminal")]
+[node name="DossiersButton" type="Button" parent="Main/Body/Icons/List"]
 unique_name_in_owner = true
+layout_mode = 2
+text = "Dossiers"
+script = ExtResource("15_icon")
+icon_name = "dossiers"
+
+[node name="MessagesButton" type="Button" parent="Main/Body/Icons/List"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Courrier"
+script = ExtResource("15_icon")
+icon_name = "messages"
+
+[node name="ArchivesButton" type="Button" parent="Main/Body/Icons/List"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Archives"
+script = ExtResource("15_icon")
+icon_name = "archives"
+
+[node name="PersonnelButton" type="Button" parent="Main/Body/Icons/List"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Personnel"
+script = ExtResource("15_icon")
+icon_name = "personnel"
+
+[node name="TerminalButton" type="Button" parent="Main/Body/Icons/List"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Terminal"
+script = ExtResource("15_icon")
+icon_name = "terminal"
+
+[node name="WindowLayer" type="Control" parent="Main/Body"]
+unique_name_in_owner = true
+clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.6
+mouse_filter = 2
+script = ExtResource("16_window_manager")
 
-[node name="Side" type="VBoxContainer" parent="Main/Body/Columns"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="SideTitle" type="Label" parent="Main/Body/Columns/Side"]
-layout_mode = 2
-theme_type_variation = &"MutedLabel"
-text = "POSTE DE TRAVAIL"
-
-[node name="DossiersButton" type="Button" parent="Main/Body/Columns/Side"]
+[node name="DossiersWindow" parent="Main/Body/WindowLayer" instance=ExtResource("3_dossiers")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
-layout_mode = 2
-focus_mode = 0
-text = "DOSSIERS"
-alignment = 0
+layout_mode = 1
 
-[node name="MessagesButton" type="Button" parent="Main/Body/Columns/Side"]
+[node name="MessagesWindow" parent="Main/Body/WindowLayer" instance=ExtResource("4_messages")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
-layout_mode = 2
-focus_mode = 0
-text = "MESSAGES"
-alignment = 0
+layout_mode = 1
 
-[node name="ArchivesButton" type="Button" parent="Main/Body/Columns/Side"]
+[node name="ArchivesWindow" parent="Main/Body/WindowLayer" instance=ExtResource("5_archives")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
-layout_mode = 2
-focus_mode = 0
-text = "ARCHIVES"
-alignment = 0
+layout_mode = 1
 
-[node name="PersonnelButton" type="Button" parent="Main/Body/Columns/Side"]
+[node name="PersonnelWindow" parent="Main/Body/WindowLayer" instance=ExtResource("7_personnel")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
-layout_mode = 2
-focus_mode = 0
-text = "DOSSIER PERSONNEL"
-alignment = 0
+layout_mode = 1
 
-[node name="Spacer" type="Control" parent="Main/Body/Columns/Side"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Poster" type="PanelContainer" parent="Main/Body/Columns/Side"]
-layout_mode = 2
-theme_type_variation = &"DocumentPanel"
-
-[node name="PosterText" type="Label" parent="Main/Body/Columns/Side/Poster"]
-layout_mode = 2
-theme_type_variation = &"DocumentLabel"
-theme_override_colors/font_color = Color(0.557, 0.122, 0.122, 1)
-theme_override_font_sizes/font_size = 20
-text = "LA VIGILANCE
-EST UN
-DEVOIR CIVIQUE"
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="BottomBar" type="PanelContainer" parent="Main"]
-layout_mode = 2
-theme_type_variation = &"TopBar"
-
-[node name="Row" type="HBoxContainer" parent="Main/BottomBar"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="StatusLabel" type="Label" parent="Main/BottomBar/Row"]
+[node name="TerminalWindow" parent="Main/Body/WindowLayer" instance=ExtResource("12_terminal_window")]
 unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"MutedLabel"
-text = "LIAISON SÉCURISÉE  //  TOUTE ACTIVITÉ EST ENREGISTRÉE"
-clip_text = true
+layout_mode = 1
 
-[node name="EndDayButton" type="Button" parent="Main/BottomBar/Row"]
+[node name="SettingsWindow" parent="Main/Body/WindowLayer" instance=ExtResource("13_settings")]
+unique_name_in_owner = true
+layout_mode = 1
+app_icon = "terminal"
+task_title = "Paramètres"
+
+[node name="Taskbar" type="PanelContainer" parent="Main"]
+layout_mode = 2
+theme_type_variation = &"Taskbar"
+
+[node name="Row" type="HBoxContainer" parent="Main/Taskbar"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StartButton" type="Button" parent="Main/Taskbar/Row"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 focus_mode = 0
+theme_type_variation = &"StartButton"
+toggle_mode = true
+text = "MINISTÈRE"
+
+[node name="TaskButtons" type="HBoxContainer" parent="Main/Taskbar/Row"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="EndDayButton" type="Button" parent="Main/Taskbar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"TaskButton"
 text = "FIN DE SERVICE"
 
-[node name="SaveButton" type="Button" parent="Main/BottomBar/Row"]
+[node name="Clock" type="PanelContainer" parent="Main/Taskbar/Row"]
+layout_mode = 2
+theme_type_variation = &"TaskbarField"
+
+[node name="Row" type="HBoxContainer" parent="Main/Taskbar/Row/Clock"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HoursLabel" type="Label" parent="Main/Taskbar/Row/Clock/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TaskbarLabel"
+
+[node name="TimeGauge" type="ProgressBar" parent="Main/Taskbar/Row/Clock/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 14)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"TimeGauge"
+show_percentage = false
+
+[node name="DateLabel" type="Label" parent="Main/Taskbar/Row/Clock/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TaskbarLabel"
+
+[node name="StartMenu" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -56.0
+offset_right = 304.0
+offset_bottom = -56.0
+grow_vertical = 0
+theme_type_variation = &"StartMenu"
+
+[node name="List" type="VBoxContainer" parent="StartMenu"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Identity" type="PanelContainer" parent="StartMenu/List"]
+layout_mode = 2
+theme_type_variation = &"TitleBarActive"
+
+[node name="Rows" type="VBoxContainer" parent="StartMenu/List/Identity"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="AgentLabel" type="Label" parent="StartMenu/List/Identity/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+
+[node name="RankLabel" type="Label" parent="StartMenu/List/Identity/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleStamp"
+
+[node name="StartPersonnel" type="Button" parent="StartMenu/List"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 focus_mode = 0
-text = "SAUVEGARDER"
+theme_type_variation = &"StartItem"
+text = "Dossier personnel"
+alignment = 0
 
-[node name="MenuButton" type="Button" parent="Main/BottomBar/Row"]
+[node name="StartTerminal" type="Button" parent="StartMenu/List"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 focus_mode = 0
-theme_type_variation = &"AlertButton"
-text = "DÉCONNEXION"
+theme_type_variation = &"StartItem"
+text = "Terminal"
+alignment = 0
 
-[node name="WindowLayer" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Scrim" type="ColorRect" parent="WindowLayer"]
+[node name="StartSettings" type="Button" parent="StartMenu/List"]
 unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.55)
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"StartItem"
+text = "Paramètres"
+alignment = 0
 
-[node name="DossiersWindow" parent="WindowLayer" instance=ExtResource("3_dossiers")]
+[node name="SaveButton" type="Button" parent="StartMenu/List"]
 unique_name_in_owner = true
-layout_mode = 1
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"StartItem"
+text = "Sauvegarder"
+alignment = 0
 
-[node name="MessagesWindow" parent="WindowLayer" instance=ExtResource("4_messages")]
+[node name="MenuButton" type="Button" parent="StartMenu/List"]
 unique_name_in_owner = true
-layout_mode = 1
-
-[node name="ArchivesWindow" parent="WindowLayer" instance=ExtResource("5_archives")]
-unique_name_in_owner = true
-layout_mode = 1
-
-[node name="PersonnelWindow" parent="WindowLayer" instance=ExtResource("7_personnel")]
-unique_name_in_owner = true
-layout_mode = 1
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"StartItem"
+text = "Déconnexion"
+alignment = 0
 
 [node name="FieldScreen" parent="." instance=ExtResource("11_field")]
 unique_name_in_owner = true

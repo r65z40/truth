@@ -45,6 +45,7 @@ var _photo := IdPhoto.new()
 @onready var _document_panel: PanelContainer = %DocumentPanel
 @onready var _doc_scroll: ScrollContainer = %DocScroll
 @onready var _doc_title: Label = %DocTitle
+var _doc_icon: TextureRect
 @onready var _doc_meta: Label = %DocMeta
 @onready var _doc_body: RichTextLabel = %DocBody
 @onready var _facts_list: HFlowContainer = %FactsList
@@ -78,6 +79,16 @@ func _ready() -> void:
 	_doc_title.add_sibling(_photo)
 	_doc_title.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	_photo.hide()
+	# Icône du type de pièce (fiche, rapport, registre...) à gauche du titre.
+	_doc_icon = TextureRect.new()
+	_doc_icon.name = "DocIcon"
+	_doc_icon.custom_minimum_size = Vector2(48, 48)
+	_doc_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_doc_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_doc_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_doc_icon.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_doc_title.get_parent().add_child(_doc_icon)
+	_doc_title.get_parent().move_child(_doc_icon, 0)
 	_show_case_view(false)
 
 
@@ -121,6 +132,7 @@ func select_document(document_id: String) -> void:
 		if tab.get_meta("document_id") == document_id:
 			_scroll_to_tab.call_deferred(tab)
 	_doc_title.text = document.title.to_upper()
+	_doc_icon.texture = PixelIcons.document_icon(document.get("type", ""), 3)
 	_doc_meta.text = "Source : %s\nFiabilité : %s     Date : %s" % [
 		document.source,
 		RELIABILITY_LABELS.get(document.reliability, document.reliability),
@@ -375,6 +387,7 @@ func _refresh_notebook() -> void:
 		button.set_pressed_no_signal(fact_id in selected_facts)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		button.icon = PixelIcons.get_icon("dossiers", 2)
 		button.custom_minimum_size = Vector2(0, 44)
 		button.add_theme_font_size_override("font_size", 15)
 		button.focus_mode = Control.FOCUS_NONE
@@ -415,6 +428,7 @@ func _build_document_tabs(case_data: Dictionary) -> void:
 	for document in case_data.documents:
 		var tab := Button.new()
 		tab.text = document.title
+		tab.icon = PixelIcons.document_icon(document.get("type", ""), 2)
 		tab.theme_type_variation = &"DocumentTab"
 		tab.toggle_mode = true
 		tab.button_group = _tab_group
