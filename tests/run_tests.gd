@@ -50,6 +50,8 @@ func _run() -> void:
 		"test_field_scenes_are_valid",
 		"test_field_interrogation",
 		"test_field_search",
+		"test_field_bakery_visit",
+		"test_field_benes_search",
 		"test_act_review",
 		"test_veritas",
 		"test_veritas_model",
@@ -559,7 +561,7 @@ func test_evenings() -> void:
 
 
 func test_field_scenes_are_valid() -> void:
-	for case_id in ["40921", "51307"]:
+	for case_id in ["40921", "51307", "52044", "52310"]:
 		var case_data := CaseLibrary.get_case(case_id)
 		var scene := FieldRules.scene_for_case(case_data)
 		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
@@ -651,6 +653,64 @@ func test_field_search() -> void:
 	check(found == ["f_srch_clock_sign", "f_srch_drawing"], "procès-verbal : ce qui a été trouvé")
 	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
 	check("field_40921_neighbours" in fired, "Vera SEDLAR écrit")
+	GameState.new_game()
+
+
+## Fait passer les journées jusqu'à l'attribution du dossier.
+func _advance_until_assigned(case_id: String) -> void:
+	for i in 6:
+		if GameState.cases.has(case_id):
+			return
+		GameState.end_day()
+
+
+func test_field_bakery_visit() -> void:
+	GameState.new_game()
+	_advance_until_assigned("52044")
+	check(GameState.can_start_field("52044"), "visite de la boulangerie possible")
+	GameState.start_field("52044")
+	check(GameState.flags.get("52044.bakery_visited") == true, "la visite est connue")
+	GameState.field_choose("visit_52044", "cash_box")
+	GameState.field_choose("visit_52044", "back_room")
+	check(GameState.flags.get("52044.kovac_bread") == true, "le pain mis de côté est relevé")
+	var notebook: Array = GameState.get_case_state("52044").noted_facts
+	check("f_vis_horvat_ticket" in notebook and "f_vis_bread" in notebook, "trouvailles notées dans le carnet")
+	check(GameState.confront_facts("52044", "f_vis_horvat_ticket", "f_death_horvat") == "horvat.status",
+			"le ticket d'un mort contredit le registre des décès")
+	GameState.apply_decision("52044", "report_bureau")
+	check(GameState.flags.get("52044.drazek_exposed") == true, "la visite suffit à mettre en cause le Bureau")
+	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check(not "field_52044_drazek" in fired, "DRAZEK n'écrit plus une fois mis en cause")
+	GameState.new_game()
+	_advance_until_assigned("52044")
+	GameState.start_field("52044")
+	GameState.field_choose("visit_52044", "son_letter")
+	check(GameState.flags.get("52044.family_humiliated") == true, "lire la lettre du fils humilie la gérante")
+	fired = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("field_52044_drazek" in fired and GameState.flags.get("52044.drazek_alerted") == true, "DRAZEK est prévenu de la visite")
+	GameState.new_game()
+
+
+func test_field_benes_search() -> void:
+	GameState.new_game()
+	_advance_until_assigned("52310")
+	check(GameState.can_start_field("52310"), "perquisition quai des Tanneurs possible")
+	var suspicion := GameState.get_indicator("suspicion")
+	GameState.start_field("52310")
+	GameState.field_choose("search_52310", "desk")
+	GameState.field_choose("search_52310", "floorboard")
+	check(GameState.flags.get("52310.manuscript_found") == true, "le manuscrit de VARGA est trouvé")
+	var found: Array = CaseLibrary.get_document(GameState.get_case_view("52310"), "search_report").facts.map(func(f: Dictionary) -> String: return f.id)
+	check(found == ["f_bns_lease", "f_bns_manuscript"], "procès-verbal : le bail et le manuscrit")
+	check(GameState.confront_facts("52310", "f_var_address", "f_bns_lease") == "apt40.occupant",
+			"le bail contredit le domicile déclaré")
+	check(GameState.confront_facts("52310", "f_bns_manuscript", "f_cen_acrostic") == "poem.acrostic",
+			"le manuscrit contredit l'analyse de la censure")
+	GameState.apply_decision("52310", "identity_error")
+	check(GameState.flags.get("52310.identity_questioned") == true and GameState.flags.get("kremer.contact") == true,
+			"le bail suffit à prouver l'erreur d'identité")
+	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("field_52310_section7" in fired and GameState.get_indicator("suspicion") >= suspicion + 2, "la Section 7 sait")
 	GameState.new_game()
 
 
@@ -930,7 +990,8 @@ func test_case_52310_structure() -> void:
 	var case_data := CaseLibrary.get_case("52310")
 	check(CaseLibrary.validate_case(case_data).is_empty(), "52310 : dossier valide %s" % [CaseLibrary.validate_case(case_data)])
 	var keys := CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
-	check(keys.size() == 2 and "poem.acrostic" in keys and "varga.mark" in keys, "52310 : 2 contradictions (%s)" % [keys])
+	check(keys.size() == 3 and "poem.acrostic" in keys and "varga.mark" in keys and "apt40.occupant" in keys,
+			"52310 : 3 contradictions, dont le bail trouvé en perquisition (%s)" % [keys])
 	check(CaseLibrary.confront(case_data, "f_p86_acrostic", "f_p79_acrostic") == "poem.acrostic", "52310 : HALVEK contre HALINA")
 	check(CaseLibrary.confront(case_data, "f_cen_acrostic", "f_p86_acrostic") == "", "52310 : le rapport et l'édition de 1986 concordent")
 	check(CaseLibrary.confront(case_data, "f_var_mark", "f_rc_mark") == "varga.mark", "52310 : la cicatrice a disparu")

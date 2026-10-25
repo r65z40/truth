@@ -67,13 +67,40 @@ contredit par le relevé d'entretien.
 Conséquence : convoquer ORLIK, c'est prévenir la Milice (`milice.orlik_questioned`) :
 le capitaine Lev ORLIK appelle le lendemain.
 
-### 52044 KOVAC et 52310 VARGA : prévus, à écrire après l'avis de fen
+### 52044 KOVAC : visite de la boulangerie n° 12, rue du Moulin
 
-- 52044 : visite de la boulangerie n° 14 (le registre caché sous le comptoir,
-  la file d'attente qui regarde) ou audition de l'agent DRAZEK.
-- 52310 : perquisition au quai des Tanneurs, app. 40, chez Karel BENES : rien
-  de VARGA n'y est resté, sauf une étagère vide et des épreuves corrigées de la
-  main de BENES (l'écriture du correcteur, pas celle du poète).
+Possible tant que le dossier est ouvert. Six endroits, quatre examens. La
+visite se fait devant la file d'attente : tout le quartier vous voit.
+
+| Endroit | Ce qu'on trouve | Usage |
+| --- | --- | --- |
+| Sous le comptoir | Le cahier de Zora : 23 inconnus aux carnets neufs depuis le 15.09, tous le jeudi | Le jeudi du marché couvert (lien avec PETRAS, 51307) |
+| La caisse | Souche du carnet de HORVAT Milan encaissée le 16.10 | **Contredit le registre des décès** : un autre chemin vers la vérité |
+| La file d'attente | « Les carnets du cimetière », un petit à lunettes du Bureau | La piste DRAZEK sans passer par l'arrestation d'ORLIK |
+| L'arrière-boutique | Deux pains mis de côté pour sa sœur à Brezno | Sa vraie petite faute : ce que la Milice appelle « servir sous le comptoir » |
+| Le cahier de visite | « RAS » du contrôleur au 18.09, et le signalement de Zora | Confirme qu'elle avait prévenu |
+| La lettre du fils | Rien, devant toute la file | `52044.family_humiliated` |
+
+Conséquence : `52044.bakery_visited`. Le lendemain, P. DRAZEK écrit pour
+« faciliter le travail » : il est prévenu (`52044.drazek_alerted`), sauf si le
+joueur l'a déjà mis en cause.
+
+### 52310 VARGA : perquisition quai des Tanneurs, bloc 11, app. 40
+
+Le domicile déclaré de VARGA, où vivent Karel et Irena BENES depuis 1982.
+Six endroits, quatre fouilles.
+
+| Endroit | Ce qu'on trouve | Usage |
+| --- | --- | --- |
+| L'étagère vide | La trace des livres enlevés, un exemplaire de 1979 « Pour H. » | Le recueil retiré du catalogue existe encore |
+| Le bureau | Épreuves paraphées « K. B. », bail au nom de Karel BENES depuis 1982 | **Contredit le domicile déclaré** : nouvelle preuve de l'erreur d'identité |
+| Le courrier | Convocation de la Section 7 pour « T. VARGA », remise à BENES, photographié le 29.10 | Montre comment la fiche a été refaite |
+| La boîte à photos | « T. et H., 1977 » : l'homme a une cicatrice | Même contradiction que la fiche de lecteur |
+| La latte du plancher | Le manuscrit de « Novembre », 1978 : HALINA | Contredit l'analyse de la censure |
+| L'armoire | Rien, sous les yeux d'Irena | `52310.family_humiliated` |
+
+Conséquence : `52310.home_searched`. Le lendemain, M. DUBEK (Section 7) fait
+savoir qu'il sait et pose les scellés (suspicion +2, `section7.noticed_search`).
 
 ## 3. La vie de tous les jours : les lieux
 
