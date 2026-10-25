@@ -98,6 +98,17 @@ func is_open() -> bool:
 	return visible or is_minimized
 
 
+## Met à jour le titre et l'icône après un changement de window_title ou app_icon.
+func refresh_title() -> void:
+	if not _title_bar:
+		return
+	(_title_bar.find_child("Title", true, false) as Label).text = window_title
+	var icon := _title_bar.find_child("TitleIcon", true, false) as TextureRect
+	icon.visible = app_icon != ""
+	if app_icon != "":
+		icon.texture = PixelIcons.get_icon(app_icon, 2)
+
+
 func short_title() -> String:
 	return task_title if task_title != "" else window_title
 
@@ -189,15 +200,17 @@ func _build_title_bar() -> PanelContainer:
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bar.add_child(row)
 
+	var icon := TextureRect.new()
+	icon.name = "TitleIcon"
+	icon.visible = app_icon != ""
 	if app_icon != "":
-		var icon := TextureRect.new()
 		icon.texture = PixelIcons.get_icon(app_icon, 2)
-		icon.custom_minimum_size = Vector2(32, 32)
-		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		row.add_child(icon)
+	icon.custom_minimum_size = Vector2(32, 32)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(icon)
 
 	var title := Label.new()
 	title.name = "Title"

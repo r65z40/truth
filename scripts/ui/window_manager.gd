@@ -27,20 +27,45 @@ var _placed: Dictionary = {}
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for window in get_windows():
-		window.movable = true
-		window.opened.connect(_on_window_opened.bind(window))
-		window.restored.connect(_on_window_restored.bind(window))
-		window.closed.connect(_on_window_hidden.bind(window))
-		window.minimized.connect(_on_window_hidden.bind(window))
-		window.resized.connect(_on_window_resized.bind(window))
+		_register(window)
 	resized.connect(relayout)
 	relayout()
+
+
+## Ajoute une fenêtre créée en cours de partie (une pièce ouverte à part).
+## Elle est détruite à sa fermeture.
+func add_window(window: MinistryWindow) -> void:
+	window.set_meta("transient", true)
+	add_child(window)
+	_register(window)
+
+
+## Ferme toutes les fenêtres (fin de service).
+func close_all() -> void:
+	for window in get_windows():
+		window.close()
+
+
+func _register(window: MinistryWindow) -> void:
+	window.movable = true
+	window.opened.connect(_on_window_opened.bind(window))
+	window.restored.connect(_on_window_restored.bind(window))
+	window.closed.connect(_on_window_closed.bind(window))
+	window.minimized.connect(_on_window_hidden.bind(window))
+	window.resized.connect(_on_window_resized.bind(window))
+
+
+func _on_window_closed(window: MinistryWindow) -> void:
+	if window.get_meta("transient", false):
+		_placed.erase(window)
+		window.queue_free()
+	_on_window_hidden(window)
 
 
 func get_windows() -> Array[MinistryWindow]:
 	var result: Array[MinistryWindow] = []
 	for child in get_children():
-		if child is MinistryWindow:
+		if child is MinistryWindow and not child.is_queued_for_deletion():
 			result.append(child)
 	return result
 

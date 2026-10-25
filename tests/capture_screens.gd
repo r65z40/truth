@@ -48,6 +48,13 @@ func _capture_all() -> void:
 	await _snap("07_dossier_interception")
 	desk.windows.dossiers.select_document("travel_log")
 	await _snap("08_dossier_registre")
+	var report_window: DocumentWindow = desk.open_document_window("40921", "work_report")
+	var log_window: DocumentWindow = desk.open_document_window("40921", "travel_log")
+	report_window.position = Vector2(8, 8)
+	log_window.position = Vector2(desk.window_manager.size.x - log_window.size.x - 8, 60)
+	await _snap("08b_pieces_cote_a_cote")
+	report_window.close()
+	log_window.close()
 	var dossiers = desk.windows.dossiers
 	dossiers.note_fact("f_log_trip")
 	dossiers.select_document("work_report")

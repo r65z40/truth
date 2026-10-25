@@ -84,7 +84,9 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Étape 1 : fond à l'emblème, icônes (pastilles), fenêtres déplaçables, superposables,
       réductibles et agrandissables, barre des tâches, menu MINISTÈRE, terminal en fenêtre,
       plein écran sur petit écran, icônes en pixels par type de pièce
-- [ ] Étape 2 : le dossier en classeur, chaque pièce dans sa propre fenêtre
+- [x] Étape 2 : le dossier en classeur (pièces en liste à gauche, lues ou « à lire »,
+      avancement en quatre étapes, éléments à noter en bas de la pièce, source rappelée
+      dans le carnet) ; chaque pièce peut s'ouvrir dans sa propre fenêtre, pour comparer
 - [ ] Étape 3 : passages à surligner dans le texte (`quote`), carnet à fiches et glisser-déposer
 - [ ] Étape 4 : Courrier, VERITAS, Archives, Dossier personnel au nouveau style ; aide en info-bulles
 

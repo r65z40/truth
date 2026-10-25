@@ -7,6 +7,9 @@ extends Control
 ## il lit GameState et délègue la sauvegarde à SaveManager.
 
 const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
+const DOCUMENT_WINDOW_SCENE := preload("res://scenes/ui/windows/document_window.tscn")
+## Décalage entre deux pièces ouvertes à part, pour qu'elles ne se cachent pas.
+const DOCUMENT_CASCADE := Vector2(32, 32)
 
 @onready var terminal: Terminal = %TerminalWindow.get_node("%Terminal")
 @onready var windows: Dictionary = {
@@ -102,6 +105,7 @@ func _ready() -> void:
 	_day_transition.hide()
 	coach.target_provider = coach_target
 	windows.dossiers.field_requested.connect(open_field)
+	windows.dossiers.document_window_requested.connect(open_document_window)
 	field_screen.finished.connect(_on_field_finished)
 	_refresh_header()
 	_boot_terminal()
@@ -162,8 +166,7 @@ func request_end_day() -> void:
 func end_day() -> void:
 	_end_day_armed = false
 	close_start_menu()
-	for window: MinistryWindow in windows.values():
-		window.close()
+	window_manager.close_all()
 	if evening_screen.open():
 		await evening_screen.finished
 	if act_review_screen.open():
@@ -328,6 +331,25 @@ func _input(event: InputEvent) -> void:
 		if not _start_menu.get_global_rect().has_point(event.global_position) \
 				and not _start_button.get_global_rect().has_point(event.global_position):
 			close_start_menu()
+
+
+## Ouvre une pièce dans sa propre fenêtre, à droite de la zone de travail,
+## ou ramène devant celle qui est déjà ouverte.
+func open_document_window(case_id: String, document_id: String) -> DocumentWindow:
+	for window in window_manager.get_windows():
+		if window is DocumentWindow and window.case_id == case_id and window.document_id == document_id:
+			window.open()
+			return window
+	var window: DocumentWindow = DOCUMENT_WINDOW_SCENE.instantiate()
+	window.notify.connect(show_toast)
+	window_manager.add_window(window)
+	window.setup(case_id, document_id)
+	window.open()
+	var others := window_manager.get_windows().filter(func(w: MinistryWindow) -> bool: return w is DocumentWindow).size() - 1
+	window.size = Vector2(minf(620.0, window_manager.size.x * 0.55), window_manager.size.y * 0.85)
+	window.position = Vector2(window_manager.size.x - window.size.x - 16.0, 16.0) + DOCUMENT_CASCADE * (others % 5) * Vector2(-1, 1)
+	window.clamp_to_parent()
+	return window
 
 
 ## Part sur le terrain pour ce dossier (interrogatoire ou perquisition).

@@ -79,6 +79,7 @@ func _run() -> void:
 		"test_friendly_desk",
 		"test_desktop_windows",
 		"test_pixel_icons",
+		"test_document_windows",
 		"test_time_in_desk",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
@@ -1587,6 +1588,50 @@ func test_pixel_icons() -> void:
 	check(window._doc_icon.texture == PixelIcons.document_icon("report", 3), "l'en-tête de la pièce montre l'icône du rapport")
 	window.queue_free()
 	await get_tree().process_frame
+
+
+## Classeur : pièces lues ou à lire, avancement, pièces ouvertes dans leur propre fenêtre.
+func test_document_windows() -> void:
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.open_app("dossiers")
+	var dossiers: DossiersWindow = desk.windows.dossiers
+	dossiers.select_case("40921")
+	var tabs: Node = dossiers.get_node("%DocumentTabs")
+	check(not tabs.get_node("Tab_identity").text.contains("à lire") and tabs.get_node("Tab_work_report").text.contains("(à lire)"),
+			"les pièces non lues sont marquées « à lire »")
+	check(tabs.get_node("Tab_work_report").theme_type_variation == &"DocumentTabNew", "pièce à lire mise en avant")
+	check(dossiers.get_node("%ProgressLabel").text.begins_with("[ ] Pièces lues : 1/4") \
+			and dossiers.get_node("%ProgressLabel").text.contains("[ ] Rapport"), "avancement en quatre étapes")
+
+	dossiers.select_document("work_report")
+	dossiers.open_current_aside()
+	await get_tree().process_frame
+	var aside: DocumentWindow = desk.window_manager.get_focused()
+	check(aside != null and aside.document_id == "work_report" and aside.visible, "la pièce s'ouvre dans sa propre fenêtre, au premier plan")
+	check(aside.get_node("%DocBody").get_parsed_text().contains("SEDLAR") and aside.window_title.contains("40921"),
+			"la fenêtre montre la pièce et son dossier")
+	check(desk.get_node("%TaskButtons").get_child_count() == 2, "la pièce a son bouton dans la barre des tâches")
+	aside.get_node("%FactsList").get_node("Fact_f_report_presence").pressed.emit()
+	check("f_report_presence" in GameState.get_case_state("40921").noted_facts, "on note un élément depuis la pièce à part")
+	check(dossiers.get_node("%NotebookList").has_node("Noted_f_report_presence"), "le carnet du dossier se met à jour")
+	check(aside.get_node("%FactsList").get_node("Fact_f_report_presence").disabled, "l'élément noté est grisé dans la pièce")
+	check(dossiers.get_node("%NotebookList").get_node("Noted_f_report_presence").tooltip_text.contains("Rapport"),
+			"le carnet rappelle la pièce d'où vient l'élément")
+	check(desk.open_document_window("40921", "work_report") == aside, "rouvrir la même pièce ramène sa fenêtre")
+	var second: DocumentWindow = desk.open_document_window("40921", "travel_log")
+	check(second != aside and second.position != aside.position, "une deuxième pièce s'ouvre décalée, pour comparer")
+	aside.close()
+	await get_tree().process_frame
+	check(not is_instance_valid(aside) and desk.window_manager.get_focused() != null, "fermer une pièce détruit sa fenêtre")
+	desk.end_day()
+	await get_tree().process_frame
+	check(not is_instance_valid(second), "fin de service : les pièces ouvertes se ferment")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
 
 
 func test_time_in_desk() -> void:
