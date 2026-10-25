@@ -438,6 +438,9 @@ func _refresh_all() -> void:
 	_refresh_actions_help()
 	_conclusion_button.disabled = not can_decide
 	_conclusion_button.text = "RÉDIGER LA CONCLUSION" if can_decide else "RAPPORT TRANSMIS"
+	# « Ouvrir à côté » ne sert qu'à comparer deux pièces : inutile si le dossier
+	# n'en a qu'une.
+	_open_aside_button.visible = not _conclusion_panel.visible and case_data.get("documents", []).size() >= 2
 	_refresh_facts(case_data)
 	_refresh_tab_states()
 	_refresh_notebook()
@@ -558,6 +561,9 @@ func _refresh_notebook() -> void:
 		# Glisser une fiche sur une autre les confronte (à la souris comme au doigt).
 		button.set_drag_forwarding(_get_note_drag.bind(fact_id, button), _can_drop_note.bind(fact_id), _drop_note.bind(fact_id))
 		_notebook_list.add_child(button)
+	# Le carnet n'apparaît qu'une fois un premier élément noté : écran plus clair
+	# au début, le carnet se révèle quand il sert.
+	_notebook.visible = current_case_id != "" and not case_state.noted_facts.is_empty()
 	_confront_button.disabled = selected_facts.size() != MAX_SELECTED_FACTS
 	if case_state.noted_facts.is_empty() and _confront_result.text == "":
 		_set_confront_result("Notez des éléments (passages soulignés), puis sélectionnez-en deux à confronter.")

@@ -10,6 +10,10 @@ const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 const DOCUMENT_WINDOW_SCENE := preload("res://scenes/ui/windows/document_window.tscn")
 ## Décalage entre deux pièces ouvertes à part, pour qu'elles ne se cachent pas.
 const DOCUMENT_CASCADE := Vector2(32, 32)
+## Au-delà de ce nombre de dossiers conclus, la bulle d'aide détaillée ne
+## s'affiche plus d'elle-même (le joueur a pris la main) ; seul le repère
+## clignotant subsiste. L'aide reste réactivable/désactivable dans les paramètres.
+const TUTORIAL_BUBBLE_UNTIL_CONCLUDED := 2
 
 @onready var terminal: Terminal = %TerminalWindow.get_node("%Terminal")
 @onready var windows: Dictionary = {
@@ -295,7 +299,9 @@ func _refresh_header() -> void:
 ## Met à jour l'aide : la bulle et l'icône signalée clignotent doucement.
 func _refresh_objective() -> void:
 	current_step = Guidance.next_step(GameState.get_condition_state(), GameState.messages)
-	coach.visible = Settings.guidance
+	# La bulle détaillée s'estompe une fois le joueur rodé ; le repère clignotant
+	# sur l'icône reste tant que l'aide est activée.
+	coach.visible = Settings.guidance and GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED
 	if _pulse_tween:
 		_pulse_tween.kill()
 	for button: Control in _target_buttons.values():

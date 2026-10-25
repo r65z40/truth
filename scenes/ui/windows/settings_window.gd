@@ -8,6 +8,8 @@ extends MinistryWindow
 @onready var _guidance_toggle: Button = %GuidanceToggle
 @onready var _field_3d_toggle: Button = %Field3dToggle
 @onready var _scale_option: OptionButton = %ScaleOption
+@onready var _resolution_row: Control = %ResolutionRow
+@onready var _resolution_option: OptionButton = %ResolutionOption
 @onready var _music_option: OptionButton = %MusicOption
 @onready var _language_option: OptionButton = %LanguageOption
 
@@ -32,6 +34,9 @@ func _ready() -> void:
 		_music_option.add_item("Coupée" if level == 0.0 else "%d %%" % roundi(level * 100))
 	_music_option.item_selected.connect(func(index: int) -> void: Settings.set_music_volume(Settings.MUSIC_LEVELS[index]))
 	_scale_option.item_selected.connect(func(index: int) -> void: Settings.set_ui_scale(Settings.UI_SCALES[index]))
+	for size in Settings.WINDOW_SIZES:
+		_resolution_option.add_item("%d × %d" % [size.x, size.y])
+	_resolution_option.item_selected.connect(func(index: int) -> void: Settings.set_window_size(Settings.WINDOW_SIZES[index]))
 	for code in Localization.LOCALES:
 		_language_option.add_item(Localization.LOCALE_LABELS.get(code, code))
 	_language_option.item_selected.connect(func(index: int) -> void: Settings.set_language(Localization.LOCALES[index]))
@@ -40,6 +45,8 @@ func _ready() -> void:
 
 func _on_opened() -> void:
 	_fullscreen_row.visible = Settings.supports_fullscreen_toggle()
+	_resolution_row.visible = Settings.supports_fullscreen_toggle()
+	_resolution_option.select(maxi(Settings.WINDOW_SIZES.find(Settings.window_size), 0))
 	_fullscreen_toggle.set_pressed_no_signal(Settings.fullscreen)
 	_crt_toggle.set_pressed_no_signal(Settings.crt_effect)
 	_guidance_toggle.set_pressed_no_signal(Settings.guidance)

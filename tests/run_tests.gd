@@ -63,6 +63,7 @@ func _run() -> void:
 		"test_case_53402",
 		"test_case_53517",
 		"test_case_briefings",
+		"test_tutorial_bubble_fades",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -1182,6 +1183,27 @@ func test_case_53517() -> void:
 
 
 ## Chaque dossier doit expliquer ce qu'on cherche (OBJET) et pourquoi il est là.
+## Les bulles tuto s'affichent au début, puis s'estompent une fois des dossiers conclus.
+func test_tutorial_bubble_fades() -> void:
+	GameState.new_game()
+	Settings.guidance = true
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk._refresh_objective()
+	check(GameState.concluded_case_count() == 0 and desk.coach.visible, "aide affichée au début (aucun dossier conclu)")
+	GameState.confront_facts("40921", "f_report_presence", "f_log_trip")
+	GameState.apply_decision("40921", CaseLibrary.get_case("40921").decisions[0].id)
+	GameState.end_day()
+	GameState.apply_decision("51307", CaseLibrary.get_case("51307").decisions[0].id)
+	check(GameState.concluded_case_count() == 2, "deux dossiers conclus")
+	desk._refresh_objective()
+	check(not desk.coach.visible, "la bulle d'aide s'estompe une fois le joueur rodé")
+	desk.queue_free()
+	GameState.new_game()
+	await get_tree().process_frame
+
+
 func test_case_briefings() -> void:
 	for case_id in CaseLibrary.get_case_ids():
 		var briefing: Dictionary = CaseLibrary.get_case(case_id).get("briefing", {})
@@ -2060,6 +2082,11 @@ func test_music_player() -> void:
 	get_tree().root.add_child(window)
 	window.open()
 	check(window.get_node("%MusicOption").item_count == Settings.MUSIC_LEVELS.size(), "Paramètres : réglage du volume de la musique")
+	check(window.get_node("%ResolutionOption").item_count == Settings.WINDOW_SIZES.size(), "Paramètres : choix de la résolution")
+	var saved_size: Vector2i = Settings.window_size
+	Settings.set_window_size(Vector2i(1600, 900))
+	check(Settings.window_size == Vector2i(1600, 900), "la résolution de la fenêtre est réglable")
+	Settings.set_window_size(saved_size)
 	window.queue_free()
 	Music.stop()
 	GameState.new_game()
