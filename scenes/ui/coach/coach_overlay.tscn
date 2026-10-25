@@ -25,11 +25,27 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="CoachName" type="Label" parent="Bubble/Layout"]
+[node name="HeaderRow" type="HBoxContainer" parent="Bubble/Layout"]
 layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="CoachName" type="Label" parent="Bubble/Layout/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
 theme_type_variation = &"DocumentLabel"
 theme_override_font_sizes/font_size = 14
 text = "R. MAZUR, votre supérieur :"
+
+[node name="CloseButton" type="Button" parent="Bubble/Layout/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+tooltip_text = "Masquer l'astuce"
+text = "✕"
 
 [node name="CoachText" type="Label" parent="Bubble/Layout"]
 unique_name_in_owner = true

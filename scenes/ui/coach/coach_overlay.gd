@@ -7,6 +7,10 @@ extends Control
 ## chaque image, pour suivre les fenêtres et les sélections de l'interface.
 ## Couleurs : types de thème "CoachBubble" et "CoachHighlight".
 
+## Émis quand le joueur ferme la bulle avec la croix : le bureau masque l'astuce
+## de l'étape en cours (elle réapparaît à l'étape suivante).
+signal dismissed
+
 const BUBBLE_WIDTH := 380.0
 const GAP := 14.0
 const MARGIN := 12.0
@@ -24,11 +28,13 @@ var _time := 0.0
 
 @onready var _bubble: PanelContainer = %Bubble
 @onready var _text_label: Label = %CoachText
+@onready var _close_button: Button = %CloseButton
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_text_label.text = text
+	_close_button.pressed.connect(func() -> void: dismissed.emit())
 
 
 ## Contrôle actuellement signalé, ou null.
