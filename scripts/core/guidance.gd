@@ -44,9 +44,9 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 					guide.get("open", "Un dossier vous attend : n° %s, %s. Ouvrez-le." % [case_id, view.get("subject_name", "?")])))
 		if viewed < total:
 			return _case_step(case_id, _step("Lire toutes les pièces du dossier n° %s (%d/%d)." % [case_id, viewed, total],
-					"Les onglets beiges au-dessus de la pièce changent de document.", "dossiers",
+					"Les pièces marquées « à lire » restent à consulter.", "dossiers",
 					"tab:" + next_unviewed,
-					guide.get("read", "Lisez chaque pièce : cliquez sur l'onglet signalé (%d/%d)." % [viewed, total])))
+					guide.get("read", "Lisez chaque pièce : cliquez sur la pièce signalée (%d/%d)." % [viewed, total])))
 		if case_state.get("noted_facts", []).size() < MIN_NOTED_FACTS:
 			return _case_step(case_id, _step("Noter les éléments importants du dossier n° %s dans votre carnet." % case_id,
 					"Boutons « + NOTER » sous chaque pièce.", "dossiers", "facts",

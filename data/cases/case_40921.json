@@ -7,8 +7,8 @@
 	"guide": {
 		"note": "Conseils de la bulle d'aide : ce premier dossier sert de tutoriel.",
 		"open": "Votre premier dossier : Anton SEDLAR, technicien à la Centrale n° 3. Ouvrez-le.",
-		"read": "Un dossier se compose de pièces. Cliquez sur l'onglet signalé pour lire la suivante.",
-		"facts": "Sous chaque pièce, les éléments notables. Cliquez dessus pour les noter. Le rapport de présence et le registre de déplacements parlent tous deux du 21 octobre.",
+		"read": "Un dossier se compose de pièces. Cliquez sur la pièce signalée, marquée « à lire ».",
+		"facts": "Sous chaque pièce, les éléments à noter. Cliquez dessus pour les copier dans votre carnet. Le rapport de présence et le registre de déplacements parlent tous deux du 21 octobre.",
 		"notebook": "Votre carnet est à gauche. Sélectionnez deux éléments qui se contredisent, puis cliquez sur CONFRONTER.",
 		"notebook_retry": "Ces deux éléments peuvent être vrais en même temps. Où était SEDLAR le 21 octobre ? Notez sa présence dans le rapport de présence, puis confrontez-la au trajet du registre de déplacements.",
 		"conclusion": "Contradiction établie : vous avez de quoi conclure. Cliquez sur RÉDIGER LA CONCLUSION, choisissez, signez. Il n'y a pas de bonne réponse imposée."

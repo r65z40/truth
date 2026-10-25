@@ -58,7 +58,8 @@ scenes/
   main_menu/                  menu principal
   desk/                       bureau de l'inspecteur : fond, icônes, fenêtres, barre des tâches
   ui/terminal/                terminal + interprète de commandes
-  ui/windows/                 Dossiers, Messages, Archives, Dossier personnel, Paramètres
+  ui/windows/                 Dossiers, Messages, Archives, Dossier personnel, Paramètres,
+                              Terminal, pièce ouverte à part (DocumentWindow)
   ui/crt_overlay/             filtre écran cathodique (autoload)
 ui/theme/ministry_theme.tres  thème global (couleurs, polices, styles)
 ui/shaders/crt.gdshader
@@ -87,7 +88,9 @@ tests/                        tests automatiques et captures d'écran
 - **Terminal** (fenêtre facultative) : saisie ou bouton > `TerminalCommands.parse()`
   > signal `app_requested` > `Desk.open_app()`.
 - **Lecture d'une pièce** : `DossiersWindow.select_document()` > affichage BBCode >
-  `GameState.mark_document_viewed()`.
+  `GameState.mark_document_viewed()`. « Ouvrir la pièce à côté » > signal
+  `document_window_requested` > `Desk.open_document_window()` crée une
+  `DocumentWindow` (détruite à sa fermeture, `WindowManager.add_window()`).
 - **Carnet d'enquête** : « + NOTER » > `GameState.note_fact()` ; deux éléments
   sélectionnés > `GameState.confront_facts()` > `CaseLibrary.confront()`.
 - **Conclusion** : `ConclusionPanel.submitted` > `GameState.apply_decision()` >

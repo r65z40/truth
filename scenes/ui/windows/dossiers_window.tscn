@@ -35,51 +35,75 @@ theme_override_constants/margin_bottom = 14
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="CaseColumn" type="VBoxContainer" parent="Layout/Content/Columns"]
-custom_minimum_size = Vector2(320, 0)
+[node name="CaseScroll" type="ScrollContainer" parent="Layout/Content/Columns"]
+custom_minimum_size = Vector2(330, 0)
 layout_mode = 2
-theme_override_constants/separation = 10
+horizontal_scroll_mode = 0
 
-[node name="CaseListTitle" type="Label" parent="Layout/Content/Columns/CaseColumn"]
+[node name="CaseColumn" type="VBoxContainer" parent="Layout/Content/Columns/CaseScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="CaseListTitle" type="Label" parent="Layout/Content/Columns/CaseScroll/CaseColumn"]
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 text = "DOSSIERS ASSIGNÉS"
 
-[node name="CaseList" type="VBoxContainer" parent="Layout/Content/Columns/CaseColumn"]
+[node name="CaseList" type="VBoxContainer" parent="Layout/Content/Columns/CaseScroll/CaseColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Notebook" type="VBoxContainer" parent="Layout/Content/Columns/CaseColumn"]
+[node name="PiecesTitle" type="Label" parent="Layout/Content/Columns/CaseScroll/CaseColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "PIÈCES DU DOSSIER"
+
+[node name="DocumentTabsScroll" type="ScrollContainer" parent="Layout/Content/Columns/CaseScroll/CaseColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="DocumentTabs" type="VBoxContainer" parent="Layout/Content/Columns/CaseScroll/CaseColumn/DocumentTabsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Notebook" type="VBoxContainer" parent="Layout/Content/Columns/CaseScroll/CaseColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="NotebookTitle" type="Label" parent="Layout/Content/Columns/CaseColumn/Notebook"]
+[node name="NotebookTitle" type="Label" parent="Layout/Content/Columns/CaseScroll/CaseColumn/Notebook"]
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 text = "CARNET D'ENQUÊTE"
 
-[node name="NotebookScroll" type="ScrollContainer" parent="Layout/Content/Columns/CaseColumn/Notebook"]
+[node name="NotebookScroll" type="ScrollContainer" parent="Layout/Content/Columns/CaseScroll/CaseColumn/Notebook"]
+custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="NotebookList" type="VBoxContainer" parent="Layout/Content/Columns/CaseColumn/Notebook/NotebookScroll"]
+[node name="NotebookList" type="VBoxContainer" parent="Layout/Content/Columns/CaseScroll/CaseColumn/Notebook/NotebookScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
-[node name="ConfrontResult" type="Label" parent="Layout/Content/Columns/CaseColumn/Notebook"]
+[node name="ConfrontResult" type="Label" parent="Layout/Content/Columns/CaseScroll/CaseColumn/Notebook"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 15
 autowrap_mode = 3
 
-[node name="ConfrontButton" type="Button" parent="Layout/Content/Columns/CaseColumn/Notebook"]
+[node name="ConfrontButton" type="Button" parent="Layout/Content/Columns/CaseScroll/CaseColumn/Notebook"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
@@ -108,18 +132,7 @@ autowrap_mode = 3
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
-
-[node name="DocumentTabsScroll" type="ScrollContainer" parent="Layout/Content/Columns/DocumentColumn"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 58)
-layout_mode = 2
-follow_focus = true
-vertical_scroll_mode = 0
-
-[node name="DocumentTabs" type="HBoxContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentTabsScroll"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 6
+autowrap_mode = 3
 
 [node name="DocumentPanel" type="PanelContainer" parent="Layout/Content/Columns/DocumentColumn"]
 unique_name_in_owner = true
@@ -189,24 +202,24 @@ theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 15
 autowrap_mode = 3
 
-[node name="FactsPanel" type="PanelContainer" parent="Layout/Content/Columns/DocumentColumn"]
+[node name="FactsPanel" type="PanelContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="FactsLayout" type="VBoxContainer" parent="Layout/Content/Columns/DocumentColumn/FactsPanel"]
+[node name="FactsLayout" type="VBoxContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent/FactsPanel"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="FactsTitle" type="Label" parent="Layout/Content/Columns/DocumentColumn/FactsPanel/FactsLayout"]
+[node name="FactsTitle" type="Label" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent/FactsPanel/FactsLayout"]
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
-text = "ÉLÉMENTS NOTABLES DE CETTE PIÈCE : cliquez pour les noter dans votre carnet"
+text = "À NOTER : cliquez sur un élément pour le copier dans votre carnet"
+autowrap_mode = 3
 
-[node name="FactsList" type="HFlowContainer" parent="Layout/Content/Columns/DocumentColumn/FactsPanel/FactsLayout"]
+[node name="FactsList" type="VBoxContainer" parent="Layout/Content/Columns/DocumentColumn/DocumentPanel/DocScroll/DocContent/FactsPanel/FactsLayout"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/h_separation = 6
-theme_override_constants/v_separation = 6
+theme_override_constants/separation = 4
 
 [node name="ConclusionPanel" parent="Layout/Content/Columns/DocumentColumn" instance=ExtResource("2_conclusion")]
 unique_name_in_owner = true

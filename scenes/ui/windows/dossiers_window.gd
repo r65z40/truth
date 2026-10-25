@@ -1,6 +1,9 @@
+class_name DossiersWindow
 extends MinistryWindow
-## Fenêtre « Dossiers » : liste des dossiers, lecture des pièces, carnet d'enquête
-## (noter et confronter des éléments) et formulaire de conclusion.
+## Fenêtre « Dossiers » : le classeur. Liste des dossiers, pièces du dossier
+## (lues ou à lire), lecture d'une pièce (ou ouverture dans sa propre fenêtre),
+## carnet d'enquête (noter et confronter des éléments), avancement de l'enquête
+## et formulaire de conclusion.
 ##
 ## Lit CaseLibrary et GameState ; toutes les modifications passent par GameState.
 
@@ -21,6 +24,8 @@ const MAX_SELECTED_FACTS := 2
 ## Le joueur part sur le terrain (interrogatoire ou perquisition) : le bureau
 ## ouvre l'écran de scène.
 signal field_requested(case_id: String)
+## Le joueur veut poser une pièce à côté, dans sa propre fenêtre.
+signal document_window_requested(case_id: String, document_id: String)
 
 var current_case_id := ""
 var current_document_id := ""
@@ -30,6 +35,9 @@ var last_confront_failed := false
 ## Éléments du carnet sélectionnés pour une confrontation (au plus 2).
 var selected_facts: Array[String] = []
 var _tab_group := ButtonGroup.new()
+var _open_aside_button: Button
+## Pièce pour laquelle la bulle d'aide a déjà fait défiler jusqu'aux éléments.
+var _guide_scrolled_document := ""
 var _photo := IdPhoto.new()
 
 @onready var _case_list: VBoxContainer = %CaseList
@@ -39,8 +47,8 @@ var _photo := IdPhoto.new()
 @onready var _confront_result: Label = %ConfrontResult
 @onready var _case_header: Label = %CaseHeader
 @onready var _case_summary: Label = %CaseSummary
-## Onglets des pièces sur une seule ligne, qui défile si le dossier en compte beaucoup.
-@onready var _document_tabs: HBoxContainer = %DocumentTabs
+## Pièces du dossier, en liste verticale sous les dossiers (défile si besoin).
+@onready var _document_tabs: VBoxContainer = %DocumentTabs
 @onready var _document_tabs_scroll: ScrollContainer = %DocumentTabsScroll
 @onready var _document_panel: PanelContainer = %DocumentPanel
 @onready var _doc_scroll: ScrollContainer = %DocScroll
@@ -48,7 +56,7 @@ var _photo := IdPhoto.new()
 var _doc_icon: TextureRect
 @onready var _doc_meta: Label = %DocMeta
 @onready var _doc_body: RichTextLabel = %DocBody
-@onready var _facts_list: HFlowContainer = %FactsList
+@onready var _facts_list: VBoxContainer = %FactsList
 @onready var _facts_panel: Control = %FactsPanel
 @onready var _veritas_strip: Control = %VeritasStrip
 @onready var _veritas_remark: Label = %VeritasRemark
@@ -89,7 +97,21 @@ func _ready() -> void:
 	_doc_icon.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	_doc_title.get_parent().add_child(_doc_icon)
 	_doc_title.get_parent().move_child(_doc_icon, 0)
+	# Poser la pièce à côté, dans sa propre fenêtre, pour la comparer à une autre.
+	_open_aside_button = Button.new()
+	_open_aside_button.name = "OpenAsideButton"
+	_open_aside_button.text = "OUVRIR LA PIÈCE À CÔTÉ"
+	_open_aside_button.tooltip_text = "Ouvrir cette pièce dans sa propre fenêtre, pour la comparer à une autre."
+	_open_aside_button.custom_minimum_size = Vector2(0, 44)
+	_open_aside_button.focus_mode = Control.FOCUS_NONE
+	_open_aside_button.add_theme_font_size_override("font_size", 14)
+	_open_aside_button.pressed.connect(open_current_aside)
+	_document_tabs_scroll.add_sibling(_open_aside_button)
 	_show_case_view(false)
+	# Un élément noté depuis une pièce ouverte à part apparaît aussitôt au carnet.
+	GameState.state_changed.connect(func() -> void:
+		if is_open():
+			_refresh_all())
 
 
 func _on_opened() -> void:
@@ -133,11 +155,7 @@ func select_document(document_id: String) -> void:
 			_scroll_to_tab.call_deferred(tab)
 	_doc_title.text = document.title.to_upper()
 	_doc_icon.texture = PixelIcons.document_icon(document.get("type", ""), 3)
-	_doc_meta.text = "Source : %s\nFiabilité : %s     Date : %s" % [
-		document.source,
-		RELIABILITY_LABELS.get(document.reliability, document.reliability),
-		_format_iso_date(document.get("date", "")),
-	]
+	_doc_meta.text = DocumentWindow.describe_source(document)
 	_doc_body.text = render_document_bbcode(document)
 	_photo.photo = document.get("photo", {})
 	_photo.visible = document.has("photo")
@@ -147,6 +165,12 @@ func select_document(document_id: String) -> void:
 	_doc_scroll.scroll_vertical = 0
 	GameState.mark_document_viewed(current_case_id, document_id)
 	_refresh_all()
+
+
+## Ouvre la pièce affichée dans sa propre fenêtre (le bureau la crée).
+func open_current_aside() -> void:
+	if current_case_id != "" and current_document_id != "":
+		document_window_requested.emit(current_case_id, current_document_id)
 
 
 # --- Carnet d'enquête ----------------------------------------------------------
@@ -209,6 +233,7 @@ func open_conclusion() -> void:
 		return
 	_conclusion_panel.setup(current_case_id)
 	_document_tabs_scroll.hide()
+	_open_aside_button.hide()
 	_document_panel.hide()
 	_facts_panel.hide()
 	_footer.hide()
@@ -260,7 +285,7 @@ static func _escape(text: String) -> String:
 	return text.replace("[", "[lb]")
 
 
-static func _format_iso_date(iso: String) -> String:
+static func format_iso_date(iso: String) -> String:
 	var bits := iso.split("-")
 	if bits.size() != 3:
 		return iso
@@ -276,15 +301,33 @@ func _refresh_all() -> void:
 	if case_state.decision != "":
 		status_text += "  //  " + CaseLibrary.get_decision(case_data, case_state.decision).get("label", "").to_upper()
 	_case_header.text = "DOSSIER N° %s  |  %s  |  %s" % [current_case_id, case_data.subject_name, status_text]
-	_progress_label.text = "Pièces lues : %d/%d  //  Contradictions : %d" % [case_state.viewed_documents.size(),
-			case_data.documents.size(), case_state.contradictions_found.size()]
+	_progress_label.text = progress_text(case_data, case_state)
 	var can_decide := GameState.can_decide(current_case_id)
 	_refresh_actions(can_decide)
 	_conclusion_button.disabled = not can_decide
 	_conclusion_button.text = "RÉDIGER LA CONCLUSION" if can_decide else "RAPPORT TRANSMIS"
 	_refresh_facts(case_data)
+	_refresh_tab_states()
 	_refresh_notebook()
 	_refresh_case_list()
+
+
+## Avancement de l'enquête en quatre étapes cochées : lire, noter, confronter, conclure.
+static func progress_text(case_data: Dictionary, case_state: Dictionary) -> String:
+	var read: int = case_state.viewed_documents.size()
+	var total: int = case_data.documents.size()
+	var noted: int = case_state.noted_facts.size()
+	var found: int = case_state.contradictions_found.size()
+	var steps := [
+		[read >= total, "Pièces lues : %d/%d" % [read, total]],
+		[noted > 0, "Éléments notés : %d" % noted],
+		[found > 0, "Contradictions : %d" % found],
+		[case_state.decision != "", "Rapport"],
+	]
+	var parts: PackedStringArray = []
+	for step in steps:
+		parts.append(("[x] " if step[0] else "[ ] ") + step[1])
+	return "   ".join(parts)
 
 
 # --- Actions qui coûtent du temps --------------------------------------------
@@ -359,17 +402,7 @@ func _refresh_facts(case_data: Dictionary) -> void:
 	var document := CaseLibrary.get_document(case_data, current_document_id)
 	var noted: Array = GameState.get_case_state(current_case_id).noted_facts
 	for fact in document.get("facts", []):
-		var button := Button.new()
-		button.name = "Fact_" + fact.id
-		var is_noted: bool = fact.id in noted
-		button.text = ("NOTÉ : " if is_noted else "+ ") + fact.label
-		button.disabled = is_noted
-		button.tooltip_text = "Déjà dans votre carnet." if is_noted else "Ajouter cet élément à votre carnet d'enquête."
-		button.custom_minimum_size = Vector2(0, 44)
-		button.add_theme_font_size_override("font_size", 15)
-		button.focus_mode = Control.FOCUS_NONE
-		button.pressed.connect(note_fact.bind(fact.id))
-		_facts_list.add_child(button)
+		_facts_list.add_child(DocumentWindow.make_fact_button(fact, fact.id in noted, note_fact))
 
 
 func _refresh_notebook() -> void:
@@ -380,14 +413,16 @@ func _refresh_notebook() -> void:
 	var case_state := GameState.get_case_state(current_case_id)
 	for fact_id in case_state.noted_facts:
 		var fact := CaseLibrary.get_fact(case_data, fact_id)
+		var source := _document_of_fact(case_data, fact_id)
 		var button := Button.new()
 		button.name = "Noted_" + fact_id
 		button.text = fact.get("label", fact_id)
+		button.tooltip_text = "Source : %s. Cliquez pour le sélectionner." % source.get("title", "?")
 		button.toggle_mode = true
 		button.set_pressed_no_signal(fact_id in selected_facts)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		button.icon = PixelIcons.get_icon("dossiers", 2)
+		button.icon = PixelIcons.document_icon(source.get("type", ""), 2)
 		button.custom_minimum_size = Vector2(0, 44)
 		button.add_theme_font_size_override("font_size", 15)
 		button.focus_mode = Control.FOCUS_NONE
@@ -398,6 +433,15 @@ func _refresh_notebook() -> void:
 		_set_confront_result("Notez des éléments sous chaque pièce, puis sélectionnez-en deux ici pour les confronter.")
 	elif selected_facts.size() == 1:
 		_set_confront_result("Sélectionnez un second élément à confronter.")
+
+
+## Pièce dont provient un élément (pour rappeler sa source dans le carnet).
+static func _document_of_fact(case_data: Dictionary, fact_id: String) -> Dictionary:
+	for document in case_data.get("documents", []):
+		for fact in document.get("facts", []):
+			if fact.id == fact_id:
+				return document
+	return {}
 
 
 func _refresh_case_list() -> void:
@@ -411,11 +455,12 @@ func _refresh_case_list() -> void:
 		var case_state := GameState.get_case_state(case_id)
 		var button := Button.new()
 		button.text = "N° %s  [%s]\n%s" % [case_id, STATUS_LABELS.get(case_state.status, "?"), case_data.subject_name]
+		button.add_theme_font_size_override("font_size", 15)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.toggle_mode = true
 		button.set_pressed_no_signal(case_id == current_case_id)
-		button.custom_minimum_size = Vector2(0, 64)
+		button.custom_minimum_size = Vector2(0, 52)
 		button.set_meta("case_id", case_id)
 		button.pressed.connect(select_case.bind(case_id))
 		_case_list.add_child(button)
@@ -430,18 +475,46 @@ func _build_document_tabs(case_data: Dictionary) -> void:
 		tab.text = document.title
 		tab.icon = PixelIcons.document_icon(document.get("type", ""), 2)
 		tab.theme_type_variation = &"DocumentTab"
+		tab.name = "Tab_" + document.id
+		tab.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		tab.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		tab.add_theme_font_size_override("font_size", 15)
 		tab.toggle_mode = true
 		tab.button_group = _tab_group
 		tab.custom_minimum_size = Vector2(0, 44)
 		tab.set_meta("document_id", document.id)
 		tab.pressed.connect(select_document.bind(document.id))
 		_document_tabs.add_child(tab)
+	_refresh_tab_states()
+	_fit_document_list.call_deferred()
+
+
+## La liste des pièces prend la place de son contenu, jusqu'à quatre pièces
+## environ ; au-delà elle défile, pour laisser de la place au carnet.
+func _fit_document_list() -> void:
+	var content := _document_tabs.get_combined_minimum_size().y
+	_document_tabs_scroll.custom_minimum_size.y = minf(content, 4.5 * 46.0)
+
+
+## Pièces pas encore lues : texte mis en avant et mention « à lire ».
+func _refresh_tab_states() -> void:
+	for tab: Button in _document_tabs.get_children():
+		if tab.is_queued_for_deletion():
+			continue
+		var document_id: String = tab.get_meta("document_id")
+		var unread := not GameState.is_document_viewed(current_case_id, document_id)
+		var title: String = CaseLibrary.get_document(GameState.get_case_view(current_case_id), document_id).get("title", "")
+		tab.text = title + ("  (à lire)" if unread else "")
+		tab.theme_type_variation = &"DocumentTabNew" if unread else &"DocumentTab"
+		tab.tooltip_text = "Pièce pas encore lue." if unread else "Pièce lue."
 
 
 func _show_case_view(has_case: bool) -> void:
 	_case_header.visible = has_case
 	_case_summary.visible = has_case
 	_document_tabs_scroll.visible = has_case
+	_open_aside_button.visible = has_case
+	%PiecesTitle.visible = has_case
 	_document_panel.visible = has_case
 	_facts_panel.visible = has_case
 	_footer.visible = has_case
@@ -468,6 +541,10 @@ func get_guide_target(part: String, case_id := "") -> Control:
 		"facts":
 			for button in _facts_list.get_children():
 				if button is Button and not button.disabled and not button.is_queued_for_deletion():
+					# Les éléments sont en bas de la pièce : on y descend une fois par pièce.
+					if _guide_scrolled_document != current_document_id:
+						_guide_scrolled_document = current_document_id
+						_doc_scroll.ensure_control_visible.call_deferred(button)
 					return button
 			# Rien à noter sur cette pièce : les autres onglets.
 			return _document_tabs_scroll
