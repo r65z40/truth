@@ -1,35 +1,39 @@
 extends Control
-## Bureau de l'inspecteur : poste de travail principal.
+## Bureau de l'inspecteur : l'ordinateur du ministère.
 ##
-## Orchestre l'en-tête (date, identité, grade), le terminal, les raccourcis
-## latéraux et les fenêtres (Dossiers, Messages, Archives). Ne contient aucune
-## règle de jeu : il lit GameState et délègue la sauvegarde à SaveManager.
+## Un fond, une colonne d'icônes, des fenêtres qu'on ouvre, déplace et réduit
+## (WindowManager) et une barre des tâches (menu MINISTÈRE, fenêtres ouvertes,
+## fin de service, heures restantes, date). Ne contient aucune règle de jeu :
+## il lit GameState et délègue la sauvegarde à SaveManager.
 
 const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 
-@onready var terminal: Terminal = %Terminal
+@onready var terminal: Terminal = %TerminalWindow.get_node("%Terminal")
 @onready var windows: Dictionary = {
 	"dossiers": %DossiersWindow,
 	"messages": %MessagesWindow,
 	"archives": %ArchivesWindow,
 	"personnel": %PersonnelWindow,
+	"terminal": %TerminalWindow,
+	"settings": %SettingsWindow,
 }
+@onready var window_manager: WindowManager = %WindowLayer
 
 @onready var _date_label: Label = %DateLabel
+@onready var _hours_label: Label = %HoursLabel
+@onready var _time_gauge: ProgressBar = %TimeGauge
 @onready var _agent_label: Label = %AgentLabel
 @onready var _rank_label: Label = %RankLabel
-@onready var _messages_button: Button = %MessagesButton
-@onready var _status_label: Label = %StatusLabel
-@onready var _scrim: ColorRect = %Scrim
+@onready var _messages_button: DesktopIcon = %MessagesButton
+@onready var _start_button: Button = %StartButton
+@onready var _start_menu: Control = %StartMenu
+@onready var _task_buttons: HBoxContainer = %TaskButtons
 @onready var _day_transition: ColorRect = %DayTransition
 @onready var _day_transition_label: Label = %DayTransitionLabel
 @onready var evening_screen: EveningScreen = %EveningScreen
 @onready var act_review_screen: ActReviewScreen = %ActReviewScreen
 @onready var coach: CoachOverlay = %CoachOverlay
 @onready var field_screen: FieldScreen = %FieldScreen
-@onready var _objective_bar: Control = %ObjectiveBar
-@onready var _objective_text: Label = %ObjectiveText
-@onready var _objective_hint: Label = %ObjectiveHint
 @onready var _toast: Control = %Toast
 @onready var _toast_label: Label = %ToastLabel
 @onready var _target_buttons: Dictionary = {
@@ -54,6 +58,8 @@ const TOOLTIPS := {
 	"MessagesButton": "Lire le courrier interne et les réponses de la hiérarchie.",
 	"ArchivesButton": "Voir les rapports que vous avez transmis.",
 	"PersonnelButton": "Votre évaluation par la Direction du personnel.",
+	"TerminalButton": "Le terminal du ministère, pour les commandes tapées au clavier.",
+	"StartButton": "Menu du ministère : identité, terminal, paramètres, sauvegarde.",
 	"EndDayButton": "Terminer la journée : la suite de vos décisions arrive le lendemain.",
 	"SaveButton": "Enregistrer la partie.",
 	"MenuButton": "Revenir au menu principal.",
@@ -72,18 +78,27 @@ func _ready() -> void:
 	_messages_button.pressed.connect(terminal.submit_command.bind("MESSAGES"))
 	%ArchivesButton.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
 	%PersonnelButton.pressed.connect(terminal.submit_command.bind("PROFIL"))
+	%TerminalButton.pressed.connect(open_app.bind("terminal"))
 	%SaveButton.pressed.connect(terminal.submit_command.bind("SAUVER"))
 	%MenuButton.pressed.connect(terminal.submit_command.bind("MENU"))
 	%EndDayButton.pressed.connect(terminal.submit_command.bind("FIN"))
+	_start_button.toggled.connect(_start_menu.set_visible)
+	%StartPersonnel.pressed.connect(terminal.submit_command.bind("PROFIL"))
+	%StartTerminal.pressed.connect(open_app.bind("terminal"))
+	%StartSettings.pressed.connect(open_app.bind("settings"))
+	for item: Button in _start_menu.find_children("*", "Button", true, false):
+		item.pressed.connect(close_start_menu)
 	for window: MinistryWindow in windows.values():
 		window.hide()
 		window.closed.connect(_on_window_closed)
 		window.notify.connect(show_toast)
+	window_manager.windows_changed.connect(_refresh_taskbar)
+	_task_buttons.get_parent().resized.connect(func() -> void:
+		for button: Button in _task_buttons.get_children():
+			button.custom_minimum_size.x = _task_button_width())
 	for button_name in TOOLTIPS:
 		(get_node("%" + button_name) as Control).tooltip_text = TOOLTIPS[button_name]
 	_toast.hide()
-	_scrim.hide()
-	_scrim.gui_input.connect(_on_scrim_input)
 	_day_transition.hide()
 	coach.target_provider = coach_target
 	windows.dossiers.field_requested.connect(open_field)
@@ -93,30 +108,38 @@ func _ready() -> void:
 	has_unsaved_changes = false
 
 
-## Ouvre une fenêtre par son nom ("dossiers", "messages", "archives").
+## Ouvre une fenêtre par son nom ("dossiers", "messages", "archives"...) et la
+## passe au premier plan ; les autres fenêtres restent ouvertes derrière.
 func open_app(app_name: String) -> void:
 	if not windows.has(app_name):
 		push_warning("Desk: application inconnue : %s" % app_name)
 		return
-	for other_name in windows:
-		if other_name != app_name:
-			windows[other_name].hide()
-	_scrim.show()
+	close_start_menu()
 	windows[app_name].open()
 
 
+## Application de la fenêtre au premier plan ("" si aucune n'est à l'écran).
 func get_open_app() -> String:
+	var focused := window_manager.get_focused()
 	for app_name in windows:
-		if windows[app_name].visible:
+		if windows[app_name] == focused:
 			return app_name
 	return ""
+
+
+func is_app_open(app_name: String) -> bool:
+	return windows.has(app_name) and windows[app_name].is_open()
+
+
+func close_start_menu() -> void:
+	_start_button.set_pressed_no_signal(false)
+	_start_menu.hide()
 
 
 func save_game() -> void:
 	if SaveManager.save_game() == OK:
 		has_unsaved_changes = false
 		terminal.print_line("Session enregistrée le %s." % GameState.get_date_short())
-		_flash_status("SESSION ENREGISTRÉE")
 		show_toast("Partie sauvegardée.")
 	else:
 		terminal.print_line("ÉCHEC DE L'ENREGISTREMENT.", Terminal.COLOR_ALERT)
@@ -130,6 +153,7 @@ func request_end_day() -> void:
 		_end_day_armed = true
 		terminal.print_line("ATTENTION : dossier(s) sans conclusion : %s." % ", ".join(pending), Terminal.COLOR_ALERT)
 		terminal.print_line("Répétez FIN pour quitter votre poste malgré tout.", Terminal.COLOR_ALERT)
+		show_toast("Dossier(s) sans conclusion : %s.\nCliquez encore sur FIN DE SERVICE pour partir malgré tout." % ", ".join(pending), 4.0)
 		return
 	end_day()
 
@@ -137,9 +161,9 @@ func request_end_day() -> void:
 ## Quitte le poste : soirée s'il y en a une, revue de fin d'acte, puis jour suivant.
 func end_day() -> void:
 	_end_day_armed = false
+	close_start_menu()
 	for window: MinistryWindow in windows.values():
-		window.hide()
-	_scrim.hide()
+		window.close()
 	if evening_screen.open():
 		await evening_screen.finished
 	if act_review_screen.open():
@@ -173,20 +197,21 @@ func return_to_menu() -> void:
 		_logout_armed = true
 		terminal.print_line("ATTENTION : modifications non sauvegardées depuis votre dernier enregistrement.", Terminal.COLOR_ALERT)
 		terminal.print_line("Cliquez sur SAUVEGARDER, ou répétez DÉCONNEXION pour quitter sans sauvegarder.", Terminal.COLOR_ALERT)
+		show_toast("Modifications non sauvegardées.\nSauvegardez, ou choisissez encore Déconnexion pour quitter.", 4.0)
 		return
 	terminal.print_line("Fermeture de session...", Terminal.COLOR_DIM)
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
 ## Affiche brièvement une notification en bas de l'écran.
-func show_toast(text: String) -> void:
+func show_toast(text: String, duration := 1.8) -> void:
 	_toast_label.text = text
 	_toast.show()
 	_toast.modulate.a = 1.0
 	if _toast_tween:
 		_toast_tween.kill()
 	_toast_tween = create_tween()
-	_toast_tween.tween_interval(1.8)
+	_toast_tween.tween_interval(duration)
 	_toast_tween.tween_property(_toast, "modulate:a", 0.0, 0.5)
 	_toast_tween.tween_callback(_toast.hide)
 
@@ -210,39 +235,47 @@ func _on_state_changed() -> void:
 	_refresh_header()
 
 
-## Ligne d'horloge sous la date : heure de service et temps restant.
+## Ligne d'horloge : heure de service et temps restant (terminal, fin de journée).
 func clock_line() -> String:
+	return "%s  //  %s" % [GameState.get_clock_text(), hours_text()]
+
+
+## Temps de service restant, pour la barre des tâches.
+func hours_text() -> String:
 	var hours := GameState.hours_used
 	if WorkTime.is_overtime(hours):
-		return "%s  //  HEURES SUPPLÉMENTAIRES" % GameState.get_clock_text()
+		return "HEURES SUPPLÉMENTAIRES"
 	var left := WorkTime.day_hours() - hours
 	if left <= 0:
-		return "%s  //  FIN DE SERVICE" % GameState.get_clock_text()
-	return "%s  //  %d h de service restantes" % [GameState.get_clock_text(), left]
+		return "FIN DE SERVICE"
+	return "%d h restantes" % left
 
 
 func _refresh_header() -> void:
-	_date_label.text = "%s\n%s" % [GameState.get_date_long(), clock_line()]
+	_date_label.text = "%s  %s" % [FictionalCalendar.format_compact(GameState.day_index), GameState.get_clock_text()]
+	_hours_label.text = hours_text()
+	_time_gauge.max_value = WorkTime.day_hours()
+	_time_gauge.value = WorkTime.day_hours() - mini(GameState.hours_used, WorkTime.day_hours())
 	_agent_label.text = "%s  //  %s" % [GameState.player.name, GameState.player.badge]
 	_rank_label.text = GameState.get_rank_title().to_upper()
 	var unread := GameState.get_unread_count()
 	var pending := _undecided_case_ids().size()
-	_messages_button.text = "MESSAGES\n" + ("%d non lu(s)" % unread if unread > 0 else "aucun nouveau message")
-	%DossiersButton.text = "DOSSIERS\n" + ("%d dossier(s) à traiter" % pending if pending > 0 else "aucun dossier en attente")
-	%ArchivesButton.text = "ARCHIVES\n%d rapport(s) transmis" % GameState.decisions.size()
-	%PersonnelButton.text = "DOSSIER PERSONNEL\nvotre évaluation"
+	_messages_button.badge = unread
+	_messages_button.tooltip_text = "%s\n%s" % [TOOLTIPS.MessagesButton,
+			"%d message(s) non lu(s)." % unread if unread > 0 else "Aucun nouveau message."]
+	%DossiersButton.badge = pending
+	%DossiersButton.tooltip_text = "%s\n%s" % [TOOLTIPS.DossiersButton,
+			"%d dossier(s) à traiter." % pending if pending > 0 else "Aucun dossier en attente."]
 	%ArchivesButton.visible = GameState.is_feature_unlocked("archives")
 	%PersonnelButton.visible = GameState.is_feature_unlocked("personnel")
+	%StartPersonnel.visible = %PersonnelButton.visible
 	terminal.set_advanced_visible(GameState.is_feature_unlocked("terminal_advanced"))
 	_refresh_objective()
 
 
-## Met à jour la barre d'objectif et signale le bouton correspondant.
+## Met à jour l'aide : la bulle et l'icône signalée clignotent doucement.
 func _refresh_objective() -> void:
 	current_step = Guidance.next_step(GameState.get_condition_state(), GameState.messages)
-	_objective_bar.visible = Settings.guidance
-	_objective_text.text = current_step.text
-	_objective_hint.text = current_step.hint
 	coach.visible = Settings.guidance
 	if _pulse_tween:
 		_pulse_tween.kill()
@@ -253,6 +286,48 @@ func _refresh_objective() -> void:
 		_pulse_tween = create_tween().set_loops()
 		_pulse_tween.tween_property(target, "modulate", Color(0.6, 1.4, 0.8), 0.7)
 		_pulse_tween.tween_property(target, "modulate", Color.WHITE, 0.7)
+
+
+## Un bouton par fenêtre ouverte dans la barre des tâches ; enfoncé pour celle
+## au premier plan. Un clic la ressort, la passe devant ou la réduit.
+func _refresh_taskbar() -> void:
+	for child in _task_buttons.get_children():
+		child.queue_free()
+	var focused := window_manager.get_focused()
+	for window in window_manager.get_open_windows():
+		var button := Button.new()
+		button.name = "Task_" + window.name
+		button.text = window.short_title()
+		button.icon = PixelIcons.get_icon(window.app_icon, 2) if window.app_icon != "" else null
+		button.theme_type_variation = &"TaskButton"
+		button.toggle_mode = true
+		button.button_pressed = window == focused
+		button.custom_minimum_size = Vector2(_task_button_width(), 44)
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.clip_text = true
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		button.focus_mode = Control.FOCUS_NONE
+		button.pressed.connect(window_manager.toggle_from_taskbar.bind(window))
+		_task_buttons.add_child(button)
+
+
+## Largeur des boutons de la barre des tâches : ils se partagent la place libre.
+func _task_button_width() -> float:
+	var row := _task_buttons.get_parent() as HBoxContainer
+	var free := row.size.x
+	for child: Control in row.get_children():
+		if child != _task_buttons:
+			free -= child.size.x + row.get_theme_constant("separation")
+	var count := maxi(window_manager.get_open_windows().size(), 1)
+	return clampf(free / count - 4.0, 56.0, 190.0)
+
+
+func _input(event: InputEvent) -> void:
+	# Le menu MINISTÈRE se referme quand on clique ailleurs.
+	if _start_menu.visible and event is InputEventMouseButton and event.pressed:
+		if not _start_menu.get_global_rect().has_point(event.global_position) \
+				and not _start_button.get_global_rect().has_point(event.global_position):
+			close_start_menu()
 
 
 ## Part sur le terrain pour ce dossier (interrogatoire ou perquisition).
@@ -270,23 +345,23 @@ func _on_field_finished() -> void:
 			windows.dossiers.select_document(document.id)
 
 
-## Contrôle que la bulle d'aide signale pour l'étape en cours : le bouton de
-## l'application, l'endroit précis dans la fenêtre ouverte, ou le bouton FERMER
-## d'une autre fenêtre restée ouverte.
+## Contrôle que la bulle d'aide signale pour l'étape en cours : l'endroit précis
+## dans la fenêtre de l'application si elle est au premier plan, sinon son icône.
 func coach_target() -> Control:
 	if evening_screen.visible or act_review_screen.visible or field_screen.visible or _day_transition.visible:
 		return null
 	var app: String = current_step.get("target", "")
-	var open := get_open_app()
-	if open == "":
-		coach.text = current_step.get("coach", "")
-		return _target_buttons.get(app)
-	if open == app:
-		var window_text: String = windows[open].get_guide_text(current_step.get("part", ""), current_step.get("case_id", ""))
+	if windows.has(app) and windows[app].visible:
+		var window: MinistryWindow = windows[app]
+		if window != window_manager.get_focused():
+			# Fenêtre cachée derrière une autre : son icône la ramène devant.
+			coach.text = current_step.get("coach", "")
+			return _target_buttons.get(app)
+		var window_text: String = window.get_guide_text(current_step.get("part", ""), current_step.get("case_id", ""))
 		coach.text = window_text if window_text != "" else current_step.get("coach", "")
-		return windows[open].get_guide_target(current_step.get("part", ""), current_step.get("case_id", ""))
-	coach.text = "Fermez cette fenêtre pour passer à l'étape suivante."
-	return windows[open].get_close_button()
+		return window.get_guide_target(current_step.get("part", ""), current_step.get("case_id", ""))
+	coach.text = current_step.get("coach", "")
+	return _target_buttons.get(app)
 
 
 ## Après la signature d'un rapport : la réponse du supérieur s'affiche aussitôt.
@@ -299,22 +374,5 @@ func _on_decision_applied(case_id: String, _decision_id: String, message_id: Str
 
 
 func _on_window_closed() -> void:
-	if get_open_app() == "":
-		_scrim.hide()
+	if get_open_app() == "terminal":
 		terminal.focus_input()
-
-
-func _on_scrim_input(event: InputEvent) -> void:
-	# Toucher ou cliquer à côté d'une fenêtre la ferme.
-	if event is InputEventMouseButton and event.pressed:
-		var open_name := get_open_app()
-		if open_name != "":
-			windows[open_name].close()
-
-
-func _flash_status(text: String) -> void:
-	_status_label.text = text
-	var tween := create_tween()
-	_status_label.modulate = Color(0.235, 0.878, 0.478)
-	tween.tween_property(_status_label, "modulate", Color.WHITE, 1.5)
-	tween.tween_callback(func() -> void: _status_label.text = "LIAISON SÉCURISÉE  //  TOUTE ACTIVITÉ EST ENREGISTRÉE")

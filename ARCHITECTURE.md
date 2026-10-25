@@ -50,10 +50,13 @@ scripts/
     assessment.gd             évaluation de l'agent en mots (data/assessment.json)
     guidance.gd               objectif du jour affiché au bureau (étape suivante)
     field_rules.gd            scènes de terrain (interrogatoires, perquisitions)
-  ui/ministry_window.gd       cadre commun des fenêtres
+  ui/ministry_window.gd       cadre commun des fenêtres (titre, réduire, agrandir, fermer, déplacer)
+  ui/window_manager.gd        zone de travail : ordre des fenêtres, premier plan, petit écran
+  ui/pixel_icons.gd           icônes en pixels (grilles 16 x 16 aux couleurs du thème)
+  ui/bevel_style_box.gd       style en relief des fenêtres et boutons (utilisé par le thème)
 scenes/
   main_menu/                  menu principal
-  desk/                       bureau de l'inspecteur (scène principale de jeu)
+  desk/                       bureau de l'inspecteur : fond, icônes, fenêtres, barre des tâches
   ui/terminal/                terminal + interprète de commandes
   ui/windows/                 Dossiers, Messages, Archives, Dossier personnel, Paramètres
   ui/crt_overlay/             filtre écran cathodique (autoload)
@@ -75,8 +78,14 @@ tests/                        tests automatiques et captures d'écran
 
 - **Menu > Nouvelle partie** : `GameState.new_game()` puis scène `desk`.
 - **Menu > Continuer** : `SaveManager.load_game()` puis scène `desk`.
-- **Terminal** : saisie ou bouton > `TerminalCommands.parse()` > signal
-  `app_requested` > `Desk.open_app()` > fenêtre `MinistryWindow.open()`.
+- **Bureau** : icône, menu MINISTÈRE ou commande du terminal > `Desk.open_app()` >
+  `MinistryWindow.open()` > `WindowManager` la place (première fois) et la passe
+  au premier plan. Plusieurs fenêtres restent ouvertes ; `Desk.get_open_app()`
+  renvoie celle du premier plan. La barre des tâches a un bouton par fenêtre
+  ouverte (ressortir, passer devant, réduire). Sous 900 px de large, chaque
+  fenêtre occupe toute la zone de travail.
+- **Terminal** (fenêtre facultative) : saisie ou bouton > `TerminalCommands.parse()`
+  > signal `app_requested` > `Desk.open_app()`.
 - **Lecture d'une pièce** : `DossiersWindow.select_document()` > affichage BBCode >
   `GameState.mark_document_viewed()`.
 - **Carnet d'enquête** : « + NOTER » > `GameState.note_fact()` ; deux éléments
@@ -108,7 +117,7 @@ les décisions (`flags` des issues) sont le lien entre un dossier et ses suites.
 `scripts/core/guidance.gd` calcule, à partir de l'état seul, la prochaine étape
 utile (`{text, hint, target}`) : lire les messages, ouvrir un dossier, noter et
 confronter des éléments, rédiger la conclusion, finir la journée. Le bureau
-l'affiche dans la barre OBJECTIF et fait pulser le bouton visé. Désactivable dans
+la montre dans la bulle d'aide et fait pulser l'icône visée. Désactivable dans
 Paramètres (`gameplay/guidance`). Les fenêtres émettent `notify(text)` ; le bureau
 affiche ces notifications brèves (toast). Les sauvegardes contiennent un résumé
 (`summary` : date, grade) lu par le menu sans charger la partie.

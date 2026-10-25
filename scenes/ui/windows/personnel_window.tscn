@@ -14,6 +14,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 window_title = "DOSSIER PERSONNEL  //  DIRECTION DU PERSONNEL"
+app_icon = "personnel"
+task_title = "Dossier personnel"
 classification = "CONFIDENTIEL"
 
 [node name="Layout" type="VBoxContainer" parent="."]

@@ -13,7 +13,9 @@ offset_bottom = -48.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
-window_title = "MESSAGERIE INTERNE  //  LIAISON SÉCURISÉE"
+window_title = "COURRIER INTERNE  //  LIAISON SÉCURISÉE"
+app_icon = "messages"
+task_title = "Courrier"
 
 [node name="Layout" type="VBoxContainer" parent="."]
 layout_mode = 2

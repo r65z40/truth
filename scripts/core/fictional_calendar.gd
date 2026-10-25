@@ -68,3 +68,9 @@ static func format_long(day_index: int) -> String:
 static func format_short(day_index: int) -> String:
 	var d := date_for_day(day_index)
 	return "%02d.%02d.%d" % [d.day, d.month, d.year]
+
+
+## Format de la barre des tâches, par exemple « LUN. 03.11.1986 ».
+static func format_compact(day_index: int) -> String:
+	var d := date_for_day(day_index)
+	return "%s. %s" % [WEEKDAYS[d.weekday].left(3), format_short(day_index)]

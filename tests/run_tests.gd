@@ -77,6 +77,8 @@ func _run() -> void:
 		"test_field_in_desk",
 		"test_failed_confrontation_feedback",
 		"test_friendly_desk",
+		"test_desktop_windows",
+		"test_pixel_icons",
 		"test_time_in_desk",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
@@ -1116,10 +1118,11 @@ func test_desk_scene_flow() -> void:
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
 	check(ResourceLoader.exists(desk.MAIN_MENU_SCENE), "la scène du menu référencée par le bureau existe")
-	check(desk.get_node("%DateLabel").text == "LUNDI 3 NOVEMBRE 1986\n08h00  //  8 h de service restantes",
-			"date et horloge dans l'en-tête : %s" % desk.get_node("%DateLabel").text)
-	check(desk.get_node("%RankLabel").text == "INSPECTEUR DE 3E CLASSE", "grade affiché")
-	check(desk.get_node("%MessagesButton").text.contains("2 non lu(s)"), "compteur de messages non lus")
+	check(desk.get_node("%DateLabel").text == "LUN. 03.11.1986  08h00",
+			"date et heure dans la barre des tâches : %s" % desk.get_node("%DateLabel").text)
+	check(desk.get_node("%HoursLabel").text == "8 h restantes", "heures de service dans la barre des tâches")
+	check(desk.get_node("%RankLabel").text == "INSPECTEUR DE 3E CLASSE", "grade affiché dans le menu MINISTÈRE")
+	check(desk.get_node("%MessagesButton").badge == 2, "pastille du courrier : 2 non lus")
 	check(desk.get_open_app() == "", "aucune fenêtre ouverte au départ")
 
 	desk.terminal.submit_command("dossiers")
@@ -1138,9 +1141,10 @@ func test_desk_scene_flow() -> void:
 	check(desk.get_open_app() == "messages", "le bouton Messages ouvre la messagerie")
 	await get_tree().process_frame
 	check(GameState.get_unread_count() == 1, "le message affiché est marqué lu")
-	check(desk.get_node("%MessagesButton").text.contains("1 non lu(s)"), "le compteur se met à jour")
+	check(desk.get_node("%MessagesButton").badge == 1, "la pastille se met à jour")
 	desk.terminal.submit_command("archives")
-	check(desk.get_open_app() == "archives", "une seule fenêtre ouverte à la fois")
+	check(desk.get_open_app() == "archives" and desk.is_app_open("messages"),
+			"la dernière fenêtre ouverte passe devant, l'autre reste ouverte")
 
 	desk.get_node("%PersonnelButton").pressed.emit()
 	check(desk.get_open_app() == "personnel", "le bouton Dossier personnel ouvre l'évaluation")
@@ -1277,7 +1281,7 @@ func test_end_day_in_desk() -> void:
 	desk.evening_screen.get_node("%ContinueButton").pressed.emit()
 	await get_tree().process_frame
 	check(GameState.day_index == 1, "après la soirée, la journée se termine")
-	check(desk.get_node("%DateLabel").text.begins_with("MARDI 4 NOVEMBRE 1986\n08h00"), "la date de l'en-tête avance, l'horloge repart")
+	check(desk.get_node("%DateLabel").text == "MAR. 04.11.1986  08h00", "la date de la barre des tâches avance, l'horloge repart")
 	check(SaveManager.has_save(), "sauvegarde automatique en fin de journée")
 	check(desk.terminal.get_log_text().contains("MARDI 4 NOVEMBRE 1986"), "le terminal ouvre une nouvelle session")
 	check(desk.get_node("%DayTransition").visible, "l'écran de transition s'affiche")
@@ -1444,10 +1448,11 @@ func test_friendly_desk() -> void:
 	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
-	check(desk.get_node("%ObjectiveBar").visible, "la barre d'objectif est affichée")
-	check(desk.get_node("%ObjectiveText").text.contains("prise de fonction"), "premier objectif : le message de Mazur")
-	check(desk.current_step.target == "messages", "le bouton Messages est signalé")
-	check(desk.get_node("%DossiersButton").text.contains("1 dossier(s) à traiter"), "le bouton Dossiers résume la situation")
+	check(desk.coach.visible, "la bulle d'aide est affichée")
+	check(desk.current_step.text.contains("prise de fonction"), "premier objectif : le message de Mazur")
+	check(desk.current_step.target == "messages", "l'icône du courrier est signalée")
+	check(desk.get_node("%DossiersButton").badge == 1 and desk.get_node("%DossiersButton").tooltip_text.contains("1 dossier(s) à traiter"),
+			"l'icône Dossiers résume la situation")
 	check(desk.get_node("%DossiersButton").tooltip_text != "", "les boutons ont une info-bulle")
 	check(not desk.has_unsaved_changes, "rien à sauvegarder à l'arrivée")
 	desk.terminal.submit_command("dossiers")
@@ -1463,15 +1468,15 @@ func test_friendly_desk() -> void:
 	check(desk.terminal.get_log_text().contains("non sauvegardées"), "le terminal prévient de la perte")
 	Settings.guidance = false
 	desk._refresh_objective()
-	check(not desk.get_node("%ObjectiveBar").visible, "l'aide se désactive dans les paramètres")
+	check(not desk.coach.visible, "l'aide se désactive dans les paramètres")
 	Settings.guidance = true
 	desk._refresh_objective()
 	check(desk.coach_target() == desk.get_node("%MessagesButton") and desk.coach.text.contains("Bienvenue"),
-			"la bulle d'aide montre le bouton Messages")
+			"la bulle d'aide montre l'icône du courrier")
 	desk.get_node("%MessagesButton").pressed.emit()
-	check(desk.coach_target() == desk.windows.messages.get_close_button(), "message lu : la bulle montre FERMER")
+	check(desk.coach_target() == desk.get_node("%DossiersButton"), "message lu : la bulle montre l'icône Dossiers")
 	desk.windows.messages.close()
-	check(desk.coach_target() == desk.get_node("%DossiersButton"), "puis le bouton Dossiers")
+	check(desk.coach_target() == desk.get_node("%DossiersButton"), "fenêtre fermée : toujours l'icône Dossiers")
 	desk.get_node("%DossiersButton").pressed.emit()
 	var part: String = desk.current_step.part
 	check(part.begins_with("tab:") and desk.coach_target() == desk.windows.dossiers.get_guide_target(part, "40921") \
@@ -1483,6 +1488,104 @@ func test_friendly_desk() -> void:
 	desk.windows.dossiers.close()
 	GameState.new_game()
 	desk.queue_free()
+	await get_tree().process_frame
+
+
+## Bureau à fenêtres : plusieurs fenêtres, premier plan, réduction, agrandissement,
+## barre des tâches, menu MINISTÈRE, petit écran.
+func test_desktop_windows() -> void:
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	var manager: WindowManager = desk.window_manager
+	var dossiers: MinistryWindow = desk.windows.dossiers
+	var messages: MinistryWindow = desk.windows.messages
+	check(desk.get_node("%TaskButtons").get_child_count() == 0, "aucune fenêtre : barre des tâches vide")
+	desk.open_app("dossiers")
+	desk.open_app("messages")
+	await get_tree().process_frame
+	check(dossiers.visible and messages.visible and desk.get_open_app() == "messages", "deux fenêtres ouvertes, la dernière devant")
+	check(messages.is_active and not dossiers.is_active, "seule la fenêtre au premier plan a sa barre de titre active")
+	check(manager.get_child(-1) == messages, "la fenêtre au premier plan est dessinée en dernier")
+	check(desk.get_node("%TaskButtons").get_child_count() == 2, "un bouton par fenêtre dans la barre des tâches")
+	check(dossiers.get_anchor(SIDE_RIGHT) == 0.0 and Rect2(Vector2.ZERO, manager.size).encloses(dossiers.get_rect()),
+			"la fenêtre a une position libre, dans la zone de travail")
+	manager.raise_window(dossiers)
+	check(desk.get_open_app() == "dossiers" and manager.get_child(-1) == dossiers, "on repasse une fenêtre devant")
+
+	# Réduire puis ressortir depuis la barre des tâches.
+	manager.toggle_from_taskbar(dossiers)
+	check(not dossiers.visible and dossiers.is_minimized and desk.is_app_open("dossiers"), "réduite : cachée mais ouverte")
+	check(desk.get_open_app() == "messages", "la fenêtre suivante passe devant")
+	manager.toggle_from_taskbar(dossiers)
+	check(dossiers.visible and desk.get_open_app() == "dossiers", "le bouton de la barre des tâches la ressort")
+	dossiers.get_node("Layout/TitleBar").find_child("MinimizeButton", true, false).pressed.emit()
+	check(dossiers.is_minimized, "le bouton _ réduit la fenêtre")
+	desk.open_app("dossiers")
+	check(dossiers.visible and not dossiers.is_minimized, "rouvrir une fenêtre réduite la ressort")
+
+	# Agrandir et déplacer.
+	var before := dossiers.get_rect()
+	dossiers.toggle_maximize()
+	check(dossiers.get_rect() == Rect2(Vector2.ZERO, manager.size), "agrandie : toute la zone de travail")
+	dossiers.toggle_maximize()
+	check(dossiers.get_rect() == before, "rétablie : taille et place d'origine")
+	messages.position = Vector2(-5000, 9000)
+	messages.clamp_to_parent()
+	check(messages.get_rect().end.y <= manager.size.y and messages.position.x + messages.size.x >= MinistryWindow.KEEP_VISIBLE.x,
+			"une fenêtre déplacée garde sa barre de titre à portée")
+
+	# Fermer, aide, menu MINISTÈRE.
+	messages.get_close_button().pressed.emit()
+	check(not desk.is_app_open("messages") and desk.get_node("%TaskButtons").get_child_count() >= 1, "le bouton X ferme la fenêtre")
+	desk.get_node("%StartButton").button_pressed = true
+	check(desk.get_node("%StartMenu").visible, "le bouton MINISTÈRE ouvre le menu")
+	desk.get_node("%StartSettings").pressed.emit()
+	check(not desk.get_node("%StartMenu").visible and desk.get_open_app() == "settings", "le menu ouvre les paramètres et se referme")
+	desk.get_node("%StartTerminal").pressed.emit()
+	check(desk.get_open_app() == "terminal", "le terminal est une fenêtre comme les autres")
+	desk.terminal.submit_command("ident")
+	check(desk.terminal.get_log_text().contains("INS-7734"), "le terminal fonctionne dans sa fenêtre")
+
+	# Petit écran : chaque fenêtre occupe toute la zone de travail.
+	manager.force_compact = true
+	check(manager.compact and desk.windows.terminal.get_rect() == Rect2(Vector2.ZERO, manager.size), "petit écran : fenêtres en plein écran")
+	manager.force_compact = false
+	desk.end_day()
+	check(manager.get_open_windows().is_empty(), "fin de service : toutes les fenêtres se ferment")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+## Icônes en pixels : grilles valides, une icône par type de pièce des dossiers.
+func test_pixel_icons() -> void:
+	for icon_name in PixelIcons.GRIDS:
+		var rows: Array = PixelIcons.GRIDS[icon_name]
+		var valid := rows.size() == PixelIcons.SIZE
+		for row: String in rows:
+			valid = valid and row.length() == PixelIcons.SIZE
+			for key in row:
+				valid = valid and (key == "." or PixelIcons.COLOR_NAMES.has(key))
+		check(valid, "icône %s : 16 x 16, lettres connues" % icon_name)
+	var image := PixelIcons.build_image("identity")
+	check(image.get_pixel(0, 2).a == 1.0 and image.get_pixel(0, 0).a == 0.0, "les points « . » sont transparents")
+	for case_id in CaseLibrary.get_case_ids():
+		for document in CaseLibrary.get_case(case_id).documents:
+			check(PixelIcons.DOCUMENT_ICONS.has(document.type) and PixelIcons.has_icon(PixelIcons.DOCUMENT_ICONS[document.type]),
+					"pièce %s/%s : icône pour le type %s" % [case_id, document.id, document.type])
+	check(PixelIcons.document_icon("inconnu") == PixelIcons.get_icon("document"), "type inconnu : page générique")
+	check(PixelIcons.get_icon("letter", 3).get_size() == Vector2(48, 48), "icône agrandie trois fois sans lissage")
+	var window: Node = load("res://scenes/ui/windows/dossiers_window.tscn").instantiate()
+	get_tree().root.add_child(window)
+	window.open()
+	window.select_case("40921")
+	var tab: Button = window.get_node("%DocumentTabs").get_child(0)
+	check(tab.icon == PixelIcons.document_icon("identity", 2), "l'onglet de la fiche d'identité porte son icône")
+	window.select_document("work_report")
+	check(window._doc_icon.texture == PixelIcons.document_icon("report", 3), "l'en-tête de la pièce montre l'icône du rapport")
+	window.queue_free()
 	await get_tree().process_frame
 
 
@@ -1510,6 +1613,7 @@ func test_time_in_desk() -> void:
 			"la demande est en cours")
 	dossiers_window.get_node("%ConsultButton").pressed.emit()
 	check(dossiers_window.get_node("%ConsultButton").text == "CONSULTÉ" and GameState.hours_used == 2, "consultation : 2 heures employées")
-	check(desk.get_node("%DateLabel").text.ends_with("10h00  //  6 h de service restantes"), "l'horloge avance")
+	check(desk.get_node("%DateLabel").text.ends_with("10h00") and desk.get_node("%HoursLabel").text == "6 h restantes",
+			"l'horloge avance")
 	desk.queue_free()
 	await get_tree().process_frame
