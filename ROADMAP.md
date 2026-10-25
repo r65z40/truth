@@ -106,6 +106,9 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
 - [ ] Utiliser les drapeaux `milice.ally` / `milice.enemy` dans un troisième dossier
+- [x] Lecteur de musique (demande de fen du 25.10) : autoload `Music`, fondus enchaînés,
+      volume dans Paramètres, morceau choisi par `data/music.json` (moment, acte, drapeaux, indicateurs)
+- [ ] Morceaux fournis par fen (.ogg dans `assets/music/`, liste dans son README)
 - [ ] Sons d'ambiance (terminal, tampon de signature)
 
 ## Ensuite

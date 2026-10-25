@@ -108,6 +108,19 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(180, 44)
 layout_mode = 2
 
+[node name="MusicRow" type="HBoxContainer" parent="Layout/Content/Options"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="Layout/Content/Options/MusicRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Volume de la musique"
+
+[node name="MusicOption" type="OptionButton" parent="Layout/Content/Options/MusicRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+
 [node name="DoneButton" type="Button" parent="Layout/Content/Options"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)

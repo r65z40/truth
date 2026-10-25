@@ -8,6 +8,7 @@ extends MinistryWindow
 @onready var _guidance_toggle: Button = %GuidanceToggle
 @onready var _field_3d_toggle: Button = %Field3dToggle
 @onready var _scale_option: OptionButton = %ScaleOption
+@onready var _music_option: OptionButton = %MusicOption
 
 
 func _ready() -> void:
@@ -26,6 +27,9 @@ func _ready() -> void:
 	_field_3d_toggle.toggled.connect(func(on: bool) -> void:
 		Settings.set_field_3d(on)
 		_refresh_toggle_labels())
+	for level in Settings.MUSIC_LEVELS:
+		_music_option.add_item("Coupée" if level == 0.0 else "%d %%" % roundi(level * 100))
+	_music_option.item_selected.connect(func(index: int) -> void: Settings.set_music_volume(Settings.MUSIC_LEVELS[index]))
 	_scale_option.item_selected.connect(func(index: int) -> void: Settings.set_ui_scale(Settings.UI_SCALES[index]))
 	%DoneButton.pressed.connect(close)
 
@@ -37,9 +41,19 @@ func _on_opened() -> void:
 	_guidance_toggle.set_pressed_no_signal(Settings.guidance)
 	_field_3d_toggle.set_pressed_no_signal(Settings.field_3d)
 	_scale_option.select(maxi(Settings.UI_SCALES.find(Settings.ui_scale), 0))
+	_music_option.select(_closest_music_level())
 	_refresh_toggle_labels()
 
 
 func _refresh_toggle_labels() -> void:
 	for toggle: Button in [_fullscreen_toggle, _crt_toggle, _guidance_toggle, _field_3d_toggle]:
 		toggle.text = "ACTIVÉ" if toggle.button_pressed else "DÉSACTIVÉ"
+
+
+## Cran de volume le plus proche du réglage enregistré.
+func _closest_music_level() -> int:
+	var best := 0
+	for i in Settings.MUSIC_LEVELS.size():
+		if absf(Settings.MUSIC_LEVELS[i] - Settings.music_volume) < absf(Settings.MUSIC_LEVELS[best] - Settings.music_volume):
+			best = i
+	return best

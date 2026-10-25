@@ -1,0 +1,31 @@
+{
+	"_comment": "Musique : chaque règle associe un contexte (menu, intro, desk, evening, field_search, field_interrogation, act_review) à un morceau, sous conditions (min_day, max_day, act, requires_flags, forbidden_flags, min_indicator, max_indicator). La première règle qui convient l'emporte. Un fichier absent donne du silence, sans erreur. Fichiers : assets/music/README.md.",
+	"tracks": {
+		"menu": {"file": "res://assets/music/menu.ogg", "volume_db": 0},
+		"intro": {"file": "res://assets/music/intro.ogg", "volume_db": 0},
+		"act1_desk": {"file": "res://assets/music/acte1_bureau.ogg", "volume_db": -4},
+		"act2_desk": {"file": "res://assets/music/acte2_bureau.ogg", "volume_db": -4},
+		"act3_desk": {"file": "res://assets/music/acte3_bureau.ogg", "volume_db": -4},
+		"act4_desk": {"file": "res://assets/music/acte4_bureau.ogg", "volume_db": -4},
+		"desk_tension": {"file": "res://assets/music/bureau_tension.ogg", "volume_db": -4},
+		"evening": {"file": "res://assets/music/soiree.ogg", "volume_db": -2},
+		"evening_grief": {"file": "res://assets/music/soiree_deuil.ogg", "volume_db": -2},
+		"field_interrogation": {"file": "res://assets/music/interrogatoire.ogg", "volume_db": -6},
+		"field_search": {"file": "res://assets/music/perquisition.ogg", "volume_db": -6},
+		"act_review": {"file": "res://assets/music/fin_acte.ogg", "volume_db": 0}
+	},
+	"rules": [
+		{"context": "menu", "track": "menu"},
+		{"context": "intro", "track": "intro"},
+		{"context": "desk", "conditions": {"min_indicator": {"suspicion": 60}}, "track": "desk_tension"},
+		{"context": "desk", "conditions": {"act": 4}, "track": "act4_desk"},
+		{"context": "desk", "conditions": {"act": 3}, "track": "act3_desk"},
+		{"context": "desk", "conditions": {"act": 2}, "track": "act2_desk"},
+		{"context": "desk", "track": "act1_desk"},
+		{"context": "evening", "conditions": {"requires_flags": ["40921.sedlar_arrested"]}, "track": "evening_grief"},
+		{"context": "evening", "track": "evening"},
+		{"context": "field_interrogation", "track": "field_interrogation"},
+		{"context": "field_search", "track": "field_search"},
+		{"context": "act_review", "track": "act_review"}
+	]
+}
