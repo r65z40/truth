@@ -359,11 +359,11 @@ func test_end_day_without_decision() -> void:
 	var fired := GameState.end_day()
 	var fired_ids := fired.map(func(e: Dictionary) -> String: return e.id)
 	check(GameState.day_index == 1 and GameState.get_date_long() == "MARDI 4 NOVEMBRE 1986", "on passe au mardi 4 novembre")
-	check(fired_ids == ["assign_51307", "51307_milice_plea", "40921_reminder", "daily_bulletin_1"],
-			"nouveau dossier, pression de la Milice, rappel et bulletin : %s" % [fired_ids])
+	check(fired_ids == ["assign_51307", "features_day_2", "51307_milice_plea", "40921_reminder", "daily_bulletin_1"],
+			"nouveau dossier, habilitations, pression de la Milice, rappel et bulletin : %s" % [fired_ids])
 	check(GameState.cases.has("51307"), "le dossier 51307 est attribué")
 	check(GameState.get_indicator("suspicion") == 23, "le retard éveille la suspicion")
-	check(GameState.get_unread_count() == unread + 4, "quatre nouveaux messages")
+	check(GameState.get_unread_count() == unread + 5, "cinq nouveaux messages")
 	check(GameState.messages[-1].date_label == "04.11.1986", "messages datés du jour")
 	check(days == [1], "signal day_started émis")
 	var next_ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
@@ -393,7 +393,7 @@ func test_delayed_consequences() -> void:
 	GameState.new_game()
 	GameState.apply_decision("40921", "investigate")
 	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
-	check(ids == ["assign_51307", "51307_milice_plea", "daily_bulletin_1"], "enquête sans fondement : pas de suite propre au 40921")
+	check(ids == ["assign_51307", "features_day_2", "51307_milice_plea", "daily_bulletin_1"], "enquête sans fondement : pas de suite propre au 40921")
 	check(GameState.decisions[0].veritas_agreed == false, "désaccord avec VERITAS mémorisé")
 
 
@@ -453,6 +453,9 @@ func test_request_and_consultation() -> void:
 	check(GameState.get_requestable_documents("40921").map(func(d: Dictionary) -> String: return d.id) == ["medical_halvek"],
 			"une pièce à demander dans le 40921")
 	check(not "medical_halvek" in _visible_document_ids("40921"), "la pièce n'existe pas avant la demande")
+	check(not GameState.request_document("40921", "medical_halvek") and not GameState.consult_superior("40921"),
+			"premier jour : ni demande ni consultation")
+	GameState.end_day()
 	check(GameState.request_document("40921", "medical_halvek") and GameState.hours_used == 1, "demande : 1 heure")
 	check(not GameState.request_document("40921", "medical_halvek"), "on ne demande pas deux fois")
 	check(not GameState.request_document("40921", "identity"), "une pièce ordinaire ne se demande pas")
@@ -996,9 +999,15 @@ func test_full_session_flow() -> void:
 	get_tree().current_scene = menu
 	await get_tree().process_frame
 	menu.get_node("%NewGameButton").pressed.emit()
+	await _wait_for_scene("Intro")
+	var intro := get_tree().current_scene
+	check(intro.name == "Intro" and intro.get_node("%PageLabel").text == "1 / 4", "« Nouvelle partie » ouvre l'introduction")
+	intro.next_page()
+	check(intro.get_node("%TitleLabel").text == "VOUS ÊTES A. VOSK", "page suivante")
+	intro.get_node("%SkipButton").pressed.emit()
 	await _wait_for_scene("Desk")
 	var desk := get_tree().current_scene
-	check(desk.name == "Desk", "« Nouvelle partie » mène au bureau")
+	check(desk.name == "Desk", "PASSER mène au bureau")
 	desk.terminal.submit_command("dossiers")
 	desk.windows.dossiers.select_case("40921")
 	desk.terminal.submit_command("sauver")
@@ -1170,14 +1179,41 @@ func test_friendly_desk() -> void:
 	desk._refresh_objective()
 	check(not desk.get_node("%ObjectiveBar").visible, "l'aide se désactive dans les paramètres")
 	Settings.guidance = true
+	desk._refresh_objective()
+	check(desk.coach_target() == desk.get_node("%MessagesButton") and desk.coach.text.contains("Bienvenue"),
+			"la bulle d'aide montre le bouton Messages")
+	desk.get_node("%MessagesButton").pressed.emit()
+	check(desk.coach_target() == desk.windows.messages.get_close_button(), "message lu : la bulle montre FERMER")
+	desk.windows.messages.close()
+	check(desk.coach_target() == desk.get_node("%DossiersButton"), "puis le bouton Dossiers")
+	desk.get_node("%DossiersButton").pressed.emit()
+	var part: String = desk.current_step.part
+	check(part.begins_with("tab:") and desk.coach_target() == desk.windows.dossiers.get_guide_target(part, "40921") \
+			and desk.coach_target().get_meta("document_id") == part.substr(4),
+			"dans le dossier : l'onglet de la pièce suivante")
+	for document_id in ["work_report", "intercept", "travel_log"]:
+		desk.windows.dossiers.select_document(document_id)
+	check(desk.current_step.part == "facts" and desk.coach_target() is Button and desk.coach.text.contains("21 octobre"), "noter : conseil propre au premier dossier")
+	desk.windows.dossiers.close()
+	GameState.new_game()
 	desk.queue_free()
 	await get_tree().process_frame
 
 
 func test_time_in_desk() -> void:
+	GameState.new_game()
 	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
+	check(not desk.get_node("%ArchivesButton").visible and not desk.get_node("%PersonnelButton").visible,
+			"premier jour : ni Archives ni Dossier personnel")
+	desk.terminal.submit_command("dossiers")
+	desk.windows.dossiers.select_case("40921")
+	check(not desk.windows.dossiers.get_node("%RequestButton").visible and not desk.windows.dossiers.get_node("%ConsultButton").visible,
+			"premier jour : ni DEMANDER ni CONSULTER")
+	desk.windows.dossiers.close()
+	GameState.end_day()
+	check(desk.get_node("%ArchivesButton").visible and desk.get_node("%PersonnelButton").visible, "deuxième jour : tout est débloqué")
 	desk.terminal.submit_command("dossiers")
 	var dossiers_window = desk.windows.dossiers
 	dossiers_window.select_case("40921")

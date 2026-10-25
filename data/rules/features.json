@@ -1,0 +1,10 @@
+{
+	"note": "Fonctions débloquées au fil de la partie, pour une première journée simple. Conditions au format des événements. Les commandes tapées au terminal restent disponibles ; les règles (demander, consulter) vérifient aussi ces conditions.",
+	"features": {
+		"request_document": {"min_day": 1},
+		"consult_superior": {"min_day": 1},
+		"archives": {"min_day": 1},
+		"personnel": {"min_day": 1},
+		"terminal_advanced": {"min_day": 1}
+	}
+}

@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/coach/coach_overlay.gd" id="1_script"]
+
+[node name="CoachOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="Bubble" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 380.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_type_variation = &"CoachBubble"
+
+[node name="Layout" type="VBoxContainer" parent="Bubble"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="CoachName" type="Label" parent="Bubble/Layout"]
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+theme_override_font_sizes/font_size = 14
+text = "R. MAZUR, votre supérieur :"
+
+[node name="CoachText" type="Label" parent="Bubble/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+autowrap_mode = 3

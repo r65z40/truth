@@ -72,6 +72,14 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Écran de fin d'acte (archive des sujets), commission d'avancement, promotion en 2e classe acceptée ou déclinée
 - [ ] Acte 2 : action « demander une archive confidentielle » débloquée par la 2e classe
 
+## En cours : accueil du joueur (demande de fen du 25.10)
+
+- [x] Introduction illustrée en 4 pages
+- [x] Bulle d'aide de MAZUR qui montre où cliquer, conseils propres au premier dossier
+- [x] Première journée allégée, fonctions débloquées le lendemain
+- [ ] Écran principal plus visuel (bureau dessiné ou terminal allégé : choix de fen)
+- [ ] Proposé à fen : interrogatoires (ORLIK) et fouilles (domicile SEDLAR) en scènes illustrées
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)

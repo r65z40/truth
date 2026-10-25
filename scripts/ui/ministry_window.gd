@@ -36,6 +36,17 @@ func close() -> void:
 
 
 ## À surcharger : appelé à chaque ouverture.
+## Contrôle à signaler par la bulle d'aide pour une partie de la fenêtre
+## (voir Guidance) ; par défaut, aucun.
+func get_guide_target(_part: String, _case_id := "") -> Control:
+	return null
+
+
+## Bouton de fermeture (la bulle d'aide le signale quand il faut revenir au bureau).
+func get_close_button() -> Control:
+	return find_child("CloseButton", true, false)
+
+
 func _on_opened() -> void:
 	pass
 

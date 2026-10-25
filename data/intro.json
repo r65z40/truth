@@ -1,0 +1,25 @@
+{
+	"note": "Introduction montrée au début d'une nouvelle partie. art : scène dessinée par IntroArt.",
+	"pages": [
+		{
+			"art": "city",
+			"title": "VELMIRA, NOVEMBRE 1986",
+			"text": "Une petite république d'Europe centrale. L'électricité manque, la frontière de Halvek est surveillée, et le ministère de la Sécurité nationale veille sur chaque citoyen."
+		},
+		{
+			"art": "badge",
+			"title": "VOUS ÊTES A. VOSK",
+			"text": "Inspecteur de 3e classe, premier jour à la Section 4. Votre père, horloger, a disparu en 1971. Le ministère vous a recruté quand même. Ou peut-être pour cette raison."
+		},
+		{
+			"art": "dossier",
+			"title": "VOTRE TRAVAIL",
+			"text": "Chaque jour, des dossiers de citoyens signalés. Lisez les pièces, notez ce qui compte, et cherchez deux éléments qui ne disent pas la même chose : c'est une contradiction."
+		},
+		{
+			"art": "signature",
+			"title": "CHAQUE SIGNATURE COMPTE",
+			"text": "Vous signez ensuite une conclusion. Elle pèse sur le sujet, sur sa famille, et sur vous. Le système VERITAS vous conseillera. Il n'a pas toujours raison."
+		}
+	]
+}

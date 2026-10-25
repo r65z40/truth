@@ -2,6 +2,7 @@ extends Control
 ## Menu principal : nouvelle partie, continuer, paramètres, quitter.
 
 const DESK_SCENE := "res://scenes/desk/desk.tscn"
+const INTRO_SCENE := "res://scenes/intro/intro.tscn"
 
 @onready var _continue_button: Button = %ContinueButton
 @onready var _quit_button: Button = %QuitButton
@@ -43,7 +44,7 @@ func open_settings() -> void:
 
 func start_new_game() -> void:
 	GameState.new_game()
-	get_tree().change_scene_to_file(DESK_SCENE)
+	get_tree().change_scene_to_file(INTRO_SCENE)
 
 
 func continue_game() -> void:
