@@ -95,7 +95,7 @@ func _ready() -> void:
 	# Icône du type de pièce (fiche, rapport, registre...) à gauche du titre.
 	_doc_icon = TextureRect.new()
 	_doc_icon.name = "DocIcon"
-	_doc_icon.custom_minimum_size = Vector2(48, 48)
+	_doc_icon.custom_minimum_size = Vector2(64, 64)
 	_doc_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_doc_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_doc_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -194,7 +194,7 @@ func select_document(document_id: String) -> void:
 		if tab.get_meta("document_id") == document_id:
 			_scroll_to_tab.call_deferred(tab)
 	_doc_title.text = document.title.to_upper()
-	_doc_icon.texture = PixelIcons.document_icon(document.get("type", ""), 3)
+	_doc_icon.texture = PixelIcons.document_icon(document.get("type", ""), 4)
 	_doc_meta.text = DocumentWindow.describe_source(document)
 	_photo.photo = document.get("photo", {})
 	_photo.visible = document.has("photo")
@@ -332,22 +332,49 @@ func _on_conclusion_submitted(decision_id: String) -> void:
 ## Avec passages (voir passage_style()), chaque élément qui a une citation
 ## (« quote ») devient un lien souligné dans le texte (« fact:<id> ») ; un
 ## élément déjà noté est surligné.
+## Couleur sépia des libellés de champs (colonne de gauche des fiches et en-têtes
+## de registre), pour les distinguer des valeurs en encre pleine : la pièce se lit
+## comme un vrai formulaire. Correspond à DocumentMeta du thème.
+const LABEL_COLOR := "5c4f3d"
+## Taille (px) des pictogrammes en ligne devant les libellés de champs.
+const FIELD_ICON_SIZE := 22
+## Mots-clés du libellé d'un champ -> pictogramme (res://ui/icons/<nom>.png).
+const FIELD_ICONS := [
+	["f_person", ["nom", "prénom", "prenom", "identité", "sujet", "citoyen :"]],
+	["f_date", ["né", "date", "naissance", "délivr", "émis"]],
+	["f_id", ["carte", "matricule", "numéro", "n°", "dossier", "permis"]],
+	["f_work", ["profession", "travail", "emploi", "poste", "fonction", "grade"]],
+	["f_family", ["situation", "famille", "conjoint", "enfant", "marié", "proche", "époux", "épouse"]],
+	["f_home", ["adresse", "domicile", "district", "résidence", "logement"]],
+	["f_warn", ["antécédent", "avertissement", "risque", "sanction", "mention", "alerte"]],
+]
+
+## Balise [img] du pictogramme correspondant au libellé, ou "" si aucun ne colle.
+static func _field_icon_tag(label: String) -> String:
+	var low := label.to_lower()
+	for entry in FIELD_ICONS:
+		for keyword in entry[1]:
+			if low.contains(keyword):
+				return "[img=%d]res://ui/icons/%s.png[/img]  " % [FIELD_ICON_SIZE, entry[0]]
+	return ""
+
+
 static func render_document_bbcode(document: Dictionary, passages := {}) -> String:
 	var marker := PassageMarker.new(document.get("facts", []) if not passages.is_empty() else [], passages)
 	var parts: PackedStringArray = []
 	if document.has("fields"):
 		var table := "[table=2]"
 		for field in document.fields:
-			table += "[cell padding=0,4,24,4][b]%s[/b][/cell][cell padding=0,4,0,4]%s[/cell]" % [
-				_escape(field[0]).to_upper(), marker.mark(field[1])]
+			table += "[cell padding=0,4,24,4]%s[color=%s][b]%s[/b][/color][/cell][cell padding=0,4,0,4]%s[/cell]" % [
+				_field_icon_tag(field[0]), LABEL_COLOR, _escape(field[0]).to_upper(), marker.mark(field[1])]
 		parts.append(table + "[/table]")
 	if document.has("author"):
-		parts.append("[b]Rédacteur :[/b] %s" % marker.mark(document.author))
+		parts.append("[color=%s][b]Rédacteur :[/b][/color] %s" % [LABEL_COLOR, marker.mark(document.author)])
 	if document.has("rows"):
 		var columns: Array = document.get("columns", [])
 		var table := "[table=%d]" % maxi(columns.size(), 1)
 		for column in columns:
-			table += "[cell padding=0,4,20,6][b]%s[/b][/cell]" % _escape(column).to_upper()
+			table += "[cell padding=0,4,20,6][color=%s][b]%s[/b][/color][/cell]" % [LABEL_COLOR, _escape(column).to_upper()]
 		for row in document.rows:
 			for value in row:
 				table += "[cell padding=0,4,20,4]%s[/cell]" % marker.mark(str(value))
