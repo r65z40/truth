@@ -318,6 +318,100 @@
 					"label": "Le 30 octobre, sans certificat, l'absence est déclarée injustifiée"
 				}
 			]
+		},
+		{
+			"id": "orlik_audition",
+			"type": "report",
+			"title": "Procès-verbal de votre audition de B. ORLIK",
+			"source": "Section 4, salle d'audition n° 3",
+			"reliability": "B",
+			"date": "1986-11-04",
+			"conditions": {
+				"requires_flags": [
+					"field.audition_51307.started"
+				]
+			},
+			"veritas_remark": "Le sujet est membre du Parti depuis 1961. Ses déclarations doivent être pondérées en conséquence.",
+			"body": "Audition conduite par l'inspecteur A. VOSK. Sont retenues au procès-verbal les déclarations suivantes du sujet, dans l'ordre où elles ont été faites.",
+			"facts": [
+				{
+					"id": "f_aud_clock",
+					"key": "clock.status.october",
+					"value": "En panne certains jours",
+					"label": "« L'horloge tombe en panne, je fais mon travail »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_51307.q_certificates"
+						]
+					}
+				},
+				{
+					"id": "f_aud_sedlar",
+					"key": "orlik.sedlar",
+					"value": "Service rendu contre service rendu",
+					"label": "« SEDLAR m'a rendu service, je lui ai rendu service »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_51307.q_sedlar"
+						]
+					}
+				},
+				{
+					"id": "f_aud_brother",
+					"key": "orlik.protection",
+					"value": "Invoque son frère",
+					"label": "« Mon frère saura que vous m'avez fait descendre ici »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_51307.q_brother"
+						]
+					}
+				},
+				{
+					"id": "f_aud_petras_once",
+					"key": "petras.days",
+					"value": "Une seule fois",
+					"label": "« PETRAS ? Je l'ai couvert une fois, par pitié »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_51307.q_petras"
+						]
+					}
+				},
+				{
+					"id": "f_aud_admits",
+					"key": "orlik.motive",
+					"value": "Contre des denrées",
+					"label": "Aveu : « Un paquet de café, de temps en temps »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_51307.p_clock"
+						]
+					}
+				},
+				{
+					"id": "f_aud_petras_pays",
+					"key": "petras.payment",
+					"value": "En bouteilles",
+					"label": "Aveu : « PETRAS paie en bouteilles »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_51307.p_petras"
+						]
+					}
+				},
+				{
+					"id": "f_aud_chaudron",
+					"key": "orlik.informant",
+					"value": "Réagit au nom CHAUDRON",
+					"label": "Blêmit au nom de code « CHAUDRON » et réclame son frère",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_51307.p_chaudron"
+						]
+					}
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -516,5 +610,6 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 51307 : votre question",
 		"body": "Inspecteur,\n\nUne horloge tombe rarement en panne deux fois le même mois, et jamais seulement pour les amis du chef d'équipe.\n\nQuant au frère : décidez avant qu'il ne décide pour vous. Dans ce métier, on ne choisit pas d'avoir des ennemis, seulement lesquels.\n\nR. MAZUR"
-	}
+	},
+	"field_scene": "audition_51307"
 }

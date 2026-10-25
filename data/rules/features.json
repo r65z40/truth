@@ -5,6 +5,7 @@
 		"consult_superior": {"min_day": 1},
 		"archives": {"min_day": 1},
 		"personnel": {"min_day": 1},
-		"terminal_advanced": {"min_day": 1}
+		"terminal_advanced": {"min_day": 1},
+		"field_work": {"min_day": 1}
 	}
 }

@@ -18,6 +18,10 @@ const STATUS_LABELS := {
 }
 const MAX_SELECTED_FACTS := 2
 
+## Le joueur part sur le terrain (interrogatoire ou perquisition) : le bureau
+## ouvre l'écran de scène.
+signal field_requested(case_id: String)
+
 var current_case_id := ""
 var current_document_id := ""
 ## Éléments du carnet sélectionnés pour une confrontation (au plus 2).
@@ -50,6 +54,7 @@ var _photo := IdPhoto.new()
 @onready var _conclusion_button: Button = %ConclusionButton
 @onready var _request_button: Button = %RequestButton
 @onready var _consult_button: Button = %ConsultButton
+@onready var _field_button: Button = %FieldButton
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
 
 
@@ -59,6 +64,10 @@ func _ready() -> void:
 	_conclusion_button.pressed.connect(open_conclusion)
 	_request_button.pressed.connect(request_next_document)
 	_consult_button.pressed.connect(consult_superior)
+	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
+	# Actions secondaires en plus petit, pour que le pied de pièce tienne sur une ligne.
+	for button: Button in [_request_button, _consult_button, _field_button]:
+		button.add_theme_font_size_override("font_size", 14)
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
 	_conclusion_panel.hide()
@@ -234,7 +243,7 @@ func _refresh_all() -> void:
 	if case_state.decision != "":
 		status_text += "  //  " + CaseLibrary.get_decision(case_data, case_state.decision).get("label", "").to_upper()
 	_case_header.text = "DOSSIER N° %s  |  %s  |  %s" % [current_case_id, case_data.subject_name, status_text]
-	_progress_label.text = "Pièces : %d/%d\nContradictions : %d" % [case_state.viewed_documents.size(),
+	_progress_label.text = "Pièces lues : %d/%d  //  Contradictions : %d" % [case_state.viewed_documents.size(),
 			case_data.documents.size(), case_state.contradictions_found.size()]
 	var can_decide := GameState.can_decide(current_case_id)
 	_refresh_actions(can_decide)
@@ -268,6 +277,16 @@ func _refresh_actions(can_decide: bool) -> void:
 			or not WorkTime.check(GameState.hours_used, "consult_superior").ok
 	_consult_button.text = "CONSULTÉ" if consulted else "CONSULTER (%d h)" % WorkTime.cost("consult_superior")
 	_consult_button.tooltip_text = "Demander conseil à votre supérieur sur ce dossier (une fois)."
+	# Terrain : interrogatoire ou perquisition, une fois par dossier.
+	var scene := GameState.get_field_scene(current_case_id)
+	_field_button.visible = not scene.is_empty() and GameState.is_feature_unlocked("field_work")
+	if _field_button.visible:
+		var cost := WorkTime.cost(scene.get("time_action", "interrogate"))
+		var started := not GameState.get_field_state(scene.id).is_empty()
+		_field_button.text = ("%s : FAIT" if started else "%s (%d h)") % ([scene.button] if started else [scene.button, cost])
+		_field_button.disabled = not GameState.can_start_field(current_case_id) \
+				or not WorkTime.check(GameState.hours_used, scene.get("time_action", "interrogate")).ok
+		_field_button.tooltip_text = scene.get("title", "")
 
 
 ## Libellés des pièces demandées aujourd'hui, pas encore arrivées.

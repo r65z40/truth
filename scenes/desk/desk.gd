@@ -26,6 +26,7 @@ const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 @onready var evening_screen: EveningScreen = %EveningScreen
 @onready var act_review_screen: ActReviewScreen = %ActReviewScreen
 @onready var coach: CoachOverlay = %CoachOverlay
+@onready var field_screen: FieldScreen = %FieldScreen
 @onready var _objective_bar: Control = %ObjectiveBar
 @onready var _objective_text: Label = %ObjectiveText
 @onready var _objective_hint: Label = %ObjectiveHint
@@ -85,6 +86,8 @@ func _ready() -> void:
 	_scrim.gui_input.connect(_on_scrim_input)
 	_day_transition.hide()
 	coach.target_provider = coach_target
+	windows.dossiers.field_requested.connect(open_field)
+	field_screen.finished.connect(_on_field_finished)
 	_refresh_header()
 	_boot_terminal()
 	has_unsaved_changes = false
@@ -252,11 +255,26 @@ func _refresh_objective() -> void:
 		_pulse_tween.tween_property(target, "modulate", Color.WHITE, 0.7)
 
 
+## Part sur le terrain pour ce dossier (interrogatoire ou perquisition).
+func open_field(case_id: String) -> void:
+	if field_screen.open(case_id):
+		terminal.print_line("Départ sur le terrain : %s." % field_screen.scene.get("title", ""))
+
+
+## Retour du terrain : le dossier se rouvre sur le procès-verbal.
+func _on_field_finished() -> void:
+	open_app("dossiers")
+	windows.dossiers.select_case(field_screen.scene.case_id)
+	for document in GameState.get_case_view(field_screen.scene.case_id).documents:
+		if document.get("conditions", {}).get("requires_flags", []).has(FieldRules.flag_for(field_screen.scene, "started")):
+			windows.dossiers.select_document(document.id)
+
+
 ## Contrôle que la bulle d'aide signale pour l'étape en cours : le bouton de
 ## l'application, l'endroit précis dans la fenêtre ouverte, ou le bouton FERMER
 ## d'une autre fenêtre restée ouverte.
 func coach_target() -> Control:
-	if evening_screen.visible or act_review_screen.visible or _day_transition.visible:
+	if evening_screen.visible or act_review_screen.visible or field_screen.visible or _day_transition.visible:
 		return null
 	var app: String = current_step.get("target", "")
 	var open := get_open_app()

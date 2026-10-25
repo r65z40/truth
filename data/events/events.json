@@ -487,6 +487,56 @@
 				"subject": "Recommandation du 6 novembre",
 				"body": "Agent VOSK,\n\nLa Direction a enregistré votre recommandation téléphonique en faveur de la citoyenne L. VOSK, étudiante en médecine, auprès du ministère de la Santé.\n\nLa recommandation a été suivie. Elle figure désormais à votre dossier, avec le nom de la bénéficiaire et son affectation : hôpital n° 2, service des urgences.\n\nLa Direction du personnel"
 			}
+		},
+		{
+			"id": "field_51307_brother",
+			"conditions": {
+				"requires_flags": [
+					"milice.orlik_questioned"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"milice.noticed_player": true
+			},
+			"message": {
+				"from": "L. ORLIK, Capitaine, Milice du District 9",
+				"subject": "Mon frère",
+				"body": "Inspecteur VOSK,\n\nVous avez fait descendre mon frère Bohdan au sous-sol de votre ministère, avec sa médaille du Travail sur la poitrine. Trente ans de Centrale.\n\nJe ne vous demande rien. Je vous fais savoir que je sais. À Velmira, tout le monde finit par avoir besoin de la Milice un jour.\n\nCapitaine L. ORLIK"
+			}
+		},
+		{
+			"id": "field_51307_chaudron",
+			"conditions": {
+				"requires_flags": [
+					"51307.chaudron_confronted"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"milice.hostile": true
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Un nom de code",
+				"body": "Inspecteur,\n\nLa Milice du District 9 se plaint qu'un nom de code de ses services ait été prononcé pendant une audition de la Section 4. Je ne vous demande pas où vous l'avez appris.\n\nCertains noms ne se disent pas à voix haute. Retenez-le pour la prochaine fois.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "field_40921_neighbours",
+			"conditions": {
+				"requires_flags": [
+					"40921.family_humiliated"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Vera SEDLAR",
+				"subject": "(sans objet)",
+				"body": "Vous avez fouillé le cartable de mes élèves et le lit de mon fils. Il a huit ans. Depuis, il range ses dessins dans ses chaussures.\n\nLes voisins ne nous disent plus bonjour. Je ne vous en veux pas : c'est votre travail. Je voulais seulement que vous le sachiez.\n\nV. S."
+			}
 		}
 	]
 }

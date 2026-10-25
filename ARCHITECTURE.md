@@ -28,6 +28,7 @@ data/
   cases/case_<id>.json        un dossier = un fichier
   messages/initial_messages.json
   events/events.json          événements différés (conséquences, rappels, bulletins)
+  field/<scène>.json          scènes de terrain (audition, perquisition)
   assessment.json             paliers d'appréciation des indicateurs, observations
 scripts/
   autoload/
@@ -44,6 +45,7 @@ scripts/
     veritas.gd                VERITAS déterministe (remarques, recommandation)
     assessment.gd             évaluation de l'agent en mots (data/assessment.json)
     guidance.gd               objectif du jour affiché au bureau (étape suivante)
+    field_rules.gd            scènes de terrain (interrogatoires, perquisitions)
   ui/ministry_window.gd       cadre commun des fenêtres
 scenes/
   main_menu/                  menu principal
@@ -203,6 +205,20 @@ défaut). Les conditions sont celles des événements, plus `min_count`
 `EveningRules`, état dans `GameState.evenings`, écran
 `scenes/evening/evening_screen.tscn` ouvert par le bureau avant le jour suivant.
 
+## Terrain (`data/field/<scène>.json`)
+
+Un dossier rattache une scène par `"field_scene"`. Une scène a un `type`
+(`interrogation` ou `search`), `turns`, `time_action` (coût dans
+`work_time.json`), `available_when` (liste de conditions, une suffit),
+`start_flags`/`start_effects`, `options` {id, label, conditions, text, note,
+set_flags, effects, ends, spot [x, y, l, h] pour une perquisition} et, pour un
+interrogatoire, `presentations` {id, facts, text, note, ...} et
+`present_default`. Chaque choix pose `field.<scène>.<choix>`. Le procès-verbal
+est une pièce ordinaire du dossier dont les éléments portent des `conditions`
+sur ces drapeaux : `CaseLibrary.filter_case` filtre aussi les éléments. Logique
+dans `FieldRules`, état dans `GameState.field_scenes`, écran
+`scenes/field/field_screen.tscn`, décors dessinés par `FieldArt`.
+
 ## Campagne (`data/campaign.json`)
 
 Profil du personnage joué (nom, matricule, supérieur). Rien n'est écrit en dur
@@ -215,7 +231,7 @@ Fichier `user://savegame.json` :
 `{save_version, game_version, saved_at, state}`. Pour changer le format :
 incrémenter `SAVE_VERSION` et ajouter une étape dans `SaveManager._migrate()`.
 Un chargement en échec ne modifie pas l'état courant. Version actuelle : 4
-(heures de service, pièces demandées, consultation, soirées).
+(heures de service, pièces demandées, consultation, soirées, scènes de terrain).
 Emplacement de `user://` sous Windows : `%APPDATA%\Godot\app_userdata\Ministry of Truth\`.
 
 ## Compatibilité mobile

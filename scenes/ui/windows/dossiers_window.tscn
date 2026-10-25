@@ -102,6 +102,11 @@ layout_mode = 2
 theme_type_variation = &"MutedLabel"
 autowrap_mode = 3
 
+[node name="ProgressLabel" type="Label" parent="Layout/Content/Columns/DocumentColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+
 [node name="DocumentTabsScroll" type="ScrollContainer" parent="Layout/Content/Columns/DocumentColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 58)
@@ -217,14 +222,9 @@ vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="Footer" type="HBoxContainer" parent="Layout/Content/Columns/DocumentColumn"]
+alignment = 2
 unique_name_in_owner = true
 layout_mode = 2
-
-[node name="ProgressLabel" type="Label" parent="Layout/Content/Columns/DocumentColumn/Footer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"MutedLabel"
 
 [node name="RequestButton" type="Button" parent="Layout/Content/Columns/DocumentColumn/Footer"]
 unique_name_in_owner = true
@@ -237,6 +237,12 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "CONSULTER (1 h)"
+
+[node name="FieldButton" type="Button" parent="Layout/Content/Columns/DocumentColumn/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "TERRAIN (2 h)"
 
 [node name="ConclusionButton" type="Button" parent="Layout/Content/Columns/DocumentColumn/Footer"]
 unique_name_in_owner = true

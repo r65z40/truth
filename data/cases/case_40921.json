@@ -216,7 +216,7 @@
 		{
 			"id": "medical_halvek",
 			"type": "report",
-			"title": "Dossier médical de Maria SEDLAR",
+			"title": "Dossier médical d'Irena SEDLAR",
 			"source": "Hôpital régional de Halvek, service de cardiologie",
 			"reliability": "B",
 			"date": "1986-10-22",
@@ -225,7 +225,7 @@
 			},
 			"veritas_remark": "Document médical sans portée sécuritaire.",
 			"author": "Dr J. MARKO, chef de service",
-			"body": "Patiente : Maria SEDLAR, 71 ans, domiciliée à Halvek.\n\nInsuffisance cardiaque sévère. Le traitement adapté n'est pas disponible dans les hôpitaux de Velmira ni de Halvek. Une demande de soins à l'étranger (Aldria) a été refusée le 02.10.1986 par la commission régionale.\n\nVisite de son fils Anton le 21.10.1986, de 09h00 à 19h00. Il a apporté des papiers, que la patiente a gardés sous son oreiller.",
+			"body": "Patiente : Irena SEDLAR, 71 ans, domiciliée à Halvek.\n\nInsuffisance cardiaque sévère. Le traitement adapté n'est pas disponible dans les hôpitaux de Velmira ni de Halvek. Une demande de soins à l'étranger (Aldria) a été refusée le 02.10.1986 par la commission régionale.\n\nVisite de son fils Anton le 21.10.1986, de 09h00 à 19h00. Il a apporté des papiers, que la patiente a gardés sous son oreiller.",
 			"facts": [
 				{
 					"id": "f_med_visit",
@@ -238,6 +238,78 @@
 					"key": "sedlar.care",
 					"value": "Soins à l'étranger refusés",
 					"label": "Soins en Aldria refusés le 02.10.1986 par la commission régionale"
+				}
+			]
+		},
+		{
+			"id": "search_report",
+			"type": "report",
+			"title": "Procès-verbal de perquisition, bloc 14, app. 61",
+			"source": "Section 4, perquisition conduite par l'inspecteur A. VOSK",
+			"reliability": "A",
+			"date": "1986-11-04",
+			"conditions": {
+				"requires_flags": [
+					"field.search_40921.started"
+				]
+			},
+			"veritas_remark": "Objets saisis versés au dossier. Les éléments sans valeur probante ne sont pas pris en compte.",
+			"body": "Perquisition au domicile du citoyen SEDLAR, en présence de son épouse Vera SEDLAR. Objets relevés :",
+			"facts": [
+				{
+					"id": "f_srch_prescription",
+					"key": "sedlar.motive",
+					"value": "Visite à sa mère malade",
+					"label": "Ordonnance de Halvek-Sud au nom d'Irena SEDLAR, sa mère",
+					"conditions": {
+						"requires_flags": [
+							"field.search_40921.drawer"
+						]
+					}
+				},
+				{
+					"id": "f_srch_forgery",
+					"key": "sedlar.papers.forged",
+					"value": "Signature imitée",
+					"label": "Demande de soins : signature du médecin imitée au crayon",
+					"conditions": {
+						"requires_flags": [
+							"field.search_40921.mattress"
+						]
+					}
+				},
+				{
+					"id": "f_srch_clock_sign",
+					"key": "heure_juste.sign",
+					"value": "Horloge sans aiguilles, « 06h05 »",
+					"label": "Papier à demi brûlé : une horloge sans aiguilles et « 06h05 »",
+					"conditions": {
+						"requires_flags": [
+							"field.search_40921.stove"
+						]
+					}
+				},
+				{
+					"id": "f_srch_orlik_note",
+					"key": "orlik.repairs",
+					"value": "Réparations chez ORLIK",
+					"label": "Au dos d'une photo : « ORLIK, samedi, la chaudière »",
+					"conditions": {
+						"requires_flags": [
+							"field.search_40921.photo"
+						]
+					}
+				},
+				{
+					"id": "f_srch_drawing",
+					"key": "sedlar.child",
+					"value": "Dessin d'enfant",
+					"label": "Dessin de l'enfant : « papa dans le train »",
+					"conditions": {
+						"requires_flags": [
+							"field.search_40921.child_bed"
+						]
+					}
 				}
 			]
 		}
@@ -442,5 +514,6 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 40921 : votre question",
 		"body": "Inspecteur,\n\nVous me demandez mon avis. Le voici, et il n'ira pas plus loin que ce bureau.\n\nUn registre de train ment rarement. Un chef d'équipe, plus souvent. Regardez qui signe quoi, et demandez-vous ce que chacun avait à y gagner.\n\nR. MAZUR"
-	}
+	},
+	"field_scene": "search_40921"
 }

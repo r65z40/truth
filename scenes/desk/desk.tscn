@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/evening/evening_screen.tscn" id="8_evening"]
 [ext_resource type="PackedScene" path="res://scenes/act_end/act_review_screen.tscn" id="9_act_review"]
 [ext_resource type="PackedScene" path="res://scenes/ui/coach/coach_overlay.tscn" id="10_coach"]
+[ext_resource type="PackedScene" path="res://scenes/field/field_screen.tscn" id="11_field"]
 
 [node name="Desk" type="Control"]
 layout_mode = 3
@@ -275,6 +276,9 @@ layout_mode = 1
 [node name="PersonnelWindow" parent="WindowLayer" instance=ExtResource("7_personnel")]
 unique_name_in_owner = true
 layout_mode = 1
+
+[node name="FieldScreen" parent="." instance=ExtResource("11_field")]
+unique_name_in_owner = true
 
 [node name="CoachOverlay" parent="." instance=ExtResource("10_coach")]
 unique_name_in_owner = true

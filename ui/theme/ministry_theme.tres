@@ -262,6 +262,30 @@ content_margin_top = 10.0
 content_margin_right = 16.0
 content_margin_bottom = 12.0
 
+[sub_resource type="StyleBoxFlat" id="sb_spot"]
+bg_color = Color(0.93, 0.78, 0.42, 0.08)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.93, 0.78, 0.42, 0.55)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="sb_spot_hover"]
+bg_color = Color(0.93, 0.78, 0.42, 0.22)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.93, 0.78, 0.42, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [sub_resource type="StyleBoxFlat" id="sb_tooltip"]
 bg_color = Color(0.082, 0.094, 0.09, 1)
 border_width_left = 1
@@ -308,6 +332,8 @@ IntroArt/colors/paper_dark = Color(0.7, 0.63, 0.5, 1)
 IntroArt/colors/ink = Color(0.17, 0.14, 0.11, 1)
 IntroArt/colors/wood = Color(0.27, 0.18, 0.12, 1)
 IntroArt/colors/folder = Color(0.62, 0.5, 0.3, 1)
+IntroArt/colors/cloth = Color(0.2, 0.25, 0.33, 1)
+IntroArt/colors/scar = Color(0.55, 0.25, 0.22, 1)
 LineEdit/colors/font_color = Color(0.235, 0.878, 0.478, 1)
 LineEdit/colors/caret_color = Color(0.235, 0.878, 0.478, 1)
 LineEdit/colors/font_placeholder_color = Color(0.122, 0.42, 0.247, 1)
@@ -368,6 +394,14 @@ TerminalText/fonts/bold_font = SubResource("font_mono_bold")
 TerminalText/font_sizes/normal_font_size = 18
 ObjectiveBar/base_type = &"PanelContainer"
 ObjectiveBar/styles/panel = SubResource("sb_objective")
+FieldSpot/base_type = &"Button"
+FieldSpot/colors/font_color = Color(0.93, 0.78, 0.42, 1)
+FieldSpot/colors/font_hover_color = Color(1, 0.95, 0.8, 1)
+FieldSpot/font_sizes/font_size = 14
+FieldSpot/styles/normal = SubResource("sb_spot")
+FieldSpot/styles/hover = SubResource("sb_spot_hover")
+FieldSpot/styles/pressed = SubResource("sb_spot_hover")
+FieldSpot/styles/focus = SubResource("sb_spot_hover")
 CoachBubble/base_type = &"PanelContainer"
 CoachBubble/styles/panel = SubResource("sb_coach")
 CoachHighlight/base_type = &"Control"

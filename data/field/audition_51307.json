@@ -1,0 +1,80 @@
+{
+	"note": "Audition de B. ORLIK (docs/design/TERRAIN.md). Chaque choix pose le drapeau field.audition_51307.<id> ; les éléments du procès-verbal orlik_audition en dépendent.",
+	"id": "audition_51307",
+	"case_id": "51307",
+	"type": "interrogation",
+	"button": "INTERROGER",
+	"title": "AUDITION  //  SALLE N° 3, SOUS-SOL DU MINISTÈRE",
+	"time_action": "interrogate",
+	"turns": 5,
+	"available_when": [{"undecided_cases": ["51307"]}],
+	"start_flags": {"milice.orlik_questioned": true},
+	"subject": {
+		"name": "B. ORLIK",
+		"photo": {"face": "round", "hair": "receding", "gray": true, "facial_hair": "none", "mark": "scar"}
+	},
+	"intro": "Une table en formica, deux chaises, une lampe. Bohdan ORLIK porte son bleu de travail et sa médaille du Travail. Il n'a pas enlevé sa casquette.\n\n« Trente ans de Centrale, inspecteur. On ne m'avait jamais fait descendre au sous-sol. »",
+	"options": [
+		{
+			"id": "q_certificates",
+			"label": "« Parlez-moi des certificats d'octobre. »",
+			"text": "« Quatre certificats, oui. L'horloge tombe en panne, je fais mon travail. On ne va pas retenir la paie d'un ouvrier à cause d'une machine. »",
+			"note": ["f_aud_clock"]
+		},
+		{
+			"id": "q_sedlar",
+			"label": "« Et Anton SEDLAR, le 21 octobre ? »",
+			"text": "Il hausse les épaules. « Un bon technicien. Sa mère est malade, tout le monde le sait à l'atelier. Il m'a rendu service, je lui ai rendu service. C'est ça, la classe ouvrière, inspecteur. »",
+			"note": ["f_aud_sedlar"]
+		},
+		{
+			"id": "q_brother",
+			"label": "« Votre frère est capitaine de la Milice. »",
+			"text": "Pour la première fois, il sourit. « Lev n'a rien à voir là-dedans. Mais il saura que vous m'avez fait descendre ici. Il sait toujours tout, Lev. »",
+			"note": ["f_aud_brother"]
+		},
+		{
+			"id": "q_petras",
+			"label": "« Que fait PETRAS le jeudi ? »",
+			"conditions": {"requires_noted_any": ["f_cert_petras", "f_anon_petras", "f_pet_thursdays"]},
+			"text": "« PETRAS ? Un ivrogne. Sa femme est venue pleurer, je l'ai couvert une fois, par pitié. Une fois. »",
+			"note": ["f_aud_petras_once"]
+		},
+		{
+			"id": "q_threat",
+			"label": "« Vous savez ce qu'on fait des faussaires ? »",
+			"text": "ORLIK croise les bras. « Je sais ce qu'on fait des inspecteurs qui se trompent de cible. » Derrière la porte, le planton tousse. Vous n'obtenez rien de plus."
+		}
+	],
+	"presentations": [
+		{
+			"id": "p_clock",
+			"facts": ["f_clock_ok"],
+			"text": "Il regarde le relevé d'entretien longtemps. Il enlève enfin sa casquette.\n\n« ... Bon. L'horloge marche. Je rends des services. Un paquet de café, de temps en temps, une bouteille pour les fêtes. Tout le monde le fait, à la Centrale. Écrivez-le, si ça vous fait plaisir. »",
+			"note": ["f_aud_admits"],
+			"set_flags": {"51307.orlik_admitted": true}
+		},
+		{
+			"id": "p_petras",
+			"facts": ["f_cert_petras", "f_pet_thursdays"],
+			"text": "« Deux jeudis, deux certificats. Et alors ? » Il se penche. « PETRAS paie en bouteilles. Ça vous va, comme aveu ? Vous allez arrêter un ivrogne pour deux bouteilles ? »",
+			"note": ["f_aud_petras_pays"]
+		},
+		{
+			"id": "p_chaudron",
+			"facts": ["f_kremer_informant"],
+			"text": "Le visage d'ORLIK se vide d'un coup. « Qui vous a donné ce nom ? »\n\nIl se lève, renverse la chaise. « L'audition est terminée. J'exige la présence du capitaine ORLIK. » Le planton ouvre la porte avant que vous ayez répondu.",
+			"note": ["f_aud_chaudron"],
+			"set_flags": {"51307.chaudron_confronted": true},
+			"effects": {"suspicion": 2},
+			"ends": true
+		},
+		{
+			"id": "p_letter",
+			"facts": ["f_anon_motive", "f_anon_petras"],
+			"text": "« Une lettre anonyme ! » Il rit. « Vous croyez les lettres anonymes, inspecteur ? Dans ce pays ? Moi, j'en reçois une par mois. »"
+		}
+	],
+	"present_default": "ORLIK repousse le papier du bout du doigt. « Je ne vois pas le rapport, inspecteur. »",
+	"outro": "Le planton raccompagne ORLIK. Dans l'escalier, il se retourne : « Bonne continuation, inspecteur VOSK. » Il a retenu votre nom."
+}
