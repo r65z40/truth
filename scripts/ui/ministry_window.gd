@@ -42,6 +42,11 @@ func get_guide_target(_part: String, _case_id := "") -> Control:
 	return null
 
 
+## Texte de la bulle d'aide propre à la fenêtre, s'il remplace celui de l'étape.
+func get_guide_text(_part: String, _case_id := "") -> String:
+	return ""
+
+
 ## Bouton de fermeture (la bulle d'aide le signale quand il faut revenir au bureau).
 func get_close_button() -> Control:
 	return find_child("CloseButton", true, false)

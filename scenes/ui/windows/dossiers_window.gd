@@ -24,6 +24,9 @@ signal field_requested(case_id: String)
 
 var current_case_id := ""
 var current_document_id := ""
+## Vrai si la dernière confrontation de ce dossier n'a rien donné (la bulle
+## d'aide donne alors un conseil plus précis).
+var last_confront_failed := false
 ## Éléments du carnet sélectionnés pour une confrontation (au plus 2).
 var selected_facts: Array[String] = []
 var _tab_group := ButtonGroup.new()
@@ -91,7 +94,8 @@ func select_case(case_id: String) -> void:
 		return
 	if case_id != current_case_id:
 		selected_facts.clear()
-		_confront_result.text = ""
+		_set_confront_result("")
+		last_confront_failed = false
 	current_case_id = case_id
 	_case_summary.text = case_data.get("summary", "")
 	_build_document_tabs(case_data)
@@ -158,15 +162,32 @@ func confront_selected() -> void:
 		return
 	var already_found: Array = GameState.get_case_state(current_case_id).contradictions_found.duplicate()
 	var key := GameState.confront_facts(current_case_id, selected_facts[0], selected_facts[1])
+	last_confront_failed = key == ""
 	if key == "":
-		_confront_result.text = "Aucune incohérence entre ces deux éléments."
+		_set_confront_result("PAS DE CONTRADICTION. Ces deux éléments peuvent être vrais en même temps. "
+				+ "Cherchez deux éléments qui parlent du même fait (même jour, même personne) sans dire la même chose.", true)
+		notify.emit("Pas de contradiction entre ces deux éléments.")
 	elif key in already_found:
-		_confront_result.text = "Contradiction déjà établie."
+		_set_confront_result("Contradiction déjà établie.")
 	else:
-		_confront_result.text = "CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport."
+		_set_confront_result("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport.")
 		notify.emit("CONTRADICTION ÉTABLIE")
 	selected_facts.clear()
 	_refresh_all()
+
+
+## Verdict sous le carnet ; un échec s'affiche en rouge pour ne pas passer inaperçu.
+func _set_confront_result(text: String, failed := false) -> void:
+	_confront_result.text = text
+	_confront_result.theme_type_variation = &"StampLabel" if failed else &"HeaderLabel"
+
+
+## Conseil de la bulle d'aide propre à la fenêtre ("" : celui de l'étape).
+func get_guide_text(part: String, case_id := "") -> String:
+	if part != "notebook" or not last_confront_failed or case_id != current_case_id:
+		return ""
+	return CaseLibrary.get_case(case_id).get("guide", {}).get("notebook_retry",
+			"Ces deux éléments ne se contredisent pas. Cherchez deux pièces qui parlent du même jour ou de la même personne, et notez ce qu'elles affirment.")
 
 
 # --- Conclusion ----------------------------------------------------------------
@@ -361,9 +382,9 @@ func _refresh_notebook() -> void:
 		_notebook_list.add_child(button)
 	_confront_button.disabled = selected_facts.size() != MAX_SELECTED_FACTS
 	if case_state.noted_facts.is_empty() and _confront_result.text == "":
-		_confront_result.text = "Notez des éléments sous chaque pièce, puis sélectionnez-en deux ici pour les confronter."
+		_set_confront_result("Notez des éléments sous chaque pièce, puis sélectionnez-en deux ici pour les confronter.")
 	elif selected_facts.size() == 1:
-		_confront_result.text = "Sélectionnez un second élément à confronter."
+		_set_confront_result("Sélectionnez un second élément à confronter.")
 
 
 func _refresh_case_list() -> void:
