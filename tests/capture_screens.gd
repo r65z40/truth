@@ -183,6 +183,24 @@ func _capture_all() -> void:
 	desk.windows.dossiers.open_conclusion()
 	await _snap("36_dossier_53118_veritas")
 	desk.windows.dossiers.close()
+	# Acte 2 : dossier 53402 Le Cheminot (frontière + décret 86-31, audition de terrain).
+	GameState.day_index = 7
+	GameState.flags["decret_86_31"] = true
+	GameState.assign_case("53402")
+	desk.open_field("53402")
+	await _snap("37_audition_cheminot")
+	desk.field_screen.choose("q_passengers")
+	GameState.note_fact("53402", "f_dispatch_ontime")
+	desk.field_screen.present("f_dispatch_ontime")
+	await _snap("38_cheminot_aveu")
+	desk.field_screen.hide()
+	desk.open_app("dossiers")
+	desk.windows.dossiers.select_case("53402")
+	desk.windows.dossiers.select_document("veritas_link")
+	await _snap("39_cheminot_raccordement")
+	desk.windows.dossiers.open_conclusion()
+	await _snap("40_cheminot_veritas")
+	desk.windows.dossiers.close()
 	get_tree().quit()
 
 

@@ -1,0 +1,563 @@
+{
+	"id": "53402",
+	"title": "Citoyen n° 53402",
+	"subject_name": "VRABEC, Marek",
+	"summary": "Signalement de la Direction de la ligne Velmira–Halvek : retards nocturnes anormaux consignés par l'aiguilleur du poste de Brenec, à proximité de la frontière.",
+	"priority": "prioritaire",
+	"field_scene": "audition_53402",
+	"documents": [
+		{
+			"id": "identity",
+			"type": "identity",
+			"title": "Fiche d'identité civile",
+			"source": "Registre central de la population",
+			"reliability": "A",
+			"date": "1986-11-07",
+			"veritas_remark": "Aucun antécédent. Vit seul depuis le décès de sa femme (1982). Son fils a quitté le pays en 1981 : exposition frontalière à surveiller.",
+			"photo": {
+				"caption": "Cliché du 14.01.1984",
+				"face": "long",
+				"hair": "short",
+				"gray": true,
+				"facial_hair": "mustache",
+				"mark": "none"
+			},
+			"fields": [
+				[
+					"Nom",
+					"VRABEC"
+				],
+				[
+					"Prénom",
+					"Marek"
+				],
+				[
+					"Né le",
+					"11.02.1931 à Brenec"
+				],
+				[
+					"N° de citoyen",
+					"53402"
+				],
+				[
+					"Profession",
+					"Aiguilleur de nuit, poste de Brenec, ligne Velmira–Halvek"
+				],
+				[
+					"Adresse",
+					"Maison de poste, km 47, ligne de Halvek"
+				],
+				[
+					"Parti",
+					"Non-membre"
+				],
+				[
+					"Famille",
+					"Veuf. Fils : Pavel VRABEC, parti pour Aldria en 1981 (via Halvek)."
+				]
+			],
+			"facts": [
+				{
+					"id": "f_vrabec_son",
+					"key": "vrabec.family",
+					"value": "Fils passé à l'étranger en 1981",
+					"label": "Fils, Pavel VRABEC, parti pour Aldria en 1981 par Halvek",
+					"quote": "Fils : Pavel VRABEC, parti pour Aldria en 1981 (via Halvek)."
+				},
+				{
+					"id": "f_vrabec_post",
+					"key": "vrabec.post",
+					"value": "Aiguilleur de nuit à la frontière",
+					"label": "Seul aiguilleur de nuit du poste de Brenec, à 3 km de la frontière",
+					"quote": "Aiguilleur de nuit, poste de Brenec, ligne Velmira–Halvek"
+				}
+			]
+		},
+		{
+			"id": "line_report",
+			"type": "report",
+			"title": "Signalement de la Direction de la ligne",
+			"source": "Direction de l'exploitation, ligne Velmira–Halvek",
+			"reliability": "A",
+			"date": "1986-11-06",
+			"veritas_remark": "Anomalie de régularité confirmée par la Direction. Interprétation : négligence ou défaillance d'un agent isolé.",
+			"author": "D. SOKOL, chef d'exploitation",
+			"body": "La Direction signale un nombre anormal de retards consignés au poste d'aiguillage de Brenec sur les trains de nuit du mois d'octobre. Le train 2241 (Velmira 22h40 → Halvek) est porté « retardé » cinq nuits sur le mois, toujours entre dix et quinze minutes, toujours au motif « signalisation ».\n\nAucun de ces retards n'a été répercuté sur l'horaire officiel de la ligne. L'aiguilleur de service ces nuits-là était M. VRABEC.",
+			"facts": [
+				{
+					"id": "f_line_count",
+					"key": "train.delays.count",
+					"value": "Cinq nuits en octobre",
+					"label": "Train 2241 porté « retardé » cinq nuits d'octobre, motif « signalisation »",
+					"quote": "cinq nuits sur le mois, toujours entre dix et quinze minutes, toujours au motif « signalisation »"
+				}
+			]
+		},
+		{
+			"id": "delay_log",
+			"type": "register",
+			"title": "Registre des retards du poste de Brenec",
+			"source": "Poste d'aiguillage de Brenec",
+			"reliability": "A",
+			"date": "1986-11-06",
+			"veritas_remark": "Registre tenu de la main de l'agent. Motif récurrent : défaillance de signalisation.",
+			"columns": [
+				"Nuit",
+				"Train",
+				"Retard",
+				"Motif consigné"
+			],
+			"rows": [
+				[
+					"02.10.1986",
+					"2241",
+					"12 min",
+					"Signalisation"
+				],
+				[
+					"09.10.1986",
+					"2241",
+					"14 min",
+					"Signalisation"
+				],
+				[
+					"16.10.1986",
+					"2241",
+					"11 min",
+					"Signalisation"
+				],
+				[
+					"23.10.1986",
+					"2241",
+					"13 min",
+					"Signalisation"
+				],
+				[
+					"30.10.1986",
+					"2241",
+					"12 min",
+					"Signalisation"
+				]
+			],
+			"body": "Tous les retards du train 2241 sont consignés au motif « signalisation défaillante, secteur du km 47 ». Aucun autre train n'est porté en retard sur la période.",
+			"facts": [
+				{
+					"id": "f_delays_fault",
+					"key": "train.delays.october",
+					"value": "Signalisation défaillante",
+					"label": "Retards consignés pour « signalisation défaillante » au km 47",
+					"quote": "signalisation défaillante, secteur du km 47"
+				}
+			]
+		},
+		{
+			"id": "dispatch_relay",
+			"type": "report",
+			"title": "Relevé du régulateur central",
+			"source": "Régulation centrale du réseau, Velmira",
+			"reliability": "A",
+			"date": "1986-11-05",
+			"veritas_remark": "Document technique du réseau. Sans portée sécuritaire propre.",
+			"author": "Régulation centrale (relevé automatique)",
+			"body": "Relevé des incidents de signalisation, secteur frontalier, octobre 1986.\n\nAucune défaillance de signalisation n'a été enregistrée au secteur du km 47 en octobre. Les cinq nuits concernées, le poste de Brenec a transmis un départ « à l'heure » au régulateur, puis a rattrapé le retard avant le poste suivant.\n\nConclusion technique : les retards du train 2241 n'ont pas d'origine matérielle.",
+			"facts": [
+				{
+					"id": "f_dispatch_ontime",
+					"key": "train.delays.october",
+					"value": "Aucune défaillance",
+					"label": "Régulateur central : aucune défaillance de signalisation en octobre",
+					"quote": "Aucune défaillance de signalisation n'a été enregistrée au secteur du km 47 en octobre."
+				}
+			]
+		},
+		{
+			"id": "border_report",
+			"type": "report",
+			"title": "Note de la garde-frontière",
+			"source": "Détachement de garde-frontière, secteur de Halvek",
+			"reliability": "B",
+			"date": "1986-11-06",
+			"veritas_remark": "Source frontalière. Au titre du décret 86-31, toute exposition de ce type est traitée avec la plus grande sévérité.",
+			"body": "Pour information de la Section 4.\n\nÀ cinq reprises en octobre, nos patrouilles ont relevé des mouvements de personnes le long de la voie, entre le poste de Brenec (km 47) et le passage à niveau du km 49, dans le créneau du train 2241. Un groupe non identifié a été aperçu le 23 octobre.\n\nLe secteur est classé sensible. Toute complicité d'un agent de l'État avec ces mouvements relèverait du décret 86-31.",
+			"facts": [
+				{
+					"id": "f_border_group",
+					"key": "halvek.movements",
+					"value": "Groupe non identifié",
+					"label": "Garde-frontière : « groupe non identifié » le long de la voie le 23.10",
+					"quote": "Un groupe non identifié a été aperçu le 23 octobre."
+				}
+			]
+		},
+		{
+			"id": "veritas_link",
+			"type": "report",
+			"title": "Note de raccordement VERITAS",
+			"source": "VERITAS, recoupement automatique",
+			"reliability": "B",
+			"date": "1986-11-07",
+			"veritas_remark": "Raccordement établi par le module. Hypothèse retenue : filière d'exfiltration organisée.",
+			"body": "RACCORDEMENT AUTOMATIQUE — dossier 53402.\n\nLe module VERITAS relie les cinq retards du train 2241 aux mouvements signalés par la garde-frontière, et au départ du fils du sujet (Pavel VRABEC, Aldria, 1981) par le même secteur.\n\nHypothèse raccordée : l'aiguilleur retarde volontairement le convoi pour couvrir des passages organisés vers l'étranger. Le dossier est raccordé à la série « filières frontalières » (décret 86-31).",
+			"facts": [
+				{
+					"id": "f_link_network",
+					"key": "vrabec.network",
+					"value": "Raccordé à une filière d'exfiltration",
+					"label": "Raccordement : retards + mouvements + départ du fils = « filière frontalière »",
+					"quote": "l'aiguilleur retarde volontairement le convoi pour couvrir des passages organisés vers l'étranger"
+				}
+			]
+		},
+		{
+			"id": "manifest",
+			"type": "register",
+			"title": "Relevé des titres de transport, train 2241",
+			"source": "Billetterie de la ligne (sur demande)",
+			"reliability": "A",
+			"date": "1986-11-08",
+			"request": {
+				"label": "Relevé des voyageurs du train 2241 (nuits d'octobre)",
+				"flags": {
+					"53402.manifest_requested": true
+				},
+				"effects": {
+					"suspicion": 2
+				}
+			},
+			"veritas_remark": "Relevé conforme. Les voyageurs sont identifiés et titulaires de permis.",
+			"columns": [
+				"Nuit",
+				"Voyageur",
+				"Titre / permis"
+			],
+			"rows": [
+				[
+					"02.10.1986",
+					"KOVAC, Irena",
+					"Permis de visite familiale (Halvek)"
+				],
+				[
+					"09.10.1986",
+					"KOVAC, Irena",
+					"Permis de visite familiale (Halvek)"
+				],
+				[
+					"16.10.1986",
+					"DRABEK, Stefan",
+					"Permis de visite familiale (Halvek)"
+				],
+				[
+					"23.10.1986",
+					"DRABEK, Stefan + 3",
+					"Permis de visite familiale (expirés 20.10)"
+				],
+				[
+					"30.10.1986",
+					"KOVAC, Irena",
+					"Permis de visite familiale (Halvek)"
+				]
+			],
+			"body": "Les voyageurs du train 2241 ces nuits-là sont des résidents de Brenec identifiés, titulaires de permis de visite familiale pour le secteur de Halvek. Les permis du 23 octobre étaient échus depuis le 20, date du durcissement du régime des passages.",
+			"facts": [
+				{
+					"id": "f_manifest_residents",
+					"key": "halvek.movements",
+					"value": "Voyageurs identifiés, permis familiaux",
+					"label": "Les « mouvements » sont des résidents de Brenec avec permis de visite familiale",
+					"quote": "des résidents de Brenec identifiés, titulaires de permis de visite familiale pour le secteur de Halvek"
+				},
+				{
+					"id": "f_manifest_expired",
+					"key": "halvek.permits",
+					"value": "Permis échus le 20.10",
+					"label": "Les permis du 23 octobre étaient échus depuis le durcissement du 20",
+					"quote": "Les permis du 23 octobre étaient échus depuis le 20, date du durcissement du régime des passages."
+				}
+			]
+		},
+		{
+			"id": "vrabec_audition",
+			"type": "report",
+			"title": "Procès-verbal de votre audition de M. VRABEC",
+			"source": "Section 4, salle d'audition n° 3",
+			"reliability": "B",
+			"date": "1986-11-08",
+			"conditions": {
+				"requires_flags": [
+					"field.audition_53402.started"
+				]
+			},
+			"veritas_remark": "Le sujet n'est pas membre du Parti et présente une exposition frontalière. Ses déclarations sont pondérées à la baisse.",
+			"body": "Audition conduite par l'inspecteur A. VOSK. Sont retenues au procès-verbal les déclarations suivantes du sujet, dans l'ordre où elles ont été faites.",
+			"facts": [
+				{
+					"id": "f_vaud_delays",
+					"key": "train.delays.october",
+					"value": "Signalisation défaillante",
+					"label": "« La signalisation gèle, l'hiver, au km 47. Je note ce que je vois. »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_53402.q_delays"
+						]
+					}
+				},
+				{
+					"id": "f_vaud_passengers",
+					"key": "halvek.movements",
+					"value": "Des gens du village",
+					"label": "« Qui voulez-vous qui monte à Brenec la nuit ? Des gens du village. »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_53402.q_passengers"
+						]
+					}
+				},
+				{
+					"id": "f_vaud_son",
+					"key": "vrabec.family",
+					"value": "Évoque son fils",
+					"label": "« Mon fils est parti par cette voie. Je connais ceux qui restent de ce côté. »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_53402.q_son"
+						]
+					}
+				},
+				{
+					"id": "f_vaud_admits",
+					"key": "train.delays.motive",
+					"value": "A retardé le train volontairement",
+					"label": "Aveu : « J'ai tenu le 2241 douze minutes. Le temps qu'ils embrassent les leurs. »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_53402.p_dispatch"
+						]
+					}
+				},
+				{
+					"id": "f_vaud_nothing",
+					"key": "vrabec.payment",
+					"value": "N'a rien reçu",
+					"label": "« Je n'ai jamais pris un sou. Pas une pièce, pas un œuf. »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_53402.p_manifest"
+						]
+					}
+				},
+				{
+					"id": "f_vaud_no_network",
+					"key": "vrabec.network",
+					"value": "Nie toute filière",
+					"label": "« Une filière ? Ce sont des mères et des fils, inspecteur, pas des espions. »",
+					"conditions": {
+						"requires_flags": [
+							"field.audition_53402.p_link"
+						]
+					}
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "arrest",
+			"label": "Transmettre à la sûreté des frontières",
+			"description": "Complicité de passage et faux en écritures : transmission au titre du décret 86-31.",
+			"archive": "Transmis à la sûreté des frontières. Jugé pour complicité de franchissement clandestin. Le poste de Brenec a été confié à un agent de la capitale.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 9,
+						"suspicion": -2,
+						"influence": 1
+					},
+					"response": "arrest_found",
+					"flags": {
+						"53402.vrabec_arrested": true,
+						"world.border_crackdown": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 6,
+						"suspicion": 2,
+						"influence": 0
+					},
+					"response": "arrest_unfounded",
+					"flags": {
+						"53402.vrabec_arrested": true,
+						"world.border_crackdown": true
+					}
+				}
+			]
+		},
+		{
+			"id": "reassign",
+			"label": "Proposer une sanction administrative",
+			"description": "Faux dans le registre : retrait de la ligne frontalière et mutation, sans poursuites.",
+			"archive": "Retiré de la ligne de Halvek, muté au triage de Velmira. Blâme inscrit au dossier. Les voyageurs n'ont pas été inquiétés.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 2,
+						"suspicion": 2,
+						"influence": 3
+					},
+					"response": "reassign_found",
+					"flags": {
+						"53402.vrabec_reassigned": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 1,
+						"suspicion": 3,
+						"influence": 1
+					},
+					"response": "reassign_unfounded",
+					"flags": {
+						"53402.vrabec_reassigned": true
+					}
+				}
+			]
+		},
+		{
+			"id": "clear",
+			"label": "Classer — défaillance technique",
+			"description": "Aucune suite. Les retards sont imputés à la signalisation, comme consignés.",
+			"archive": "Dossier classé pour défaillance technique. L'aiguilleur a gardé son poste au km 47. La garde-frontière a demandé qui avait signé.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -8,
+						"suspicion": 14,
+						"influence": 2
+					},
+					"response": "clear_found",
+					"flags": {
+						"53402.line_cleared": true,
+						"halm.defied": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -4,
+						"suspicion": 7,
+						"influence": 1
+					},
+					"response": "clear_unfounded",
+					"flags": {
+						"53402.line_cleared": true,
+						"halm.defied": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"arrest_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53402 : transmission à la sûreté des frontières",
+			"body": "Inspecteur,\n\nVous avez établi vous-même qui montait dans ce train : des voisins, des permis échus de trois jours. Et vous avez transmis quand même, au titre du décret.\n\nLe cabinet du Directeur HALM est satisfait du chiffre. Le train 2241 part à l'heure, désormais. Personne n'y monte plus à Brenec.\n\nR. MAZUR"
+		},
+		"arrest_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53402 : transmission à la sûreté des frontières",
+			"body": "Inspecteur,\n\nVRABEC a été remis à la sûreté des frontières. Le décret 86-31 suffira : on n'a plus besoin de prouver grand-chose, en ce moment, quand le mot « frontière » figure au dossier.\n\nJe note tout de même que vous n'avez pas demandé qui voyageait. HALM, lui, ne le notera pas.\n\nR. MAZUR"
+		},
+		"reassign_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53402 : sanction administrative",
+			"body": "Inspecteur,\n\nUn faux dans un registre, voilà ce que vous retenez. VRABEC quitte la frontière pour le triage de Velmira, loin de la voie de Halvek. Pas de procès, pas de filière, pas de une.\n\nLe cabinet du Directeur HALM trouve la sanction « légère pour l'époque ». J'ai répondu qu'elle était exacte. C'est ce qu'on nous demande, non ? D'être exacts.\n\nR. MAZUR"
+		},
+		"reassign_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53402 : sanction administrative",
+			"body": "Inspecteur,\n\nVous mutez un aiguilleur sans avoir tiré au clair ce qui se passait sur cette voie. La Direction de la ligne exécutera.\n\nLe cabinet du Directeur HALM aurait préféré la frontière au triage. Préparez-vous à l'entendre.\n\nR. MAZUR"
+		},
+		"clear_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53402 : classement",
+			"body": "Inspecteur,\n\nLe régulateur central écrit qu'aucune signalisation n'a lâché, et vous classez pour défaillance de signalisation. C'est votre signature.\n\nLe décret 86-31 était sur la table. Le cabinet du Directeur HALM voulait un nom pour le bulletin de la frontière. Vous lui donnez une panne. On vous le rappellera.\n\nR. MAZUR"
+		},
+		"clear_unfounded": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53402 : classement",
+			"body": "Inspecteur,\n\nDossier classé pour défaillance technique. La garde-frontière a déjà demandé par écrit qui avait pris cette décision.\n\nEn période de décret, classer une affaire de frontière n'est jamais vu comme une rigueur. On le lit autrement. Soyez prudent.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "arrest",
+		"rationale": "Retards volontaires consignés comme défaillances, le long d'un secteur frontalier sensible, par un agent dont le fils est passé à l'étranger. Raccordement à une filière d'exfiltration. Sous le décret 86-31, l'exposition frontalière est déterminante.",
+		"factors": [
+			{
+				"id": "frontier",
+				"label": "Exposition frontalière : retards sur un secteur sensible",
+				"category": "border",
+				"weight": 9,
+				"decision": "arrest",
+				"document": "border_report"
+			},
+			{
+				"id": "network",
+				"label": "Raccordement : filière d'exfiltration (retards + mouvements + fils)",
+				"category": "linked",
+				"weight": 6,
+				"decision": "arrest",
+				"document": "veritas_link",
+				"contestable": true
+			},
+			{
+				"id": "falsification",
+				"label": "Faux dans le registre : retards sans origine matérielle",
+				"category": "established_fact",
+				"weight": 11,
+				"decision": "arrest",
+				"document": "dispatch_relay",
+				"requires_contradiction": "train.delays.october"
+			},
+			{
+				"id": "residents",
+				"label": "Voyageurs identifiés, titulaires de permis familiaux",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "reassign",
+				"document": "manifest",
+				"requires_contradiction": "halvek.movements"
+			},
+			{
+				"id": "clean_record",
+				"label": "Agent sans antécédent, trente ans de service",
+				"category": "risk",
+				"weight": 4,
+				"decision": "clear",
+				"document": "identity"
+			}
+		],
+		"note": "VERITAS surpondère la frontière (x3 sous le décret 86-31) et le raccordement ; il range le relevé des voyageurs parmi les faits « établis par l'agent », de faible poids. Même après la découverte des permis familiaux, il recommande la transmission à la frontière."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "VRABEC tenait le train 2241 une dizaine de minutes certaines nuits pour laisser des voisins de Brenec monter discrètement vers Halvek, où vivent leurs familles séparées par la frontière. Il n'a jamais rien reçu : son propre fils est parti par cette voie en 1981. Les permis des voyageurs étaient réguliers jusqu'au durcissement du 20 octobre. Il n'existe aucune filière : VERITAS a raccordé des coïncidences. Les retards « signalisation » sont faux ; la signalisation n'a jamais lâché.",
+		"involved": [
+			"53402",
+			"vrabec_p",
+			"halvek"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 53402 : votre question",
+		"body": "Inspecteur,\n\nUn train qui prend douze minutes de retard cinq nuits de suite, toujours le même, toujours près de la frontière : ce n'est pas la signalisation, c'est une habitude.\n\nReste à savoir si vous poursuivez l'habitude ou les gens qui en profitent. Depuis le décret, la différence ne regarde plus que vous. Moi, je n'ai rien dit.\n\nR. MAZUR"
+	}
+}

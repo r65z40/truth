@@ -60,6 +60,7 @@ func _run() -> void:
 		"test_veritas_acte2",
 		"test_ministry_record",
 		"test_case_53118",
+		"test_case_53402",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -600,7 +601,7 @@ func test_evenings() -> void:
 
 
 func test_field_scenes_are_valid() -> void:
-	for case_id in ["40921", "51307", "52044", "52310"]:
+	for case_id in ["40921", "51307", "52044", "52310", "53402"]:
 		var case_data := CaseLibrary.get_case(case_id)
 		var scene := FieldRules.scene_for_case(case_data)
 		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
@@ -981,6 +982,49 @@ func test_case_53118() -> void:
 	var knowing := DecisionRules.resolve(case_data, with_permit, "arrest_all")
 	check(knowing.response_id == "arrest_all_knowing" and knowing.flags.get("53118.innocents_condemned", false),
 			"arrêter malgré le permis condamne sciemment des innocents")
+
+
+func test_case_53402() -> void:
+	var case_data := CaseLibrary.get_case("53402")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 53402 est valide %s" % CaseLibrary.validate_case(case_data))
+	# Sans le décret, VERITAS penche déjà vers la transmission.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "arrest" and advice.confidence == 70,
+			"VERITAS recommande la frontière (indice %d)" % advice.confidence)
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# Le décret 86-31 durcit l'exposition frontalière (x2 -> x3).
+	var decree := {"decret_86_31": true}
+	check(Veritas.scores(case_data, {}, decree).arrest.score == 79,
+			"le décret fait monter l'indice d'arrestation à 79")
+	var frontier := _factor_by_id(Veritas.scores(case_data, {}, decree).arrest.factors, "frontier")
+	check(frontier.category == "border" and frontier.multiplier == 3.0, "sous le décret, la frontière pèse x3")
+	# Raccordement contestable : l'écarter ne suffit pas à renverser le décret.
+	var link := _factor_by_id(Veritas.scores(case_data, {}, decree).arrest.factors, "network")
+	check(link.category == "linked" and link.get("contestable", false), "le raccordement est une donnée raccordée contestable")
+	check(Veritas.recommendation(case_data, {"contested_factors": ["network"]}, decree).decision_id == "arrest",
+			"même sans le raccordement, le décret maintient la transmission")
+	# Les pièces établies par l'agent disculpent, mais pèsent peu face au décret.
+	check(Veritas.scores(case_data, {"contradictions_found": ["train.delays.october", "halvek.movements"]}, decree).arrest.score == 90,
+			"faux au registre + voyageurs identifiés : l'indice d'arrestation reste écrasant")
+	# Deux contradictions : le relevé central et le relevé des voyageurs.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("train.delays.october" in keys and "halvek.movements" in keys,
+			"le relevé central et le manifeste contredisent le dossier")
+	# Le manifeste n'existe qu'une fois demandé.
+	var state := GameState.get_condition_state()
+	state.cases = {"53402": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "manifest" in visible, "le relevé des voyageurs est invisible avant la demande")
+	# Issues de décision selon la contradiction établie grâce au manifeste.
+	var proved := {"contradictions_found": ["halvek.movements"]}
+	var blind := {"contradictions_found": []}
+	check(DecisionRules.resolve(case_data, proved, "arrest").response_id == "arrest_found",
+			"transmettre en connaissant les permis familiaux")
+	check(DecisionRules.resolve(case_data, blind, "arrest").response_id == "arrest_unfounded",
+			"transmettre sans avoir vérifié qui voyageait")
+	check(DecisionRules.resolve(case_data, proved, "clear").flags.get("halm.defied", false),
+			"classer une affaire de frontière sous le décret défie HALM")
 
 
 func _factor_by_id(factors: Array, id: String) -> Dictionary:

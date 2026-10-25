@@ -537,7 +537,7 @@
 				"subject": "(sans objet)",
 				"body": "Vous avez fouillé le cartable de mes élèves et le lit de mon fils. Il a huit ans. Depuis, il range ses dessins dans ses chaussures.\n\nLes voisins ne nous disent plus bonjour. Je ne vous en veux pas : c'est votre travail. Je voulais seulement que vous le sachiez.\n\nV. S."
 			}
-				},
+		},
 		{
 			"id": "field_52044_drazek",
 			"conditions": {
@@ -685,6 +685,85 @@
 				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
 				"subject": "(sans objet)",
 				"body": "Vous avez demandé le fonds Sainte-Agathe, et vous avez compté les émargements. Sept, pas onze. Et un permis signé avant qu'on ne durcisse le couvre-feu.\n\nLe Bureau des cultes ne vous remerciera pas tout haut, mais la veuve TILL joue encore de l'orgue ce dimanche grâce à vous.\n\nFaites attention. Un inspecteur qui classe ce que HALM voulait voir pendre se fait remarquer, lui aussi. Ne me nommez pas. K."
+			}
+		},
+		{
+			"id": "assign_53402",
+			"conditions": {
+				"min_day": 7
+			},
+			"assign_cases": [
+				"53402"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier prioritaire : n° 53402",
+				"body": "Inspecteur,\n\nLa Direction de la ligne Velmira–Halvek signale des retards nocturnes anormaux au poste de Brenec, à trois kilomètres de la frontière. L'aiguilleur s'appelle VRABEC.\n\nLe dossier 53402 vous est attribué. Depuis le décret 86-31, le mot « frontière » n'a plus le même poids. VERITAS l'a déjà raccordé. Lisez la ligne avant de lire le raccordement.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "halm_pressure_53402",
+			"conditions": {
+				"min_day": 7
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"halm.pressure_53402": true
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "COMMUNICATION INTERNE — DÉCRET 86-31",
+				"body": "Message du Directeur HALM.\n\nLe dossier 53402 relève de la frontière. Le décret 86-31 s'applique sans discussion : un agent de l'État qui retarde un convoi sur un secteur sensible est, jusqu'à preuve du contraire, un complice.\n\nLe bulletin de la frontière attend un nom cette semaine. Un inspecteur qui comprend l'époque transmet à la sûreté des frontières.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "53402_reminder",
+			"conditions": {
+				"min_day": 9,
+				"undecided_cases": [
+					"53402"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "Dossier 53402 : toujours en attente",
+				"body": "Inspecteur,\n\nLa garde-frontière a redemandé par écrit où en était l'affaire de Brenec. Le Directeur HALM n'aime pas qu'on lui réclame ses dossiers.\n\nUn dossier de frontière qui traîne, sous le décret, se lit comme une complaisance. Concluez.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "53402_arrested_note",
+			"conditions": {
+				"min_day": 8,
+				"requires_flags": [
+					"53402.vrabec_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Requête des habitants de Brenec",
+				"body": "Monsieur l'Inspecteur,\n\nOn a emmené M. VRABEC. C'est lui qui tenait le train assez longtemps pour qu'on monte voir les nôtres, à Halvek, de l'autre côté. Il n'a jamais rien demandé en échange.\n\nDepuis, le 2241 part à l'heure et ne s'arrête plus. Ma sœur est de l'autre côté. Je ne sais pas quand je la reverrai.\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "53402_cleared_note",
+			"conditions": {
+				"min_day": 8,
+				"requires_flags": [
+					"53402.line_cleared"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
+				"subject": "(sans objet)",
+				"body": "Vous avez classé Brenec pour « défaillance technique », en pleine période de décret. Je sais ce que ça veut dire : vous avez lu les permis, pas le raccordement.\n\nLe vieux garde sa voie et son train. Mais la garde-frontière a écrit à la Direction pour demander un nom. Quand ils ne l'obtiennent pas, ils le cherchent plus haut. Faites attention à votre propre dossier. Ne me nommez pas. K."
 			}
 		}
 	]
