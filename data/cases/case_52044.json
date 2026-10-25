@@ -279,6 +279,55 @@
 					"label": "La Milice demande de ne pas « déranger » le Bureau du ravitaillement"
 				}
 			]
+		},
+		{
+			"id": "death_notices",
+			"type": "register",
+			"title": "Accusés de réception des avis de décès",
+			"source": "Bureau du ravitaillement, District 4, service du courrier",
+			"reliability": "A",
+			"date": "1986-11-05",
+			"request": {
+				"label": "Accusés de réception des avis de décès (Bureau du ravitaillement)"
+			},
+			"veritas_remark": "Document d'un service de l'État, fiabilité A. Procédure respectée.",
+			"columns": [
+				"Défunt",
+				"Avis reçu le",
+				"Visa"
+			],
+			"rows": [
+				[
+					"HORVAT Milan",
+					"20.08.1986",
+					"P. DRAZEK"
+				],
+				[
+					"SIMKO Pavol",
+					"04.09.1986",
+					"P. DRAZEK"
+				],
+				[
+					"LENSKA Ruth",
+					"09.09.1986",
+					"P. DRAZEK"
+				]
+			],
+			"body": "Après réception de l'avis, le carnet du défunt doit être annulé dans le registre des carnets délivrés.",
+			"facts": [
+				{
+					"id": "f_not_horvat",
+					"key": "horvat.status",
+					"value": "Décédé le 14.08.1986",
+					"label": "Avis de décès de HORVAT reçu et visé par P. DRAZEK le 20.08.1986"
+				},
+				{
+					"id": "f_not_drazek",
+					"key": "drazek.knew",
+					"value": "Avis visés par DRAZEK",
+					"label": "Les trois avis de décès ont été visés par P. DRAZEK lui-même"
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -286,6 +335,7 @@
 			"id": "arrest_baker",
 			"label": "Recommander l'arrestation de la gérante",
 			"description": "Détournement de tickets au point de vente : transmission au service des interpellations.",
+			"archive": "Arrêtée pour détournement de rations. Boulangerie n° 14 fermée, gérance confiée au Bureau du ravitaillement.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -319,6 +369,7 @@
 			"id": "report_bureau",
 			"label": "Mettre en cause le Bureau du ravitaillement",
 			"description": "Transmettre le dossier au contrôle interne : carnets délivrés au nom de personnes décédées.",
+			"archive": "Mise hors de cause. Le dossier du Bureau du ravitaillement est transmis à la hiérarchie.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -377,6 +428,7 @@
 			"id": "close",
 			"label": "Classer : erreur de comptage",
 			"description": "Aucune suite. L'écart sera attribué au recensement.",
+			"archive": "Dossier classé : erreur de comptage. Les carnets restent en circulation.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -507,5 +559,10 @@
 			"orlik_l",
 			"petras_v"
 		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 52044 : votre question",
+		"body": "Inspecteur,\n\nQuand un registre est trop propre, comparez-le avec le registre d'un autre service. Les services ne se parlent jamais : c'est leur faiblesse, et parfois la nôtre.\n\nUne chose encore : mettre en cause un bureau du ministère sans preuve, c'est se mettre en cause soi-même.\n\nR. MAZUR"
 	}
 }

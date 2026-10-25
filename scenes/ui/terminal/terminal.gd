@@ -76,7 +76,7 @@ func submit_command(raw: String) -> void:
 		TerminalCommands.Action.CLEAR:
 			clear()
 		TerminalCommands.Action.DATE:
-			print_line(GameState.get_date_long())
+			print_line("%s  //  %s" % [GameState.get_date_long(), GameState.get_clock_text()])
 		TerminalCommands.Action.IDENT:
 			print_line("AGENT : %s   MATRICULE : %s" % [GameState.player.name, GameState.player.badge])
 			print_line("GRADE : %s   AFFECTATION : Section 4" % GameState.get_rank_title())

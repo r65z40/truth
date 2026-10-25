@@ -41,6 +41,13 @@ func _run() -> void:
 		"test_end_day_without_decision",
 		"test_delayed_consequences",
 		"test_save_migration_from_v2",
+		"test_save_migration_from_v3",
+		"test_work_time",
+		"test_request_and_consultation",
+		"test_evenings_file_is_valid",
+		"test_evenings",
+		"test_career_evaluation",
+		"test_act_review",
 		"test_veritas",
 		"test_veritas_model",
 		"test_case_51307_depends_on_first_case",
@@ -59,7 +66,9 @@ func _run() -> void:
 		"test_full_session_flow",
 		"test_investigation_and_conclusion_flow",
 		"test_end_day_in_desk",
+		"test_act_end_in_desk",
 		"test_friendly_desk",
+		"test_time_in_desk",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -135,7 +144,15 @@ func test_document_rendering_escapes_bbcode() -> void:
 
 func test_calendar() -> void:
 	check(FictionalCalendar.format_long(0) == "LUNDI 3 NOVEMBRE 1986", "jour 0 : %s" % FictionalCalendar.format_long(0))
-	check(FictionalCalendar.format_short(29) == "02.12.1986", "jour 29 : %s" % FictionalCalendar.format_short(29))
+	check(FictionalCalendar.service_days().size() == 20, "20 journées de service")
+	check(FictionalCalendar.format_long(4) == "VENDREDI 7 NOVEMBRE 1986", "journée 4 : %s" % FictionalCalendar.format_long(4))
+	check(FictionalCalendar.format_long(5) == "LUNDI 10 NOVEMBRE 1986", "le dimanche est sauté : %s" % FictionalCalendar.format_long(5))
+	check(FictionalCalendar.format_long(19) == "SAMEDI 6 DÉCEMBRE 1986", "dernière journée : %s" % FictionalCalendar.format_long(19))
+	check(FictionalCalendar.format_short(20) == "07.12.1986", "au-delà, jour par jour : %s" % FictionalCalendar.format_short(20))
+	check(FictionalCalendar.days_since_previous(1) == 1 and FictionalCalendar.days_since_previous(5) == 3
+			and FictionalCalendar.days_since_previous(15) == 11, "écarts entre journées (ellipses)")
+	check(FictionalCalendar.act_for_day(0).number == 1 and FictionalCalendar.act_for_day(4).number == 1
+			and FictionalCalendar.act_for_day(5).number == 2 and FictionalCalendar.act_for_day(19).title == "MIROIR", "actes")
 
 
 # --- État de la partie -------------------------------------------------------
@@ -392,6 +409,216 @@ func test_save_migration_from_v2() -> void:
 	check(GameState.day_index == 1, "jour conservé")
 
 
+func test_save_migration_from_v3() -> void:
+	var data := GameState.to_dict()
+	data.erase("hours_used")
+	data.erase("overtime_days")
+	for case_state in data.cases.values():
+		case_state.erase("requested_documents")
+		case_state.erase("consulted")
+	var file := FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"save_version": 3, "state": data}))
+	file.close()
+	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "une sauvegarde v3 se charge")
+	check(GameState.hours_used == 0 and GameState.overtime_days == [], "horloge ajoutée")
+	check(GameState.get_case_state("40921").requested_documents == {} and GameState.get_case_state("40921").consulted == false,
+			"champs de demande ajoutés aux dossiers")
+	GameState.spend_time("request_document")
+	GameState.get_case_state("40921").requested_documents["medical_halvek"] = 0
+	SaveManager.save_game(GameState, TEST_SAVE_PATH)
+	GameState.new_game()
+	SaveManager.load_game(GameState, TEST_SAVE_PATH)
+	check(GameState.hours_used == 1 and GameState.get_case_state("40921").requested_documents.has("medical_halvek"),
+			"horloge et demandes sauvegardées")
+
+
+func test_work_time() -> void:
+	check(GameState.get_clock_text() == "08h00", "la journée commence à 08h00")
+	check(WorkTime.cost("request_document") == 1 and WorkTime.cost("verify_archive") == 2, "coûts lus dans les données")
+	check(WorkTime.cost("lire") == 0, "une action inconnue est gratuite")
+	for i in 8:
+		check(GameState.spend_time("consult_superior"), "heure %d disponible" % (i + 1))
+	check(GameState.get_clock_text() == "16h00" and not GameState.is_overtime_today(), "16h00 : fin de la journée normale")
+	check(GameState.spend_time("request_document") and GameState.is_overtime_today(), "heures supplémentaires notées")
+	check(GameState.spend_time("request_document"), "deuxième heure supplémentaire")
+	check(not GameState.spend_time("request_document"), "au-delà de 18h00, plus d'action payante")
+	check(GameState.hours_used == 10, "10 heures au plus")
+	GameState.apply_decision("40921", "investigate")
+	check(GameState.get_case_state("40921").decision == "investigate", "signer reste possible sans heure disponible")
+	GameState.end_day()
+	check(GameState.get_clock_text() == "08h00" and GameState.overtime_days == [0], "le lendemain, l'horloge repart ; la soirée perdue reste notée")
+
+
+func test_request_and_consultation() -> void:
+	check(GameState.get_requestable_documents("40921").map(func(d: Dictionary) -> String: return d.id) == ["medical_halvek"],
+			"une pièce à demander dans le 40921")
+	check(not "medical_halvek" in _visible_document_ids("40921"), "la pièce n'existe pas avant la demande")
+	check(GameState.request_document("40921", "medical_halvek") and GameState.hours_used == 1, "demande : 1 heure")
+	check(not GameState.request_document("40921", "medical_halvek"), "on ne demande pas deux fois")
+	check(not GameState.request_document("40921", "identity"), "une pièce ordinaire ne se demande pas")
+	check(GameState.get_requestable_documents("40921").is_empty(), "plus rien à demander")
+	check(not "medical_halvek" in _visible_document_ids("40921"), "la pièce n'arrive pas le jour même")
+	GameState.end_day()
+	check("medical_halvek" in _visible_document_ids("40921"), "la pièce arrive le lendemain")
+	var unread := GameState.get_unread_count()
+	check(GameState.consult_superior("40921") and GameState.hours_used == 1, "consulter Mazur : 1 heure")
+	check(GameState.get_unread_count() == unread + 1 and GameState.messages[-1].id == "40921.consultation", "Mazur répond par message")
+	check(GameState.flags.get("40921.consulted_superior") == true, "la consultation est mémorisée")
+	check(not GameState.consult_superior("40921"), "une seule consultation par dossier")
+	# Une demande trop curieuse se paie.
+	_reach_case_52310()
+	var suspicion := GameState.get_indicator("suspicion")
+	check(GameState.request_document("52310", "detention_file"), "demande du dossier de détention")
+	check(GameState.flags.get("52310.archive_requested") == true and GameState.get_indicator("suspicion") == suspicion + 2,
+			"la demande est signalée à la Section 7")
+	for case_id in ["40921", "51307", "52044", "52310"]:
+		var case_data := CaseLibrary.get_case(case_id)
+		check(CaseLibrary.validate_case(case_data).is_empty() and case_data.has("consultation"), "%s : consultation et pièce à demander" % case_id)
+
+
+func test_evenings_file_is_valid() -> void:
+	var data := EveningRules.get_data()
+	check(not data.get("overtime", {}).get("text", "").is_empty(), "texte de soirée perdue")
+	var days := []
+	for evening in data.evenings:
+		days.append(int(evening.day))
+		check(evening.get("intro", "") != "" and evening.actions.size() >= 2, "soirée %d : introduction et au moins 2 actions" % evening.day)
+		var unconditional := 0
+		for action in evening.actions:
+			check(action.has("id") and action.has("label") and action.has("kind") and not action.get("results", []).is_empty(),
+					"soirée %d, action %s complète" % [evening.day, action.get("id", "?")])
+			if not action.has("conditions"):
+				unconditional += 1
+			var last: Dictionary = action.results[-1]
+			check(not last.has("conditions"), "%s : la dernière variante est sans condition" % action.id)
+		check(unconditional >= 2, "soirée %d : au moins 2 actions toujours possibles" % evening.day)
+	check(days == [0, 1, 2, 3, 4], "une soirée par jour de l'acte 1 : %s" % [days])
+
+
+func test_evenings() -> void:
+	GameState.new_game()
+	check(GameState.has_evening_pending(), "une soirée est prévue le premier soir")
+	check(GameState.choose_evening_action("benes_visit").is_empty(), "action d'un autre soir refusée")
+	var result := GameState.choose_evening_action("lena_answer")
+	check(result.text.contains("brouillons"), "texte du résultat")
+	check(GameState.flags.get("lena.letter_answered") == true and GameState.flags.get("lena.asked_permit") == true,
+			"drapeaux de l'action et de la soirée")
+	check(not GameState.has_evening_pending() and GameState.choose_evening_action("radio_0").is_empty(), "une seule action par soir")
+	GameState.end_day()
+	check(not "sedlar_visit" in GameState.get_evening_actions().map(func(a: Dictionary) -> String: return a.id),
+			"pas de visite de Vera SEDLAR sans arrestation")
+	result = GameState.choose_evening_action("lena_call")
+	check(result.text.contains("Merci pour l'autorisation"), "la variante dépend de la lettre envoyée")
+	# La radio écoutée deux fois sans ménager le gardien : signalement.
+	GameState.new_game()
+	GameState.choose_evening_action("radio_0")
+	GameState.end_day()
+	var suspicion := GameState.get_indicator("suspicion")
+	result = GameState.choose_evening_action("radio_1")
+	check(GameState.flags.get("adler.reported_radio") == true and result.text.contains("porte du gardien"), "deuxième écoute : ADLER signale")
+	check(GameState.get_indicator("suspicion") == suspicion + 3, "le signalement coûte de la suspicion")
+	var ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("evening_radio_reported" in ids, "note de Mazur le lendemain")
+	# Avec ADLER ménagé, pas de signalement.
+	GameState.new_game()
+	GameState.choose_evening_action("adler_0")
+	GameState.end_day()
+	GameState.choose_evening_action("radio_1")
+	GameState.end_day()
+	GameState.choose_evening_action("radio_2")
+	check(GameState.flags.get("adler.reported_radio") != true, "le gardien ménagé ne signale pas")
+	# Heures supplémentaires : soirée perdue.
+	GameState.new_game()
+	GameState.hours_used = 9
+	GameState.overtime_days = [0]
+	check(GameState.choose_evening_action("lena_answer").is_empty(), "pas d'action après des heures supplémentaires")
+	check(GameState.lose_evening().contains("vingt heures") and not GameState.has_evening_pending(), "soirée perdue")
+	check(GameState.flags.get("lena.asked_permit") == true, "la lettre de Lena est quand même arrivée")
+	# Autorisation de stage pour Lena : conséquence vendredi et lundi.
+	GameState.new_game()
+	for day in 3:
+		GameState.end_day()
+	GameState.choose_evening_action("lena_permit_call")
+	GameState.end_day()
+	check(GameState.choose_evening_action("lena_news").text.contains("Avis favorable"), "Lena obtient son stage")
+	ids = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("evening_lena_permit_noted" in ids and GameState.flags.get("lena.leverage") == true, "la recommandation est notée au dossier")
+	# Sauvegarde.
+	var saved := GameState.to_dict()
+	GameState.new_game()
+	GameState.from_dict(JSON.parse_string(JSON.stringify(saved)))
+	check(GameState.evenings.size() == 2 and GameState.evenings["3"].action == "lena_permit_call", "soirées sauvegardées")
+	GameState.new_game()
+
+
+func test_career_evaluation() -> void:
+	var rules := Career.act_rules(1)
+	check(rules.cases == ["40921", "51307", "52044", "52310"] and int(rules.to_rank) == Career.Rank.INSPECTOR_2ND, "règle de l'acte 1")
+	check(Career.act_rules(4).is_empty(), "pas encore de règle pour l'acte 4")
+	var cases := {}
+	for case_id in rules.cases:
+		cases[case_id] = {"decision": "x", "contradictions_found": []}
+	cases["40921"].contradictions_found = ["a"]
+	cases["52310"].contradictions_found = ["b"]
+	var state := {"indicators": {"loyalty": 50, "suspicion": 30}, "flags": {}, "cases": cases}
+	check(Career.evaluate(rules, state).eligible, "4 dossiers conclus, 2 appuyés, loyal, peu surveillé : promotion")
+	state.indicators.suspicion = 50
+	check(not Career.evaluate(rules, state).eligible, "surveillance renforcée : pas de promotion")
+	state.indicators.suspicion = 30
+	state.indicators.loyalty = 44
+	check(not Career.evaluate(rules, state).eligible, "loyauté à confirmer : pas de promotion")
+	state.indicators.loyalty = 50
+	cases["52310"].contradictions_found = []
+	var result := Career.evaluate(rules, state)
+	check(not result.eligible and not result.criteria[1].ok, "une seule conclusion appuyée : pas de promotion")
+	state.flags["milice.favor_owed"] = true
+	result = Career.evaluate(rules, state)
+	check(result.eligible and result.bought, "la faveur de la Milice achète la promotion")
+	cases["51307"].decision = ""
+	check(not Career.evaluate(rules, state).eligible, "un dossier sans conclusion : pas de promotion")
+
+
+func test_act_review() -> void:
+	GameState.new_game()
+	check(not GameState.has_act_review_pending(), "pas de revue le premier soir")
+	for day in 4:
+		GameState.end_day()
+	var review := GameState.get_act_review()
+	check(review.act == 1 and review.title == "LE ZÈLE" and review.subjects.size() == 4, "vendredi soir : revue de l'acte 1")
+	check(review.subjects[0].decision == "Sans conclusion" and not review.evaluation.eligible, "sans conclusion, pas de promotion")
+	check(review.letter.contains("maintenu"), "lettre de maintien au grade")
+	check(GameState.complete_act_review(true) == "" and GameState.player.rank == Career.Rank.INSPECTOR, "accepter n'a pas d'effet sans proposition")
+	check(GameState.flags.get("career.act1_denied") == true and not GameState.has_act_review_pending(), "revue close")
+	# Acte bien mené : promotion acceptée.
+	GameState.new_game()
+	GameState.confront_facts("40921", "f_report_presence", "f_log_trip")
+	GameState.apply_decision("40921", "arrest")
+	for day in 4:
+		GameState.end_day()
+	for case_id in ["51307", "52044", "52310"]:
+		GameState.get_case_state(case_id).contradictions_found.append("test")
+		GameState.apply_decision(case_id, CaseLibrary.get_case(case_id).decisions[0].id)
+	GameState.indicators.loyalty = 60
+	GameState.indicators.suspicion = 30
+	review = GameState.get_act_review()
+	check(review.evaluation.eligible and review.letter.contains("2e classe"), "promotion proposée")
+	check(review.subjects[0].text.contains("Arrêté le 4.11.1986"), "le sort du sujet est archivé")
+	var with_truth: bool = GameState.flags.get("52310.truth_known") == true
+	check(review.subjects[3].text.contains("Karel BENES") == with_truth, "la vérité sur VARGA n'apparaît que si elle est connue")
+	check(GameState.complete_act_review(true).contains("Nomination"), "promotion acceptée")
+	check(GameState.get_rank_title() == "Inspecteur de 2e classe", "nouveau grade")
+	var saved := GameState.to_dict()
+	GameState.from_dict(JSON.parse_string(JSON.stringify(saved)))
+	check(GameState.player.rank == Career.Rank.INSPECTOR_2ND, "grade sauvegardé")
+	# Promotion déclinée.
+	GameState.flags.erase("act1.reviewed")
+	GameState.player.rank = Career.Rank.INSPECTOR
+	check(GameState.complete_act_review(false).contains("KREMER"), "promotion déclinée")
+	check(GameState.flags.get("career.refused_promotion") == true and GameState.player.rank == Career.Rank.INSPECTOR,
+			"on reste en 3e classe, le refus est mémorisé")
+	GameState.new_game()
+
+
 func test_veritas() -> void:
 	var case_data := CaseLibrary.get_case("40921")
 	for document in case_data.documents:
@@ -474,7 +701,7 @@ func test_case_51307_depends_on_first_case() -> void:
 			if document_id in extra:
 				expected.append(document_id)
 		check(ids == expected, "40921 « %s » (contradiction : %s) > pièces %s" % [scenario[0], scenario[1], ids])
-	check(CaseLibrary.get_case("51307").documents.size() == 7, "le dossier complet garde ses 7 pièces")
+	check(CaseLibrary.get_case("51307").documents.size() == 8, "le dossier complet garde ses 8 pièces")
 
 
 func test_case_51307_contradictions_and_veritas() -> void:
@@ -722,7 +949,8 @@ func test_desk_scene_flow() -> void:
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
 	check(ResourceLoader.exists(desk.MAIN_MENU_SCENE), "la scène du menu référencée par le bureau existe")
-	check(desk.get_node("%DateLabel").text == "LUNDI 3 NOVEMBRE 1986", "date affichée dans l'en-tête")
+	check(desk.get_node("%DateLabel").text == "LUNDI 3 NOVEMBRE 1986\n08h00  //  8 h de service restantes",
+			"date et horloge dans l'en-tête : %s" % desk.get_node("%DateLabel").text)
 	check(desk.get_node("%RankLabel").text == "INSPECTEUR DE 3E CLASSE", "grade affiché")
 	check(desk.get_node("%MessagesButton").text.contains("2 non lu(s)"), "compteur de messages non lus")
 	check(desk.get_open_app() == "", "aucune fenêtre ouverte au départ")
@@ -869,8 +1097,14 @@ func test_end_day_in_desk() -> void:
 	check(GameState.day_index == 0, "première demande : avertissement, pas de changement de jour")
 	check(desk.terminal.get_log_text().contains("sans conclusion : 40921"), "le terminal signale le dossier en attente")
 	desk.get_node("%EndDayButton").pressed.emit()
-	check(GameState.day_index == 1, "seconde demande : la journée se termine")
-	check(desk.get_node("%DateLabel").text == "MARDI 4 NOVEMBRE 1986", "la date de l'en-tête avance")
+	check(GameState.day_index == 0 and desk.evening_screen.visible, "seconde demande : la soirée commence")
+	check(desk.evening_screen.get_action_ids() == ["lena_answer", "radio_0", "adler_0"], "trois actions le premier soir")
+	desk.evening_screen.choose("radio_0")
+	check(desk.evening_screen.get_node("%ResultLabel").text.contains("Radio Aldria"), "le résultat de la soirée s'affiche")
+	desk.evening_screen.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
+	check(GameState.day_index == 1, "après la soirée, la journée se termine")
+	check(desk.get_node("%DateLabel").text.begins_with("MARDI 4 NOVEMBRE 1986\n08h00"), "la date de l'en-tête avance, l'horloge repart")
 	check(SaveManager.has_save(), "sauvegarde automatique en fin de journée")
 	check(desk.terminal.get_log_text().contains("MARDI 4 NOVEMBRE 1986"), "le terminal ouvre une nouvelle session")
 	check(desk.get_node("%DayTransition").visible, "l'écran de transition s'affiche")
@@ -882,6 +1116,32 @@ func test_end_day_in_desk() -> void:
 	check(desk.windows.dossiers.get_node("%DocumentTabs").get_child_count() == 4, "pièces de base du dossier 51307")
 	desk.queue_free()
 	await get_tree().process_frame
+
+
+func test_act_end_in_desk() -> void:
+	GameState.new_game()
+	for day in 4:
+		GameState.end_day()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.end_day()
+	check(desk.evening_screen.visible, "vendredi : la soirée d'abord")
+	desk.evening_screen.choose("adler_4")
+	desk.evening_screen.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
+	check(desk.act_review_screen.visible and GameState.day_index == 4, "puis la revue de fin d'acte")
+	check(desk.act_review_screen.get_node("%TitleLabel").text == "FIN DE L'ACTE 1  //  LE ZÈLE", "titre de l'acte")
+	check(desk.act_review_screen.get_node("%SubjectsBox").get_child_count() == 8, "quatre sujets archivés")
+	check(desk.act_review_screen.get_node("%ContinueButton").visible and not desk.act_review_screen.get_node("%AcceptButton").visible,
+			"sans promotion proposée, seulement CONTINUER")
+	desk.act_review_screen.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
+	check(GameState.day_index == 5 and GameState.flags.get("act1.reviewed") == true, "lundi 10 novembre, acte 2")
+	check(desk.get_node("%DayTransitionLabel").text.contains("3 jours plus tard"), "ellipse du week-end")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
 
 
 func test_friendly_desk() -> void:
@@ -910,5 +1170,24 @@ func test_friendly_desk() -> void:
 	desk._refresh_objective()
 	check(not desk.get_node("%ObjectiveBar").visible, "l'aide se désactive dans les paramètres")
 	Settings.guidance = true
+	desk.queue_free()
+	await get_tree().process_frame
+
+
+func test_time_in_desk() -> void:
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.terminal.submit_command("dossiers")
+	var dossiers_window = desk.windows.dossiers
+	dossiers_window.select_case("40921")
+	check(dossiers_window.get_node("%RequestButton").text == "DEMANDER (1 h)" and not dossiers_window.get_node("%RequestButton").disabled,
+			"bouton de demande de pièce")
+	dossiers_window.get_node("%RequestButton").pressed.emit()
+	check(dossiers_window.get_node("%RequestButton").text == "DEMANDE EN COURS" and dossiers_window.get_node("%RequestButton").disabled,
+			"la demande est en cours")
+	dossiers_window.get_node("%ConsultButton").pressed.emit()
+	check(dossiers_window.get_node("%ConsultButton").text == "CONSULTÉ" and GameState.hours_used == 2, "consultation : 2 heures employées")
+	check(desk.get_node("%DateLabel").text.ends_with("10h00  //  6 h de service restantes"), "l'horloge avance")
 	desk.queue_free()
 	await get_tree().process_frame

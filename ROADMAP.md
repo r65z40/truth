@@ -65,9 +65,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] VERITAS : indice de conformité calculé, `VERITAS POURQUOI`
 - [x] Onglets des pièces sur une ligne défilante (dossiers de 8 pièces)
 - [ ] Fondations de la localisation (français, anglais)
-- [ ] Horloge de service, demander une pièce, consulter Mazur
-- [ ] Soirées (Lena, radio d'Aldria)
-- [ ] Calendrier en 20 journées, écran de fin d'acte, promotion
+- [x] Horloge de service (8 h + 2 h), demander une pièce (livrée le lendemain), consulter Mazur
+- [x] Soirées : 5 soirées de l'acte 1 (Lena, radio d'Aldria, M. ADLER, visites), perdues en heures supplémentaires
+- [x] Calendrier en 20 journées de service, ellipses entre les actes
+- [x] Profil du joueur dans `data/campaign.json` (préparation des extensions)
+- [x] Écran de fin d'acte (archive des sujets), commission d'avancement, promotion en 2e classe acceptée ou déclinée
+- [ ] Acte 2 : action « demander une archive confidentielle » débloquée par la 2e classe
 
 ## Prochaine itération
 

@@ -440,6 +440,41 @@
 				"subject": "(sans objet)",
 				"body": "Inspecteur,\n\nComparez la photo de la fiche 52310 avec celle de la fiche de lecteur de 1979. Regardez la joue droite.\n\nCe n'est pas le même homme. Le vrai Teodor VARGA a été arrêté en 1981 et n'est jamais revenu. Le ministère a déjà condamné quelqu'un sous ce nom ; il lui en faut un deuxième pour le procès.\n\nOn m'envoie aux archives lundi. Si vous voulez voir les originaux, c'est là qu'ils seront. Ne m'écrivez pas. Brûlez ceci.\n\nK."
 			}
+		},
+		{
+			"id": "evening_radio_reported",
+			"conditions": {
+				"requires_flags": [
+					"adler.reported_radio"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"player.radio_on_file": true
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Note du gardien de votre immeuble",
+				"body": "Inspecteur,\n\nLe gardien du bloc 7, District 2, signale l'écoute répétée d'une radio étrangère dans votre appartement. Le signalement est arrivé sur mon bureau, par chance.\n\nJe le classe. Il reste dans votre dossier. Un inspecteur qui écoute Aldria doit savoir que d'autres écoutent l'inspecteur.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "evening_lena_permit_noted",
+			"conditions": {
+				"min_day": 5,
+				"requires_flags": [
+					"lena.permit_helped"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"lena.leverage": true
+			},
+			"message": {
+				"from": "Direction du personnel, Ministère de la Sécurité nationale",
+				"subject": "Recommandation du 6 novembre",
+				"body": "Agent VOSK,\n\nLa Direction a enregistré votre recommandation téléphonique en faveur de la citoyenne L. VOSK, étudiante en médecine, auprès du ministère de la Santé.\n\nLa recommandation a été suivie. Elle figure désormais à votre dossier, avec le nom de la bénéficiaire et son affectation : hôpital n° 2, service des urgences.\n\nLa Direction du personnel"
+			}
 		}
 	]
 }

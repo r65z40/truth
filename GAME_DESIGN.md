@@ -166,11 +166,37 @@ détention en 1983 ; l'homme de la photo est Karel BENES, l'occupant actuel de
 l'appartement. VERITAS (91) ignore les documents « hors période ». Dans tous les
 cas, KREMER, relégué aux archives, écrit à Vosk : c'est la fin de l'acte 1.
 
+## Temps de service et soirées (0.6)
+
+Une journée de service compte 8 heures (plus 2 heures supplémentaires). Lire
+est gratuit ; demander une pièce, consulter MAZUR et signer coûtent 1 h. Une
+pièce demandée arrive le lendemain.
+
+Après la fin de service vient la **soirée**, dans l'appartement du bloc 7 : une
+seule action parmi 2 ou 3 (`data/evenings.json`). Une journée finie en heures
+supplémentaires fait perdre la soirée. Fils de l'acte 1 :
+- **Lena** demande une autorisation de stage, bloquée par le dossier du père.
+  Le joueur peut répondre, appeler le ministère de la Santé avec son matricule
+  (elle obtient le stage, mais la recommandation est notée au dossier et devient
+  un levier de la hiérarchie) ou refuser par principe.
+- **La radio d'Aldria** annonce l'accord d'électricité, parle de Halvek, lit un
+  poème de VARGA, puis annonce la commission du 8 décembre. Deux écoutes sans
+  avoir ménagé M. ADLER : signalement, suspicion +3, note de MAZUR.
+- **M. ADLER**, gardien et informateur ordinaire : le ménager protège, mais il
+  montre qu'il pourrait aussi dénoncer ses voisins.
+- **Visites** selon les décisions : Vera SEDLAR après l'arrestation de son
+  mari, Irena BENES après celle de « VARGA ».
+
 ## Carrière
 
-Inspecteur > Analyste du renseignement > Chef de section > Directeur du
-renseignement > Ministre de la Sécurité > Haut dirigeant. Progression non
-automatique (réputation, relations, résultats, choix, événements).
+Inspecteur de 3e classe > 2e classe > Inspecteur principal > Chef de section
+adjoint > Directeur adjoint par intérim (puis ministre et haut dirigeant, hors
+campagne). Le dernier soir d'un acte, un écran archive le sort de chaque sujet
+et la commission d'avancement statue (`data/rules/promotion.json`) : tous les
+dossiers conclus, au moins 2 conclusions appuyées par une contradiction,
+loyauté conforme, pas de surveillance renforcée. Une faveur de la Milice peut
+remplacer la qualité des conclusions (et MAZUR le dit). Le joueur peut décliner :
+le refus est mémorisé (`career.refused_promotion`).
 
 ## Journal des décisions de design
 
@@ -179,5 +205,6 @@ automatique (réputation, relations, résultats, choix, événements).
 - 2026-10-24 : les conséquences récompensent l'instruction (contradiction établie)
   plus que la décision elle-même ; le joueur confronte des éléments par paires.
 - 2026-10-24 : conception V2 validée par fen (`docs/design/`).
+- 2026-10-25 : soirées, une action par soir, perdue en heures supplémentaires.
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

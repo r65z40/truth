@@ -1,0 +1,15 @@
+{
+	"note": "Les 20 journées de service de la campagne (une journée = environ 12 minutes de jeu). Les jours sans service (dimanches, ellipses entre les actes) sont sautés.",
+	"service_days": [
+		"1986-11-03", "1986-11-04", "1986-11-05", "1986-11-06", "1986-11-07",
+		"1986-11-10", "1986-11-11", "1986-11-12", "1986-11-13", "1986-11-14",
+		"1986-11-17", "1986-11-18", "1986-11-19", "1986-11-20", "1986-11-21",
+		"1986-12-02", "1986-12-03", "1986-12-04", "1986-12-05", "1986-12-06"
+	],
+	"acts": [
+		{"number": 1, "title": "LE ZÈLE", "first_day": 0},
+		{"number": 2, "title": "LES FISSURES", "first_day": 5},
+		{"number": 3, "title": "LA PEUR", "first_day": 10},
+		{"number": 4, "title": "MIROIR", "first_day": 15}
+	]
+}

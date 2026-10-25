@@ -280,6 +280,33 @@
 					"label": "SEDLAR ne connaît pas VARGA : il allait à Halvek pour sa mère"
 				}
 			]
+		},
+		{
+			"id": "detention_file",
+			"type": "report",
+			"title": "Dossier de détention n° 81/203",
+			"source": "Archives centrales du ministère",
+			"reliability": "A",
+			"date": "1986-11-07",
+			"request": {
+				"label": "Dossier de détention n° 81/203 (Archives centrales)",
+				"flags": {
+					"52310.archive_requested": true
+				},
+				"effects": {
+					"suspicion": 2
+				}
+			},
+			"veritas_remark": "Pièce non communicable. Demande enregistrée.",
+			"body": "PIÈCE NON COMMUNICABLE\n\nLe dossier n° 81/203 relève de la Section 7. Sa consultation est réservée aux agents de niveau d'accès 3.\n\nVotre demande a été enregistrée au nom de l'agent VOSK, matricule INS-7734, et transmise pour information au chef de la Section 7.\n\n[À la main, au crayon, dans la marge : « 81/203 = VARGA T., écroué le 14.03.1981. Voir sous-sol B. »]",
+			"facts": [
+				{
+					"id": "f_det_date",
+					"key": "varga.arrest",
+					"value": "Écroué le 14.03.1981",
+					"label": "Note au crayon : VARGA T. écroué le 14.03.1981"
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -287,6 +314,8 @@
 			"id": "arrest",
 			"label": "Recommander l'arrestation de l'auteur",
 			"description": "Message codé à destination d'un réseau de passage : transmission au service des interpellations.",
+			"archive": "« Teodor VARGA » arrêté au quai des Tanneurs. Procès public annoncé par la Section 7.",
+			"archive_truth": {"requires_flags": ["52310.truth_known"], "text": "L'homme arrêté s'appelle Karel BENES, correcteur. Le vrai VARGA est mort en détention en 1983."},
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -322,6 +351,7 @@
 			"id": "no_code",
 			"label": "Conclure à l'absence de message codé",
 			"description": "Le poème est une dédicace. Le dossier est renvoyé au Service de la censure.",
+			"archive": "Le poème est déclaré sans message codé. Le recueil reste retiré des bibliothèques.",
 			"status_after": "closed",
 			"outcomes": [
 				{
@@ -357,6 +387,7 @@
 			"id": "identity_error",
 			"label": "Signaler une erreur d'identité",
 			"description": "Le sujet de la fiche ne correspond pas à l'auteur de 1979. Demande de vérification à l'état civil.",
+			"archive": "Erreur d'identité signalée. La Section 7 conteste ; le dossier est suspendu.",
 			"status_after": "under_investigation",
 			"outcomes": [
 				{
@@ -487,5 +518,10 @@
 			"section7",
 			"kremer_h"
 		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 52310 : votre question",
+		"body": "Inspecteur,\n\nJe ne lis pas de poésie. Mais je sais qu'une édition « revue » a toujours été revue par quelqu'un. Demandez-vous qui, et pourquoi on ne vous l'a pas dit.\n\nEt si vous trouvez la réponse, réfléchissez longtemps avant de l'écrire.\n\nR. MAZUR"
 	}
 }

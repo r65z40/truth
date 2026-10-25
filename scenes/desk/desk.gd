@@ -23,6 +23,8 @@ const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 @onready var _scrim: ColorRect = %Scrim
 @onready var _day_transition: ColorRect = %DayTransition
 @onready var _day_transition_label: Label = %DayTransitionLabel
+@onready var evening_screen: EveningScreen = %EveningScreen
+@onready var act_review_screen: ActReviewScreen = %ActReviewScreen
 @onready var _objective_bar: Control = %ObjectiveBar
 @onready var _objective_text: Label = %ObjectiveText
 @onready var _objective_hint: Label = %ObjectiveHint
@@ -127,13 +129,25 @@ func request_end_day() -> void:
 	end_day()
 
 
-## Passe au jour suivant, sauvegarde automatiquement et affiche la transition.
+## Quitte le poste : soirée s'il y en a une, revue de fin d'acte, puis jour suivant.
 func end_day() -> void:
 	_end_day_armed = false
 	for window: MinistryWindow in windows.values():
 		window.hide()
 	_scrim.hide()
-	_day_transition_label.text = "FIN DE SERVICE\n\n%s" % FictionalCalendar.format_long(GameState.day_index + 1)
+	if evening_screen.open():
+		await evening_screen.finished
+	if act_review_screen.open():
+		await act_review_screen.finished
+	_start_next_day()
+
+
+## Passe au jour suivant, sauvegarde automatiquement et affiche la transition.
+func _start_next_day() -> void:
+	var next_day := GameState.day_index + 1
+	var gap := FictionalCalendar.days_since_previous(next_day)
+	var ellipsis := "\n\n%d jours plus tard" % gap if gap > 2 else ""
+	_day_transition_label.text = "FIN DE SERVICE%s\n\n%s" % [ellipsis, FictionalCalendar.format_long(next_day)]
 	_day_transition.modulate.a = 0.0
 	_day_transition.show()
 	GameState.end_day()
@@ -191,8 +205,19 @@ func _on_state_changed() -> void:
 	_refresh_header()
 
 
+## Ligne d'horloge sous la date : heure de service et temps restant.
+func clock_line() -> String:
+	var hours := GameState.hours_used
+	if WorkTime.is_overtime(hours):
+		return "%s  //  HEURES SUPPLÉMENTAIRES" % GameState.get_clock_text()
+	var left := WorkTime.day_hours() - hours
+	if left <= 0:
+		return "%s  //  FIN DE SERVICE" % GameState.get_clock_text()
+	return "%s  //  %d h de service restantes" % [GameState.get_clock_text(), left]
+
+
 func _refresh_header() -> void:
-	_date_label.text = GameState.get_date_long()
+	_date_label.text = "%s\n%s" % [GameState.get_date_long(), clock_line()]
 	_agent_label.text = "%s  //  %s" % [GameState.player.name, GameState.player.badge]
 	_rank_label.text = GameState.get_rank_title().to_upper()
 	var unread := GameState.get_unread_count()

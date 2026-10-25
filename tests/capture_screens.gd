@@ -57,7 +57,11 @@ func _capture_all() -> void:
 	desk.terminal.submit_command("archives")
 	await _snap("13_archives")
 	desk.end_day()
-	await _snap("14_fin_de_service", 0.8)
+	await _snap("14a_soiree")
+	desk.evening_screen.choose("lena_answer")
+	await _snap("14b_soiree_resultat")
+	desk.evening_screen.get_node("%ContinueButton").pressed.emit()
+	await _snap("14c_fin_de_service", 0.8)
 	await _wait(2.5)
 	desk.terminal.submit_command("messages")
 	desk.windows.messages.select_message(GameState.messages[-2].id)
@@ -88,6 +92,22 @@ func _capture_all() -> void:
 	await _snap("22_dossier_52310_poeme")
 	desk.windows.dossiers.open_conclusion()
 	await _snap("23_dossier_52310_veritas")
+	desk.windows.dossiers.close()
+	# Fin de l'acte 1 : dossiers conclus avec contradictions, promotion proposée.
+	for case_id in ["51307", "52044", "52310"]:
+		if GameState.can_decide(case_id):
+			GameState.get_case_state(case_id).contradictions_found.append("capture")
+			GameState.apply_decision(case_id, CaseLibrary.get_case(case_id).decisions[1].id)
+	GameState.indicators.loyalty = 60
+	GameState.indicators.suspicion = 30
+	GameState.end_day()
+	desk.end_day()
+	desk.evening_screen.choose("lena_news")
+	await _snap("24_soiree_vendredi")
+	desk.evening_screen.get_node("%ContinueButton").pressed.emit()
+	await _snap("25_fin_acte_1")
+	desk.act_review_screen.decide(true)
+	await _snap("26_promotion")
 	get_tree().quit()
 
 

@@ -123,8 +123,8 @@ func _ellipse(center: Vector2, radius: Vector2, from := 0.0, to := TAU, steps :=
 
 ## Calotte de cheveux : haut de l'ellipse, couvrant une part "coverage" du front.
 func _cap(center: Vector2, radius: Vector2, coverage: float) -> PackedVector2Array:
-	var points := _ellipse(center, radius + Vector2(3, 4), PI, TAU, 24)
+	# L'arc s'arrête à la ligne des cheveux : un polygone fermé par une corde,
+	# sans croisement (sinon la triangulation échoue).
 	var base_y := center.y - radius.y * (1.0 - coverage) * 0.9
-	points.append(Vector2(center.x + radius.x, base_y))
-	points.append(Vector2(center.x - radius.x, base_y))
-	return points
+	var start := asin(clampf((center.y - base_y) / (radius.y + 4), 0.0, 1.0))
+	return _ellipse(center, radius + Vector2(3, 4), PI + start, TAU - start, 24)

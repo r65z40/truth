@@ -11,6 +11,8 @@ signal decision_applied(case_id: String, decision_id: String, message_id: String
 signal day_started(day_index: int, events: Array)
 
 const INITIAL_MESSAGES_PATH := "res://data/messages/initial_messages.json"
+## Profil du personnage joué et identifiant de la campagne.
+const CAMPAIGN_PATH := "res://data/campaign.json"
 
 const INDICATOR_MIN := 0
 const INDICATOR_MAX := 100
@@ -38,6 +40,12 @@ var decisions: Array = []
 var flags: Dictionary = {}
 ## Identifiants des événements différés déjà déclenchés.
 var fired_events: Array = []
+## Heures de service déjà employées aujourd'hui (voir WorkTime).
+var hours_used: int = 0
+## Journées où l'agent a fait des heures supplémentaires (soirée perdue).
+var overtime_days: Array = []
+## Soirées passées : {"<jour>": {"action": id, "kind": kind}} (voir EveningRules).
+var evenings: Dictionary = {}
 
 
 func _ready() -> void:
@@ -46,11 +54,10 @@ func _ready() -> void:
 
 ## Réinitialise complètement l'état pour une nouvelle partie.
 func new_game() -> void:
-	player = {
-		"name": "A. VOSK",
-		"badge": "INS-7734",
-		"rank": Career.Rank.INSPECTOR,
-	}
+	var campaign := DataLoader.load_json(CAMPAIGN_PATH)
+	player = campaign.get("player", {}).duplicate()
+	player["campaign"] = campaign.get("id", "vosk")
+	player["rank"] = Career.Rank.INSPECTOR
 	day_index = 0
 	indicators = INITIAL_INDICATORS.duplicate()
 	cases = {}
@@ -62,6 +69,9 @@ func new_game() -> void:
 	decisions = []
 	flags = {}
 	fired_events = []
+	hours_used = 0
+	overtime_days = []
+	evenings = {}
 	state_changed.emit()
 
 
@@ -107,7 +117,8 @@ func assign_case(case_id: String) -> void:
 
 ## État minimal utilisé pour évaluer des conditions (événements, pièces).
 func get_condition_state() -> Dictionary:
-	return {"day_index": day_index, "flags": flags, "cases": cases, "fired_events": fired_events}
+	return {"day_index": day_index, "flags": flags, "cases": cases, "fired_events": fired_events,
+			"evening_counts": EveningRules.counts(evenings)}
 
 
 ## Le dossier tel que le joueur le voit : seulement les pièces disponibles.
@@ -154,6 +165,76 @@ func confront_facts(case_id: String, fact_a_id: String, fact_b_id: String) -> St
 	return key
 
 
+# --- Horloge de service ------------------------------------------------------
+
+func get_clock_text() -> String:
+	return WorkTime.clock_text(hours_used)
+
+
+## Dépense les heures d'une action si possible. Renvoie false si la journée ne le
+## permet plus. Les heures supplémentaires sont notées pour la soirée.
+func spend_time(action: String) -> bool:
+	if not WorkTime.check(hours_used, action).ok:
+		return false
+	hours_used += WorkTime.cost(action)
+	if WorkTime.is_overtime(hours_used) and not day_index in overtime_days:
+		overtime_days.append(day_index)
+	state_changed.emit()
+	return true
+
+
+func is_overtime_today() -> bool:
+	return day_index in overtime_days
+
+
+## Demande une pièce complémentaire (livrée le lendemain). Renvoie false si
+## impossible : pièce inconnue, déjà demandée, ou plus assez de temps.
+func request_document(case_id: String, document_id: String) -> bool:
+	var document := CaseLibrary.get_document(CaseLibrary.get_case(case_id), document_id)
+	var case_state := get_case_state(case_id)
+	if not document.has("request") or case_state.requested_documents.has(document_id):
+		return false
+	if not spend_time("request_document"):
+		return false
+	case_state.requested_documents[document_id] = day_index
+	var request: Dictionary = document.request
+	flags.merge(request.get("flags", {}), true)
+	for indicator in request.get("effects", {}):
+		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(request.effects[indicator]),
+				INDICATOR_MIN, INDICATOR_MAX)
+	state_changed.emit()
+	return true
+
+
+## Pièces que l'agent peut encore demander pour ce dossier.
+func get_requestable_documents(case_id: String) -> Array:
+	var case_state := get_case_state(case_id)
+	var result := []
+	for document in CaseLibrary.get_case(case_id).get("documents", []):
+		if document.has("request") and not case_state.requested_documents.has(document.id) \
+				and EventRules.are_conditions_met(document.get("conditions", {}), get_condition_state()):
+			result.append(document)
+	return result
+
+
+## Consulte le supérieur sur un dossier (une fois par dossier) : message de conseil.
+func consult_superior(case_id: String) -> bool:
+	var consultation: Dictionary = CaseLibrary.get_case(case_id).get("consultation", {})
+	var case_state := get_case_state(case_id)
+	if consultation.is_empty() or case_state.consulted or not can_decide(case_id):
+		return false
+	if not spend_time("consult_superior"):
+		return false
+	case_state.consulted = true
+	flags["%s.consulted_superior" % case_id] = true
+	var message := consultation.duplicate()
+	message["id"] = "%s.consultation" % case_id
+	message["date_label"] = get_date_short()
+	receive_message(message, false)
+	state_changed.emit()
+	return true
+
+
 func can_decide(case_id: String) -> bool:
 	return get_case_state(case_id).decision == ""
 
@@ -165,6 +246,11 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 		push_warning("GameState: le dossier %s a déjà fait l'objet d'une décision." % case_id)
 		return {}
 	var case_state := get_case_state(case_id)
+	# Signer reste toujours possible ; l'heure n'est comptée que s'il en reste.
+	if WorkTime.check(hours_used, "sign_conclusion").ok:
+		hours_used += WorkTime.cost("sign_conclusion")
+		if WorkTime.is_overtime(hours_used) and not day_index in overtime_days:
+			overtime_days.append(day_index)
 	# Avis de VERITAS sur le dossier tel que l'agent l'a vu, avant la décision.
 	var advice := Veritas.recommendation(get_case_view(case_id), case_state)
 	var result := DecisionRules.resolve(CaseLibrary.get_case(case_id), case_state, decision_id)
@@ -189,6 +275,122 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	state_changed.emit()
 	decision_applied.emit(case_id, decision_id, message_id)
 	return result
+
+
+# --- Soirées -----------------------------------------------------------------
+
+## Soirée prévue ce soir, ou {} s'il n'y en a pas.
+func get_evening() -> Dictionary:
+	return EveningRules.evening_for_day(day_index)
+
+
+## Vrai si une soirée est prévue ce soir et n'a pas encore eu lieu.
+func has_evening_pending() -> bool:
+	return not get_evening().is_empty() and not evenings.has(str(day_index))
+
+
+func get_evening_actions() -> Array:
+	return EveningRules.available_actions(get_evening(), get_condition_state())
+
+
+## Passe la soirée à l'action donnée. Renvoie {text, effects, set_flags},
+## ou {} si l'action n'est pas proposée ce soir.
+func choose_evening_action(action_id: String) -> Dictionary:
+	if not has_evening_pending() or is_overtime_today():
+		return {}
+	var evening := get_evening()
+	var action := EveningRules.get_action(evening, action_id)
+	if action.is_empty() or not get_evening_actions().any(func(a: Dictionary) -> bool: return a.id == action_id):
+		return {}
+	flags.merge(evening.get("set_flags", {}), true)
+	var result := EveningRules.resolve(action, get_condition_state())
+	_apply_effects(result.effects)
+	flags.merge(result.set_flags, true)
+	evenings[str(day_index)] = {"action": action_id, "kind": action.get("kind", "")}
+	state_changed.emit()
+	return result
+
+
+## Soirée perdue après des heures supplémentaires. Renvoie le texte à afficher.
+func lose_evening() -> String:
+	if not has_evening_pending():
+		return ""
+	var overtime: Dictionary = EveningRules.get_data().get("overtime", {})
+	flags.merge(get_evening().get("set_flags", {}), true)
+	flags.merge(overtime.get("set_flags", {}), true)
+	evenings[str(day_index)] = {"action": "", "kind": ""}
+	state_changed.emit()
+	return overtime.get("text", "")
+
+
+func _apply_effects(effects: Dictionary) -> void:
+	for indicator in effects:
+		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(effects[indicator]),
+				INDICATOR_MIN, INDICATOR_MAX)
+
+
+# --- Fin d'acte ---------------------------------------------------------------
+
+## Revue du dernier soir d'un acte : archive des sujets et commission
+## d'avancement. Renvoie {} si ce soir n'est pas une fin d'acte à examiner.
+func get_act_review() -> Dictionary:
+	var act := FictionalCalendar.act_for_day(day_index)
+	if act.is_empty() or FictionalCalendar.act_for_day(day_index + 1).get("number") == act.number:
+		return {}
+	var rules := Career.act_rules(int(act.number))
+	if rules.is_empty() or flags.get("act%d.reviewed" % int(act.number)) == true:
+		return {}
+	var subjects := []
+	for case_id in rules.cases:
+		var case_data := CaseLibrary.get_case(case_id)
+		var decision_id: String = cases.get(case_id, {}).get("decision", "")
+		var entry := {"case_id": case_id, "name": case_data.get("subject_name", case_id),
+				"decision": "Sans conclusion", "text": "Dossier réattribué à un autre inspecteur."}
+		for decision in case_data.get("decisions", []):
+			if decision.id == decision_id:
+				entry.decision = decision.label
+				entry.text = decision.get("archive", "")
+				var truth: Dictionary = decision.get("archive_truth", {})
+				if not truth.is_empty() and EventRules.are_conditions_met(truth, get_condition_state()):
+					entry.text += " " + truth.text
+		subjects.append(entry)
+	var evaluation := Career.evaluate(rules, {"indicators": indicators, "flags": flags, "cases": cases})
+	var letter: String = rules.denied
+	if evaluation.eligible:
+		letter = rules.offer_bought if evaluation.bought else rules.offer
+	return {"act": int(act.number), "title": act.title, "subjects": subjects, "evaluation": evaluation,
+			"letter": letter, "target_rank": Career.rank_title(int(rules.to_rank)),
+			"unlocks": rules.get("unlocks", "")}
+
+
+func has_act_review_pending() -> bool:
+	return not get_act_review().is_empty()
+
+
+## Clôt la revue de fin d'acte. accept : le joueur accepte la promotion
+## proposée (ignoré si elle ne l'est pas). Renvoie le texte de conclusion.
+func complete_act_review(accept: bool) -> String:
+	var review := get_act_review()
+	if review.is_empty():
+		return ""
+	var rules := Career.act_rules(review.act)
+	var prefix := "career.act%d" % review.act
+	flags["act%d.reviewed" % review.act] = true
+	var text := ""
+	if not review.evaluation.eligible:
+		flags[prefix + "_denied"] = true
+	elif accept:
+		player["rank"] = int(rules.to_rank)
+		flags[prefix + "_promoted"] = true
+		if review.evaluation.bought:
+			flags["career.promotion_bought"] = true
+		text = rules.accepted
+	else:
+		flags[prefix + "_refused"] = true
+		flags["career.refused_promotion"] = true
+		text = rules.refused
+	state_changed.emit()
+	return text
 
 
 # --- Messages ----------------------------------------------------------------
@@ -223,6 +425,7 @@ func get_unread_count() -> int:
 ## Renvoie la liste des événements déclenchés.
 func end_day() -> Array:
 	day_index += 1
+	hours_used = 0
 	var fired := EventRules.due_events(get_condition_state())
 	for event in fired:
 		for case_id in event.get("assign_cases", []):
@@ -255,6 +458,9 @@ func to_dict() -> Dictionary:
 		"decisions": decisions.duplicate(true),
 		"flags": flags.duplicate(true),
 		"fired_events": fired_events.duplicate(),
+		"hours_used": hours_used,
+		"overtime_days": overtime_days.duplicate(),
+		"evenings": evenings.duplicate(true),
 	}
 
 
@@ -280,9 +486,12 @@ func from_dict(data: Dictionary) -> void:
 	decisions = data.get("decisions", [])
 	flags = data.get("flags", {})
 	fired_events = data.get("fired_events", [])
+	hours_used = int(data.get("hours_used", 0))
+	overtime_days = data.get("overtime_days", []).map(func(day) -> int: return int(day))
+	evenings = data.get("evenings", {})
 	state_changed.emit()
 
 
 func _new_case_state() -> Dictionary:
 	return {"status": CASE_OPEN, "viewed_documents": [], "noted_facts": [],
-			"contradictions_found": [], "decision": ""}
+			"contradictions_found": [], "decision": "", "requested_documents": {}, "consulted": false}

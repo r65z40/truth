@@ -1,0 +1,14 @@
+{
+	"note": "Horloge de service : une journée de 8 heures (08h00 à 16h00), jusqu'à 2 heures supplémentaires. Lire, noter et confronter ne coûtent rien.",
+	"day_start_hour": 8,
+	"day_hours": 8,
+	"overtime_hours": 2,
+	"costs": {
+		"sign_conclusion": 1,
+		"request_document": 1,
+		"consult_superior": 1,
+		"verify_archive": 2,
+		"interrogate": 2,
+		"meet_informant": 2
+	}
+}

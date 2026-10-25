@@ -1,0 +1,214 @@
+{
+	"note": "Soirées de Vosk, appartement du bloc 7, District 2. Une action par soir. Une journée finie en heures supplémentaires fait perdre la soirée. Les conditions suivent le format des événements, plus min_count (nombre de soirées passées à une activité, choix du soir compris).",
+	"location": "BLOC 7, DISTRICT 2",
+	"overtime": {
+		"text": "Vous quittez le ministère après vingt heures. Le dernier tramway est parti ; vous rentrez à pied par le quai. Dans le hall, la lampe de M. ADLER est encore allumée. Vous vous couchez sans dîner.",
+		"set_flags": {"evening.lost_once": true}
+	},
+	"evenings": [
+		{
+			"day": 0,
+			"intro": "Le chauffage marche une heure sur deux. Sur la table de la cuisine, une lettre de votre sœur Lena, arrivée ce matin.\n\n« Mon stage de fin d'études à l'hôpital n° 2 attend une autorisation du ministère de la Santé. On me dit qu'elle est bloquée à cause du dossier de papa. Tu travailles là-bas maintenant. Tu pourrais demander. Juste demander. »",
+			"set_flags": {"lena.asked_permit": true},
+			"actions": [
+				{
+					"id": "lena_answer",
+					"kind": "lena",
+					"label": "Répondre à Lena",
+					"description": "Une lettre courte. Promettre, ou seulement rassurer.",
+					"results": [{"text": "Vous écrivez trois brouillons. Le dernier dit : « Je vais voir ce que je peux faire. Ne parle de papa à personne. » Vous le postez en bas, dans la boîte du hall."}],
+					"set_flags": {"lena.letter_answered": true}
+				},
+				{
+					"id": "radio_0",
+					"kind": "radio",
+					"label": "Écouter la radio d'Aldria",
+					"description": "Volume au plus bas, la couverture sur le poste.",
+					"results": [{"text": "Radio Aldria, service en langue velmirienne. Le speaker annonce un accord d'électricité pour l'hiver : Aldria fournira le courant que la Centrale n° 3 ne produit plus. « Les autorités de Velmira n'ont pas commenté. » Puis un air de violon, et le brouillage revient."}],
+					"set_flags": {"radio.power_deal_heard": true}
+				},
+				{
+					"id": "adler_0",
+					"kind": "adler",
+					"label": "Descendre saluer M. ADLER",
+					"description": "Le gardien de l'immeuble. Sa porte est toujours entrouverte.",
+					"results": [{"text": "M. ADLER vous offre un verre de liqueur de prune. « Inspecteur, maintenant. Votre père serait fier. » Il tapote un cahier d'écolier posé près de la radio. « Les heures d'entrée et de sortie. C'est mon travail, rien de personnel. Vous, je vous mets toujours à l'heure. »"}],
+					"set_flags": {"adler.friendly": true}
+				}
+			]
+		},
+		{
+			"day": 1,
+			"intro": "Il pleut sur le District 2. Dans l'escalier, quelqu'un a gratté au clou, sur la peinture verte, le dessin d'une horloge sans aiguilles. Au matin, le peintre de l'immeuble l'aura recouvert.",
+			"actions": [
+				{
+					"id": "sedlar_visit",
+					"kind": "visit",
+					"label": "Ouvrir à Vera SEDLAR",
+					"description": "On frappe. Une femme au manteau élimé, un cartable d'institutrice et un sac de provisions.",
+					"conditions": {"requires_flags": ["40921.sedlar_arrested"]},
+					"results": [{"text": "« Je suis la femme d'Anton SEDLAR. Je ne vous demande rien, je veux seulement savoir où il est. » Vous ne le savez pas. Elle pose le sac sur le paillasson : des pommes de terre. « Pour vous. Pour qu'on ne dise pas que je suis venue les mains vides. » Elle redescend sans attendre la réponse. M. ADLER a vu toute la scène."}],
+					"effects": {"suspicion": 1},
+					"set_flags": {"sedlar.vera_visited": true}
+				},
+				{
+					"id": "lena_call",
+					"kind": "lena",
+					"label": "Appeler Lena depuis la cabine du hall",
+					"description": "Trois minutes, une seule pièce dans l'appareil.",
+					"results": [
+						{
+							"conditions": {"requires_flags": ["lena.letter_answered"]},
+							"text": "Lena a reçu votre lettre. Elle parle vite : à l'hôpital n° 2, il manque de l'insuline, des pansements, même des seringues. « Les familles passent à Halvek pour en chercher de l'autre côté. Tout le monde le sait. » Puis, plus bas : « Merci pour l'autorisation. Je sais que tu vas essayer. »"
+						},
+						{"text": "Lena décroche à la quatrième sonnerie. « Tu as lu ma lettre ? » Vous dites que vous n'avez pas eu le temps. Un silence. Elle raconte l'hôpital : plus d'insuline, plus de seringues, des familles qui passent à Halvek pour en chercher. Les trois minutes sont finies avant qu'elle reparle du stage."}
+					],
+					"set_flags": {"lena.called": true}
+				},
+				{
+					"id": "radio_1",
+					"kind": "radio",
+					"label": "Écouter la radio d'Aldria",
+					"description": "Le bulletin de vingt-deux heures.",
+					"results": [
+						{
+							"conditions": {"requires_flags": ["40921.sedlar_arrested"]},
+							"text": "Radio Aldria cite « une source à Halvek » : un ouvrier de Velmira aurait été arrêté pour avoir fait passer des papiers médicaux pour sa mère. Ni le nom ni l'usine ne sont donnés. Vous éteignez le poste avant la fin."
+						},
+						{"text": "Radio Aldria parle du poste-frontière de Halvek : les files d'attente doublent, « surtout des malades et leurs familles ». Un médecin aldrien dit que l'hôpital de Halvek-Sud soigne chaque semaine des patients venus de Velmira sans papiers en règle."}
+					],
+					"set_flags": {"radio.halvek_heard": true},
+					"followups": [
+						{
+							"conditions": {"min_count": {"radio": 2}, "forbidden_flags": ["adler.friendly"]},
+							"text": "En coupant le poste, vous entendez un pas dans l'escalier, puis la porte du gardien qui se referme doucement.",
+							"set_flags": {"adler.reported_radio": true},
+							"effects": {"suspicion": 3}
+						}
+					]
+				}
+			]
+		},
+		{
+			"day": 2,
+			"intro": "Lena est venue dîner sans prévenir, avec un pain et deux harengs. Elle a la blouse de l'hôpital sous son manteau. Il est neuf heures ; vous ne pourrez pas tout faire.",
+			"actions": [
+				{
+					"id": "lena_dinner",
+					"kind": "lena",
+					"label": "Dîner avec Lena",
+					"description": "Écouter, ne rien promettre de plus.",
+					"results": [{"text": "Elle parle de la commission des stages : elle se réunit vendredi. « Ils lisent ton nom de famille, ils lisent le dossier de papa, ils signent “avis défavorable”. Toi, ils te lisent comment ? » Elle rit, mais elle attend une réponse. Avant de partir, elle laisse sur la table une photo de vous deux, enfants, devant l'horloge de la gare."}],
+					"set_flags": {"lena.dinner": true}
+				},
+				{
+					"id": "radio_2",
+					"kind": "radio",
+					"label": "Écouter la radio d'Aldria avec Lena",
+					"description": "Elle insiste : « Tout le monde écoute. »",
+					"results": [{"text": "Une émission littéraire. Une voix lit un poème interdit, « Halina », d'un certain Teodor VARGA, « emprisonné à Velmira depuis 1981, et dont nous sommes sans nouvelles ». Lena connaît les derniers vers par cœur. Elle les murmure avec la radio."}],
+					"set_flags": {"radio.varga_heard": true},
+					"followups": [
+						{
+							"conditions": {"min_count": {"radio": 2}, "forbidden_flags": ["adler.friendly"]},
+							"text": "Quand Lena s'en va, M. ADLER est sur le palier, un seau à la main. Il ne dit rien. Il regarde la porte de votre appartement, puis Lena.",
+							"set_flags": {"adler.reported_radio": true},
+							"effects": {"suspicion": 3}
+						}
+					]
+				},
+				{
+					"id": "work_home",
+					"kind": "work",
+					"label": "Relire vos notes de la journée",
+					"description": "Lena fait la vaisselle pendant que vous travaillez.",
+					"results": [{"text": "Vous relisez le carnet du jour à la lumière de la cuisine. Lena essuie les assiettes sans parler, puis s'en va plus tôt que prévu. « Tu ressembles à papa, quand tu fais ça. » Vous ne savez pas si c'est un reproche."}],
+					"effects": {"loyalty": 1},
+					"set_flags": {"lena.left_early": true}
+				}
+			]
+		},
+		{
+			"day": 3,
+			"intro": "La commission des stages se réunit demain matin. Vous avez dans votre portefeuille la carte du ministère, avec le tampon de la Section 4. Un coup de téléphone suffirait peut-être.",
+			"actions": [
+				{
+					"id": "lena_permit_call",
+					"kind": "lena",
+					"label": "Appeler le ministère de la Santé pour Lena",
+					"description": "Donner votre matricule. Ce sera noté quelque part.",
+					"results": [{"text": "Un fonctionnaire de garde note votre matricule, épelle votre nom deux fois. « Une recommandation de la Section 4 ? Je transmets. » Il raccroche avant que vous ayez dit merci. Vous restez longtemps la main sur le combiné."}],
+					"effects": {"influence": 1, "suspicion": 2},
+					"set_flags": {"lena.permit_helped": true}
+				},
+				{
+					"id": "lena_refuse",
+					"kind": "lena",
+					"label": "Écrire à Lena que vous ne pouvez rien",
+					"description": "Un inspecteur n'intervient pas pour sa famille.",
+					"results": [{"text": "« Un inspecteur ne peut pas intervenir pour sa famille. C'est la règle, et c'est une bonne règle. » En relisant, vous reconnaissez la phrase : c'est celle de la circulaire 12/84. Vous la postez quand même."}],
+					"effects": {"loyalty": 2},
+					"set_flags": {"lena.refused": true}
+				},
+				{
+					"id": "radio_3",
+					"kind": "radio",
+					"label": "Écouter la radio d'Aldria",
+					"description": "Oublier la commission une heure.",
+					"results": [{"text": "Radio Aldria annonce qu'une commission d'inspection internationale visitera la Centrale thermique n° 3 de Velmira le 8 décembre, « condition de l'accord d'électricité ». Le ministère de l'Énergie n'a pas confirmé."}],
+					"set_flags": {"world.commission_announced": true},
+					"followups": [
+						{
+							"conditions": {"min_count": {"radio": 2}, "forbidden_flags": ["adler.friendly"]},
+							"text": "Le lendemain matin, votre boîte aux lettres a été ouverte. Rien n'a été pris.",
+							"set_flags": {"adler.reported_radio": true},
+							"effects": {"suspicion": 3}
+						}
+					]
+				}
+			]
+		},
+		{
+			"day": 4,
+			"intro": "Vendredi. La semaine est finie ; lundi, une autre commence. Dans le hall, M. ADLER a affiché la liste des tours de ménage. Votre nom est souligné deux fois.",
+			"actions": [
+				{
+					"id": "benes_visit",
+					"kind": "visit",
+					"label": "Écouter Irena BENES",
+					"description": "Elle attend au pied de l'escalier depuis une heure. Elle a trouvé votre adresse.",
+					"conditions": {"requires_flags": ["52310.varga_arrested"]},
+					"results": [{"text": "Elle ne pleure pas. Elle vous tend une photo de mariage : Karel BENES, jeune, sans aucune cicatrice. « Il était correcteur, il corrigeait les fautes des autres. Il n'a jamais écrit un poème de sa vie. » Elle reprend la photo. « Vous l'avez signé. Maintenant vous savez à quoi il ressemble. »"}],
+					"effects": {"suspicion": 1},
+					"set_flags": {"benes.met": true}
+				},
+				{
+					"id": "lena_news",
+					"kind": "lena",
+					"label": "Appeler Lena",
+					"description": "La commission s'est réunie ce matin.",
+					"results": [
+						{
+							"conditions": {"requires_flags": ["lena.permit_helped"]},
+							"text": "« Avis favorable ! » Elle crie presque. « Le président de la commission a demandé si j'étais bien la sœur de l'inspecteur VOSK. J'ai dit oui. Il a souri. » Elle commence lundi à l'hôpital n° 2. Vous ne lui dites pas que, désormais, quelqu'un sait ce qu'elle vous doit."
+						},
+						{
+							"conditions": {"requires_flags": ["lena.refused"]},
+							"text": "« Avis défavorable. On m'envoie au dispensaire du District 9. » Elle ne vous reproche rien. Elle demande seulement : « Ta règle, elle t'a aidé, toi ? » puis elle raccroche."
+						},
+						{"text": "« Avis défavorable, dispensaire du District 9. » Lena parle d'une voix plate. « Tu n'as pas répondu. Je pensais que tu n'osais pas. Maintenant je pense que tu n'as pas essayé. » La ligne coupe."}
+					],
+					"set_flags": {"lena.permit_known": true}
+				},
+				{
+					"id": "adler_4",
+					"kind": "adler",
+					"label": "Partager une bouteille avec M. ADLER",
+					"description": "Il a des nouvelles du quartier. Il en a toujours.",
+					"results": [{"text": "M. ADLER a les yeux brillants. « Au troisième, les KOLAR, ils écoutent Aldria. Je ne l'ai pas encore écrit. On est voisins, n'est-ce pas ? » Il vous ressert. Vous comprenez qu'il ne vous demande pas votre avis : il vous montre qu'il pourrait le faire pour vous aussi."}],
+					"set_flags": {"adler.friendly": true, "adler.kolar_known": true}
+				}
+			]
+		}
+	]
+}

@@ -41,6 +41,9 @@ puis 7-8-9 si la gestion du temps est validée, puis 5, 10, 11, 13, 14.
 ## Extensions futures
 
 - Acte 5 « Le pouvoir » ou suite (voir `ACTE5_FAISABILITE.md`).
+- Extensions jouant un autre personnage : MAZUR, BRANDT, KREMER, ORLIK, LENA, le père
+  de Vosk (voir `EXTENSIONS_PERSONNAGES.md`). Préparation dès le MVP : profil du
+  joueur et campagne dans les données, pas dans le code.
 - Adaptation mobile complète.
 - Reformulation de VERITAS par un modèle de langage, côté serveur, limitée aux
   informations accessibles à VERITAS.
