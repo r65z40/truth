@@ -4,6 +4,11 @@
 	"player": {
 		"name": "A. VOSK",
 		"badge": "INS-7734",
-		"superior": "R. MAZUR, Directeur adjoint, Section 4"
+		"superior": "R. MAZUR, Directeur adjoint, Section 4",
+		"record": {
+			"born": "Né le 09.02.1949 à Velmira.",
+			"father": "Père : A. VOSK, horloger, atelier ████, District 2. ████████████ 1971.",
+			"sealed": "Dossier familial SCELLÉ — accès réservé à la Direction. Mention conservée pour mémoire du service."
+		}
 	}
 }

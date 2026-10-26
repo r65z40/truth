@@ -1740,6 +1740,9 @@ func test_desk_scene_flow() -> void:
 	check(desk.get_open_app() == "personnel", "le bouton Dossier personnel ouvre l'évaluation")
 	var personnel_text: String = desk.windows.personnel.get_node("%PersonnelText").get_parsed_text()
 	check(personnel_text.contains("LOYAUTÉ ENVERS LE RÉGIME : conforme"), "l'évaluation est rédigée en mots")
+	check(personnel_text.contains("ÉTAT CIVIL") and personnel_text.contains("horloger") and personnel_text.contains("1971"),
+			"l'état civil évoque le père horloger et 1971")
+	check(personnel_text.contains("SCELLÉ"), "le dossier familial est marqué scellé : on sent que quelque chose est caché")
 	desk.terminal.submit_command("commande_bidon")
 	check(desk.terminal.get_log_text().contains("COMMANDE INCONNUE"), "le terminal signale une commande inconnue")
 	desk.terminal.submit_command("ident")

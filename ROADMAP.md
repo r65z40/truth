@@ -131,8 +131,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
       déportations sur les dénouements graves (tampons DÉPORTÉ/EXÉCUTÉ/CONDAMNÉ +
       `fate_line` crue sur la carte, archive officielle conservée plus pudique)
 - [ ] Levier n°4 (suite) : conséquences aussi dans les soirées et sur le bureau
-- [ ] Levier n°2 : faire revenir les gens (épargnés/condamnés) sur 2-3 figures — à proposer
-- [ ] Levier n°3 : semer le père dès l'acte 1 (horloge, nom, date 1971) — à proposer
+- [x] Levier n°3 (début) : semer le père dès l'acte 1 — extrait d'état civil scellé dans
+      le dossier personnel (« Père : A. VOSK, horloger… ████ 1971 », mention SCELLÉE),
+      visible dès le 2e jour, pour sentir vite que quelque chose autour du père est caché
+      (s'ajoute aux traces existantes : intro, horloge sans aiguilles, soirées Lena/ADLER)
+- [ ] Levier n°3 (suite) : relier le motif de l'horloge au père, « atelier VOSK » entrevu, date 1971 qui revient
+- [ ] Levier n°2 : faire revenir les gens — validé par fen ; dépend des dossiers d'acte 3 (SEDLAR) à écrire
 
 ## Prochaine itération
 

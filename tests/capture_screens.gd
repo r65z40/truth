@@ -81,6 +81,11 @@ func _capture_all() -> void:
 	await _snap("11b_veritas")
 	desk.windows.veritas.close()
 	dossiers.get_node("%ConclusionPanel").get_node("%SignButton").pressed.emit()
+	await get_tree().process_frame
+	# La signature ouvre d'abord la carte de destin du sujet ; on continue ensuite.
+	await _snap("11c_carte_destin_sedlar")
+	desk.archive_card.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
 	await _snap("12_reponse_superieur")
 	desk.terminal.submit_command("archives")
 	await _snap("13_archives")
@@ -138,6 +143,7 @@ func _capture_all() -> void:
 		if GameState.can_decide(case_id):
 			GameState.get_case_state(case_id).contradictions_found.append("capture")
 			GameState.apply_decision(case_id, CaseLibrary.get_case(case_id).decisions[1].id)
+	desk.archive_card.hide()  # la signature ouvre la carte de destin : on la referme pour la capture
 	GameState.indicators.loyalty = 60
 	GameState.indicators.suspicion = 30
 	GameState.end_day()
@@ -153,6 +159,7 @@ func _capture_all() -> void:
 	# Terrain : audition d'ORLIK, perquisition chez SEDLAR.
 	GameState.new_game()
 	GameState.apply_decision("40921", "arrest")
+	desk.archive_card.hide()
 	GameState.end_day()
 	GameState.note_fact("51307", "f_clock_ok")
 	desk.open_field("51307")

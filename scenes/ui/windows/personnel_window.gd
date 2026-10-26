@@ -16,7 +16,19 @@ func _on_opened() -> void:
 	_identity.text = "AGENT : %s     MATRICULE : %s\nGRADE : %s     AFFECTATION : Section 4\nÉVALUATION AU : %s" % [
 		GameState.player.name, GameState.player.badge, GameState.get_rank_title(), GameState.get_date_short()]
 	var assessment := Assessment.describe(GameState.indicators, GameState.flags)
-	var lines: PackedStringArray = ["[b]APPRÉCIATIONS DE LA HIÉRARCHIE[/b]", ""]
+	var lines: PackedStringArray = []
+	# Extrait d'état civil : la ligne du père est partiellement caviardée et le
+	# dossier familial scellé. Visible dès le début, pour qu'on sente vite que
+	# quelque chose, autour du père, est tenu hors de portée.
+	var record: Dictionary = GameState.player.get("record", {})
+	if not record.is_empty():
+		lines.append("[b]ÉTAT CIVIL (EXTRAIT) :[/b]")
+		for field in ["born", "father", "sealed"]:
+			if record.get(field, "") != "":
+				lines.append(record[field])
+		lines.append("")
+	lines.append("[b]APPRÉCIATIONS DE LA HIÉRARCHIE[/b]")
+	lines.append("")
 	for line in assessment.lines:
 		lines.append("[b]%s :[/b] %s" % [line.label.to_upper(), line.text])
 	lines.append("")
