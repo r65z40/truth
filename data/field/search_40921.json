@@ -11,6 +11,7 @@
 	"start_flags": {"40921.home_searched": true},
 	"start_effects": {"loyalty": 1},
 	"art": "sedlar_flat",
+	"image": "res://assets/field/search_40921_salon.webp",
 	"intro": "Deux pièces sous les toits, rue de l'Unité. Vera SEDLAR vous ouvre en blouse d'institutrice, un cahier rouge à la main. L'enfant est assis sur son lit et ne dit rien.\n\n« Faites ce que vous avez à faire. »\n\nVous avez le temps de fouiller quatre endroits.",
 	"options": [
 		{

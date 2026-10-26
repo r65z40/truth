@@ -48,6 +48,7 @@ func _run() -> void:
 		"test_evenings",
 		"test_career_evaluation",
 		"test_field_scenes_are_valid",
+		"test_field_background_image",
 		"test_field_interrogation",
 		"test_field_search",
 		"test_field_bakery_visit",
@@ -728,6 +729,8 @@ func test_field_scenes_are_valid() -> void:
 		var scene := FieldRules.scene_for_case(case_data)
 		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
 		check(WorkTime.cost(scene.time_action) == 2, "%s : 2 heures" % scene.id)
+		if scene.has("image"):
+			check(scene.image is String and (scene.image as String).begins_with("res://"), "%s : chemin d'image valide" % scene.id)
 		for result in scene.options + scene.get("presentations", []):
 			for fact_id in result.get("note", []):
 				var fact := CaseLibrary.get_fact(case_data, fact_id)
@@ -740,6 +743,19 @@ func test_field_scenes_are_valid() -> void:
 				check(area[0] >= 0 and area[1] >= 0 and area[0] + area[2] <= FieldArt.CANVAS.x and area[1] + area[3] <= FieldArt.CANVAS.y,
 						"%s : zone %s dans le dessin" % [scene.id, result.id])
 		check(CaseLibrary.validate_case(case_data).is_empty(), "%s : dossier toujours valide" % case_id)
+
+
+func test_field_background_image() -> void:
+	var art := FieldArt.new()
+	# Un fichier présent sert d'image de fond de la scène de terrain...
+	art.image_path = "res://ui/icons/f_person.png"
+	check(art.has_image(), "une image existante devient le fond de la scène")
+	# ...un fichier absent retombe sur le décor dessiné, sans casser la scène.
+	art.image_path = "res://assets/field/inexistante.webp"
+	check(not art.has_image(), "une image manquante retombe sur le dessin")
+	art.image_path = ""
+	check(not art.has_image(), "pas d'image de fond par défaut")
+	art.free()
 
 
 func test_field_interrogation() -> void:

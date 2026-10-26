@@ -20,6 +20,15 @@ var subject: Dictionary = {}:
 	set(value):
 		subject = value
 		queue_redraw()
+## Image de fond facultative (res://...). Si le fichier existe, elle remplace le
+## décor dessiné ; sinon on retombe sur le dessin, ce qui permet de livrer les
+## images une par une sans jamais casser une scène.
+var image_path := "":
+	set(value):
+		image_path = value
+		_texture = load(value) if value != "" and ResourceLoader.exists(value) else null
+		queue_redraw()
+var _texture: Texture2D = null
 
 
 func _init() -> void:
@@ -46,7 +55,18 @@ func _c(name: String) -> Color:
 	return get_theme_color(name, "IntroArt")
 
 
+## Une image de fond est-elle chargée (fichier présent) ?
+func has_image() -> bool:
+	return _texture != null
+
+
 func _draw() -> void:
+	# Image de fond si elle existe : fond sombre pour les éventuelles marges, puis
+	# l'image dans le repère de dessin, alignée sur les zones cliquables (spots).
+	if _texture != null:
+		draw_rect(Rect2(Vector2.ZERO, size), _c("paper_dark").darkened(0.6))
+		draw_texture_rect(_texture, to_local_rect([0, 0, CANVAS.x, CANVAS.y]), false)
+		return
 	# Le décor déborde du repère : mur en haut, sol en bas, sans bandes noires.
 	var horizon := _offset().y + 230.0 * get_canvas_scale()
 	match scene:
