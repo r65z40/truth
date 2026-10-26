@@ -1,5 +1,5 @@
 {
-	"note": "Perquisition chez SEDLAR (docs/design/TERRAIN.md). spot : zone cliquable dans le dessin (repère 640 x 300). Chaque choix pose field.search_40921.<id>.",
+	"note": "Perquisition chez SEDLAR (docs/design/TERRAIN.md). Deux pièces reliées par une porte : salon et chambre. Chaque endroit pose field.search_40921.<id> ; passer d'une pièce à l'autre est gratuit, le budget de fouilles est commun. spot : zone cliquable en FRACTIONS de l'image [x, y, l, h], chaque valeur entre 0 et 1 (0,0 = coin haut-gauche). Placer finement avec l'éditeur de zones (F2) dans la scène.",
 	"id": "search_40921",
 	"case_id": "40921",
 	"type": "search",
@@ -11,51 +11,74 @@
 	"start_flags": {"40921.home_searched": true},
 	"start_effects": {"loyalty": 1},
 	"art": "sedlar_flat",
-	"intro": "Deux pièces sous les toits, rue de l'Unité. Vera SEDLAR vous ouvre en blouse d'institutrice, un cahier rouge à la main. L'enfant est assis sur son lit et ne dit rien.\n\n« Faites ce que vous avez à faire. »\n\nVous avez le temps de fouiller quatre endroits.",
-	"options": [
+	"intro": "Deux pièces sous les toits, rue de l'Unité. Vera SEDLAR vous ouvre en blouse d'institutrice, un cahier rouge à la main. L'enfant est assis sur son lit et ne dit rien.\n\n« Faites ce que vous avez à faire. »\n\nVous avez le temps de fouiller quatre endroits, dans l'une ou l'autre pièce.",
+	"rooms": [
 		{
-			"id": "drawer",
-			"label": "Le tiroir de la commode",
-			"spot": [40, 150, 120, 50],
-			"text": "Sous des nappes repassées, une ordonnance de l'hôpital de Halvek-Sud au nom d'Irena SEDLAR : un traitement cardiaque introuvable à Velmira. Le papier a été plié et déplié souvent.",
-			"note": ["f_srch_prescription"]
+			"id": "salon",
+			"label": "Le salon",
+			"start": true,
+			"art": "sedlar_flat",
+			"image": "res://assets/field/search_40921_salon.webp",
+			"doors": [
+				{"to": "chambre", "label": "Passer dans la chambre", "spot": [0.30, 0.17, 0.11, 0.56]}
+			],
+			"options": [
+				{
+					"id": "drawer",
+					"label": "Le tiroir de la commode",
+					"spot": [0.16, 0.66, 0.15, 0.17],
+					"text": "Sous des nappes repassées, une ordonnance de l'hôpital de Halvek-Sud au nom d'Irena SEDLAR : un traitement cardiaque introuvable à Velmira. Le papier a été plié et déplié souvent.",
+					"note": ["f_srch_prescription"]
+				},
+				{
+					"id": "stove",
+					"label": "Le poêle",
+					"spot": [0.015, 0.52, 0.11, 0.34],
+					"text": "Dans les cendres froides, un papier à moitié brûlé. On y devine une horloge dessinée à la main, sans aiguilles, et l'heure « 06h05 ». Vous avez déjà vu ce dessin, gravé dans votre escalier.",
+					"note": ["f_srch_clock_sign"],
+					"set_flags": {"heure_juste.sign_stove": true}
+				},
+				{
+					"id": "photo",
+					"label": "La photo de famille",
+					"spot": [0.19, 0.40, 0.09, 0.12],
+					"text": "Une photo de 1979 : SEDLAR, Vera, une vieille femme devant une maison de Halvek. Au dos, au crayon : « ORLIK, samedi, la chaudière ». Vera détourne les yeux.",
+					"note": ["f_srch_orlik_note"]
+				},
+				{
+					"id": "satchel",
+					"label": "Le cartable de Vera",
+					"spot": [0.42, 0.80, 0.10, 0.15],
+					"text": "Des cahiers d'élèves, corrigés à l'encre rouge. Rien d'autre. Vera vous regarde feuilleter les dictées de ses élèves de huit ans sans rien dire. Elle n'oubliera pas.",
+					"set_flags": {"40921.family_humiliated": true}
+				}
+			]
 		},
 		{
-			"id": "mattress",
-			"label": "Sous le matelas",
-			"spot": [430, 175, 160, 45],
-			"text": "Une enveloppe : un formulaire de demande de soins à l'étranger, rempli d'une écriture appliquée. La signature du médecin a d'abord été tracée au crayon, puis repassée à l'encre. C'est un faux, et un faux maladroit.",
-			"note": ["f_srch_forgery"]
-		},
-		{
-			"id": "stove",
-			"label": "Le poêle",
-			"spot": [205, 120, 70, 110],
-			"text": "Dans les cendres froides, un papier à moitié brûlé. On y devine une horloge dessinée à la main, sans aiguilles, et l'heure « 06h05 ». Vous avez déjà vu ce dessin, gravé dans votre escalier.",
-			"note": ["f_srch_clock_sign"],
-			"set_flags": {"heure_juste.sign_stove": true}
-		},
-		{
-			"id": "photo",
-			"label": "La photo de famille",
-			"spot": [300, 40, 70, 60],
-			"text": "Une photo de 1979 : SEDLAR, Vera, une vieille femme devant une maison de Halvek. Au dos, au crayon : « ORLIK, samedi, la chaudière ». Vera détourne les yeux.",
-			"note": ["f_srch_orlik_note"]
-		},
-		{
-			"id": "satchel",
-			"label": "Le cartable de Vera",
-			"spot": [110, 210, 70, 50],
-			"text": "Des cahiers d'élèves, corrigés à l'encre rouge. Rien d'autre. Vera vous regarde feuilleter les dictées de ses élèves de huit ans sans rien dire. Elle n'oubliera pas.",
-			"set_flags": {"40921.family_humiliated": true}
-		},
-		{
-			"id": "child_bed",
-			"label": "Le lit de l'enfant",
-			"spot": [520, 95, 90, 75],
-			"text": "L'enfant se lève pour vous laisser la place. Sous l'oreiller, un dessin : un train, une maison, un bonhomme qui fait signe. Écrit en dessous : « papa dans le train ».",
-			"note": ["f_srch_drawing"],
-			"set_flags": {"40921.family_humiliated": true}
+			"id": "chambre",
+			"label": "La chambre",
+			"art": "sedlar_flat",
+			"image": "res://assets/field/search_40921_chambre.webp",
+			"doors": [
+				{"to": "salon", "label": "Revenir au salon", "spot": [0.02, 0.30, 0.08, 0.46]}
+			],
+			"options": [
+				{
+					"id": "mattress",
+					"label": "Sous le matelas",
+					"spot": [0.22, 0.56, 0.30, 0.20],
+					"text": "Une enveloppe : un formulaire de demande de soins à l'étranger, rempli d'une écriture appliquée. La signature du médecin a d'abord été tracée au crayon, puis repassée à l'encre. C'est un faux, et un faux maladroit.",
+					"note": ["f_srch_forgery"]
+				},
+				{
+					"id": "child_bed",
+					"label": "Le lit de l'enfant",
+					"spot": [0.30, 0.74, 0.16, 0.13],
+					"text": "L'enfant se lève pour vous laisser la place. Sous l'oreiller, un dessin : un train, une maison, un bonhomme qui fait signe. Écrit en dessous : « papa dans le train ».",
+					"note": ["f_srch_drawing"],
+					"set_flags": {"40921.family_humiliated": true}
+				}
+			]
 		}
 	],
 	"outro": "Vera referme la porte derrière vous sans la claquer. Sur le palier d'en face, un judas s'éteint."

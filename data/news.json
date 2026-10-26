@@ -173,6 +173,54 @@
 			"body": "Le Bureau du ravitaillement rappelle que l'achat de carnets hors des guichets officiels est un délit."
 		},
 		{
+			"id": "d_53118_arrest",
+			"section": "À LA UNE",
+			"priority": 60,
+			"conditions": {"after_decision": {"case": "53118", "decisions": ["arrest_all", "restrict"]}},
+			"headline": "Sainte-Agathe : un « réseau paroissial » mis hors d'état",
+			"body": "Des rassemblements nocturnes ont pris fin dans la paroisse Sainte-Agathe. La Section 7 salue « un travail d'inspection exemplaire ». Les intéressés ont été transférés aux fins utiles."
+		},
+		{
+			"id": "d_53118_clear",
+			"section": "NATION",
+			"priority": 40,
+			"conditions": {"after_decision": {"case": "53118", "decisions": ["clear"]}},
+			"headline": "Vie religieuse : une veillée en règle, dossier classé",
+			"body": "Le Bureau des cultes confirme qu'une veillée de la paroisse Sainte-Agathe disposait d'un permis. « Les croyants respectueux de la loi n'ont rien à craindre », rappelle le Ministère."
+		},
+		{
+			"id": "d_53402_arrest",
+			"section": "À LA UNE",
+			"priority": 58,
+			"conditions": {"after_decision": {"case": "53402", "decisions": ["arrest"]}},
+			"headline": "Ligne de Halvek : un aiguilleur au service d'une filière",
+			"body": "Un employé du triage, soupçonné d'avoir couvert des franchissements clandestins, a été transféré à la sûreté des frontières. Le décret 86-31 sera appliqué « avec la plus grande fermeté »."
+		},
+		{
+			"id": "d_53402_clear",
+			"section": "NATION",
+			"priority": 38,
+			"conditions": {"after_decision": {"case": "53402", "decisions": ["clear", "reassign"]}},
+			"headline": "Ponctualité : la ligne de Halvek revient à l'heure",
+			"body": "Après une « défaillance technique », le trafic est rétabli entre Velmira et Halvek. Le Bureau des transports annonce un contrôle renforcé des horaires de nuit."
+		},
+		{
+			"id": "d_53517_transmit",
+			"section": "NATION",
+			"priority": 42,
+			"conditions": {"after_decision": {"case": "53517", "decisions": ["transmit"]}},
+			"headline": "Logement : un signalement de citoyen suivi d'effet",
+			"body": "Grâce à la vigilance d'un riverain, un appartement du District 2 a été libéré et réattribué. Le Ministère remercie « ceux qui savent regarder autour d'eux »."
+		},
+		{
+			"id": "d_53517_dismiss",
+			"section": "CARNET",
+			"priority": 22,
+			"conditions": {"after_decision": {"case": "53517", "decisions": ["dismiss", "turn"]}},
+			"headline": "Mise en garde contre les signalements de complaisance",
+			"body": "Le Bureau des signalements rappelle que toute dénonciation infondée « détourne les services de leur mission ». Les abus pourront être relevés."
+		},
+		{
 			"id": "default_vigilance",
 			"section": "NATION",
 			"priority": 1,

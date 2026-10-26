@@ -407,6 +407,8 @@
 	"decisions": [
 		{
 			"id": "arrest",
+			"stamp": "EXÉCUTÉ",
+			"fate_line": "Jugé en deux heures, fusillé à l'aube du 19. L'homme n'était pas Teodor VARGA : la photo avait été changée. On a tué un nom, et un inconnu avec.",
 			"label": "Recommander l'arrestation de l'auteur",
 			"description": "Message codé à destination d'un réseau de passage : transmission au service des interpellations.",
 			"archive": "« Teodor VARGA » arrêté au quai des Tanneurs. Procès public annoncé par la Section 7.",
@@ -449,6 +451,7 @@
 		},
 		{
 			"id": "no_code",
+			"stamp": "RELAXÉ",
 			"label": "Conclure à l'absence de message codé",
 			"description": "Le poème est une dédicace. Le dossier est renvoyé au Service de la censure.",
 			"archive": "Le poème est déclaré sans message codé. Le recueil reste retiré des bibliothèques.",
@@ -485,6 +488,7 @@
 		},
 		{
 			"id": "identity_error",
+			"stamp": "SUSPENDU",
 			"label": "Signaler une erreur d'identité",
 			"description": "Le sujet de la fiche ne correspond pas à l'auteur de 1979. Demande de vérification à l'état civil.",
 			"archive": "Erreur d'identité signalée. La Section 7 conteste ; le dossier est suspendu.",
@@ -642,6 +646,76 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 52310 : votre question",
 		"body": "Inspecteur,\n\nJe ne lis pas de poésie. Mais je sais qu'une édition « revue » a toujours été revue par quelqu'un. Demandez-vous qui, et pourquoi on ne vous l'a pas dit.\n\nEt si vous trouvez la réponse, réfléchissez longtemps avant de l'écrire.\n\nR. MAZUR"
+	},
+	"comparison": {
+		"id": "varga_faces",
+		"title": "Confrontation des deux clichés",
+		"intro": "La fiche d'identité de 1986 et la vieille fiche de lecteur de 1979 portent le même nom. Posez les deux clichés côte à côte et relevez, trait par trait, ce qui ne concorde pas.",
+		"left": {
+			"label": "Fiche de lecteur — 1979",
+			"photo_document": "reader_card"
+		},
+		"right": {
+			"label": "Fiche d'identité — 1986",
+			"photo_document": "identity"
+		},
+		"points": [
+			{
+				"id": "name",
+				"label": "Nom et prénom",
+				"detail_left": "VARGA, Teodor",
+				"detail_right": "VARGA, Teodor",
+				"note": "Le nom concorde : c'est pour cela que la substitution passe inaperçue."
+			},
+			{
+				"id": "address",
+				"label": "Adresse déclarée",
+				"detail_left": "Bloc 11, app. 40, quai des Tanneurs",
+				"detail_right": "Bloc 11, app. 40, quai des Tanneurs",
+				"note": "Même adresse : l'occupant actuel du logement a été photographié à la place du poète."
+			},
+			{
+				"id": "face",
+				"label": "Forme du visage",
+				"field": "face",
+				"detail_left": "Visage allongé",
+				"detail_right": "Visage rond"
+			},
+			{
+				"id": "hair",
+				"label": "Chevelure",
+				"field": "hair",
+				"detail_left": "Cheveux dégarnis, bruns",
+				"detail_right": "Cheveux bouclés, grisonnants"
+			},
+			{
+				"id": "glasses",
+				"label": "Lunettes",
+				"field": "glasses",
+				"detail_left": "Sans lunettes",
+				"detail_right": "Avec lunettes"
+			},
+			{
+				"id": "mark",
+				"label": "Signe particulier",
+				"field": "mark",
+				"detail_left": "Cicatrice à la joue droite (accident d'atelier, 1951)",
+				"detail_right": "Néant",
+				"decisive": true,
+				"note": "Une cicatrice de 1951 ne s'efface pas. C'est la preuve : ces deux fiches ne montrent pas le même homme."
+			}
+		],
+		"establishes": "varga.mark",
+		"advantage": {
+			"note_facts": [
+				"f_rc_mark",
+				"f_var_mark"
+			],
+			"set_flags": {
+				"52310.identity_compared": true
+			},
+			"text": "Une cicatrice à la joue depuis 1951 ne s'efface pas en sept ans. L'homme de 1979 et celui de 1986 ne sont pas la même personne. La contradiction est établie : vous pouvez l'opposer lors de votre conclusion."
+		}
 	},
 	"field_scene": "search_52310"
 }

@@ -421,9 +421,68 @@
 			]
 		}
 	],
+	"comparison": {
+		"id": "cemetery_books",
+		"title": "Authentifier un carnet de rationnement",
+		"intro": "Un carnet de pain encaissé à la Boulangerie n° 12, au nom de HORVAT Milan, est sous vos yeux. Posez à côté la fiche du même citoyen à l'état civil, et vérifiez : le titulaire, le carnet lui-même, sa situation. Le réflexe est de chercher un faux au comptoir. Regardez d'abord qui est censé le présenter.",
+		"left": {
+			"label": "Carnet de rationnement encaissé — HORVAT Milan",
+			"mark": {
+				"kind": "stamp",
+				"emblem": "wheat",
+				"star_points": 5,
+				"title": "RAVITAILLEMENT",
+				"subtitle": "DISTRICT 4",
+				"serial": "D4-1986",
+				"date": "1986",
+				"ink": "violet",
+				"seed": 4,
+				"wear": 0.28
+			}
+		},
+		"right": {
+			"label": "HORVAT Milan — registre des décès (état civil)"
+		},
+		"points": [
+			{
+				"id": "holder",
+				"label": "Titulaire",
+				"detail_left": "HORVAT Milan — Bloc 3, app. 12",
+				"detail_right": "HORVAT Milan — Bloc 3, app. 12",
+				"note": "C'est bien le même citoyen : même nom, même adresse. Le carnet n'a pas été présenté sous un faux nom."
+			},
+			{
+				"id": "stamp",
+				"label": "Authenticité du carnet",
+				"detail_left": "Papier filigrané, tampon du District 4 conforme (étoile à cinq branches)",
+				"detail_right": "Papier filigrané, tampon du District 4 conforme (étoile à cinq branches)",
+				"note": "Le carnet est un vrai carnet : papier et tampon officiels. Crier au faux ici serait l'erreur de VERITAS — aucun faussaire n'a touché ce comptoir."
+			},
+			{
+				"id": "status",
+				"label": "Situation du titulaire",
+				"detail_left": "Carnet délivré le 02.10.1986, visa P. DRAZEK",
+				"detail_right": "Décédé le 14.08.1986, sept semaines plus tôt",
+				"decisive": true,
+				"note": "Un vrai carnet, délivré par l'État à un homme mort depuis sept semaines. Le faux n'est pas le papier : c'est le titulaire. La fraude est au Bureau du ravitaillement, pas à la boulangerie."
+			}
+		],
+		"establishes": "horvat.status",
+		"advantage": {
+			"note_facts": [
+				"f_reg_horvat",
+				"f_death_horvat"
+			],
+			"set_flags": {
+				"52044.cards_compared": true
+			},
+			"text": "Le carnet est authentique, mais son titulaire est mort en août : c'est le Bureau du ravitaillement qui délivre des carnets à des défunts, pas la gérante qui les détourne. Zora KOVAC est innocente. Le vrai faussaire n'est pas celui que VERITAS désigne."
+		}
+	},
 	"decisions": [
 		{
 			"id": "arrest_baker",
+			"stamp": "TRANSFÉRÉE",
 			"label": "Recommander l'arrestation de la gérante",
 			"description": "Détournement de tickets au point de vente : transmission au service des interpellations.",
 			"archive": "Arrêtée pour détournement de rations. Boulangerie n° 12 fermée, gérance confiée au Bureau du ravitaillement.",
@@ -458,6 +517,7 @@
 		},
 		{
 			"id": "report_bureau",
+			"stamp": "MISE HORS DE CAUSE",
 			"label": "Mettre en cause le Bureau du ravitaillement",
 			"description": "Transmettre le dossier au contrôle interne : carnets délivrés au nom de personnes décédées.",
 			"archive": "Mise hors de cause. Le dossier du Bureau du ravitaillement est transmis à la hiérarchie.",
@@ -517,6 +577,7 @@
 		},
 		{
 			"id": "close",
+			"stamp": "CLASSÉ",
 			"label": "Classer : erreur de comptage",
 			"description": "Aucune suite. L'écart sera attribué au recensement.",
 			"archive": "Dossier classé : erreur de comptage. Les carnets restent en circulation.",

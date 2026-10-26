@@ -4,6 +4,7 @@
 	"case_id": "53517",
 	"type": "search",
 	"button": "PERQUISITION",
+	"image": "res://assets/field/search_53517_salon.webp",
 	"title": "PERQUISITION  //  BLOC 14, ESCALIER D, APP. 7",
 	"time_action": "search_home",
 	"turns": 4,

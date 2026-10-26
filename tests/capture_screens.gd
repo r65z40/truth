@@ -26,7 +26,7 @@ func _capture_all() -> void:
 	var intro: Node = load("res://scenes/intro/intro.tscn").instantiate()
 	get_tree().root.add_child(intro)
 	for page in intro.pages.size():
-		await _snap("02%s_introduction" % "abcd"[page])
+		await _snap("02%s_introduction" % "abcdef"[page])
 		if page < intro.pages.size() - 1:
 			intro.next_page()
 	intro.queue_free()
@@ -81,6 +81,11 @@ func _capture_all() -> void:
 	await _snap("11b_veritas")
 	desk.windows.veritas.close()
 	dossiers.get_node("%ConclusionPanel").get_node("%SignButton").pressed.emit()
+	await get_tree().process_frame
+	# La signature ouvre d'abord la carte de destin du sujet ; on continue ensuite.
+	await _snap("11c_carte_destin_sedlar")
+	desk.archive_card.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
 	await _snap("12_reponse_superieur")
 	desk.terminal.submit_command("archives")
 	await _snap("13_archives")
@@ -126,6 +131,24 @@ func _capture_all() -> void:
 	await _snap("21_dossier_52310_fiche_1979")
 	desk.windows.dossiers.select_document("poem_1979")
 	await _snap("22_dossier_52310_poeme")
+	# Mini-jeu « comparer deux pièces » : le joueur juge chaque trait des deux fiches.
+	desk.open_comparison("52310")
+	var cmp_case := CaseLibrary.get_case("52310")
+	var cmp := ComparisonRules.get_comparison(cmp_case)
+	var cmp_left := ComparisonRules.photo_of(cmp_case, cmp.left.photo_document)
+	var cmp_right := ComparisonRules.photo_of(cmp_case, cmp.right.photo_document)
+	var cmp_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
+	var cmp_points: Array = cmp.points
+	for i in cmp_points.size():
+		var differs: bool = ComparisonRules.compare_point(cmp_points[i], cmp_left, cmp_right).differs
+		var vbox: Node = cmp_cards[i].get_child(0).get_child(0)
+		var judge: Node = vbox.get_child(vbox.get_child_count() - 1)
+		judge.get_child(1 if differs else 0).button_pressed = true
+	await _snap("22b_comparer_pieces")
+	desk.comparison_screen.get_node("%ValidateButton").pressed.emit()
+	await _snap("22c_comparer_resultat")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.windows.dossiers.open_conclusion()
 	await _snap("23_dossier_52310_veritas")
 	desk.windows.veritas.analysis_time = 0.6
@@ -138,6 +161,7 @@ func _capture_all() -> void:
 		if GameState.can_decide(case_id):
 			GameState.get_case_state(case_id).contradictions_found.append("capture")
 			GameState.apply_decision(case_id, CaseLibrary.get_case(case_id).decisions[1].id)
+	desk.archive_card.hide()  # la signature ouvre la carte de destin : on la referme pour la capture
 	GameState.indicators.loyalty = 60
 	GameState.indicators.suspicion = 30
 	GameState.end_day()
@@ -153,6 +177,7 @@ func _capture_all() -> void:
 	# Terrain : audition d'ORLIK, perquisition chez SEDLAR.
 	GameState.new_game()
 	GameState.apply_decision("40921", "arrest")
+	desk.archive_card.hide()
 	GameState.end_day()
 	GameState.note_fact("51307", "f_clock_ok")
 	desk.open_field("51307")
@@ -184,6 +209,17 @@ func _capture_all() -> void:
 	desk.field_screen.choose("floorboard")
 	await _snap("33_perquisition_benes")
 	desk.field_screen.hide()
+	# Carte de destin du sujet après une signature (levier d'impact).
+	var fate_state: Dictionary = GameState.get_case_state("40921").duplicate()
+	fate_state["decision"] = "arrest"
+	fate_state["contradictions_found"] = ["x"]
+	desk.archive_card.show_fate(FateRules.fate_for(CaseLibrary.get_case("40921"), fate_state))
+	await _snap("33b_carte_destin")
+	# Dénouement dur : la chorale déportée (tampon, camp, mort, voix d'une mère).
+	desk.archive_card.show_fate(FateRules.fate_for(CaseLibrary.get_case("53118"),
+			{"decision": "arrest_all", "contradictions_found": []}))
+	await _snap("33c_carte_destin_chorale")
+	desk.archive_card.hide()
 	# Acte 2 : dossier 53118 La Chorale (RACCORDEMENT + comparaison avec l'archive).
 	GameState.day_index = 6
 	GameState.assign_case("53118")
@@ -194,6 +230,11 @@ func _capture_all() -> void:
 	await _snap("34_dossier_53118_raccordement")
 	desk.windows.dossiers.select_document("archive_parish")
 	await _snap("35_dossier_53118_archive")
+	# Comparaison sans portrait : le signalement confronté aux archives paroissiales.
+	desk.open_comparison("53118")
+	await _snap("35b_comparer_chorale")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.windows.dossiers.open_conclusion()
 	await _snap("36_dossier_53118_veritas")
 	desk.windows.dossiers.close()
@@ -212,9 +253,53 @@ func _capture_all() -> void:
 	desk.windows.dossiers.select_case("53402")
 	desk.windows.dossiers.select_document("veritas_link")
 	await _snap("39_cheminot_raccordement")
+	# Authentification des permis de passage (cachets visuels, « traquer les faussaires »).
+	desk.open_comparison("53402")
+	await _snap("39b_authentifier_permis")
+	var permit_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
+	var permit_cmp: Dictionary = ComparisonRules.get_comparison(CaseLibrary.get_case("53402"))
+	var permit_pts: Array = permit_cmp.points
+	for i in permit_pts.size():
+		var differs: bool = ComparisonRules.compare_point(permit_pts[i], {}, {}).differs
+		var vbox: Node = permit_cards[i].get_child(0).get_child(0)
+		vbox.get_child(vbox.get_child_count() - 1).get_child(1 if differs else 0).button_pressed = true
+	desk.comparison_screen.get_node("%ValidateButton").pressed.emit()
+	await _snap("39c_permis_resultat")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.windows.dossiers.open_conclusion()
 	await _snap("40_cheminot_veritas")
 	desk.windows.dossiers.close()
+	# Démasquer un vrai faux : la signature du médecin imitée au crayon (SEDLAR, 40921).
+	GameState.flags["field.search_40921.mattress"] = true
+	desk.open_comparison("40921")
+	await _snap("40b_authentifier_signature")
+	var sig_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
+	var sig_cmp: Dictionary = ComparisonRules.get_comparison(CaseLibrary.get_case("40921"))
+	var sig_pts: Array = sig_cmp.points
+	for i in sig_pts.size():
+		var differs: bool = ComparisonRules.compare_point(sig_pts[i], {}, {}).differs
+		var vbox: Node = sig_cards[i].get_child(0).get_child(0)
+		vbox.get_child(vbox.get_child_count() - 1).get_child(1 if differs else 0).button_pressed = true
+	desk.comparison_screen.get_node("%ValidateButton").pressed.emit()
+	await _snap("40c_faux_demasque")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
+	# Les carnets du cimetière (52044) : carnet authentique au nom d'un mort (piège inversé).
+	GameState.assign_case("52044")
+	desk.open_comparison("52044")
+	await _snap("36b_authentifier_carnet")
+	var book_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
+	var book_cmp: Dictionary = ComparisonRules.get_comparison(CaseLibrary.get_case("52044"))
+	var book_pts: Array = book_cmp.points
+	for i in book_pts.size():
+		var differs: bool = ComparisonRules.compare_point(book_pts[i], {}, {}).differs
+		var vbox: Node = book_cards[i].get_child(0).get_child(0)
+		vbox.get_child(vbox.get_child_count() - 1).get_child(1 if differs else 0).button_pressed = true
+	desk.comparison_screen.get_node("%ValidateButton").pressed.emit()
+	await _snap("36c_carnet_resultat")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.queue_free()
 	# Socle de traduction : l'interface bascule en anglais (contenu des dossiers en repli FR).
 	Localization.set_locale("en")
@@ -232,6 +317,8 @@ func _capture_all() -> void:
 	await _snap("43_galerie_scenes")
 	gallery._open_field("51307")
 	await _snap("44_galerie_apercu_terrain", 1.2)
+	gallery._open_field("53118")
+	await _snap("45_visite_chorale", 1.2)
 	gallery.queue_free()
 	get_tree().quit()
 

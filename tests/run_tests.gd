@@ -48,10 +48,15 @@ func _run() -> void:
 		"test_evenings",
 		"test_career_evaluation",
 		"test_field_scenes_are_valid",
+		"test_field_background_image",
 		"test_field_interrogation",
 		"test_field_search",
+		"test_field_rooms",
 		"test_field_bakery_visit",
 		"test_field_benes_search",
+		"test_field_chorale",
+		"test_fate_card",
+		"test_comparison",
 		"test_field_stages_are_valid",
 		"test_field_stage_3d",
 		"test_act_review",
@@ -210,6 +215,10 @@ func test_news() -> void:
 	check(not "d1_40921_arrest" in titles and not "d1_40921_investigate" in titles, "dossier classé : le journal se tait")
 	check(NewsRules.are_conditions_met({"after_decision": {"case": "40921"}}, decided), "sans liste : n'importe quelle décision")
 	check(NewsRules.edition({"day_index": 30, "flags": {}, "cases": {}}).articles.size() == 2, "un jour sans actualité : les articles par défaut")
+	# Les dossiers de l'acte 2 ont aussi leur conséquence au journal, en langue officielle.
+	var choir := {"day_index": 7, "flags": {}, "cases": {}, "decisions": [{"case_id": "53118", "decision_id": "arrest_all", "day_index": 6}]}
+	check("d_53118_arrest" in NewsRules.edition(choir).articles.map(func(a: Dictionary) -> String: return a.id),
+			"la déportation de la chorale fait la une, en version officielle")
 	var ids := {}
 	for article in NewsRules.data().articles:
 		check(not ids.has(article.id) and article.get("headline", "") != "" and article.get("body", "") != "", "article %s complet et unique" % article.id)
@@ -517,6 +526,16 @@ func test_event_conditions() -> void:
 	state["fired_events"] = ["once", "again"]
 	var due := EventRules.due_events(state, events)
 	check(due.size() == 1 and due[0].id == "again", "un événement ne se répète que s'il est repeatable")
+	# Les gens reviennent (levier 2) : la décision sur la chorale a des échos.
+	var choir_ids: Array = EventRules.due_events(
+			{"day_index": 11, "flags": {"53118.choir_arrested": true}, "cases": {}, "fired_events": []}
+			).map(func(e: Dictionary) -> String: return e.id)
+	check("53118_kolb_recidive" in choir_ids, "KOLB récidive après l'arrestation de la chorale sur sa parole")
+	check(not "53118_cleared_denounced" in choir_ids, "classer ne s'applique pas quand on a arrêté")
+	var cleared_ids: Array = EventRules.due_events(
+			{"day_index": 11, "flags": {"53118.choir_cleared": true}, "cases": {}, "fired_events": []}
+			).map(func(e: Dictionary) -> String: return e.id)
+	check("53118_cleared_denounced" in cleared_ids, "classer la chorale expose l'inspecteur (KOLB le dénonce)")
 
 
 func test_end_day_without_decision() -> void:
@@ -723,12 +742,20 @@ func test_evenings() -> void:
 
 
 func test_field_scenes_are_valid() -> void:
-	for case_id in ["40921", "51307", "52044", "52310", "53402", "53517"]:
+	for case_id in ["40921", "51307", "52044", "52310", "53118", "53402", "53517"]:
 		var case_data := CaseLibrary.get_case(case_id)
 		var scene := FieldRules.scene_for_case(case_data)
 		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
 		check(WorkTime.cost(scene.time_action) == 2, "%s : 2 heures" % scene.id)
-		for result in scene.options + scene.get("presentations", []):
+		if scene.has("image"):
+			check(scene.image is String and (scene.image as String).begins_with("res://"), "%s : chemin d'image valide" % scene.id)
+		var room_ids: Array = scene.get("rooms", []).map(func(r: Dictionary) -> String: return r.get("id", ""))
+		for room: Dictionary in scene.get("rooms", []):
+			check(room.get("image", "").begins_with("res://"), "%s : pièce %s avec image" % [scene.id, room.get("id", "")])
+			for door: Dictionary in room.get("doors", []):
+				check(door.get("to", "") in room_ids, "%s : la porte de %s mène à une pièce connue" % [scene.id, room.get("id", "")])
+				check(_spot_in_bounds(door.get("spot", [0, 0, 0, 0])), "%s : porte de %s dans le cadre" % [scene.id, room.get("id", "")])
+		for result in FieldRules.all_options(scene) + scene.get("presentations", []):
 			for fact_id in result.get("note", []):
 				var fact := CaseLibrary.get_fact(case_data, fact_id)
 				check(fact.get("conditions", {}).get("requires_flags", []) == [FieldRules.flag_for(scene, result.id)],
@@ -736,10 +763,41 @@ func test_field_scenes_are_valid() -> void:
 			for fact_id in result.get("facts", []):
 				check(not CaseLibrary.get_fact(case_data, fact_id).is_empty(), "%s : élément présenté %s existant" % [scene.id, fact_id])
 			if result.has("spot"):
-				var area: Array = result.spot
-				check(area[0] >= 0 and area[1] >= 0 and area[0] + area[2] <= FieldArt.CANVAS.x and area[1] + area[3] <= FieldArt.CANVAS.y,
-						"%s : zone %s dans le dessin" % [scene.id, result.id])
+				check(_spot_in_bounds(result.spot), "%s : zone %s dans le cadre" % [scene.id, result.id])
 		check(CaseLibrary.validate_case(case_data).is_empty(), "%s : dossier toujours valide" % case_id)
+
+
+func test_field_background_image() -> void:
+	var art := FieldArt.new()
+	# Un fichier présent sert d'image de fond de la scène de terrain...
+	art.image_path = "res://ui/icons/f_person.png"
+	check(art.has_image(), "une image existante devient le fond de la scène")
+	# ...un fichier absent retombe sur le décor dessiné, sans casser la scène.
+	art.image_path = "res://assets/field/inexistante.webp"
+	check(not art.has_image(), "une image manquante retombe sur le dessin")
+	art.image_path = ""
+	check(not art.has_image(), "pas d'image de fond par défaut")
+	# Les zones en fractions se calent sur l'image affichée, quelle que soit la taille.
+	check(FieldArt.is_fractional([0.1, 0.2, 0.3, 0.4]) and not FieldArt.is_fractional([40, 150, 120, 50]),
+			"une zone est reconnue comme fraction ou comme pixels")
+	art.image_path = "res://ui/icons/f_person.png"
+	art.size = Vector2(640, 360)
+	var img := art.image_rect()
+	var r := art.to_local_rect([0.25, 0.5, 0.5, 0.25])
+	check(is_equal_approx(r.position.x, img.position.x + img.size.x * 0.25) and is_equal_approx(r.size.x, img.size.x * 0.5),
+			"une zone en fractions tombe exactement sur l'image")
+	# En mode vidéo, FieldArt est transparent et les zones couvrent tout le cadre 16:9.
+	art.video_mode = true
+	check(art.image_rect() == Rect2(Vector2.ZERO, art.size), "en mode vidéo, les zones couvrent tout le cadre")
+	art.video_mode = false
+	art.free()
+
+
+## Une zone est-elle dans le cadre (fractions 0..1, ou pixels du repère 640 x 300) ?
+func _spot_in_bounds(area: Array) -> bool:
+	if FieldArt.is_fractional(area):
+		return area[0] >= 0.0 and area[1] >= 0.0 and area[0] + area[2] <= 1.0 and area[1] + area[3] <= 1.0
+	return area[0] >= 0 and area[1] >= 0 and area[0] + area[2] <= FieldArt.CANVAS.x and area[1] + area[3] <= FieldArt.CANVAS.y
 
 
 func test_field_interrogation() -> void:
@@ -818,6 +876,42 @@ func test_field_search() -> void:
 	GameState.new_game()
 
 
+func test_field_rooms() -> void:
+	# Logique pure : deux pièces, options à plat, appartenance des endroits.
+	var scene := FieldRules.get_scene("search_40921")
+	check(FieldRules.has_rooms(scene), "le 40921 est une perquisition à pièces")
+	check(FieldRules.all_options(scene).size() == 6, "six endroits au total, toutes pièces confondues")
+	check(FieldRules.start_room(scene).id == "salon", "on arrive dans le salon")
+	check(FieldRules.room_of_option(scene, "stove") == "salon" and FieldRules.room_of_option(scene, "mattress") == "chambre",
+			"chaque endroit appartient à une pièce")
+	# Écran : on ne voit que la pièce courante, l'image suit, le budget est commun.
+	GameState.new_game()
+	Settings.field_3d = false
+	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	check(screen.preview("40921"), "aperçu de la perquisition")
+	# Une vidéo absente ne se joue pas : la scène retombe sur l'image (puis le dessin).
+	check(not screen._set_video("res://assets/field/inexistante.ogv") and not screen._set_video(""),
+			"vidéo manquante : pas de lecture")
+	var salon := screen.get_choice_ids()
+	check("stove" in salon and not "mattress" in salon, "le salon ne propose que ses propres endroits")
+	check(not screen.is_3d() and screen.get_node("%Art").visible \
+			and (screen.get_node("%Art").image_path as String).ends_with("salon.webp"), "l'image du salon est affichée")
+	check(screen._current_view().doors.size() == 1, "une porte mène à la chambre")
+	screen._go_to_room("chambre")
+	var chambre := screen.get_choice_ids()
+	check("mattress" in chambre and not "stove" in chambre, "la chambre propose ses propres endroits")
+	check((screen.get_node("%Art").image_path as String).ends_with("chambre.webp"), "l'image change avec la pièce")
+	# Fouiller dans une pièce entame le budget partagé des deux.
+	screen.choose("mattress")
+	screen._go_to_room("salon")
+	check(FieldRules.turns_left(scene, GameState.get_field_state("search_40921")) == 3,
+			"une fouille entame le budget commun aux deux pièces")
+	screen.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
 ## Fait passer les journées jusqu'à l'attribution du dossier.
 func _advance_until_assigned(case_id: String) -> void:
 	for i in 6:
@@ -873,6 +967,223 @@ func test_field_benes_search() -> void:
 			"le bail suffit à prouver l'erreur d'identité")
 	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
 	check("field_52310_section7" in fired and GameState.get_indicator("suspicion") >= suspicion + 2, "la Section 7 sait")
+	GameState.new_game()
+
+
+func test_field_chorale() -> void:
+	GameState.new_game()
+	for i in 12:
+		if GameState.cases.has("53118"):
+			break
+		GameState.end_day()
+	check(GameState.cases.has("53118"), "le dossier de la chorale est attribué (acte 2, jour 5)")
+	check(GameState.can_start_field("53118"), "la visite de la salle de la chorale est possible")
+	GameState.start_field("53118")
+	check(GameState.flags.get("53118.parish_visited") == true, "la visite de la paroisse est connue")
+	check(GameState.flags.get("field.visit_53118.started") == true, "le drapeau de départ de la scène est posé")
+	# Quatre endroits examinés : budget de tours exact (4).
+	GameState.field_choose("visit_53118", "organ")
+	GameState.field_choose("visit_53118", "entrance_book")
+	GameState.field_choose("visit_53118", "board")
+	GameState.field_choose("visit_53118", "vestry")
+	var noted: Array = GameState.get_case_state("53118").noted_facts
+	for fact_id in ["f_cho_vigil", "f_cho_register", "f_cho_permit", "f_cho_absent", "f_cho_kolb"]:
+		check(fact_id in noted, "relevé sur place versé au carnet : %s" % fact_id)
+	# Le compte rendu de visite n'existe qu'une fois la scène commencée.
+	check(not CaseLibrary.get_document(GameState.get_case_view("53118"), "visit_report").is_empty(),
+			"le compte rendu de visite apparaît après la visite")
+	# Les relevés contredisent le signalement de l'informateur.
+	check(GameState.confront_facts("53118", "f_cho_register", "f_sig_count") == "choir.list",
+			"sept émargements contredisent les onze noms dénoncés")
+	check(GameState.confront_facts("53118", "f_cho_permit", "f_sig_curfew") == "choir.curfew",
+			"le permis de veillée contredit le rassemblement non autorisé")
+	check(GameState.confront_facts("53118", "f_cho_kolb", "f_sig_single") == "choir.source",
+			"le rival écarté du poste d'organiste éclaire la source unique")
+	GameState.apply_decision("53118", "clear")
+	check(GameState.flags.get("53118.choir_cleared") == true and GameState.flags.get("kremer.contact") == true,
+			"la visite seule suffit à classer la veillée comme autorisée")
+	GameState.new_game()
+
+
+func test_fate_card() -> void:
+	# Clore le dossier de départ : le sujet est relaxé, la carte reprend l'archive.
+	GameState.new_game()
+	_advance_until_assigned("40921")
+	GameState.apply_decision("40921", "close")
+	var fate := FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921"))
+	check(not fate.is_empty(), "une carte de destin existe après la signature")
+	check(fate.subject_name == "SEDLAR, Anton Pavel", "nom du sujet repris du dossier")
+	check(fate.stamp == "RELAXÉ", "clore le dossier : sujet relaxé")
+	check(fate.line.begins_with("Dossier clos"), "ligne de conséquence = archive de la décision")
+	check(not fate.photo.is_empty(), "photo d'identité du sujet réutilisée")
+	check(fate.quote == "", "pas de citation sur ce dénouement")
+	# Arrestation : sujet transféré, et une phrase de la famille accompagne le destin.
+	GameState.new_game()
+	_advance_until_assigned("40921")
+	GameState.apply_decision("40921", "arrest")
+	var harsh := FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921"))
+	check(harsh.stamp == "TRANSFÉRÉ", "arrestation : sujet transféré")
+	check(harsh.quote != "", "une phrase de la famille accompagne l'arrestation")
+	# Les dénouements les plus durs montrent la réalité crue (camp, mort), pas l'archive polie.
+	var choir := FateRules.fate_for(CaseLibrary.get_case("53118"),
+			{"decision": "arrest_all", "contradictions_found": []})
+	check(choir.stamp == "DÉPORTÉS", "arrêter la chorale : déportation")
+	check(choir.line.contains("camp de Dolenz") and choir.line.contains("meurt"),
+			"la carte dit le camp et la mort, pas l'euphémisme officiel")
+	# Sans décision, aucune carte.
+	GameState.new_game()
+	_advance_until_assigned("40921")
+	check(FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921")).is_empty(),
+			"aucune carte tant que le dossier n'est pas signé")
+	GameState.new_game()
+
+
+func test_comparison() -> void:
+	var case_data := CaseLibrary.get_case("52310")
+	var comparison := ComparisonRules.get_comparison(case_data)
+	check(not comparison.is_empty(), "VARGA propose une comparaison de pièces")
+	var left := ComparisonRules.photo_of(case_data, comparison.left.photo_document)
+	var right := ComparisonRules.photo_of(case_data, comparison.right.photo_document)
+	check(not left.is_empty() and not right.is_empty(), "les deux clichés désignés existent")
+	# Le trait décisif est le signe particulier : cicatrice en 1979, néant en 1986.
+	var decisive := {}
+	for point in comparison.points:
+		if point.get("decisive", false):
+			decisive = point
+	check(decisive.get("field", "") == "mark", "le trait décisif est le signe particulier")
+	var compared := ComparisonRules.compare_point(decisive, left, right)
+	check(compared.differs and compared.decisive, "le signe particulier diffère entre les deux pièces")
+	check(compared.left.contains("Cicatrice") and compared.right == "Néant", "les mentions exactes sont affichées")
+	# Les mentions explicites priment sur le trait de photo.
+	check(not ComparisonRules.compare_point({"detail_left": "X", "detail_right": "X"}, {}, {}).differs,
+			"deux mentions identiques : aucune différence")
+	# Notation : le joueur juge chaque trait. Tout juste = avantage ; une erreur = refus.
+	var right_verdicts := {}
+	for point in comparison.points:
+		right_verdicts[point.id] = ComparisonRules.compare_point(point, left, right).differs
+	check(ComparisonRules.grade(comparison, left, right, right_verdicts).all_ok, "jugement entièrement correct : validé")
+	var missed := right_verdicts.duplicate()
+	missed[decisive.id] = false
+	var bad := ComparisonRules.grade(comparison, left, right, missed)
+	check(not bad.all_ok and not bad.decisive_ok and bad.wrong == 1, "rater le trait décisif : refusé")
+	var invented := right_verdicts.duplicate()
+	invented["name"] = true
+	check(ComparisonRules.grade(comparison, left, right, invented).wrong == 1,
+			"inventer une différence sur un trait identique : erreur")
+	var incomplete := right_verdicts.duplicate()
+	incomplete.erase(decisive.id)
+	check(not ComparisonRules.grade(comparison, left, right, incomplete).all_ok, "trait non jugé : incomplet")
+	# Appliquer la comparaison établit la contradiction et verse les faits au carnet.
+	GameState.new_game()
+	var advantage := GameState.apply_comparison("52310")
+	check(advantage.get("established", "") == "varga.mark", "comparer établit la contradiction varga.mark")
+	var case_state := GameState.get_case_state("52310")
+	check("varga.mark" in case_state.contradictions_found, "la contradiction est enregistrée")
+	check("f_rc_mark" in case_state.noted_facts and "f_var_mark" in case_state.noted_facts,
+			"les deux faits comparés sont versés au carnet")
+	# L'avantage est concret : conclure à l'erreur d'identité est désormais « prouvé ».
+	var proved := DecisionRules.resolve(case_data, case_state, "identity_error")
+	check(proved.response_id == "identity_proved", "la comparaison débloque la conclusion prouvée")
+	# Idempotent : réappliquer ne double rien et ne redonne pas d'avantage.
+	check(GameState.apply_comparison("52310").is_empty(), "l'avantage ne s'acquiert qu'une fois")
+	check(case_state.contradictions_found.count("varga.mark") == 1, "pas de doublon de contradiction")
+	check(GameState.flags.get("52310.identity_compared") == true, "drapeau de comparaison posé")
+	# Deuxième dossier : la chorale (53118), sans photo, contradiction exculpatoire.
+	var choir_case := CaseLibrary.get_case("53118")
+	var choir := ComparisonRules.get_comparison(choir_case)
+	check(not choir.is_empty() and choir.establishes == "choir.curfew", "la chorale propose une comparaison exculpatoire")
+	check(not choir.left.has("photo_document"), "comparaison de pièces sans portrait")
+	var choir_verdicts := {}
+	for point in choir.points:
+		choir_verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(choir, {}, {}, choir_verdicts).all_ok, "jugement correct de la chorale")
+	var choir_advantage := GameState.apply_comparison("53118")
+	check(choir_advantage.established == "choir.curfew", "la comparaison établit choir.curfew")
+	var choir_state := GameState.get_case_state("53118")
+	check("f_arc_permit" in choir_state.noted_facts and "f_arc_register" in choir_state.noted_facts,
+			"permis et registre versés au carnet")
+	check(DecisionRules.resolve(choir_case, choir_state, "clear").response_id == "clear_proved",
+			"la comparaison débloque la relaxe prouvée de la chorale")
+	# Troisième dossier : authentification de permis (cheminot 53402), avec cachets.
+	# Enjeu « faussaire » : ne pas crier au faux sur un sceau authentique.
+	var permit_case := CaseLibrary.get_case("53402")
+	var permits := ComparisonRules.get_comparison(permit_case)
+	check(not permits.is_empty() and permits.left.mark.kind == "stamp", "le cheminot a une comparaison avec cachets")
+	# Le sceau concorde (vrai), la validité diffère (permis échu) : c'est un vrai permis expiré.
+	check(not ComparisonRules.compare_point(permits.points[0], {}, {}).differs, "le sceau est authentique : concorde")
+	var permit_points: Array = permits.points
+	var validity: Dictionary = permit_points[permit_points.size() - 1]
+	check(validity.decisive and ComparisonRules.compare_point(validity, {}, {}).differs, "la validité diffère : permis échu")
+	var permit_verdicts := {}
+	for point in permits.points:
+		permit_verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(permits, {}, {}, permit_verdicts).all_ok, "authentification correcte")
+	# Crier à la falsification sur le sceau authentique est une erreur.
+	var false_alarm := permit_verdicts.duplicate()
+	false_alarm["seal"] = true
+	check(not ComparisonRules.grade(permits, {}, {}, false_alarm).all_ok, "accuser un vrai sceau de faux : erreur")
+	check(GameState.apply_comparison("53402").established == "halvek.movements", "l'authentification établit halvek.movements")
+	check("f_manifest_residents" in GameState.get_case_state("53402").noted_facts, "les résidents sont versés au carnet")
+	# Quatrième dossier : démasquer un vrai faux (signature imitée, 40921).
+	# Enjeu « faussaire » : le nom concorde (piège), c'est la main qui trahit la copie.
+	var forgery_case := CaseLibrary.get_case("40921")
+	var forgery := ComparisonRules.get_comparison(forgery_case)
+	check(not forgery.is_empty() and forgery.left.mark.kind == "signature", "40921 a une comparaison de signatures")
+	# La comparaison n'est possible qu'une fois la pièce trouvée (après perquisition).
+	check(not EventRules.are_conditions_met(forgery.get("conditions", {}), {"flags": {}}),
+			"la signature ne se compare pas avant la perquisition")
+	check(EventRules.are_conditions_met(forgery.get("conditions", {}), {"flags": {"field.search_40921.mattress": true}}),
+			"la signature se compare une fois le matelas fouillé")
+	# Le nom du signataire concorde (copié juste) ; la graphie décisive diffère.
+	check(not ComparisonRules.compare_point(forgery.points[0], {}, {}).differs, "le nom du signataire concorde : piège")
+	var hand := {}
+	for point in forgery.points:
+		if point.get("decisive", false):
+			hand = point
+	check(hand.id == "hand" and ComparisonRules.compare_point(hand, {}, {}).differs, "la graphie est le trait décisif et diffère")
+	var forgery_verdicts := {}
+	for point in forgery.points:
+		forgery_verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(forgery, {}, {}, forgery_verdicts).all_ok, "démasquage correct du faux")
+	# Accuser le nom (pourtant exact) de faux est une erreur.
+	var over_accuse := forgery_verdicts.duplicate()
+	over_accuse["signatory"] = true
+	check(not ComparisonRules.grade(forgery, {}, {}, over_accuse).all_ok, "crier au faux sur un nom exact : erreur")
+	# Démasquer le faux établit la falsification : l'arrestation devient appuyée.
+	GameState.new_game()
+	check(GameState.apply_comparison("40921").established == "sedlar.papers.forged", "le démasquage établit sedlar.papers.forged")
+	var forgery_state := GameState.get_case_state("40921")
+	check("f_srch_forgery" in forgery_state.noted_facts, "la demande de soins falsifiée est versée au carnet")
+	check(GameState.flags.get("40921.forgery_authenticated") == true, "drapeau d'authentification posé")
+	check(DecisionRules.resolve(forgery_case, forgery_state, "arrest").response_id == "arrest_found",
+			"le faux démasqué appuie l'arrestation")
+	# Cinquième dossier : les carnets du cimetière (52044). Le piège « faussaire » est
+	# inversé : le carnet est authentique (ne pas crier au faux), le titulaire est mort.
+	var books_case := CaseLibrary.get_case("52044")
+	var books := ComparisonRules.get_comparison(books_case)
+	check(not books.is_empty() and books.left.mark.kind == "stamp", "52044 a une comparaison avec tampon")
+	check(not ComparisonRules.compare_point(books.points[1], {}, {}).differs, "le carnet est authentique : tampon concorde")
+	var status := {}
+	for point in books.points:
+		if point.get("decisive", false):
+			status = point
+	check(status.id == "status" and ComparisonRules.compare_point(status, {}, {}).differs,
+			"la situation du titulaire est le trait décisif et diffère (carnet à un mort)")
+	var books_verdicts := {}
+	for point in books.points:
+		books_verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(books, {}, {}, books_verdicts).all_ok, "comparaison correcte des carnets")
+	# Accuser le carnet authentique de faux est l'erreur que VERITAS commettrait.
+	var cry_forgery := books_verdicts.duplicate()
+	cry_forgery["stamp"] = true
+	check(not ComparisonRules.grade(books, {}, {}, cry_forgery).all_ok, "crier au faux sur un vrai carnet : erreur")
+	# L'avantage : établir horvat.status disculpe la boulangère et met en cause le Bureau.
+	GameState.new_game()
+	check(GameState.apply_comparison("52044").established == "horvat.status", "la comparaison établit horvat.status")
+	var books_state := GameState.get_case_state("52044")
+	check("f_death_horvat" in books_state.noted_facts, "le décès du titulaire est versé au carnet")
+	check(DecisionRules.resolve(books_case, books_state, "report_bureau").response_id == "bureau_proved",
+			"la comparaison débloque la mise en cause prouvée du Bureau")
 	GameState.new_game()
 
 
@@ -1589,6 +1900,9 @@ func test_desk_scene_flow() -> void:
 	check(desk.get_open_app() == "personnel", "le bouton Dossier personnel ouvre l'évaluation")
 	var personnel_text: String = desk.windows.personnel.get_node("%PersonnelText").get_parsed_text()
 	check(personnel_text.contains("LOYAUTÉ ENVERS LE RÉGIME : conforme"), "l'évaluation est rédigée en mots")
+	check(personnel_text.contains("ÉTAT CIVIL") and personnel_text.contains("horloger") and personnel_text.contains("1971"),
+			"l'état civil évoque le père horloger et 1971")
+	check(personnel_text.contains("SCELLÉ"), "le dossier familial est marqué scellé : on sent que quelque chose est caché")
 	desk.terminal.submit_command("commande_bidon")
 	check(desk.terminal.get_log_text().contains("COMMANDE INCONNUE"), "le terminal signale une commande inconnue")
 	desk.terminal.submit_command("ident")
@@ -1608,7 +1922,7 @@ func test_full_session_flow() -> void:
 	menu.get_node("%NewGameButton").pressed.emit()
 	await _wait_for_scene("Intro")
 	var intro := get_tree().current_scene
-	check(intro.name == "Intro" and intro.get_node("%PageLabel").text == "1 / 4", "« Nouvelle partie » ouvre l'introduction")
+	check(intro.name == "Intro" and intro.get_node("%PageLabel").text == "1 / 5", "« Nouvelle partie » ouvre l'introduction")
 	intro.next_page()
 	check(intro.get_node("%TitleLabel").text == "VOUS ÊTES A. VOSK", "page suivante")
 	intro.get_node("%SkipButton").pressed.emit()
@@ -1705,7 +2019,14 @@ func test_investigation_and_conclusion_flow() -> void:
 	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
 	conclusion.get_node("%SignButton").pressed.emit()
 	await get_tree().process_frame
-	check(desk.get_open_app() == "messages", "la réponse du supérieur s'affiche aussitôt")
+	# Le destin du sujet s'affiche d'abord, puis la réponse du supérieur.
+	check(desk.archive_card.visible, "la carte de destin du sujet s'affiche après la signature")
+	check(desk.archive_card.get_node("%StampLabel").text == "EN SURSIS", "maintenu sous surveillance : en sursis")
+	check(desk.archive_card.get_node("%SubjectName").text == "SEDLAR, Anton Pavel", "la carte nomme le sujet")
+	desk.archive_card.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
+	check(not desk.archive_card.visible, "la carte se ferme sur CONTINUER")
+	check(desk.get_open_app() == "messages", "la réponse du supérieur s'affiche ensuite")
 	check(desk.windows.messages.current_message_id == "40921.investigate_found", "c'est la bonne réponse")
 	check(desk.windows.messages.get_node("%MessageSubject").text.contains("enquête complémentaire accordée"),
 			"l'objet du message est affiché")
@@ -1843,7 +2164,7 @@ func test_field_stages_are_valid() -> void:
 		var art: String = "interrogation" if scene.type == "interrogation" else scene.art
 		check(FieldStage3D.has_stage(art), "%s : décor 3D %s" % [scene_id, art])
 		var stage := DataLoader.load_json(FieldStage3D.stage_path(art))
-		var option_ids: Array = scene.options.map(func(o: Dictionary) -> String: return o.id)
+		var option_ids: Array = FieldRules.all_options(scene).map(func(o: Dictionary) -> String: return o.id)
 		var spots := []
 		for prop: Dictionary in stage.props:
 			check(prop.has("id") and (prop.has("parts") or prop.get("role", "") == "subject"), "%s : objet %s constructible" % [art, prop.get("id", "?")])
@@ -1878,23 +2199,24 @@ func test_field_stage_3d() -> void:
 	check(stage.get_spot_ids() == ["present"], "le dossier sur la table sert à présenter un élément")
 	stage.queue_free()
 	await get_tree().process_frame
-	# Dans l'écran de terrain : 3D si le réglage est actif, sinon dessin.
+	# Dans l'écran de terrain : l'image livrée prime ; sinon la 3D si le réglage est
+	# actif ; sinon le dessin. (Aperçu libre pour ne pas dépendre du calendrier.)
 	GameState.new_game()
-	GameState.apply_decision("40921", "arrest")
-	GameState.end_day()
 	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
 	get_tree().root.add_child(screen)
 	Settings.field_3d = true
-	screen.open("40921")
-	check(screen.is_3d() and screen.get_stage().active_spots.size() == 6, "perquisition en 3D")
-	screen.get_stage().press_spot("stove")
-	check(GameState.flags.get("heure_juste.sign_stove") == true, "cliquer sur le poêle en 3D le fouille")
-	check(not "stove" in screen.get_stage().active_spots, "le poêle n'est plus proposé")
-	GameState.end_day()
+	check(screen.preview("40921") and not screen.is_3d() and screen.get_node("%Art").visible \
+			and screen.get_node("%Art").has_image(), "une image livrée prime sur la 3D")
+	# Scène sans image livrée : la 3D s'affiche si le réglage est actif, sinon le dessin.
+	var no_image := FieldRules.get_scene("audition_53402").duplicate(true)
+	no_image.erase("image")
+	GameState.field_scenes[no_image.id] = {"turns_used": 0, "chosen": [], "finished": false}
+	screen._show_scene(no_image)
+	check(screen.is_3d() and screen.get_stage().active_spots.size() > 0,
+			"sans image, la 3D s'affiche si le réglage est actif")
 	Settings.field_3d = false
-	screen.open("51307")
+	screen._show_scene(no_image)
 	check(not screen.is_3d() and screen.get_node("%Art").visible, "réglage 2D : décor dessiné")
-	Settings.field_3d = true
 	screen.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()

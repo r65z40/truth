@@ -20,6 +20,22 @@ var subject: Dictionary = {}:
 	set(value):
 		subject = value
 		queue_redraw()
+## Image de fond facultative (res://...). Si le fichier existe, elle remplace le
+## décor dessiné ; sinon on retombe sur le dessin, ce qui permet de livrer les
+## images une par une sans jamais casser une scène.
+var image_path := "":
+	set(value):
+		image_path = value
+		_texture = load(value) if value != "" and ResourceLoader.exists(value) else null
+		queue_redraw()
+var _texture: Texture2D = null
+## Mode vidéo : la scène joue une vidéo de fond (gérée par FieldScreen, posée
+## derrière). FieldArt ne dessine alors rien (fond transparent) et sert seulement
+## de support aux zones cliquables, qui couvrent tout le cadre 16:9.
+var video_mode := false:
+	set(value):
+		video_mode = value
+		queue_redraw()
 
 
 func _init() -> void:
@@ -36,8 +52,35 @@ func _offset() -> Vector2:
 	return (size - CANVAS * get_canvas_scale()) / 2.0
 
 
-## Zone [x, y, w, h] du repère de dessin, en coordonnées du contrôle.
+## Rectangle où l'image de fond est réellement affichée : ajustée pour tenir en
+## entier sans être déformée ni rognée (« contain »). Sans image, c'est le repère
+## de dessin CANVAS mis à l'échelle. Les zones cliquables exprimées en fractions
+## s'y réfèrent, donc elles tombent toujours au même endroit de l'image.
+func image_rect() -> Rect2:
+	if video_mode:
+		return Rect2(Vector2.ZERO, size)
+	if _texture == null:
+		return Rect2(_offset(), CANVAS * get_canvas_scale())
+	var tex := _texture.get_size()
+	var fit := minf(size.x / tex.x, size.y / tex.y)
+	var draw_size := tex * fit
+	return Rect2((size - draw_size) / 2.0, draw_size)
+
+
+## Une zone est-elle donnée en fractions (toutes ses valeurs entre 0 et 1) ?
+static func is_fractional(area: Array) -> bool:
+	return area.size() == 4 and area.all(func(v: float) -> bool: return absf(v) <= 1.0)
+
+
+## Zone [x, y, w, h] en coordonnées du contrôle. Deux conventions :
+## - fractions de l'image affichée (valeurs entre 0 et 1) : recommandé pour les
+##   scènes avec image, les zones restent calées sur l'image à toute taille ;
+## - pixels du repère de dessin 640 x 300 (hérité) : pour les décors dessinés.
 func to_local_rect(area: Array) -> Rect2:
+	if is_fractional(area):
+		var base := image_rect()
+		return Rect2(base.position + Vector2(area[0], area[1]) * base.size,
+				Vector2(area[2], area[3]) * base.size)
 	var factor := get_canvas_scale()
 	return Rect2(_offset() + Vector2(area[0], area[1]) * factor, Vector2(area[2], area[3]) * factor)
 
@@ -46,7 +89,24 @@ func _c(name: String) -> Color:
 	return get_theme_color(name, "IntroArt")
 
 
+## Une image de fond est-elle chargée (fichier présent) ?
+func has_image() -> bool:
+	return _texture != null
+
+
 func _draw() -> void:
+	# En mode vidéo, FieldArt est transparent : la vidéo (posée derrière par
+	# FieldScreen) occupe le cadre, et seules les zones cliquables restent dessus.
+	if video_mode:
+		return
+	# Image de fond si elle existe : fond sombre pour les éventuelles marges, puis
+	# l'image dans le repère de dessin, alignée sur les zones cliquables (spots).
+	if _texture != null:
+		draw_rect(Rect2(Vector2.ZERO, size), _c("paper_dark").darkened(0.6))
+		# L'image est affichée en entier, sans déformation ni rognage, pour que les
+		# zones cliquables (en fractions) tombent exactement sur ses objets.
+		draw_texture_rect(_texture, image_rect(), false)
+		return
 	# Le décor déborde du repère : mur en haut, sol en bas, sans bandes noires.
 	var horizon := _offset().y + 230.0 * get_canvas_scale()
 	match scene:

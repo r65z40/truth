@@ -366,6 +366,8 @@
 	"decisions": [
 		{
 			"id": "arrest",
+			"stamp": "CONDAMNÉ",
+			"fate_line": "Jugé pour complicité de franchissement clandestin : douze ans. Au km 47, un autre aiguilleur prend le poste. Les familles qu'il laissait passer ne passent plus.",
 			"label": "Transmettre à la sûreté des frontières",
 			"description": "Complicité de passage et faux en écritures : transmission au titre du décret 86-31.",
 			"archive": "Transmis à la sûreté des frontières. Jugé pour complicité de franchissement clandestin. Le poste de Brenec a été confié à un agent de la capitale.",
@@ -401,6 +403,7 @@
 		},
 		{
 			"id": "reassign",
+			"stamp": "MUTÉ",
 			"label": "Proposer une sanction administrative",
 			"description": "Faux dans le registre : retrait de la ligne frontalière et mutation, sans poursuites.",
 			"archive": "Retiré de la ligne de Halvek, muté au triage de Velmira. Blâme inscrit au dossier. Les voyageurs n'ont pas été inquiétés.",
@@ -434,6 +437,7 @@
 		},
 		{
 			"id": "clear",
+			"stamp": "RELAXÉ",
 			"label": "Classer — défaillance technique",
 			"description": "Aucune suite. Les retards sont imputés à la signalisation, comme consignés.",
 			"archive": "Dossier classé pour défaillance technique. L'aiguilleur a gardé son poste au km 47. La garde-frontière a demandé qui avait signé.",
@@ -563,5 +567,80 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 53402 : votre question",
 		"body": "Inspecteur,\n\nUn train qui prend douze minutes de retard cinq nuits de suite, toujours le même, toujours près de la frontière : ce n'est pas la signalisation, c'est une habitude.\n\nReste à savoir si vous poursuivez l'habitude ou les gens qui en profitent. Depuis le décret, la différence ne regarde plus que vous. Moi, je n'ai rien dit.\n\nR. MAZUR"
+	},
+	"comparison": {
+		"id": "permits_2241",
+		"title": "Authentification des permis — train 2241",
+		"intro": "Le relevé des titres de transport du train 2241 est sous vos yeux. Confrontez un permis de visite familiale en règle au permis présenté la nuit du 23 octobre : le sceau, le titre, le titulaire, la validité. Un faux ne résiste pas à l'examen — mais un vrai non plus, dès qu'une règle change derrière lui.",
+		"left": {
+			"label": "Permis de visite familiale (modèle en règle)",
+			"mark": {
+				"kind": "stamp",
+				"emblem": "star",
+				"star_points": 5,
+				"title": "BUREAU DES FRONTIÈRES",
+				"subtitle": "SECTEUR DE HALVEK",
+				"serial": "VF-204",
+				"date": "1986",
+				"ink": "violet",
+				"seed": 5,
+				"wear": 0.3
+			}
+		},
+		"right": {
+			"label": "Permis présenté — DRABEK, 23.10.1986",
+			"mark": {
+				"kind": "stamp",
+				"emblem": "star",
+				"star_points": 5,
+				"title": "BUREAU DES FRONTIÈRES",
+				"subtitle": "SECTEUR DE HALVEK",
+				"serial": "VF-204",
+				"date": "1986",
+				"ink": "violet",
+				"seed": 5,
+				"wear": 0.33
+			}
+		},
+		"points": [
+			{
+				"id": "seal",
+				"label": "Sceau du Bureau des frontières",
+				"detail_left": "Étoile à cinq branches, Bureau des frontières (sceau conforme)",
+				"detail_right": "Étoile à cinq branches, Bureau des frontières (sceau conforme)",
+				"note": "Le sceau est authentique : ce n'est pas un faux. Crier à la falsification ici serait une erreur."
+			},
+			{
+				"id": "title",
+				"label": "Titre de transport",
+				"detail_left": "Permis de visite familiale (Halvek)",
+				"detail_right": "Permis de visite familiale (Halvek)"
+			},
+			{
+				"id": "holder",
+				"label": "Titulaire",
+				"detail_left": "Résident de Brenec identifié",
+				"detail_right": "Résident de Brenec identifié"
+			},
+			{
+				"id": "validity",
+				"label": "Validité du permis",
+				"detail_left": "Valable pour le secteur de Halvek",
+				"detail_right": "Échu depuis le 20.10.1986, date du durcissement des passages",
+				"decisive": true,
+				"note": "Le permis n'est pas faux : il a expiré le jour même du durcissement du régime. Un papier vrai, rendu illégal par une règle nouvelle."
+			}
+		],
+		"establishes": "halvek.movements",
+		"advantage": {
+			"note_facts": [
+				"f_manifest_residents",
+				"f_manifest_expired"
+			],
+			"set_flags": {
+				"53402.permits_checked": true
+			},
+			"text": "Les sceaux sont authentiques et les voyageurs sont des résidents de Brenec : ce ne sont pas des agents, mais des familles. Leurs permis n'étaient pas faux — ils ont seulement expiré le jour où le régime des passages s'est durci."
+		}
 	}
 }

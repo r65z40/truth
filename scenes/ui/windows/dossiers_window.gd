@@ -24,6 +24,8 @@ const MAX_SELECTED_FACTS := 2
 ## Le joueur part sur le terrain (interrogatoire ou perquisition) : le bureau
 ## ouvre l'écran de scène.
 signal field_requested(case_id: String)
+## Le joueur ouvre le mini-jeu « comparer deux pièces » (facultatif).
+signal comparison_requested(case_id: String)
 ## Le joueur veut poser une pièce à côté, dans sa propre fenêtre.
 signal document_window_requested(case_id: String, document_id: String)
 ## Le formulaire de conclusion demande l'avis de VERITAS.
@@ -71,6 +73,7 @@ var _doc_icon: TextureRect
 @onready var _request_button: Button = %RequestButton
 @onready var _consult_button: Button = %ConsultButton
 @onready var _field_button: Button = %FieldButton
+@onready var _compare_button: Button = %CompareButton
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
 
 
@@ -81,8 +84,9 @@ func _ready() -> void:
 	_request_button.pressed.connect(request_next_document)
 	_consult_button.pressed.connect(consult_superior)
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
+	_compare_button.pressed.connect(func() -> void: comparison_requested.emit(current_case_id))
 	# Actions secondaires en plus petit, pour que le pied de pièce tienne sur une ligne.
-	for button: Button in [_request_button, _consult_button, _field_button]:
+	for button: Button in [_request_button, _consult_button, _field_button, _compare_button]:
 		button.add_theme_font_size_override("font_size", 14)
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
@@ -523,6 +527,16 @@ func _refresh_actions(can_decide: bool) -> void:
 		_field_button.disabled = not GameState.can_start_field(current_case_id) \
 				or not WorkTime.check(GameState.hours_used, scene.get("time_action", "interrogate")).ok
 		_field_button.tooltip_text = scene.get("title", "")
+	# Comparer deux pièces : mini-jeu facultatif, sans coût d'heures, dès qu'un
+	# dossier propose une confrontation de clichés ou de registres. Une pièce
+	# n'est confrontable qu'une fois trouvée (ex. après la perquisition).
+	var comparison := ComparisonRules.get_comparison(CaseLibrary.get_case(current_case_id))
+	_compare_button.visible = not comparison.is_empty() \
+			and EventRules.are_conditions_met(comparison.get("conditions", {}), GameState.get_condition_state())
+	if _compare_button.visible:
+		var done: bool = comparison.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
+		_compare_button.text = "COMPARER : FAIT" if done else "COMPARER"
+		_compare_button.tooltip_text = comparison.get("title", "")
 
 
 ## Libellés des pièces demandées aujourd'hui, pas encore arrivées.

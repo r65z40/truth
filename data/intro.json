@@ -17,9 +17,14 @@
 			"text": "Chaque jour, des dossiers de citoyens signalés. Lisez les pièces, notez ce qui compte, et cherchez deux éléments qui ne disent pas la même chose : c'est une contradiction."
 		},
 		{
+			"art": "clock",
+			"title": "HUIT HEURES PAR JOUR",
+			"text": "Une journée de service dure huit heures, de 08h00 à 16h00. Lire une pièce, la noter, confronter deux éléments : c'est gratuit. Mais interroger, perquisitionner, demander une archive ou consulter votre supérieur coûte des heures. Vous pouvez tirer jusqu'à deux heures supplémentaires — au prix de votre soirée. Vous ne pourrez pas tout faire sur chaque dossier : choisir où creuser, c'est déjà une décision."
+		},
+		{
 			"art": "signature",
 			"title": "CHAQUE SIGNATURE COMPTE",
-			"text": "Vous signez ensuite une conclusion. Elle pèse sur le sujet, sur sa famille, et sur vous. Le système VERITAS vous conseillera. Il n'a pas toujours raison."
+			"text": "Vous signez ensuite une conclusion. Derrière le dossier il y a quelqu'un : une archive vous montrera son destin — transféré, relaxé, déporté — et parfois une phrase de sa famille. Bien choisir, c'est peser la preuve ET ce qu'elle coûte à un être humain. Le système VERITAS vous conseillera. Il n'a pas toujours raison."
 		}
 	]
 }

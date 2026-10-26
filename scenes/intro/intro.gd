@@ -1,5 +1,5 @@
 extends ColorRect
-## Introduction d'une nouvelle partie : quatre pages illustrées (data/intro.json),
+## Introduction d'une nouvelle partie : pages illustrées (data/intro.json),
 ## puis le bureau. Passable à tout moment.
 
 const DATA_PATH := "res://data/intro.json"

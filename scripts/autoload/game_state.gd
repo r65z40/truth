@@ -172,6 +172,34 @@ func confront_facts(case_id: String, fact_a_id: String, fact_b_id: String) -> St
 	return key
 
 
+## Mini-jeu « comparer deux pièces » : confronte les deux pièces désignées par le
+## bloc "comparison" du dossier. Si le trait décisif diffère, établit la
+## contradiction correspondante et verse les faits liés au carnet (l'avantage),
+## exactement comme une confrontation réussie. Déterministe et idempotent : le
+## jeu ne décide rien, il révèle ce que les pièces contiennent déjà.
+## Renvoie {established, notes, text}, ou {} si rien à comparer ou avantage déjà acquis.
+func apply_comparison(case_id: String) -> Dictionary:
+	var case_data := CaseLibrary.get_case(case_id)
+	var comparison := ComparisonRules.get_comparison(case_data)
+	if comparison.is_empty():
+		return {}
+	var case_state := get_case_state(case_id)
+	var established: String = comparison.get("establishes", "")
+	if established != "" and established in case_state.contradictions_found:
+		return {}
+	var advantage: Dictionary = comparison.get("advantage", {})
+	if established != "":
+		case_state.contradictions_found.append(established)
+	var notes: Array = []
+	for fact_id in advantage.get("note_facts", []):
+		note_fact(case_id, fact_id)
+		notes.append(CaseLibrary.get_fact(case_data, fact_id).get("label", fact_id))
+	_merge_flags(advantage.get("set_flags", {}))
+	_apply_effects(advantage.get("effects", {}))
+	state_changed.emit()
+	return {"established": established, "notes": notes, "text": advantage.get("text", "")}
+
+
 ## Fonction débloquée à ce stade de la partie (voir Features).
 func is_feature_unlocked(feature: String) -> bool:
 	return Features.is_unlocked(feature, get_condition_state())

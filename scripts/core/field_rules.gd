@@ -59,15 +59,61 @@ static func available_options(scene: Dictionary, scene_state: Dictionary, state:
 	if scene_state.get("finished", false) or turns_left(scene, scene_state) == 0:
 		return []
 	var chosen: Array = scene_state.get("chosen", [])
-	return scene.get("options", []).filter(func(option: Dictionary) -> bool:
+	return all_options(scene).filter(func(option: Dictionary) -> bool:
 		return not option.id in chosen and are_conditions_met(option.get("conditions", {}), state, noted))
 
 
 static func get_option(scene: Dictionary, option_id: String) -> Dictionary:
-	for option in scene.get("options", []):
+	for option in all_options(scene):
 		if option.id == option_id:
 			return option
 	return {}
+
+
+# --- Pièces (perquisitions en plusieurs pièces reliées par des portes) --------
+#
+# Une scène peut découper son décor en pièces : chaque pièce a sa propre image,
+# ses endroits à fouiller (options) et ses portes vers d'autres pièces. Changer
+# de pièce est gratuit ; le budget de fouilles reste commun à toute la scène.
+# Une scène sans "rooms" garde ses "options" à plat, comme avant.
+
+static func has_rooms(scene: Dictionary) -> bool:
+	return not scene.get("rooms", []).is_empty()
+
+
+## Toutes les options de la scène, à plat (fusion des pièces s'il y en a).
+static func all_options(scene: Dictionary) -> Array:
+	if not has_rooms(scene):
+		return scene.get("options", [])
+	var out: Array = []
+	for room: Dictionary in scene.rooms:
+		out.append_array(room.get("options", []))
+	return out
+
+
+## Pièce où l'on arrive : celle marquée "start", sinon la première.
+static func start_room(scene: Dictionary) -> Dictionary:
+	for room: Dictionary in scene.get("rooms", []):
+		if room.get("start", false):
+			return room
+	var rooms: Array = scene.get("rooms", [])
+	return rooms[0] if not rooms.is_empty() else {}
+
+
+static func get_room(scene: Dictionary, room_id: String) -> Dictionary:
+	for room: Dictionary in scene.get("rooms", []):
+		if room.get("id", "") == room_id:
+			return room
+	return {}
+
+
+## Identifiant de la pièce qui contient cette option, ou "".
+static func room_of_option(scene: Dictionary, option_id: String) -> String:
+	for room: Dictionary in scene.get("rooms", []):
+		for option: Dictionary in room.get("options", []):
+			if option.get("id", "") == option_id:
+				return room.get("id", "")
+	return ""
 
 
 ## Réaction du sujet à un élément présenté : la présentation qui cite cet

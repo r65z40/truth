@@ -24,7 +24,7 @@ var guidance := true
 ## Agrandit toute l'interface (lisibilité, petits écrans).
 var ui_scale := 1.0
 ## Scènes de terrain en 3D (sinon décors dessinés en 2D, plus légers).
-var field_3d := true
+var field_3d := false
 ## Volume de la musique, de 0 (coupée) à 1.
 var music_volume := 0.8
 ## Langue de l'interface et des dossiers ("fr" ou "en").

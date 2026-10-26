@@ -36,6 +36,8 @@ func _draw() -> void:
 			_draw_dossier()
 		"signature":
 			_draw_signature()
+		"clock":
+			_draw_clock()
 	draw_set_transform(Vector2.ZERO)
 
 
@@ -163,3 +165,34 @@ func _draw_signature() -> void:
 		var x := 520 + i * 32
 		draw_circle(Vector2(x, 80), 10, _c("building_far").lightened(0.15))
 		draw_rect(Rect2(x - 12, 92, 24, 40), _c("building_far").lightened(0.15))
+
+
+## Horloge de service : une journée de 8 heures, l'aiguille proche du soir.
+func _draw_clock() -> void:
+	draw_rect(Rect2(Vector2.ZERO, CANVAS), _c("sky"))
+	draw_rect(Rect2(0, 236, CANVAS.x, 64), _c("wood"))
+	var center := Vector2(320, 140)
+	var radius := 96.0
+	# Cadran.
+	draw_circle(center + Vector2(5, 7), radius, Color(0, 0, 0, 0.35))
+	draw_circle(center, radius, _c("paper"))
+	draw_arc(center, radius, 0, TAU, 48, _c("ink"), 3.0)
+	# Secteur des heures de bureau (08h -> 16h) mis en évidence.
+	draw_arc(center, radius - 10, -PI / 2.0, -PI / 2.0 + TAU * (8.0 / 12.0), 32, _c("accent"), 6.0)
+	# Graduations.
+	for h in 12:
+		var a := -PI / 2.0 + TAU * h / 12.0
+		var outer := center + Vector2(cos(a), sin(a)) * (radius - 4)
+		var inner := center + Vector2(cos(a), sin(a)) * (radius - (16 if h % 3 == 0 else 10))
+		draw_line(inner, outer, _c("ink"), 3.0 if h % 3 == 0 else 1.5)
+	# Aiguilles : fin de journée approchant.
+	var hour_angle := -PI / 2.0 + TAU * (7.3 / 12.0)
+	var minute_angle := -PI / 2.0 + TAU * (20.0 / 60.0)
+	draw_line(center, center + Vector2(cos(hour_angle), sin(hour_angle)) * (radius * 0.52), _c("ink"), 5.0)
+	draw_line(center, center + Vector2(cos(minute_angle), sin(minute_angle)) * (radius * 0.78), _c("alert"), 3.0)
+	draw_circle(center, 6, _c("ink"))
+	# Feuillet « 08h00 -> 16h00 ».
+	draw_rect(Rect2(248, 250, 144, 34), _c("paper"))
+	draw_rect(Rect2(248, 250, 144, 34), _c("ink"), false, 2.0)
+	for i in 3:
+		draw_rect(Rect2(262, 260 + i * 7, 116 - i * 24, 3), Color(_c("ink"), 0.5))

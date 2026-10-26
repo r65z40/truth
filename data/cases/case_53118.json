@@ -307,11 +307,86 @@
 					"quote": "Le conseil de paroisse lui a préféré Mme Ewa TILL"
 				}
 			]
+		},
+		{
+			"id": "visit_report",
+			"type": "report",
+			"title": "Compte rendu de visite, salle de la chorale Sainte-Agathe",
+			"source": "Section 4, visite conduite par l'inspecteur A. VOSK",
+			"reliability": "B",
+			"date": "1986-11-10",
+			"conditions": {
+				"requires_flags": [
+					"field.visit_53118.started"
+				]
+			},
+			"veritas_remark": "Éléments relevés sur place, après les faits. Valeur administrative limitée selon le système.",
+			"body": "Visite de la salle de répétition de la paroisse Sainte-Agathe, en présence d'Ewa TILL. Éléments relevés :",
+			"facts": [
+				{
+					"id": "f_cho_vigil",
+					"key": "choir.curfew",
+					"value": "Veillée de la fête patronale",
+					"label": "Partition annotée : la veillée chantait l'office de la Sainte-Agathe (9 novembre)",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.organ"
+						]
+					}
+				},
+				{
+					"id": "f_cho_register",
+					"key": "choir.list",
+					"value": "Sept émargements",
+					"label": "Feuille d'émargement de la veillée : sept signatures, non onze",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.entrance_book"
+						]
+					}
+				},
+				{
+					"id": "f_cho_permit",
+					"key": "choir.curfew",
+					"value": "Permis de veillée affiché",
+					"label": "Avis du Bureau des cultes (permis n° 86/212) encore épinglé au panneau",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.board"
+						]
+					}
+				},
+				{
+					"id": "f_cho_absent",
+					"key": "choir.absent",
+					"value": "FALK hospitalisé",
+					"label": "Mot de la chorale au panneau : prompt rétablissement à Roman FALK, hôpital n° 2",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.board"
+						]
+					}
+				},
+				{
+					"id": "f_cho_kolb",
+					"key": "choir.source",
+					"value": "Rival écarté du poste d'organiste",
+					"label": "Sacristie : candidature d'organiste d'Ignác KOLB (1985), poste attribué à TILL",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.vestry"
+						]
+					}
+				}
+			]
 		}
 	],
 	"decisions": [
 		{
 			"id": "arrest_all",
+			"stamp": "DÉPORTÉS",
+			"fate_line": "Les onze sont déportés au camp de Dolenz. Roman FALK, 81 ans, meurt pendant le transfert ; le registre inscrit « défaillance cardiaque ». La chorale ne chantera plus.",
+			"fate_quote": "Une mère, au guichet, sans crier : « Mon fils chantait. C'est tout. Il chantait. »",
 			"label": "Recommander l'arrestation des onze",
 			"description": "Rassemblement de défiance après le couvre-feu : transmission de la liste au service des interpellations.",
 			"archive": "Les onze membres de la chorale Sainte-Agathe sont arrêtés. La Section 7 évoque un « réseau paroissial ».",
@@ -368,6 +443,8 @@
 		},
 		{
 			"id": "restrict",
+			"stamp": "DÉPORTÉE",
+			"fate_line": "Ewa TILL est déportée seule, comme « organisatrice ». À Sainte-Agathe, l'orgue reste fermé ; personne n'ose en jouer.",
 			"label": "Ne retenir que l'organisatrice",
 			"description": "Écarter les simples choristes et ne transmettre que le nom de la chef de chœur, comme responsable du rassemblement.",
 			"archive": "Seule Ewa TILL est arrêtée, comme organisatrice. Les autres noms sont rayés de la liste.",
@@ -404,6 +481,7 @@
 		},
 		{
 			"id": "clear",
+			"stamp": "RELAXÉE",
 			"label": "Conclure à une veillée autorisée",
 			"description": "La veillée bénéficiait d'un permis. Le dossier est renvoyé au Bureau des cultes, sans suite.",
 			"archive": "Le dossier 53118 est classé sans suite : la veillée était autorisée. La chorale n'est pas inquiétée.",
@@ -535,5 +613,50 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 53118 : votre question",
 		"body": "Inspecteur,\n\nOnze noms d'un seul informateur, c'est beaucoup pour un homme qui regardait de loin. Et une chorale qui chante un dimanche précis chante rarement sans raison.\n\nLes cultes signent des permis. Les paroisses tiennent des registres. On garde ces papiers quelque part. Je ne vous en dis pas plus.\n\nR. MAZUR"
-	}
+	},
+	"comparison": {
+		"id": "signalement_vs_archives",
+		"title": "Signalement contre archives paroissiales",
+		"intro": "Le signalement de l'informateur et les pièces du fonds Sainte-Agathe parlent de la même soirée. Confrontez-les, point par point : ce qui concorde, et ce qui ne tient pas.",
+		"left": {
+			"label": "Signalement (I. KOLB)"
+		},
+		"right": {
+			"label": "Fonds Sainte-Agathe"
+		},
+		"points": [
+			{
+				"id": "date",
+				"label": "Soirée concernée",
+				"detail_left": "Dimanche 9 novembre, à l'église Sainte-Agathe",
+				"detail_right": "Veillée de la Sainte-Agathe, le 9 novembre"
+			},
+			{
+				"id": "count",
+				"label": "Nombre de participants",
+				"detail_left": "Onze participants dénoncés",
+				"detail_right": "Sept personnes ont émargé au registre de veillée"
+			},
+			{
+				"id": "authorized",
+				"label": "Autorisation de la veillée",
+				"detail_left": "Rassemblement non autorisé, après le couvre-feu",
+				"detail_right": "Permis de veillée n° 86/212, délivré le 14.10.1986 par le Bureau des cultes",
+				"decisive": true,
+				"note": "Un permis signé avant le durcissement du couvre-feu autorise la veillée : l'accusation de « rassemblement non autorisé » ne tient pas."
+			}
+		],
+		"establishes": "choir.curfew",
+		"advantage": {
+			"note_facts": [
+				"f_arc_permit",
+				"f_arc_register"
+			],
+			"set_flags": {
+				"53118.permit_compared": true
+			},
+			"text": "La veillée était autorisée, et sept personnes ont émargé, non onze. Le permis et le registre contredisent le signalement : vous pouvez les opposer lors de votre conclusion."
+		}
+	},
+	"field_scene": "visit_53118"
 }

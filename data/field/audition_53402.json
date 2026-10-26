@@ -4,6 +4,7 @@
 	"case_id": "53402",
 	"type": "interrogation",
 	"button": "INTERROGER",
+	"image": "res://assets/field/interrogatoire_53402.webp",
 	"title": "AUDITION  //  SALLE N° 3, SOUS-SOL DU MINISTÈRE",
 	"time_action": "interrogate",
 	"turns": 5,

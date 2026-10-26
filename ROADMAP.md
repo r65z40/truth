@@ -108,8 +108,64 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Visite de la boulangerie n° 12 (52044) et perquisition chez Karel BENES (52310)
 - [ ] Soirées dans des lieux dessinés (cuisine, loge d'ADLER, cabine du hall)
 - [x] Décors 3D (demande de fen du 25.10) : moteur `FieldStage3D`, audition d'ORLIK et appartement des SEDLAR en formes simples, réglage 2D/3D
+- [x] Images de terrain livrées par fen : clé `image` par scène, affichées en fond (cadrage « cover »), prioritaires sur la 3D (réglage `field_3d` désormais optionnel, désactivé par défaut)
+- [x] Perquisition en plusieurs pièces : clé `rooms` + `doors`, on clique une porte pour changer de pièce (gratuit), budget de fouilles commun. Pilote : 40921 (salon + chambre)
+- [x] Zones cliquables en fractions de l'image (calées sur l'objet), image affichée en entier (cadre 16:9) + éditeur de zones (F2 : glisser un rectangle → coordonnées copiées)
+- [x] Fond vidéo en boucle (clé `video`, .ogv) pour animer la scène : priorité vidéo > image > 3D > dessin, zones calées pareil
+- [x] Visite de la salle de la chorale Sainte-Agathe (53118, acte 2) : 5 endroits, compte rendu de visite, second chemin vers le permis, les sept émargements et le mobile de l'informateur
+- [x] Interface terrain immersive (demande de fen du 26.10) : l'image occupe tout l'écran, texte (bandeau bas) et choix (panneau droit) en surimpression translucide, zones cliquables au centre
+- [ ] Repositionner finement les zones des autres scènes (51307, 52044, 52310, 53517) avec l'éditeur
 - [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
 - [ ] Décors 3D de la boulangerie n° 12 et de l'appartement 40
+
+## Impact et profondeur (demande de fen du 26.10, doc de synthèse)
+
+- [x] Levier n°1 : carte d'archive du destin du sujet après chaque signature
+      (photo d'identité réutilisée, tampon TRANSFÉRÉ/RELAXÉ/MUTÉ…, ligne de
+      conséquence = archive de la décision, parfois une phrase d'un proche ;
+      `FateRules` + `ArchiveCard`, tampons dans les 7 dossiers)
+- [x] Levier n°4 (journal) : chaque décision des 7 dossiers a sa une du lendemain
+      dans « La Voix de Velmira » (version officielle, euphémismes qui contrastent
+      avec la carte de destin)
+- [x] Ton plus dur (demande de fen du 26.10) : camps (Dolenz), exécutions, morts,
+      déportations sur les dénouements graves (tampons DÉPORTÉ/EXÉCUTÉ/CONDAMNÉ +
+      `fate_line` crue sur la carte, archive officielle conservée plus pudique)
+- [ ] Levier n°4 (suite) : conséquences aussi dans les soirées et sur le bureau
+- [x] Levier n°3 (début) : semer le père dès l'acte 1 — extrait d'état civil scellé dans
+      le dossier personnel (« Père : A. VOSK, horloger… ████ 1971 », mention SCELLÉE),
+      visible dès le 2e jour, pour sentir vite que quelque chose autour du père est caché
+      (s'ajoute aux traces existantes : intro, horloge sans aiguilles, soirées Lena/ADLER)
+- [ ] Levier n°3 (suite) : relier le motif de l'horloge au père, « atelier VOSK » entrevu, date 1971 qui revient
+- [x] Levier n°2 (acte 2) : les gens reviennent selon ce qu'on a signé — KOLB récidive
+      (on devient son outil), la mère de la chorale attend en bas, ou KOLB dénonce
+      l'inspecteur si on a classé ; retours PETRAS/informateur déjà en place
+- [ ] Levier n°2 (acte 3) : retour de la fille SEDLAR — avec l'écriture de l'acte 3
+- Mini-jeux (demande de fen du 26.10) — facultatifs, déterministes, avec avantage :
+  - [x] Comparer deux pièces — VARGA : le joueur juge chaque trait (concorde/diffère)
+        sur les mentions exactes des deux fiches ; pièges (nom/adresse identiques) ;
+        bien juger établit `varga.mark` et verse les faits au carnet
+        (ComparisonRules + ComparisonScreen + bouton COMPARER, photos facultatives)
+  - [x] Comparer deux pièces — chorale 53118 (acte 2) : signalement vs archives
+        paroissiales, sans photo ; établit `choir.curfew` (veillée autorisée) et
+        débloque la relaxe prouvée
+  - [x] Authentifier les papiers (« traquer les faussaires ») — cheminot 53402 :
+        cachets dessinés en code (OfficialMark), le joueur confronte un permis en
+        règle au permis présenté ; sceau authentique (ne pas crier au faux),
+        validité échue ; établit `halvek.movements` (vraies familles, permis réels)
+  - [x] Démasquer un vrai faux — signature imitée (SEDLAR, 40921) : signature
+        authentique du Dr MARKO vs copie au crayon (tracé tremblé, encre « crayon »
+        dans OfficialMark) ; le nom concorde (piège : ne pas accuser un nom exact),
+        la graphie trahit la copie ; confrontable seulement après la perquisition
+        (matelas) ; établit `sedlar.papers.forged` → l'arrestation devient appuyée
+  - [x] Authentifier un carnet de rationnement — carnets du cimetière (KOVAC, 52044) :
+        carnet VRAI (tampon District 4 dessiné, OfficialMark) au nom d'un homme mort
+        sept semaines plus tôt ; piège « faussaire » inversé (ne pas accuser le vrai
+        carnet, la fraude est au Bureau) ; établit `horvat.status` → disculpe la
+        gérante et débloque la mise en cause prouvée du Bureau (DRAZEK)
+  - [ ] Amplifier encore : un vrai sceau truqué (étoile à 4 branches) dans un dossier
+        avec un faussaire au tampon ; billets de transport ; signatures côte à côte
+  - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2, à écrire)
+  - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
 
 ## Prochaine itération
 
