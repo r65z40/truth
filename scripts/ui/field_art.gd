@@ -29,6 +29,13 @@ var image_path := "":
 		_texture = load(value) if value != "" and ResourceLoader.exists(value) else null
 		queue_redraw()
 var _texture: Texture2D = null
+## Mode vidéo : la scène joue une vidéo de fond (gérée par FieldScreen, posée
+## derrière). FieldArt ne dessine alors rien (fond transparent) et sert seulement
+## de support aux zones cliquables, qui couvrent tout le cadre 16:9.
+var video_mode := false:
+	set(value):
+		video_mode = value
+		queue_redraw()
 
 
 func _init() -> void:
@@ -50,6 +57,8 @@ func _offset() -> Vector2:
 ## de dessin CANVAS mis à l'échelle. Les zones cliquables exprimées en fractions
 ## s'y réfèrent, donc elles tombent toujours au même endroit de l'image.
 func image_rect() -> Rect2:
+	if video_mode:
+		return Rect2(Vector2.ZERO, size)
 	if _texture == null:
 		return Rect2(_offset(), CANVAS * get_canvas_scale())
 	var tex := _texture.get_size()
@@ -86,6 +95,10 @@ func has_image() -> bool:
 
 
 func _draw() -> void:
+	# En mode vidéo, FieldArt est transparent : la vidéo (posée derrière par
+	# FieldScreen) occupe le cadre, et seules les zones cliquables restent dessus.
+	if video_mode:
+		return
 	# Image de fond si elle existe : fond sombre pour les éventuelles marges, puis
 	# l'image dans le repère de dessin, alignée sur les zones cliquables (spots).
 	if _texture != null:

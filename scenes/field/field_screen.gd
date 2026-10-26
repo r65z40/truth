@@ -19,6 +19,8 @@ var _room_id := ""
 var _editor: Control
 var _placing := false
 var _drag_start := Vector2.INF
+## Lecteur de la vidéo de fond en boucle (facultative, clé "video" d'une scène).
+var _video: VideoStreamPlayer
 
 @onready var _title_label: Label = %TitleLabel
 @onready var _turns_label: Label = %TurnsLabel
@@ -38,6 +40,15 @@ func _ready() -> void:
 	_stage.hide()
 	_art.get_parent().add_child(_stage)
 	_stage.spot_pressed.connect(_on_stage_spot)
+	# Vidéo de fond en boucle, posée DERRIÈRE l'Art (même cadre 16:9) : l'Art reste
+	# au-dessus, transparent, pour porter les zones cliquables.
+	_video = VideoStreamPlayer.new()
+	_video.expand = true
+	_video.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_video.hide()
+	_art.get_parent().add_child(_video)
+	_art.get_parent().move_child(_video, 0)
+	_video.finished.connect(_video.play)  # lecture en boucle
 	# Éditeur de zones : surface posée au-dessus de l'image (même cadre 16:9 que
 	# l'Art, géré par l'AspectRatioContainer), inerte tant qu'il n'est pas activé.
 	_editor = Control.new()
@@ -98,10 +109,30 @@ func _apply_room_art() -> void:
 	_art.subject = scene.get("subject", {}).get("photo", {})
 	_art.scene = "interrogation" if scene.type == "interrogation" else view.get("art", scene.get("art", ""))
 	_art.image_path = view.get("image", scene.get("image", ""))
+	# Priorité : vidéo en boucle > image livrée > 3D (si activée) > décor dessiné.
+	var has_video := _set_video(view.get("video", scene.get("video", "")))
 	var has_image: bool = _art.has_image()
-	var use_3d := not has_image and Settings.field_3d and _stage.load_stage(_art.scene, scene.get("subject", {}))
+	var use_3d := not has_video and not has_image and Settings.field_3d \
+			and _stage.load_stage(_art.scene, scene.get("subject", {}))
+	_art.video_mode = has_video
 	_stage.visible = use_3d
+	# L'Art reste visible en vidéo (transparent, il porte les zones) ; caché en 3D.
 	_art.visible = not use_3d
+
+
+## Lance (ou arrête) la vidéo de fond. Renvoie vrai si une vidéo est jouée.
+func _set_video(path: String) -> bool:
+	if path != "" and ResourceLoader.exists(path):
+		var stream: VideoStream = load(path)
+		if stream != null:
+			if _video.stream != stream:
+				_video.stream = stream
+				_video.play()
+			_video.show()
+			return true
+	_video.stop()
+	_video.hide()
+	return false
 
 
 ## Passe dans une autre pièce (gratuit, ne consomme pas de tour).
@@ -334,5 +365,6 @@ func _on_leave() -> void:
 		_log.append(GameState.field_leave(scene.id))
 		_refresh()
 		return
+	_set_video("")  # arrêter la vidéo en quittant la scène
 	hide()
 	finished.emit()

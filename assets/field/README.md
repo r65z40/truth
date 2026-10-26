@@ -12,6 +12,14 @@ par une sans jamais casser une scène.
 - L'image est affichée en entier (jamais déformée ni rognée), dans un cadre 16:9.
   Cadre un décor lisible, objets examinables bien visibles, sans interface ni texte.
 
+## Fond vidéo (animation)
+
+- Pour animer une scène, une clé `video` (`res://assets/field/<nom>.ogv`) joue une
+  vidéo **en boucle** derrière les zones cliquables, à la place de l'image.
+- Format **Ogg Theora (.ogv)**, le seul lu nativement par Godot (pas de .mp4/.webm
+  sans greffon). La vidéo doit être **16:9**. Priorité : vidéo > image > décor.
+- Les zones (`spot`) restent en fractions, calées pareil sur la vidéo.
+
 ## Zones cliquables (`spot`) et placement
 
 - Une `spot` est `[x, y, largeur, hauteur]` en **fractions de l'image**, chaque

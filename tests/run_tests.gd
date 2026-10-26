@@ -769,6 +769,10 @@ func test_field_background_image() -> void:
 	var r := art.to_local_rect([0.25, 0.5, 0.5, 0.25])
 	check(is_equal_approx(r.position.x, img.position.x + img.size.x * 0.25) and is_equal_approx(r.size.x, img.size.x * 0.5),
 			"une zone en fractions tombe exactement sur l'image")
+	# En mode vidéo, FieldArt est transparent et les zones couvrent tout le cadre 16:9.
+	art.video_mode = true
+	check(art.image_rect() == Rect2(Vector2.ZERO, art.size), "en mode vidéo, les zones couvrent tout le cadre")
+	art.video_mode = false
 	art.free()
 
 
@@ -869,6 +873,9 @@ func test_field_rooms() -> void:
 	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
 	get_tree().root.add_child(screen)
 	check(screen.preview("40921"), "aperçu de la perquisition")
+	# Une vidéo absente ne se joue pas : la scène retombe sur l'image (puis le dessin).
+	check(not screen._set_video("res://assets/field/inexistante.ogv") and not screen._set_video(""),
+			"vidéo manquante : pas de lecture")
 	var salon := screen.get_choice_ids()
 	check("stove" in salon and not "mattress" in salon, "le salon ne propose que ses propres endroits")
 	check(not screen.is_3d() and screen.get_node("%Art").visible \
