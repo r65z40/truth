@@ -84,6 +84,13 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
       les pièces restent ; le rappel « Vous pouvez… » et le compteur d'avancement
       (doublons du bandeau « À FAIRE ») sont masqués, puis réapparaissent une fois
       le joueur rodé (retour de fen du 26.10 : « trop d'info à l'écran »)
+- [x] Bandeau « À FAIRE » plus contrasté : bande vert foncé (style « OBJET DE
+      L'ENQUÊTE »), texte clair bien lisible (retour de fen : « pas assez contrasté »)
+- [x] Dossier zéro (n° 40000, Ida NOVAK) : tutoriel sur rails, deux pièces, une seule
+      contradiction évidente (l'adresse déclarée ≠ le registre), enjeu nul. Guidé en
+      premier, avant le 40921 ; apprend la boucle lire → noter → confronter → conclure
+- [x] Indice « où chercher » : pendant le tutoriel, quand deux notes portent sur le
+      même point (même clé), le carnet invite à les confronter, sans dire le verdict
 - [x] Écran principal plus visuel : remplacé par la refonte « bureau à fenêtres » ci-dessous
 
 ## En cours : interface « bureau à fenêtres » (validée par fen le 25.10, proposition `interface_v2.md` du projet)

@@ -176,6 +176,21 @@ func _in_tutorial() -> bool:
 	return Settings.guidance and GameState.concluded_case_count() < TUTORIAL_UNTIL_CONCLUDED
 
 
+## Vrai si au moins deux éléments notés portent sur le même point (même clé) :
+## ils parlent de la même personne ou du même fait et méritent d'être confrontés.
+## Ne dit pas s'ils se contredisent : c'est au joueur de trancher.
+func _notes_share_point(case_data: Dictionary, noted_facts: Array) -> bool:
+	var keys := {}
+	for fact_id in noted_facts:
+		var key: String = CaseLibrary.get_fact(case_data, fact_id).get("key", "")
+		if key == "":
+			continue
+		if keys.has(key):
+			return true
+		keys[key] = true
+	return false
+
+
 ## Rappel des actions possibles, utile une fois le tutoriel passé (acte 1).
 ## Pendant le tutoriel il fait doublon avec le bandeau « À FAIRE » : on le masque.
 func _refresh_actions_help() -> void:
@@ -620,8 +635,15 @@ func _refresh_notebook() -> void:
 	# au début, le carnet se révèle quand il sert.
 	_notebook.visible = current_case_id != "" and not case_state.noted_facts.is_empty()
 	_confront_button.disabled = selected_facts.size() != MAX_SELECTED_FACTS
-	if case_state.noted_facts.is_empty() and _confront_result.text == "":
-		_set_confront_result("Notez des éléments (passages soulignés), puis sélectionnez-en deux à confronter.")
+	# Indice « où chercher » : tant qu'aucune contradiction n'est établie (et hors
+	# échec de confrontation affiché), on oriente le joueur sans donner la réponse.
+	if selected_facts.is_empty() and case_state.contradictions_found.is_empty() and not last_confront_failed:
+		if case_state.noted_facts.is_empty():
+			if _confront_result.text == "":
+				_set_confront_result("Notez des éléments (passages soulignés), puis sélectionnez-en deux à confronter.")
+		elif _in_tutorial() and _notes_share_point(case_data, case_state.noted_facts):
+			# Deux notes portent sur le même point : repère discret, pendant l'apprentissage.
+			_set_confront_result("Deux de vos notes portent sur le même point. Sélectionnez-les toutes les deux, puis CONFRONTER.")
 	elif selected_facts.size() == 1:
 		_set_confront_result("Sélectionnez un second élément à confronter.")
 
