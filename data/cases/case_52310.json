@@ -661,30 +661,48 @@
 		},
 		"points": [
 			{
+				"id": "name",
+				"label": "Nom et prénom",
+				"detail_left": "VARGA, Teodor",
+				"detail_right": "VARGA, Teodor",
+				"note": "Le nom concorde : c'est pour cela que la substitution passe inaperçue."
+			},
+			{
+				"id": "address",
+				"label": "Adresse déclarée",
+				"detail_left": "Bloc 11, app. 40, quai des Tanneurs",
+				"detail_right": "Bloc 11, app. 40, quai des Tanneurs",
+				"note": "Même adresse : l'occupant actuel du logement a été photographié à la place du poète."
+			},
+			{
 				"id": "face",
 				"label": "Forme du visage",
-				"field": "face"
+				"field": "face",
+				"detail_left": "Visage allongé",
+				"detail_right": "Visage rond"
 			},
 			{
 				"id": "hair",
 				"label": "Chevelure",
-				"field": "hair"
+				"field": "hair",
+				"detail_left": "Cheveux dégarnis, bruns",
+				"detail_right": "Cheveux bouclés, grisonnants"
 			},
 			{
 				"id": "glasses",
 				"label": "Lunettes",
-				"field": "glasses"
-			},
-			{
-				"id": "facial_hair",
-				"label": "Pilosité du visage",
-				"field": "facial_hair"
+				"field": "glasses",
+				"detail_left": "Sans lunettes",
+				"detail_right": "Avec lunettes"
 			},
 			{
 				"id": "mark",
 				"label": "Signe particulier",
 				"field": "mark",
-				"decisive": true
+				"detail_left": "Cicatrice à la joue droite (accident d'atelier, 1951)",
+				"detail_right": "Néant",
+				"decisive": true,
+				"note": "Une cicatrice de 1951 ne s'efface pas. C'est la preuve : ces deux fiches ne montrent pas le même homme."
 			}
 		],
 		"establishes": "varga.mark",

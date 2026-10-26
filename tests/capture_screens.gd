@@ -26,7 +26,7 @@ func _capture_all() -> void:
 	var intro: Node = load("res://scenes/intro/intro.tscn").instantiate()
 	get_tree().root.add_child(intro)
 	for page in intro.pages.size():
-		await _snap("02%s_introduction" % "abcd"[page])
+		await _snap("02%s_introduction" % "abcdef"[page])
 		if page < intro.pages.size() - 1:
 			intro.next_page()
 	intro.queue_free()
@@ -131,11 +131,21 @@ func _capture_all() -> void:
 	await _snap("21_dossier_52310_fiche_1979")
 	desk.windows.dossiers.select_document("poem_1979")
 	await _snap("22_dossier_52310_poeme")
-	# Mini-jeu « comparer deux pièces » : les deux clichés de VARGA côte à côte.
+	# Mini-jeu « comparer deux pièces » : le joueur juge chaque trait des deux fiches.
 	desk.open_comparison("52310")
+	var cmp_case := CaseLibrary.get_case("52310")
+	var cmp := ComparisonRules.get_comparison(cmp_case)
+	var cmp_left := ComparisonRules.photo_of(cmp_case, cmp.left.photo_document)
+	var cmp_right := ComparisonRules.photo_of(cmp_case, cmp.right.photo_document)
+	var cmp_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
+	var cmp_points: Array = cmp.points
+	for i in cmp_points.size():
+		var differs: bool = ComparisonRules.compare_point(cmp_points[i], cmp_left, cmp_right).differs
+		var vbox: Node = cmp_cards[i].get_child(0).get_child(0)
+		var judge: Node = vbox.get_child(vbox.get_child_count() - 1)
+		judge.get_child(1 if differs else 0).button_pressed = true
 	await _snap("22b_comparer_pieces")
-	for button in desk.comparison_screen.get_node("%PointsBox").get_children():
-		button.pressed.emit()
+	desk.comparison_screen.get_node("%ValidateButton").pressed.emit()
 	await _snap("22c_comparer_resultat")
 	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
 	await get_tree().process_frame

@@ -1052,9 +1052,27 @@ func test_comparison() -> void:
 			decisive = point
 	check(decisive.get("field", "") == "mark", "le trait décisif est le signe particulier")
 	var compared := ComparisonRules.compare_point(decisive, left, right)
-	check(compared.differs and compared.decisive, "le signe particulier diffère entre les deux clichés")
-	check(not ComparisonRules.compare_point({"field": "mark"}, {"mark": "none"}, {"mark": "none"}).differs,
-			"deux clichés identiques : aucune différence")
+	check(compared.differs and compared.decisive, "le signe particulier diffère entre les deux pièces")
+	check(compared.left.contains("Cicatrice") and compared.right == "Néant", "les mentions exactes sont affichées")
+	# Les mentions explicites priment sur le trait de photo.
+	check(not ComparisonRules.compare_point({"detail_left": "X", "detail_right": "X"}, {}, {}).differs,
+			"deux mentions identiques : aucune différence")
+	# Notation : le joueur juge chaque trait. Tout juste = avantage ; une erreur = refus.
+	var right_verdicts := {}
+	for point in comparison.points:
+		right_verdicts[point.id] = ComparisonRules.compare_point(point, left, right).differs
+	check(ComparisonRules.grade(comparison, left, right, right_verdicts).all_ok, "jugement entièrement correct : validé")
+	var missed := right_verdicts.duplicate()
+	missed[decisive.id] = false
+	var bad := ComparisonRules.grade(comparison, left, right, missed)
+	check(not bad.all_ok and not bad.decisive_ok and bad.wrong == 1, "rater le trait décisif : refusé")
+	var invented := right_verdicts.duplicate()
+	invented["name"] = true
+	check(ComparisonRules.grade(comparison, left, right, invented).wrong == 1,
+			"inventer une différence sur un trait identique : erreur")
+	var incomplete := right_verdicts.duplicate()
+	incomplete.erase(decisive.id)
+	check(not ComparisonRules.grade(comparison, left, right, incomplete).all_ok, "trait non jugé : incomplet")
 	# Appliquer la comparaison établit la contradiction et verse les faits au carnet.
 	GameState.new_game()
 	var advantage := GameState.apply_comparison("52310")
@@ -1808,7 +1826,7 @@ func test_full_session_flow() -> void:
 	menu.get_node("%NewGameButton").pressed.emit()
 	await _wait_for_scene("Intro")
 	var intro := get_tree().current_scene
-	check(intro.name == "Intro" and intro.get_node("%PageLabel").text == "1 / 4", "« Nouvelle partie » ouvre l'introduction")
+	check(intro.name == "Intro" and intro.get_node("%PageLabel").text == "1 / 5", "« Nouvelle partie » ouvre l'introduction")
 	intro.next_page()
 	check(intro.get_node("%TitleLabel").text == "VOUS ÊTES A. VOSK", "page suivante")
 	intro.get_node("%SkipButton").pressed.emit()

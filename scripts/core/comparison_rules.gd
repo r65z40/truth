@@ -1,19 +1,26 @@
 class_name ComparisonRules
 extends RefCounted
-## Mini-jeu « comparer deux pièces » (logique pure). Deux documents sont posés
-## côte à côte ; le joueur pointe, trait par trait, ce qui diffère. Le jeu ne
-## fabrique rien : il révèle une différence déjà écrite dans les pièces. Trouver
-## le trait décisif établit une contradiction du dossier (avantage), exactement
-## comme une confrontation du carnet — en plus direct.
+## Mini-jeu « comparer deux pièces » (logique pure). Deux pièces du dossier sont
+## posées côte à côte ; pour chaque trait, le joueur juge lui-même si les deux
+## mentions concordent ou non. Le jeu ne tranche pas à sa place et n'invente
+## rien : la vérité de chaque trait est déjà écrite dans les pièces. Bien juger
+## le trait décisif — sans fabriquer de fausses différences — établit une
+## contradiction du dossier (l'avantage), comme une confrontation du carnet.
 ##
 ## Bloc "comparison" d'un dossier (facultatif) :
 ## {
 ##   "id", "title", "intro",
-##   "left":  {"label", "photo_document"},   pièce de gauche (photo)
-##   "right": {"label", "photo_document"},   pièce de droite (photo)
-##   "points": [ {"id", "label", "field", "decisive"?} ],  traits comparés
-##   "establishes": "<clé de contradiction>",             posée si le trait décisif diffère
-##   "advantage": {"note_facts": [...], "set_flags": {...}, "effects": {...}, "text"}
+##   "left":  {"label", "photo_document"},   pièce de gauche
+##   "right": {"label", "photo_document"},   pièce de droite
+##   "points": [ {
+##       "id", "label",
+##       "field"?,                            trait de photo (face/hair/glasses/...)
+##       "detail_left"?, "detail_right"?,     mention exacte portée par chaque pièce
+##       "decisive"?,                         trait qui porte la contradiction
+##       "note"?                              précision affichée après le jugement
+##   } ],
+##   "establishes": "<clé de contradiction>",             posée si la comparaison est juste
+##   "advantage": {"note_facts", "set_flags", "effects", "text"}
 ## }
 
 ## Rendu lisible des valeurs d'un trait de photo (voir IdPhoto).
@@ -39,18 +46,46 @@ static func photo_of(case_data: Dictionary, document_id: String) -> Dictionary:
 	return {}
 
 
-## Compare un trait entre les deux photos. Renvoie
-## {differs, decisive, left, right} (left/right : libellés lisibles).
+## Compare un trait entre les deux pièces. Utilise la mention exacte
+## (detail_left/detail_right) si elle est fournie, sinon le trait de photo.
+## Renvoie {differs, decisive, left, right} (left/right : textes à afficher).
 static func compare_point(point: Dictionary, left_photo: Dictionary, right_photo: Dictionary) -> Dictionary:
-	var field: String = point.get("field", "")
-	var left_value: Variant = left_photo.get(field, _default_for(field))
-	var right_value: Variant = right_photo.get(field, _default_for(field))
+	var left_detail: String = point.get("detail_left", "")
+	var right_detail: String = point.get("detail_right", "")
+	var differs: bool
+	if left_detail != "" or right_detail != "":
+		differs = left_detail != right_detail
+	else:
+		var field: String = point.get("field", "")
+		var left_value: Variant = left_photo.get(field, _default_for(field))
+		var right_value: Variant = right_photo.get(field, _default_for(field))
+		differs = left_value != right_value
+		left_detail = _label(field, left_value)
+		right_detail = _label(field, right_value)
 	return {
-		"differs": left_value != right_value,
+		"differs": differs,
 		"decisive": point.get("decisive", false),
-		"left": _label(field, left_value),
-		"right": _label(field, right_value),
+		"left": left_detail,
+		"right": right_detail,
 	}
+
+
+## Note le jugement du joueur. `verdicts` : {point_id: true si « différent »}.
+## Un trait non jugé compte comme une erreur. Renvoie
+## {wrong, all_ok, decisive_ok} : all_ok = aucune erreur (condition de l'avantage).
+static func grade(comparison: Dictionary, left_photo: Dictionary, right_photo: Dictionary,
+		verdicts: Dictionary) -> Dictionary:
+	var wrong := 0
+	var decisive_ok := true
+	for point in comparison.get("points", []):
+		var point_id: String = point.get("id", "")
+		var truth: bool = compare_point(point, left_photo, right_photo).differs
+		# Trait non jugé : erreur (il faut se prononcer sur chaque pièce).
+		if not verdicts.has(point_id) or bool(verdicts[point_id]) != truth:
+			wrong += 1
+			if point.get("decisive", false):
+				decisive_ok = false
+	return {"wrong": wrong, "all_ok": wrong == 0, "decisive_ok": decisive_ok}
 
 
 static func _default_for(field: String) -> Variant:
