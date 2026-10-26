@@ -55,6 +55,7 @@ func _run() -> void:
 		"test_field_bakery_visit",
 		"test_field_benes_search",
 		"test_field_chorale",
+		"test_fate_card",
 		"test_field_stages_are_valid",
 		"test_field_stage_3d",
 		"test_act_review",
@@ -989,6 +990,33 @@ func test_field_chorale() -> void:
 	GameState.new_game()
 
 
+func test_fate_card() -> void:
+	# Clore le dossier de départ : le sujet est relaxé, la carte reprend l'archive.
+	GameState.new_game()
+	_advance_until_assigned("40921")
+	GameState.apply_decision("40921", "close")
+	var fate := FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921"))
+	check(not fate.is_empty(), "une carte de destin existe après la signature")
+	check(fate.subject_name == "SEDLAR, Anton Pavel", "nom du sujet repris du dossier")
+	check(fate.stamp == "RELAXÉ", "clore le dossier : sujet relaxé")
+	check(fate.line.begins_with("Dossier clos"), "ligne de conséquence = archive de la décision")
+	check(not fate.photo.is_empty(), "photo d'identité du sujet réutilisée")
+	check(fate.quote == "", "pas de citation sur ce dénouement")
+	# Arrestation : sujet transféré, et une phrase de la famille accompagne le destin.
+	GameState.new_game()
+	_advance_until_assigned("40921")
+	GameState.apply_decision("40921", "arrest")
+	var harsh := FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921"))
+	check(harsh.stamp == "TRANSFÉRÉ", "arrestation : sujet transféré")
+	check(harsh.quote != "", "une phrase de la famille accompagne l'arrestation")
+	# Sans décision, aucune carte.
+	GameState.new_game()
+	_advance_until_assigned("40921")
+	check(FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921")).is_empty(),
+			"aucune carte tant que le dossier n'est pas signé")
+	GameState.new_game()
+
+
 func test_career_evaluation() -> void:
 	var rules := Career.act_rules(1)
 	check(rules.cases == ["40921", "51307", "52044", "52310"] and int(rules.to_rank) == Career.Rank.INSPECTOR_2ND, "règle de l'acte 1")
@@ -1818,7 +1846,14 @@ func test_investigation_and_conclusion_flow() -> void:
 	conclusion.get_node("%Choices").get_node("Choice_investigate").pressed.emit()
 	conclusion.get_node("%SignButton").pressed.emit()
 	await get_tree().process_frame
-	check(desk.get_open_app() == "messages", "la réponse du supérieur s'affiche aussitôt")
+	# Le destin du sujet s'affiche d'abord, puis la réponse du supérieur.
+	check(desk.archive_card.visible, "la carte de destin du sujet s'affiche après la signature")
+	check(desk.archive_card.get_node("%StampLabel").text == "EN SURSIS", "maintenu sous surveillance : en sursis")
+	check(desk.archive_card.get_node("%SubjectName").text == "SEDLAR, Anton Pavel", "la carte nomme le sujet")
+	desk.archive_card.get_node("%ContinueButton").pressed.emit()
+	await get_tree().process_frame
+	check(not desk.archive_card.visible, "la carte se ferme sur CONTINUER")
+	check(desk.get_open_app() == "messages", "la réponse du supérieur s'affiche ensuite")
 	check(desk.windows.messages.current_message_id == "40921.investigate_found", "c'est la bonne réponse")
 	check(desk.windows.messages.get_node("%MessageSubject").text.contains("enquête complémentaire accordée"),
 			"l'objet du message est affiché")

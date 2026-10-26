@@ -263,6 +263,8 @@
 	"decisions": [
 		{
 			"id": "transmit",
+			"stamp": "TRANSFÉRÉ",
+			"fate_quote": "Sa femme a perdu la pension d'invalidité le lendemain. Elle n'a pas écrit ; elle est venue, et elle est restée debout dans le couloir.",
 			"label": "Transmettre le signalement",
 			"description": "Donner suite au signalement de l'informateur : interpellation pour activité clandestine.",
 			"archive": "Interpellé sur signalement d'informateur. Son épouse a perdu la pension d'invalidité le temps de l'enquête.",
@@ -297,6 +299,7 @@
 		},
 		{
 			"id": "dismiss",
+			"stamp": "RELAXÉ",
 			"label": "Classer le signalement",
 			"description": "Aucune suite contre PETRAS. Le signalement reste au dossier de l'informateur.",
 			"archive": "Signalement classé. PETRAS a gardé son poste. L'informateur n'a pas été inquiété.",
@@ -330,6 +333,7 @@
 		},
 		{
 			"id": "turn",
+			"stamp": "RELAXÉ",
 			"label": "Signaler le faux signalement",
 			"description": "Retourner la procédure : signaler que l'informateur a dénoncé par intérêt, alors qu'il est lui-même visé.",
 			"archive": "Le signalement de CHAUDRON a été versé au dossier 51307 comme manœuvre. La Milice du District 9 l'a très mal pris.",

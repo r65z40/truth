@@ -424,6 +424,7 @@
 	"decisions": [
 		{
 			"id": "arrest_baker",
+			"stamp": "TRANSFÉRÉE",
 			"label": "Recommander l'arrestation de la gérante",
 			"description": "Détournement de tickets au point de vente : transmission au service des interpellations.",
 			"archive": "Arrêtée pour détournement de rations. Boulangerie n° 12 fermée, gérance confiée au Bureau du ravitaillement.",
@@ -458,6 +459,7 @@
 		},
 		{
 			"id": "report_bureau",
+			"stamp": "MISE HORS DE CAUSE",
 			"label": "Mettre en cause le Bureau du ravitaillement",
 			"description": "Transmettre le dossier au contrôle interne : carnets délivrés au nom de personnes décédées.",
 			"archive": "Mise hors de cause. Le dossier du Bureau du ravitaillement est transmis à la hiérarchie.",
@@ -517,6 +519,7 @@
 		},
 		{
 			"id": "close",
+			"stamp": "CLASSÉ",
 			"label": "Classer : erreur de comptage",
 			"description": "Aucune suite. L'écart sera attribué au recensement.",
 			"archive": "Dossier classé : erreur de comptage. Les carnets restent en circulation.",

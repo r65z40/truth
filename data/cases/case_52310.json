@@ -407,6 +407,7 @@
 	"decisions": [
 		{
 			"id": "arrest",
+			"stamp": "TRANSFÉRÉ",
 			"label": "Recommander l'arrestation de l'auteur",
 			"description": "Message codé à destination d'un réseau de passage : transmission au service des interpellations.",
 			"archive": "« Teodor VARGA » arrêté au quai des Tanneurs. Procès public annoncé par la Section 7.",
@@ -449,6 +450,7 @@
 		},
 		{
 			"id": "no_code",
+			"stamp": "RELAXÉ",
 			"label": "Conclure à l'absence de message codé",
 			"description": "Le poème est une dédicace. Le dossier est renvoyé au Service de la censure.",
 			"archive": "Le poème est déclaré sans message codé. Le recueil reste retiré des bibliothèques.",
@@ -485,6 +487,7 @@
 		},
 		{
 			"id": "identity_error",
+			"stamp": "SUSPENDU",
 			"label": "Signaler une erreur d'identité",
 			"description": "Le sujet de la fiche ne correspond pas à l'auteur de 1979. Demande de vérification à l'état civil.",
 			"archive": "Erreur d'identité signalée. La Section 7 conteste ; le dossier est suspendu.",

@@ -118,6 +118,16 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
 - [ ] Décors 3D de la boulangerie n° 12 et de l'appartement 40
 
+## Impact et profondeur (demande de fen du 26.10, doc de synthèse)
+
+- [x] Levier n°1 : carte d'archive du destin du sujet après chaque signature
+      (photo d'identité réutilisée, tampon TRANSFÉRÉ/RELAXÉ/MUTÉ…, ligne de
+      conséquence = archive de la décision, parfois une phrase d'un proche ;
+      `FateRules` + `ArchiveCard`, tampons dans les 7 dossiers)
+- [ ] Levier n°2 : faire revenir les gens (épargnés/condamnés) sur 2-3 figures
+- [ ] Levier n°3 : semer le père dès l'acte 1 (horloge, nom, date 1971)
+- [ ] Levier n°4 : rendre les conséquences visibles (journal, soirées, bureau)
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)

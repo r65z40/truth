@@ -366,6 +366,7 @@
 	"decisions": [
 		{
 			"id": "arrest",
+			"stamp": "TRANSFÉRÉ",
 			"label": "Transmettre à la sûreté des frontières",
 			"description": "Complicité de passage et faux en écritures : transmission au titre du décret 86-31.",
 			"archive": "Transmis à la sûreté des frontières. Jugé pour complicité de franchissement clandestin. Le poste de Brenec a été confié à un agent de la capitale.",
@@ -401,6 +402,7 @@
 		},
 		{
 			"id": "reassign",
+			"stamp": "MUTÉ",
 			"label": "Proposer une sanction administrative",
 			"description": "Faux dans le registre : retrait de la ligne frontalière et mutation, sans poursuites.",
 			"archive": "Retiré de la ligne de Halvek, muté au triage de Velmira. Blâme inscrit au dossier. Les voyageurs n'ont pas été inquiétés.",
@@ -434,6 +436,7 @@
 		},
 		{
 			"id": "clear",
+			"stamp": "RELAXÉ",
 			"label": "Classer — défaillance technique",
 			"description": "Aucune suite. Les retards sont imputés à la signalisation, comme consignés.",
 			"archive": "Dossier classé pour défaillance technique. L'aiguilleur a gardé son poste au km 47. La garde-frontière a demandé qui avait signé.",

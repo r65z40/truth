@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/act_end/act_review_screen.tscn" id="9_act_review"]
 [ext_resource type="PackedScene" path="res://scenes/ui/coach/coach_overlay.tscn" id="10_coach"]
 [ext_resource type="PackedScene" path="res://scenes/field/field_screen.tscn" id="11_field"]
+[ext_resource type="PackedScene" path="res://scenes/ui/archive_card.tscn" id="11_archive"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/terminal_window.tscn" id="12_terminal_window"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/settings_window.tscn" id="13_settings"]
 [ext_resource type="Script" path="res://scenes/desk/desktop_wallpaper.gd" id="14_wallpaper"]
@@ -331,6 +332,9 @@ autowrap_mode = 3
 unique_name_in_owner = true
 
 [node name="ActReviewScreen" parent="." instance=ExtResource("9_act_review")]
+unique_name_in_owner = true
+
+[node name="ArchiveCard" parent="." instance=ExtResource("11_archive")]
 unique_name_in_owner = true
 
 [node name="DayTransition" type="ColorRect" parent="."]

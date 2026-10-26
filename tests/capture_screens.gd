@@ -184,6 +184,13 @@ func _capture_all() -> void:
 	desk.field_screen.choose("floorboard")
 	await _snap("33_perquisition_benes")
 	desk.field_screen.hide()
+	# Carte de destin du sujet après une signature (levier d'impact).
+	var fate_state: Dictionary = GameState.get_case_state("40921").duplicate()
+	fate_state["decision"] = "arrest"
+	fate_state["contradictions_found"] = ["x"]
+	desk.archive_card.show_fate(FateRules.fate_for(CaseLibrary.get_case("40921"), fate_state))
+	await _snap("33b_carte_destin")
+	desk.archive_card.hide()
 	# Acte 2 : dossier 53118 La Chorale (RACCORDEMENT + comparaison avec l'archive).
 	GameState.day_index = 6
 	GameState.assign_case("53118")

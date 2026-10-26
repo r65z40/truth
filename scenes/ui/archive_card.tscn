@@ -1,0 +1,87 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/archive_card.gd" id="1_card"]
+
+[node name="ArchiveCard" type="ColorRect"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.025, 0.022, 0.88)
+script = ExtResource("1_card")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Card" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+theme_type_variation = &"DocumentPanel"
+
+[node name="Pad" type="MarginContainer" parent="Center/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="Center/Card/Pad"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Kicker" type="Label" parent="Center/Card/Pad/VBox"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "ARCHIVE DU MINISTÈRE  //  DESTIN DU SUJET"
+
+[node name="Row" type="HBoxContainer" parent="Center/Card/Pad/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="PhotoHolder" type="VBoxContainer" parent="Center/Card/Pad/VBox/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Names" type="VBoxContainer" parent="Center/Card/Pad/VBox/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="SubjectName" type="Label" parent="Center/Card/Pad/VBox/Row/Names"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+autowrap_mode = 3
+
+[node name="StampLabel" type="Label" parent="Center/Card/Pad/VBox/Row/Names"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StampLabel"
+
+[node name="LineLabel" type="Label" parent="Center/Card/Pad/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DocumentLabel"
+autowrap_mode = 3
+
+[node name="QuoteLabel" type="Label" parent="Center/Card/Pad/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+autowrap_mode = 3
+
+[node name="ContinueButton" type="Button" parent="Center/Card/Pad/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "CONTINUER"
