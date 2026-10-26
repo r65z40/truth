@@ -1104,6 +1104,26 @@ func test_comparison() -> void:
 			"permis et registre versés au carnet")
 	check(DecisionRules.resolve(choir_case, choir_state, "clear").response_id == "clear_proved",
 			"la comparaison débloque la relaxe prouvée de la chorale")
+	# Troisième dossier : authentification de permis (cheminot 53402), avec cachets.
+	# Enjeu « faussaire » : ne pas crier au faux sur un sceau authentique.
+	var permit_case := CaseLibrary.get_case("53402")
+	var permits := ComparisonRules.get_comparison(permit_case)
+	check(not permits.is_empty() and permits.left.mark.kind == "stamp", "le cheminot a une comparaison avec cachets")
+	# Le sceau concorde (vrai), la validité diffère (permis échu) : c'est un vrai permis expiré.
+	check(not ComparisonRules.compare_point(permits.points[0], {}, {}).differs, "le sceau est authentique : concorde")
+	var permit_points: Array = permits.points
+	var validity: Dictionary = permit_points[permit_points.size() - 1]
+	check(validity.decisive and ComparisonRules.compare_point(validity, {}, {}).differs, "la validité diffère : permis échu")
+	var permit_verdicts := {}
+	for point in permits.points:
+		permit_verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(permits, {}, {}, permit_verdicts).all_ok, "authentification correcte")
+	# Crier à la falsification sur le sceau authentique est une erreur.
+	var false_alarm := permit_verdicts.duplicate()
+	false_alarm["seal"] = true
+	check(not ComparisonRules.grade(permits, {}, {}, false_alarm).all_ok, "accuser un vrai sceau de faux : erreur")
+	check(GameState.apply_comparison("53402").established == "halvek.movements", "l'authentification établit halvek.movements")
+	check("f_manifest_residents" in GameState.get_case_state("53402").noted_facts, "les résidents sont versés au carnet")
 	GameState.new_game()
 
 

@@ -148,8 +148,13 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
   - [x] Comparer deux pièces — chorale 53118 (acte 2) : signalement vs archives
         paroissiales, sans photo ; établit `choir.curfew` (veillée autorisée) et
         débloque la relaxe prouvée
+  - [x] Authentifier les papiers (« traquer les faussaires ») — cheminot 53402 :
+        cachets dessinés en code (OfficialMark), le joueur confronte un permis en
+        règle au permis présenté ; sceau authentique (ne pas crier au faux),
+        validité échue ; établit `halvek.movements` (vraies familles, permis réels)
+  - [ ] Amplifier : une vraie falsification à démasquer (sceau truqué / signature
+        imitée, ex. signature du médecin de SEDLAR, f_srch_forgery) + billets
   - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2, à écrire)
-  - [ ] Vérifier une signature / un tampon (ORLIK acte 1, permis de la chorale)
   - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
 
 ## Prochaine itération

@@ -253,6 +253,20 @@ func _capture_all() -> void:
 	desk.windows.dossiers.select_case("53402")
 	desk.windows.dossiers.select_document("veritas_link")
 	await _snap("39_cheminot_raccordement")
+	# Authentification des permis de passage (cachets visuels, « traquer les faussaires »).
+	desk.open_comparison("53402")
+	await _snap("39b_authentifier_permis")
+	var permit_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
+	var permit_cmp: Dictionary = ComparisonRules.get_comparison(CaseLibrary.get_case("53402"))
+	var permit_pts: Array = permit_cmp.points
+	for i in permit_pts.size():
+		var differs: bool = ComparisonRules.compare_point(permit_pts[i], {}, {}).differs
+		var vbox: Node = permit_cards[i].get_child(0).get_child(0)
+		vbox.get_child(vbox.get_child_count() - 1).get_child(1 if differs else 0).button_pressed = true
+	desk.comparison_screen.get_node("%ValidateButton").pressed.emit()
+	await _snap("39c_permis_resultat")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.windows.dossiers.open_conclusion()
 	await _snap("40_cheminot_veritas")
 	desk.windows.dossiers.close()

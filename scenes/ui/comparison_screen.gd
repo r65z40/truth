@@ -13,6 +13,9 @@ var _case_id: String = ""
 var _comparison: Dictionary = {}
 var _left_photo := IdPhoto.new()
 var _right_photo := IdPhoto.new()
+## Cachets / signatures : l'élément officiel à authentifier (« traquer les faussaires »).
+var _left_mark := OfficialMark.new()
+var _right_mark := OfficialMark.new()
 ## point_id -> true si le joueur a jugé « différent ».
 var _verdicts: Dictionary = {}
 var _resolved: bool = false
@@ -33,6 +36,8 @@ var _resolved: bool = false
 func _ready() -> void:
 	_left_holder.add_child(_left_photo)
 	_right_holder.add_child(_right_photo)
+	_left_holder.add_child(_left_mark)
+	_right_holder.add_child(_right_mark)
 	_validate_button.pressed.connect(_on_validate)
 	_close_button.pressed.connect(_on_close)
 	hide()
@@ -53,12 +58,16 @@ func open_case(case_id: String) -> bool:
 	var right: Dictionary = _comparison.get("right", {})
 	_left_label.text = left.get("label", "")
 	_right_label.text = right.get("label", "")
-	# Les photos sont facultatives : une comparaison de registres ou de rapports
-	# n'en a pas, et l'écran se passe alors des portraits.
+	# Visuels facultatifs : portrait d'identité (photo) OU élément officiel à
+	# authentifier (cachet/signature, clé "mark"). Un registre n'a ni l'un ni l'autre.
 	_left_photo.photo = ComparisonRules.photo_of(case_data, left.get("photo_document", ""))
 	_right_photo.photo = ComparisonRules.photo_of(case_data, right.get("photo_document", ""))
 	_left_photo.visible = not _left_photo.photo.is_empty()
 	_right_photo.visible = not _right_photo.photo.is_empty()
+	_left_mark.mark = left.get("mark", {})
+	_right_mark.mark = right.get("mark", {})
+	_left_mark.visible = not _left_mark.mark.is_empty()
+	_right_mark.visible = not _right_mark.mark.is_empty()
 	_build_points()
 	_feedback.text = ""
 	_feedback.visible = false
