@@ -4,6 +4,7 @@
 	"case_id": "52044",
 	"type": "search",
 	"button": "VISITE",
+	"image": "res://assets/field/lieu_52044_boutique.webp",
 	"title": "VISITE  //  BOULANGERIE D'ÉTAT N° 12, RUE DU MOULIN",
 	"time_action": "search_home",
 	"turns": 4,

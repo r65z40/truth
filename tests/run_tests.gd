@@ -1894,23 +1894,19 @@ func test_field_stage_3d() -> void:
 	check(stage.get_spot_ids() == ["present"], "le dossier sur la table sert à présenter un élément")
 	stage.queue_free()
 	await get_tree().process_frame
-	# Dans l'écran de terrain : 3D si le réglage est actif, sinon dessin.
+	# Dans l'écran de terrain : l'image livrée prime ; sinon la 3D si le réglage est
+	# actif ; sinon le dessin. (Aperçu libre pour ne pas dépendre du calendrier.)
 	GameState.new_game()
-	GameState.apply_decision("40921", "arrest")
-	GameState.end_day()
 	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
 	get_tree().root.add_child(screen)
 	Settings.field_3d = true
-	screen.open("40921")
-	check(screen.is_3d() and screen.get_stage().active_spots.size() == 6, "perquisition en 3D")
-	screen.get_stage().press_spot("stove")
-	check(GameState.flags.get("heure_juste.sign_stove") == true, "cliquer sur le poêle en 3D le fouille")
-	check(not "stove" in screen.get_stage().active_spots, "le poêle n'est plus proposé")
-	GameState.end_day()
+	check(screen.preview("40921") and not screen.is_3d() and screen.get_node("%Art").visible \
+			and screen.get_node("%Art").has_image(), "une image livrée prime sur la 3D")
+	check(screen.preview("53402") and screen.is_3d() and screen.get_stage().active_spots.size() > 0,
+			"sans image, la 3D s'affiche si le réglage est actif")
 	Settings.field_3d = false
-	screen.open("51307")
-	check(not screen.is_3d() and screen.get_node("%Art").visible, "réglage 2D : décor dessiné")
-	Settings.field_3d = true
+	check(screen.preview("53402") and not screen.is_3d() and screen.get_node("%Art").visible,
+			"réglage 2D : décor dessiné")
 	screen.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()

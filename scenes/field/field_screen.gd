@@ -64,7 +64,8 @@ func _show_scene(new_scene: Dictionary) -> void:
 	_art.subject = scene.get("subject", {}).get("photo", {})
 	_art.scene = "interrogation" if scene.type == "interrogation" else scene.get("art", "")
 	_art.image_path = scene.get("image", "")
-	# Une image de fond livrée prend le pas sur le décor 3D comme sur le dessin.
+	# L'image livrée prime ; sinon la 3D si le réglage optionnel est actif ; sinon
+	# le décor dessiné.
 	var has_image: bool = _art.has_image()
 	var use_3d := not has_image and Settings.field_3d and _stage.load_stage(_art.scene, scene.get("subject", {}))
 	_stage.visible = use_3d

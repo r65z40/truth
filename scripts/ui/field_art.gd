@@ -65,7 +65,12 @@ func _draw() -> void:
 	# l'image dans le repère de dessin, alignée sur les zones cliquables (spots).
 	if _texture != null:
 		draw_rect(Rect2(Vector2.ZERO, size), _c("paper_dark").darkened(0.6))
-		draw_texture_rect(_texture, to_local_rect([0, 0, CANVAS.x, CANVAS.y]), false)
+		# L'image couvre tout le contrôle en gardant ses proportions (recadrée si besoin),
+		# pour ne pas la déformer quel que soit le format livré.
+		var tex_size := _texture.get_size()
+		var cover := maxf(size.x / tex_size.x, size.y / tex_size.y)
+		var draw_size := tex_size * cover
+		draw_texture_rect(_texture, Rect2((size - draw_size) / 2.0, draw_size), false)
 		return
 	# Le décor déborde du repère : mur en haut, sol en bas, sans bandes noires.
 	var horizon := _offset().y + 230.0 * get_canvas_scale()

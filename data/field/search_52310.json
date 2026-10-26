@@ -4,6 +4,7 @@
 	"case_id": "52310",
 	"type": "search",
 	"button": "PERQUISITION",
+	"image": "res://assets/field/search_52310_salon.webp",
 	"title": "PERQUISITION  //  BLOC 11, APP. 40, QUAI DES TANNEURS",
 	"time_action": "search_home",
 	"turns": 4,
