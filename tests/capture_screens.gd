@@ -131,6 +131,14 @@ func _capture_all() -> void:
 	await _snap("21_dossier_52310_fiche_1979")
 	desk.windows.dossiers.select_document("poem_1979")
 	await _snap("22_dossier_52310_poeme")
+	# Mini-jeu « comparer deux pièces » : les deux clichés de VARGA côte à côte.
+	desk.open_comparison("52310")
+	await _snap("22b_comparer_pieces")
+	for button in desk.comparison_screen.get_node("%PointsBox").get_children():
+		button.pressed.emit()
+	await _snap("22c_comparer_resultat")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.windows.dossiers.open_conclusion()
 	await _snap("23_dossier_52310_veritas")
 	desk.windows.veritas.analysis_time = 0.6

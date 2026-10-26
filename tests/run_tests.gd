@@ -56,6 +56,7 @@ func _run() -> void:
 		"test_field_benes_search",
 		"test_field_chorale",
 		"test_fate_card",
+		"test_comparison",
 		"test_field_stages_are_valid",
 		"test_field_stage_3d",
 		"test_act_review",
@@ -1034,6 +1035,41 @@ func test_fate_card() -> void:
 	_advance_until_assigned("40921")
 	check(FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921")).is_empty(),
 			"aucune carte tant que le dossier n'est pas signé")
+	GameState.new_game()
+
+
+func test_comparison() -> void:
+	var case_data := CaseLibrary.get_case("52310")
+	var comparison := ComparisonRules.get_comparison(case_data)
+	check(not comparison.is_empty(), "VARGA propose une comparaison de pièces")
+	var left := ComparisonRules.photo_of(case_data, comparison.left.photo_document)
+	var right := ComparisonRules.photo_of(case_data, comparison.right.photo_document)
+	check(not left.is_empty() and not right.is_empty(), "les deux clichés désignés existent")
+	# Le trait décisif est le signe particulier : cicatrice en 1979, néant en 1986.
+	var decisive := {}
+	for point in comparison.points:
+		if point.get("decisive", false):
+			decisive = point
+	check(decisive.get("field", "") == "mark", "le trait décisif est le signe particulier")
+	var compared := ComparisonRules.compare_point(decisive, left, right)
+	check(compared.differs and compared.decisive, "le signe particulier diffère entre les deux clichés")
+	check(not ComparisonRules.compare_point({"field": "mark"}, {"mark": "none"}, {"mark": "none"}).differs,
+			"deux clichés identiques : aucune différence")
+	# Appliquer la comparaison établit la contradiction et verse les faits au carnet.
+	GameState.new_game()
+	var advantage := GameState.apply_comparison("52310")
+	check(advantage.get("established", "") == "varga.mark", "comparer établit la contradiction varga.mark")
+	var case_state := GameState.get_case_state("52310")
+	check("varga.mark" in case_state.contradictions_found, "la contradiction est enregistrée")
+	check("f_rc_mark" in case_state.noted_facts and "f_var_mark" in case_state.noted_facts,
+			"les deux faits comparés sont versés au carnet")
+	# L'avantage est concret : conclure à l'erreur d'identité est désormais « prouvé ».
+	var proved := DecisionRules.resolve(case_data, case_state, "identity_error")
+	check(proved.response_id == "identity_proved", "la comparaison débloque la conclusion prouvée")
+	# Idempotent : réappliquer ne double rien et ne redonne pas d'avantage.
+	check(GameState.apply_comparison("52310").is_empty(), "l'avantage ne s'acquiert qu'une fois")
+	check(case_state.contradictions_found.count("varga.mark") == 1, "pas de doublon de contradiction")
+	check(GameState.flags.get("52310.identity_compared") == true, "drapeau de comparaison posé")
 	GameState.new_game()
 
 

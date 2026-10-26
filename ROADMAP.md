@@ -140,8 +140,13 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
       (on devient son outil), la mère de la chorale attend en bas, ou KOLB dénonce
       l'inspecteur si on a classé ; retours PETRAS/informateur déjà en place
 - [ ] Levier n°2 (acte 3) : retour de la fille SEDLAR — avec l'écriture de l'acte 3
-- [ ] Mini-jeux (demande de fen du 26.10, doc de propositions) : comparer des pièces,
-      vérifier une signature, fenêtre de surveillance… — en attente du choix de fen
+- Mini-jeux (demande de fen du 26.10) — facultatifs, déterministes, avec avantage :
+  - [x] Comparer deux pièces — VARGA : clichés 1979 vs 1986, la cicatrice décisive
+        établit la contradiction `varga.mark` et verse les faits au carnet
+        (ComparisonRules + ComparisonScreen + bouton COMPARER)
+  - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2)
+  - [ ] Vérifier une signature / un tampon (ORLIK acte 1, permis de la chorale)
+  - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
 
 ## Prochaine itération
 

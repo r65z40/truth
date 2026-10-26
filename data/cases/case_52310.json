@@ -647,5 +647,57 @@
 		"subject": "Dossier 52310 : votre question",
 		"body": "Inspecteur,\n\nJe ne lis pas de poésie. Mais je sais qu'une édition « revue » a toujours été revue par quelqu'un. Demandez-vous qui, et pourquoi on ne vous l'a pas dit.\n\nEt si vous trouvez la réponse, réfléchissez longtemps avant de l'écrire.\n\nR. MAZUR"
 	},
+	"comparison": {
+		"id": "varga_faces",
+		"title": "Confrontation des deux clichés",
+		"intro": "La fiche d'identité de 1986 et la vieille fiche de lecteur de 1979 portent le même nom. Posez les deux clichés côte à côte et relevez, trait par trait, ce qui ne concorde pas.",
+		"left": {
+			"label": "Fiche de lecteur — 1979",
+			"photo_document": "reader_card"
+		},
+		"right": {
+			"label": "Fiche d'identité — 1986",
+			"photo_document": "identity"
+		},
+		"points": [
+			{
+				"id": "face",
+				"label": "Forme du visage",
+				"field": "face"
+			},
+			{
+				"id": "hair",
+				"label": "Chevelure",
+				"field": "hair"
+			},
+			{
+				"id": "glasses",
+				"label": "Lunettes",
+				"field": "glasses"
+			},
+			{
+				"id": "facial_hair",
+				"label": "Pilosité du visage",
+				"field": "facial_hair"
+			},
+			{
+				"id": "mark",
+				"label": "Signe particulier",
+				"field": "mark",
+				"decisive": true
+			}
+		],
+		"establishes": "varga.mark",
+		"advantage": {
+			"note_facts": [
+				"f_rc_mark",
+				"f_var_mark"
+			],
+			"set_flags": {
+				"52310.identity_compared": true
+			},
+			"text": "Une cicatrice à la joue depuis 1951 ne s'efface pas en sept ans. L'homme de 1979 et celui de 1986 ne sont pas la même personne. La contradiction est établie : vous pouvez l'opposer lors de votre conclusion."
+		}
+	},
 	"field_scene": "search_52310"
 }

@@ -44,6 +44,7 @@ const TUTORIAL_BUBBLE_UNTIL_CONCLUDED := 2
 @onready var coach: CoachOverlay = %CoachOverlay
 @onready var field_screen: FieldScreen = %FieldScreen
 @onready var archive_card: ArchiveCard = %ArchiveCard
+@onready var comparison_screen: ComparisonScreen = %ComparisonScreen
 @onready var _toast: Control = %Toast
 @onready var _toast_label: Label = %ToastLabel
 @onready var _target_buttons: Dictionary = {
@@ -123,6 +124,7 @@ func _ready() -> void:
 	coach.target_provider = coach_target
 	coach.dismissed.connect(_on_coach_dismissed)
 	windows.dossiers.field_requested.connect(open_field)
+	windows.dossiers.comparison_requested.connect(open_comparison)
 	windows.dossiers.document_window_requested.connect(open_document_window)
 	windows.dossiers.veritas_requested.connect(open_veritas)
 	windows.archives.case_requested.connect(open_case)
@@ -419,6 +421,12 @@ func open_field(case_id: String) -> void:
 		terminal.print_line("Départ sur le terrain : %s." % field_screen.scene.get("title", ""))
 
 
+## Ouvre le mini-jeu « comparer deux pièces » pour ce dossier (facultatif).
+func open_comparison(case_id: String) -> void:
+	if comparison_screen.open_case(case_id):
+		terminal.print_line("Confrontation de pièces : dossier n° %s." % case_id)
+
+
 ## Retour du terrain : le dossier se rouvre sur le procès-verbal.
 func _on_field_finished() -> void:
 	Music.play_context("desk")
@@ -432,7 +440,7 @@ func _on_field_finished() -> void:
 ## Contrôle que la bulle d'aide signale pour l'étape en cours : l'endroit précis
 ## dans la fenêtre de l'application si elle est au premier plan, sinon son icône.
 func coach_target() -> Control:
-	if evening_screen.visible or act_review_screen.visible or field_screen.visible or _day_transition.visible or archive_card.visible:
+	if evening_screen.visible or act_review_screen.visible or field_screen.visible or _day_transition.visible or archive_card.visible or comparison_screen.visible:
 		return null
 	var app: String = current_step.get("target", "")
 	if windows.has(app) and windows[app].visible:
