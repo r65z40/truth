@@ -51,6 +51,7 @@ func _run() -> void:
 		"test_field_background_image",
 		"test_field_interrogation",
 		"test_field_search",
+		"test_field_rooms",
 		"test_field_bakery_visit",
 		"test_field_benes_search",
 		"test_field_stages_are_valid",
@@ -731,7 +732,15 @@ func test_field_scenes_are_valid() -> void:
 		check(WorkTime.cost(scene.time_action) == 2, "%s : 2 heures" % scene.id)
 		if scene.has("image"):
 			check(scene.image is String and (scene.image as String).begins_with("res://"), "%s : chemin d'image valide" % scene.id)
-		for result in scene.options + scene.get("presentations", []):
+		var room_ids: Array = scene.get("rooms", []).map(func(r: Dictionary) -> String: return r.get("id", ""))
+		for room: Dictionary in scene.get("rooms", []):
+			check(room.get("image", "").begins_with("res://"), "%s : pièce %s avec image" % [scene.id, room.get("id", "")])
+			for door: Dictionary in room.get("doors", []):
+				check(door.get("to", "") in room_ids, "%s : la porte de %s mène à une pièce connue" % [scene.id, room.get("id", "")])
+				var d: Array = door.get("spot", [0, 0, 0, 0])
+				check(d[0] >= 0 and d[1] >= 0 and d[0] + d[2] <= FieldArt.CANVAS.x and d[1] + d[3] <= FieldArt.CANVAS.y,
+						"%s : porte de %s dans le cadre" % [scene.id, room.get("id", "")])
+		for result in FieldRules.all_options(scene) + scene.get("presentations", []):
 			for fact_id in result.get("note", []):
 				var fact := CaseLibrary.get_fact(case_data, fact_id)
 				check(fact.get("conditions", {}).get("requires_flags", []) == [FieldRules.flag_for(scene, result.id)],
@@ -831,6 +840,39 @@ func test_field_search() -> void:
 	check(found == ["f_srch_clock_sign", "f_srch_drawing"], "procès-verbal : ce qui a été trouvé")
 	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
 	check("field_40921_neighbours" in fired, "Vera SEDLAR écrit")
+	GameState.new_game()
+
+
+func test_field_rooms() -> void:
+	# Logique pure : deux pièces, options à plat, appartenance des endroits.
+	var scene := FieldRules.get_scene("search_40921")
+	check(FieldRules.has_rooms(scene), "le 40921 est une perquisition à pièces")
+	check(FieldRules.all_options(scene).size() == 6, "six endroits au total, toutes pièces confondues")
+	check(FieldRules.start_room(scene).id == "salon", "on arrive dans le salon")
+	check(FieldRules.room_of_option(scene, "stove") == "salon" and FieldRules.room_of_option(scene, "mattress") == "chambre",
+			"chaque endroit appartient à une pièce")
+	# Écran : on ne voit que la pièce courante, l'image suit, le budget est commun.
+	GameState.new_game()
+	Settings.field_3d = false
+	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	check(screen.preview("40921"), "aperçu de la perquisition")
+	var salon := screen.get_choice_ids()
+	check("stove" in salon and not "mattress" in salon, "le salon ne propose que ses propres endroits")
+	check(not screen.is_3d() and screen.get_node("%Art").visible \
+			and (screen.get_node("%Art").image_path as String).ends_with("salon.webp"), "l'image du salon est affichée")
+	check(screen._current_view().doors.size() == 1, "une porte mène à la chambre")
+	screen._go_to_room("chambre")
+	var chambre := screen.get_choice_ids()
+	check("mattress" in chambre and not "stove" in chambre, "la chambre propose ses propres endroits")
+	check((screen.get_node("%Art").image_path as String).ends_with("chambre.webp"), "l'image change avec la pièce")
+	# Fouiller dans une pièce entame le budget partagé des deux.
+	screen.choose("mattress")
+	screen._go_to_room("salon")
+	check(FieldRules.turns_left(scene, GameState.get_field_state("search_40921")) == 3,
+			"une fouille entame le budget commun aux deux pièces")
+	screen.queue_free()
+	await get_tree().process_frame
 	GameState.new_game()
 
 
@@ -1859,7 +1901,7 @@ func test_field_stages_are_valid() -> void:
 		var art: String = "interrogation" if scene.type == "interrogation" else scene.art
 		check(FieldStage3D.has_stage(art), "%s : décor 3D %s" % [scene_id, art])
 		var stage := DataLoader.load_json(FieldStage3D.stage_path(art))
-		var option_ids: Array = scene.options.map(func(o: Dictionary) -> String: return o.id)
+		var option_ids: Array = FieldRules.all_options(scene).map(func(o: Dictionary) -> String: return o.id)
 		var spots := []
 		for prop: Dictionary in stage.props:
 			check(prop.has("id") and (prop.has("parts") or prop.get("role", "") == "subject"), "%s : objet %s constructible" % [art, prop.get("id", "?")])

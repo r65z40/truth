@@ -26,6 +26,20 @@ et des indices pour les actes suivants.
   drapeau lu plus tard, la Milice qui apprend la convocation, une famille qui
   voit sa maison retournée, ADLER ou les voisins qui en parlent.
 
+## 1 bis. Images livrées et pièces multiples
+
+- **Image de fond** : une scène peut porter une clé `image` (`res://assets/field/...`).
+  Elle s'affiche en fond, cadrée « cover » (ratio conservé). L'image prime sur la
+  3D ; la 3D (`Settings.field_3d`) devient un réglage optionnel, désactivé par
+  défaut, qui ne sert que pour les scènes sans image. À défaut d'image, le décor
+  dessiné (`art`) reste le secours.
+- **Plusieurs pièces** : une perquisition peut se découper en `rooms`. Chaque pièce
+  a son `id`, son `image` (ou `art`), ses `options` (endroits à fouiller) et ses
+  `doors` (`{to, label, spot}`). On clique une porte pour changer de pièce : c'est
+  gratuit, mais le budget de fouilles (`turns`) reste commun à toute la scène. La
+  pièce d'arrivée est celle marquée `start` (sinon la première). Une scène sans
+  `rooms` garde ses `options` à plat. Pilote : 40921 (salon + chambre).
+
 ## 2. Acte 1, scène par scène
 
 ### 40921 SEDLAR : perquisition rue de l'Unité (bloc 14, app. 61)
