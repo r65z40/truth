@@ -112,6 +112,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Perquisition en plusieurs pièces : clé `rooms` + `doors`, on clique une porte pour changer de pièce (gratuit), budget de fouilles commun. Pilote : 40921 (salon + chambre)
 - [x] Zones cliquables en fractions de l'image (calées sur l'objet), image affichée en entier (cadre 16:9) + éditeur de zones (F2 : glisser un rectangle → coordonnées copiées)
 - [x] Fond vidéo en boucle (clé `video`, .ogv) pour animer la scène : priorité vidéo > image > 3D > dessin, zones calées pareil
+- [x] Visite de la salle de la chorale Sainte-Agathe (53118, acte 2) : 5 endroits, compte rendu de visite, second chemin vers le permis, les sept émargements et le mobile de l'informateur
 - [ ] Repositionner finement les zones des autres scènes (51307, 52044, 52310, 53517) avec l'éditeur
 - [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
 - [ ] Décors 3D de la boulangerie n° 12 et de l'appartement 40
