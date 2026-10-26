@@ -13,12 +13,13 @@ extends Control
 ##   "title": "BUREAU DES CULTES",
 ##   "subtitle": "DISTRICT 2",
 ##   "serial": "86/212",
-##   "ink": "red|black|violet",
+##   "ink": "red|black|violet|crayon",
 ##   "wear": 0.5,                   usure de l'encre (0 = net, 1 = très marqué)
 ##   "tilt": 0.08,                  inclinaison du tampon
 ##   # signature :
 ##   "seed": 7,                     graphie déterministe
 ##   "slant": 0.25,
+##   "tremor": 0.0,                 tracé hésitant d'une copie (0 = sûr, 1 = très tremblé)
 ##   "label": "Dr. HAVEL"           nom sous la signature
 ## }
 
@@ -27,6 +28,7 @@ const INKS := {
 	"black": Color(0.12, 0.12, 0.14),
 	"violet": Color(0.34, 0.16, 0.42),
 	"blue": Color(0.16, 0.22, 0.45),
+	"crayon": Color(0.33, 0.33, 0.36),
 }
 
 var mark: Dictionary = {}:
@@ -137,6 +139,7 @@ func _draw_signature() -> void:
 	var ink := _ink()
 	var seed: int = int(mark.get("seed", 1))
 	var slant: float = mark.get("slant", 0.2)
+	var tremor: float = mark.get("tremor", 0.0)
 	var baseline := 46.0
 	var points := PackedVector2Array()
 	var x := 18.0
@@ -145,9 +148,13 @@ func _draw_signature() -> void:
 		var t := i / 47.0
 		var y := baseline - sin(phase + t * (6.0 + seed % 4)) * 16.0 * (1.0 - t * 0.2) - t * 20.0 * slant
 		y -= sin(phase * 1.7 + t * 13.0) * 4.0
+		# Une signature imitée est tracée lentement : la main tremble et repasse.
+		if tremor > 0.0:
+			y += (_noise(i) - 0.5) * tremor * 11.0
+			x += (_noise(i + 100) - 0.5) * tremor * 2.4
 		points.append(Vector2(x, y))
 		x += 3.6
-	draw_polyline(points, ink, 2.2)
+	draw_polyline(points, ink, 2.2 if tremor <= 0.0 else 1.8)
 	# Paraphe final.
 	var endp: Vector2 = points[points.size() - 1]
 	draw_line(endp, endp + Vector2(10, 8), ink, 2.2)

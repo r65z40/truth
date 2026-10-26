@@ -528,9 +528,11 @@ func _refresh_actions(can_decide: bool) -> void:
 				or not WorkTime.check(GameState.hours_used, scene.get("time_action", "interrogate")).ok
 		_field_button.tooltip_text = scene.get("title", "")
 	# Comparer deux pièces : mini-jeu facultatif, sans coût d'heures, dès qu'un
-	# dossier propose une confrontation de clichés ou de registres.
+	# dossier propose une confrontation de clichés ou de registres. Une pièce
+	# n'est confrontable qu'une fois trouvée (ex. après la perquisition).
 	var comparison := ComparisonRules.get_comparison(CaseLibrary.get_case(current_case_id))
-	_compare_button.visible = not comparison.is_empty()
+	_compare_button.visible = not comparison.is_empty() \
+			and EventRules.are_conditions_met(comparison.get("conditions", {}), GameState.get_condition_state())
 	if _compare_button.visible:
 		var done: bool = comparison.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
 		_compare_button.text = "COMPARER : FAIT" if done else "COMPARER"

@@ -10,8 +10,9 @@ extends RefCounted
 ## Bloc "comparison" d'un dossier (facultatif) :
 ## {
 ##   "id", "title", "intro",
-##   "left":  {"label", "photo_document"},   pièce de gauche
-##   "right": {"label", "photo_document"},   pièce de droite
+##   "conditions"?,                          mêmes conditions que les pièces (requires_flags...)
+##   "left":  {"label", "photo_document"?, "mark"?},   pièce de gauche
+##   "right": {"label", "photo_document"?, "mark"?},   pièce de droite
 ##   "points": [ {
 ##       "id", "label",
 ##       "field"?,                            trait de photo (face/hair/glasses/...)

@@ -333,6 +333,72 @@
 			]
 		}
 	],
+	"comparison": {
+		"id": "marko_signature",
+		"title": "Authentifier une signature",
+		"intro": "La perquisition a sorti du matelas une demande de soins à l'étranger au nom d'Irena SEDLAR. Elle porte la signature du Dr J. MARKO, chef de service à Halvek. Posez à côté la signature authentique du médecin, relevée sur son dossier médical, et examinez-les : le nom, le support, la main. Une imitation se trahit au tracé, jamais au nom.",
+		"conditions": {
+			"requires_flags": [
+				"field.search_40921.mattress"
+			]
+		},
+		"left": {
+			"label": "Dossier médical — signature authentique du Dr J. MARKO",
+			"mark": {
+				"kind": "signature",
+				"seed": 7,
+				"slant": 0.28,
+				"ink": "black",
+				"tremor": 0.0,
+				"label": "Dr J. MARKO"
+			}
+		},
+		"right": {
+			"label": "Demande de soins — signature présentée",
+			"mark": {
+				"kind": "signature",
+				"seed": 7,
+				"slant": 0.22,
+				"ink": "crayon",
+				"tremor": 0.55,
+				"label": "Dr J. MARKO"
+			}
+		},
+		"points": [
+			{
+				"id": "signatory",
+				"label": "Nom du signataire",
+				"detail_left": "Dr J. MARKO, chef de service",
+				"detail_right": "Dr J. MARKO, chef de service",
+				"note": "Le nom copié est le bon : un faussaire prend d'abord soin du nom. Crier au faux sur ce seul point serait une erreur."
+			},
+			{
+				"id": "support",
+				"label": "Support du tracé",
+				"detail_left": "Encre noire, plume d'un praticien",
+				"detail_right": "Mine de crayon grise, effaçable",
+				"note": "Un médecin signe à l'encre. Une signature au crayon se prépare — et s'efface."
+			},
+			{
+				"id": "hand",
+				"label": "Graphie et paraphe",
+				"detail_left": "Geste continu et assuré, paraphe d'un seul trait",
+				"detail_right": "Tracé lent et tremblé, lettres repassées, paraphe hésitant",
+				"decisive": true,
+				"note": "C'est la main qui parle : on imite un nom, pas un geste. Le tremblé du tracé trahit la copie."
+			}
+		],
+		"establishes": "sedlar.papers.forged",
+		"advantage": {
+			"note_facts": [
+				"f_srch_forgery"
+			],
+			"set_flags": {
+				"40921.forgery_authenticated": true
+			},
+			"text": "La signature du Dr MARKO est imitée au crayon : la demande de soins est un faux. SEDLAR a falsifié des papiers pour faire soigner sa mère mourante de l'autre côté de la frontière. La pièce est accablante — et c'est tout le poids de ce que vous en ferez."
+		}
+	},
 	"decisions": [
 		{
 			"id": "arrest",

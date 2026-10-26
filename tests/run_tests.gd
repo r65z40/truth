@@ -1124,6 +1124,39 @@ func test_comparison() -> void:
 	check(not ComparisonRules.grade(permits, {}, {}, false_alarm).all_ok, "accuser un vrai sceau de faux : erreur")
 	check(GameState.apply_comparison("53402").established == "halvek.movements", "l'authentification établit halvek.movements")
 	check("f_manifest_residents" in GameState.get_case_state("53402").noted_facts, "les résidents sont versés au carnet")
+	# Quatrième dossier : démasquer un vrai faux (signature imitée, 40921).
+	# Enjeu « faussaire » : le nom concorde (piège), c'est la main qui trahit la copie.
+	var forgery_case := CaseLibrary.get_case("40921")
+	var forgery := ComparisonRules.get_comparison(forgery_case)
+	check(not forgery.is_empty() and forgery.left.mark.kind == "signature", "40921 a une comparaison de signatures")
+	# La comparaison n'est possible qu'une fois la pièce trouvée (après perquisition).
+	check(not EventRules.are_conditions_met(forgery.get("conditions", {}), {"flags": {}}),
+			"la signature ne se compare pas avant la perquisition")
+	check(EventRules.are_conditions_met(forgery.get("conditions", {}), {"flags": {"field.search_40921.mattress": true}}),
+			"la signature se compare une fois le matelas fouillé")
+	# Le nom du signataire concorde (copié juste) ; la graphie décisive diffère.
+	check(not ComparisonRules.compare_point(forgery.points[0], {}, {}).differs, "le nom du signataire concorde : piège")
+	var hand := {}
+	for point in forgery.points:
+		if point.get("decisive", false):
+			hand = point
+	check(hand.id == "hand" and ComparisonRules.compare_point(hand, {}, {}).differs, "la graphie est le trait décisif et diffère")
+	var forgery_verdicts := {}
+	for point in forgery.points:
+		forgery_verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(forgery, {}, {}, forgery_verdicts).all_ok, "démasquage correct du faux")
+	# Accuser le nom (pourtant exact) de faux est une erreur.
+	var over_accuse := forgery_verdicts.duplicate()
+	over_accuse["signatory"] = true
+	check(not ComparisonRules.grade(forgery, {}, {}, over_accuse).all_ok, "crier au faux sur un nom exact : erreur")
+	# Démasquer le faux établit la falsification : l'arrestation devient appuyée.
+	GameState.new_game()
+	check(GameState.apply_comparison("40921").established == "sedlar.papers.forged", "le démasquage établit sedlar.papers.forged")
+	var forgery_state := GameState.get_case_state("40921")
+	check("f_srch_forgery" in forgery_state.noted_facts, "la demande de soins falsifiée est versée au carnet")
+	check(GameState.flags.get("40921.forgery_authenticated") == true, "drapeau d'authentification posé")
+	check(DecisionRules.resolve(forgery_case, forgery_state, "arrest").response_id == "arrest_found",
+			"le faux démasqué appuie l'arrestation")
 	GameState.new_game()
 
 

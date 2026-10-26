@@ -152,8 +152,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
         cachets dessinés en code (OfficialMark), le joueur confronte un permis en
         règle au permis présenté ; sceau authentique (ne pas crier au faux),
         validité échue ; établit `halvek.movements` (vraies familles, permis réels)
-  - [ ] Amplifier : une vraie falsification à démasquer (sceau truqué / signature
-        imitée, ex. signature du médecin de SEDLAR, f_srch_forgery) + billets
+  - [x] Démasquer un vrai faux — signature imitée (SEDLAR, 40921) : signature
+        authentique du Dr MARKO vs copie au crayon (tracé tremblé, encre « crayon »
+        dans OfficialMark) ; le nom concorde (piège : ne pas accuser un nom exact),
+        la graphie trahit la copie ; confrontable seulement après la perquisition
+        (matelas) ; établit `sedlar.papers.forged` → l'arrestation devient appuyée
+  - [ ] Amplifier encore : sceau truqué (étoile à 4 branches) + billets de transport
   - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2, à écrire)
   - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
 

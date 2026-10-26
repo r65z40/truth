@@ -270,6 +270,21 @@ func _capture_all() -> void:
 	desk.windows.dossiers.open_conclusion()
 	await _snap("40_cheminot_veritas")
 	desk.windows.dossiers.close()
+	# Démasquer un vrai faux : la signature du médecin imitée au crayon (SEDLAR, 40921).
+	GameState.flags["field.search_40921.mattress"] = true
+	desk.open_comparison("40921")
+	await _snap("40b_authentifier_signature")
+	var sig_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
+	var sig_cmp: Dictionary = ComparisonRules.get_comparison(CaseLibrary.get_case("40921"))
+	var sig_pts: Array = sig_cmp.points
+	for i in sig_pts.size():
+		var differs: bool = ComparisonRules.compare_point(sig_pts[i], {}, {}).differs
+		var vbox: Node = sig_cards[i].get_child(0).get_child(0)
+		vbox.get_child(vbox.get_child_count() - 1).get_child(1 if differs else 0).button_pressed = true
+	desk.comparison_screen.get_node("%ValidateButton").pressed.emit()
+	await _snap("40c_faux_demasque")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.queue_free()
 	# Socle de traduction : l'interface bascule en anglais (contenu des dossiers en repli FR).
 	Localization.set_locale("en")
