@@ -192,8 +192,29 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
         confrontation classique (découvrabilité du mini-jeu)
   - [ ] Amplifier encore : un vrai sceau truqué (étoile à 4 branches) dans un dossier
         avec un faussaire au tampon ; billets de transport ; signatures côte à côte
-  - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2, à écrire)
+  - [x] Comparer avec l'archive — registre modifié de SEDLAR (révélation d'acte 2) :
+        dossier 53761, original du sous-sol B vs copie transmise ; la ligne du 21.10
+        vers Halvek est un ajout postérieur (tampon coiffé) ; établit `register.altered`
   - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
+
+## Fait : acte 2 — L'Archive et le registre truqué (2026-10-26)
+
+- [x] Dossier 53760 L'ARCHIVE : l'archiviste H. KREMER (ex-inspecteur Section 2 relégué
+      au sous-sol B, l'allié de l'acte 1) est signalé par le contrôle interne pour
+      « vol de papier » ; le registre de prêt dément le vol (contradiction `kremer.theft`).
+      Trois voies : le protéger (classer) ouvre l'accès aux originaux (`kremer.originals`),
+      le transmettre le fait révoquer et scelle les archives, le requalifier le met sous
+      surveillance. VERITAS tient le signalement du contrôle interne pour fiable.
+- [x] Révélation de fin d'acte — dossier 53761 : qui a protégé KREMER reçoit l'original
+      du registre de déplacements du dossier 40921. La comparaison « avec l'archive »
+      prouve que le trajet du 21 octobre vers Halvek a été ajouté le 24, après la
+      clôture : la première contradiction du joueur était fabriquée, et le bordereau
+      révèle que c'est MAZUR qui avait transmis le dossier. VERITAS retourne la charge
+      et continue de couvrir la copie truquée même une fois l'altération prouvée.
+- [x] Câblage déterministe : `assign_53760` (acte 2, après la note de KREMER),
+      `assign_53761_reveal` (si `kremer.protected`), `kremer_archive_sealed` (si
+      `kremer.arrested`) ; notes de dossier personnel pour les nouveaux drapeaux
+      (`kremer.*`, `act2.*`, `player.flagged`, `mazur.confronted`). Tests ajoutés.
 
 ## Prochaine itération
 

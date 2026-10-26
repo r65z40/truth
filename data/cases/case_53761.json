@@ -1,0 +1,438 @@
+{
+	"id": "53761",
+	"title": "Original d'archive — dossier 40921",
+	"subject_name": "SEDLAR, Anton Pavel",
+	"summary": "Pièce remise par l'archiviste KREMER : l'original, conservé au sous-sol B, du registre de déplacements du dossier 40921. À comparer avec la copie que vous avez signée.",
+	"briefing": {
+		"objective": "Comparer l'original d'archive du registre de déplacements du 40921 avec la copie transmise à la Section 4, et déterminer si la copie a été modifiée.",
+		"context": "Vous avez classé le dossier de KREMER. Il tient parole : il vous sort du sous-sol B l'original du registre sur lequel reposait toute votre première enquête, le dossier 40921."
+	},
+	"priority": "sensible",
+	"guide": {
+		"note": "Révélation de fin d'acte 2 : la première « vérité » du joueur était fabriquée.",
+		"open": "KREMER a laissé une chemise sur votre bureau. Ouvrez-la : c'est l'original du registre du 40921.",
+		"read": "Lisez le mot de KREMER, puis posez la copie transmise à côté de l'original.",
+		"facts": "Comparez les deux registres ligne à ligne. Une ligne figure sur la copie et manque à l'original.",
+		"notebook": "Utilisez COMPARER AVEC L'ARCHIVE pour poser les deux registres côte à côte et juger chaque ligne.",
+		"notebook_retry": "Regardez la ligne du 21 octobre. L'original s'arrête au 14 octobre ; la copie porte un trajet Velmira > Halvek que l'original ignore.",
+		"conclusion": "Vous tenez la preuve que votre premier dossier avait été truqué. Décidez ce que vous en faites."
+	},
+	"documents": [
+		{
+			"id": "kremer_cover",
+			"type": "letter",
+			"title": "Mot de KREMER, agrafé à la chemise",
+			"source": "H. KREMER (sous-sol B)",
+			"reliability": "B",
+			"date": "1986-11-14",
+			"veritas_remark": "Note manuscrite de l'archiviste. Sans valeur probante opposable.",
+			"body": "Inspecteur,\n\nVoici ce que je vous devais. À gauche, l'original du registre de déplacements du 40921, tel qu'il est entré au sous-sol B le 22 octobre, clos et paraphé. À droite, la copie que la Section 4 vous a transmise.\n\nLisez la troisième ligne. Sur l'original, elle n'existe pas. Le trajet Velmira > Halvek du 21 octobre a été ajouté sur la copie, après la clôture, d'une autre encre, avec un tampon daté du 24.\n\nSEDLAR était peut-être à son poste ce jour-là, comme le disait le certificat. La contradiction que vous aviez « établie » avait été préparée pour vous.\n\nNe me remerciez pas. Brûlez ce mot.\n\nK.",
+			"facts": [
+				{
+					"id": "f_cover_line",
+					"key": "register.altered",
+					"value": "La 3e ligne n'existe pas sur l'original",
+					"label": "Sur l'original clos le 22.10, la ligne du 21.10 Velmira > Halvek n'existe pas",
+					"quote": "Sur l'original, elle n'existe pas."
+				}
+			]
+		},
+		{
+			"id": "archive_original",
+			"type": "travel_log",
+			"title": "Registre de déplacements — original du sous-sol B",
+			"source": "Archives centrales, original paraphé, sous-sol B",
+			"reliability": "A",
+			"date": "1986-10-22",
+			"columns": [
+				"Date",
+				"Heure",
+				"Trajet",
+				"Carte présentée",
+				"Contrôleur"
+			],
+			"rows": [
+				[
+					"14.10.1986",
+					"18h20",
+					"Velmira > Velmira-Nord",
+					"KT-55-1902",
+					"P-117"
+				]
+			],
+			"body": "Registre clos et paraphé le 22.10.1986. Dernière ligne : 14.10. Aucune écriture postérieure. Paraphe du chef de poste en bas de page.",
+			"facts": [
+				{
+					"id": "f_orig_notrip",
+					"key": "register.21oct",
+					"value": "Aucun passage le 21.10",
+					"label": "L'original ne porte aucun trajet le 21.10 : la dernière ligne est le 14.10",
+					"quote": "Dernière ligne : 14.10. Aucune écriture postérieure."
+				},
+				{
+					"id": "f_orig_closed",
+					"key": "register.closed",
+					"value": "Clos et paraphé le 22.10",
+					"label": "Registre clos et paraphé le 22.10, sans écriture postérieure",
+					"quote": "Registre clos et paraphé le 22.10.1986."
+				}
+			]
+		},
+		{
+			"id": "transmitted_copy",
+			"type": "travel_log",
+			"title": "Registre de déplacements — copie transmise à la Section 4",
+			"source": "Copie versée au dossier 40921 (celle que vous avez signée)",
+			"reliability": "B",
+			"date": "1986-10-24",
+			"columns": [
+				"Date",
+				"Heure",
+				"Trajet",
+				"Carte présentée",
+				"Contrôleur"
+			],
+			"rows": [
+				[
+					"14.10.1986",
+					"18h20",
+					"Velmira > Velmira-Nord",
+					"KT-55-1902",
+					"P-117"
+				],
+				[
+					"21.10.1986",
+					"06h05",
+					"Velmira > Halvek",
+					"KT-55-1902",
+					"P-203"
+				],
+				[
+					"21.10.1986",
+					"21h40",
+					"Halvek > Velmira",
+					"KT-55-1902",
+					"P-088"
+				]
+			],
+			"body": "Mention portée en marge, d'une autre main : « Complété le 24.10 sur instruction. » Le tampon de clôture du 22.10 figure au-dessus des lignes du 21, et non en dessous.",
+			"facts": [
+				{
+					"id": "f_copy_trip",
+					"key": "register.21oct",
+					"value": "Trajet Velmira > Halvek le 21.10",
+					"label": "La copie porte deux lignes au 21.10 : Velmira > Halvek à 06h05, retour à 21h40",
+					"quote": "Velmira > Halvek"
+				},
+				{
+					"id": "f_copy_insert",
+					"key": "register.insert",
+					"value": "Complété le 24.10 sur instruction",
+					"label": "Les lignes du 21.10 ont été ajoutées le 24.10, après la clôture du 22, d'une autre encre",
+					"quote": "Complété le 24.10 sur instruction."
+				}
+			]
+		},
+		{
+			"id": "routing_slip",
+			"type": "report",
+			"title": "Bordereau de transmission du dossier 40921",
+			"source": "Section 4, bordereau interne",
+			"reliability": "A",
+			"date": "1986-10-24",
+			"request": {
+				"label": "Retrouver le bordereau d'origine du dossier 40921",
+				"flags": {
+					"53761.routing_seen": true
+				},
+				"effects": {
+					"suspicion": 1
+				}
+			},
+			"veritas_remark": "Bordereau interne. Trace la constitution et l'attribution du dossier.",
+			"body": "Dossier 40921 (SEDLAR, A.) — constitué le 24.10.1986.\n\nPièces réunies et jointes : rapport de présence, interception, registre de déplacements (complété le 24.10), dossier médical.\n\nConstitué et transmis à l'inspecteur A. VOSK par : R. MAZUR, Directeur adjoint, Section 4.",
+			"facts": [
+				{
+					"id": "f_bord_mazur",
+					"key": "routing.40921",
+					"value": "Constitué et transmis par MAZUR",
+					"label": "Le dossier 40921 a été constitué le 24.10 et remis à VOSK par R. MAZUR en personne",
+					"quote": "Constitué et transmis à l'inspecteur A. VOSK par : R. MAZUR"
+				},
+				{
+					"id": "f_bord_date",
+					"key": "routing.date",
+					"value": "Constitué le 24.10",
+					"label": "Le dossier a été constitué le 24.10, le jour même où le registre a été « complété »",
+					"quote": "constitué le 24.10.1986"
+				}
+			]
+		},
+		{
+			"id": "veritas_cover",
+			"type": "report",
+			"title": "Note de raccordement VERITAS",
+			"source": "VERITAS, recoupement automatique",
+			"reliability": "B",
+			"date": "1986-11-14",
+			"veritas_remark": "Raccordement établi par le module. Hypothèse retenue : falsification par l'archiviste.",
+			"body": "RACCORDEMENT AUTOMATIQUE — pièce d'archive 40921.\n\nLe module constate une divergence entre l'original du sous-sol B et la copie versée. Il l'attribue à l'archiviste KREMER, connu pour consulter d'anciens originaux : l'original aurait été altéré après coup pour disculper SEDLAR.\n\nHypothèse raccordée : c'est l'original qui est faux. La copie transmise fait foi.",
+			"facts": [
+				{
+					"id": "f_cover_blame",
+					"key": "veritas.cover",
+					"value": "VERITAS accuse l'original",
+					"label": "VERITAS retourne la charge : il déclare faux l'original et « fait foi » de la copie truquée",
+					"quote": "c'est l'original qui est faux. La copie transmise fait foi."
+				}
+			]
+		}
+	],
+	"comparison": {
+		"id": "archive_register",
+		"title": "Comparer avec l'archive",
+		"intro": "Posez l'original du sous-sol B à gauche, la copie transmise à droite. Jugez chaque ligne : concorde-t-elle d'une pièce à l'autre ? Le faux reprend fidèlement l'en-tête et les lignes anciennes ; c'est ce qu'on a ajouté qu'il faut voir.",
+		"left": {
+			"label": "Original du sous-sol B — clos le 22.10"
+		},
+		"right": {
+			"label": "Copie transmise à la Section 4 — « complétée le 24.10 »"
+		},
+		"points": [
+			{
+				"id": "header",
+				"label": "En-tête et source",
+				"detail_left": "Bureau des transports, contrôle ferroviaire Velmira - Halvek",
+				"detail_right": "Bureau des transports, contrôle ferroviaire Velmira - Halvek",
+				"note": "L'en-tête est authentique des deux côtés : un faux soigne d'abord ce qui se vérifie d'un coup d'œil."
+			},
+			{
+				"id": "line_14",
+				"label": "Ligne du 14.10 (Velmira > Velmira-Nord)",
+				"detail_left": "14.10 — 18h20 — Velmira > Velmira-Nord — P-117",
+				"detail_right": "14.10 — 18h20 — Velmira > Velmira-Nord — P-117",
+				"note": "La ligne ancienne est identique : elle existait avant la manipulation."
+			},
+			{
+				"id": "line_21",
+				"label": "Ligne du 21.10 (Velmira > Halvek)",
+				"detail_left": "Aucune ligne au 21.10",
+				"detail_right": "21.10 — 06h05 — Velmira > Halvek — P-203",
+				"decisive": true,
+				"note": "C'est la ligne décisive : le trajet vers la frontière n'existe que sur la copie. Il a été ajouté après la clôture."
+			},
+			{
+				"id": "stamp",
+				"label": "Position du tampon de clôture",
+				"detail_left": "Tampon du 22.10 sous la dernière ligne (14.10)",
+				"detail_right": "Tampon du 22.10 au-dessus des lignes du 21.10",
+				"note": "Un registre se clôt sous la dernière écriture. Ici le tampon est coiffé par des lignes plus récentes : la preuve de l'ajout postérieur."
+			}
+		],
+		"establishes": "register.altered",
+		"advantage": {
+			"note_facts": [
+				"f_orig_notrip",
+				"f_bord_mazur"
+			],
+			"set_flags": {
+				"40921.register_altered": true,
+				"act2.register_revealed": true
+			},
+			"text": "Le registre du 40921 a été truqué : le trajet du 21 octobre vers Halvek a été ajouté le 24, après la clôture, pour fabriquer la contradiction que vous avez « établie ». SEDLAR était peut-être à son poste. Et le dossier vous a été remis en main propre par MAZUR. Votre première vérité était une commande."
+		}
+	},
+	"decisions": [
+		{
+			"id": "keep",
+			"stamp": "CONSERVÉ",
+			"label": "Garder l'original, ne rien dire",
+			"description": "Verser l'original au secret, sans le signaler. Vous tenez une preuve ; vous choisissez quand elle servira.",
+			"archive": "Original conservé hors procédure. Aucune suite officielle. Le joueur détient la preuve de l'altération du 40921.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 0,
+						"suspicion": 1,
+						"influence": 5
+					},
+					"response": "keep_proved",
+					"flags": {
+						"act2.original_kept": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 0,
+						"suspicion": 2,
+						"influence": 2
+					},
+					"response": "keep_unproved",
+					"flags": {}
+				}
+			]
+		},
+		{
+			"id": "report",
+			"stamp": "SIGNALÉ",
+			"label": "Signaler l'altération par la voie officielle",
+			"description": "Adresser une note : le registre du 40921 a été modifié après clôture. Vous faites confiance à la procédure.",
+			"archive": "Altération signalée par note interne. La note disparaît ; une marque reste à votre dossier personnel.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -4,
+						"suspicion": 9,
+						"influence": -2
+					},
+					"response": "report_proved",
+					"flags": {
+						"act2.alteration_reported": true,
+						"player.flagged": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -5,
+						"suspicion": 7,
+						"influence": -3
+					},
+					"response": "report_unproved",
+					"flags": {
+						"act2.alteration_reported": true,
+						"player.flagged": true
+					}
+				}
+			]
+		},
+		{
+			"id": "confront",
+			"stamp": "EN SUSPENS",
+			"label": "Demander des comptes à MAZUR",
+			"description": "Aller voir MAZUR avec le bordereau. Lui demander pourquoi il vous a remis un dossier préparé.",
+			"archive": "MAZUR interrogé en privé sur la constitution du 40921. Réponse évasive. Le joueur sait désormais à qui il a affaire.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 4,
+						"influence": 1
+					},
+					"response": "confront_proved",
+					"flags": {
+						"mazur.confronted": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -2,
+						"suspicion": 5,
+						"influence": 0
+					},
+					"response": "confront_unproved",
+					"flags": {
+						"mazur.confronted": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"keep_proved": {
+			"from": "(note personnelle — non transmise)",
+			"subject": "Dossier 40921 : ce que je garde",
+			"body": "Vous rangez l'original là où personne ne le cherchera.\n\nLe trajet du 21 octobre a été ajouté le 24, le jour où MAZUR vous a remis le dossier. Si vous aviez arrêté SEDLAR, c'est sur cette ligne-là. Vous ne pouvez pas encore le prouver à qui de droit — mais vous, vous savez, et vous tenez la pièce.\n\nUn jour, cette ligne qui n'existe pas vaudra plus qu'une carrière."
+		},
+		"keep_unproved": {
+			"from": "(note personnelle — non transmise)",
+			"subject": "Dossier 40921 : un doute que je garde",
+			"body": "Vous gardez la chemise sans avoir tout à fait démonté la copie. Le pressentiment est là : votre premier dossier sentait la commande.\n\nGardez aussi ceci en tête : refaites la comparaison au calme. Une preuve mal tenue ne protège personne."
+		},
+		"report_proved": {
+			"from": "Bureau du contrôle interne",
+			"subject": "Votre note sur le dossier 40921",
+			"body": "Inspecteur,\n\nNous avons bien reçu votre note : vous prétendez qu'un registre clos aurait été « complété » après coup. L'archiviste KREMER consulte beaucoup d'originaux ; nous savons d'où vient votre pièce.\n\nL'affaire est classée. Une seule chose est désormais au dossier : votre nom, et le jour où vous avez mis en cause une pièce jugée. B."
+		},
+		"report_unproved": {
+			"from": "Bureau du contrôle interne",
+			"subject": "Votre note sur le dossier 40921",
+			"body": "Inspecteur,\n\nVous signalez une altération sans l'avoir établie ligne à ligne. Une impression ne renverse pas un dossier clos.\n\nLa note est classée. Votre zèle, lui, est noté. B."
+		},
+		"confront_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40921 : votre visite",
+			"body": "Inspecteur,\n\nVous posez le bordereau sur mon bureau, avec mon nom dessus. Oui, c'est moi qui vous ai remis le 40921. On me l'avait remis à moi aussi, déjà complété. On ne m'a pas demandé de le lire, seulement de le faire descendre jusqu'à vous.\n\nVous vouliez savoir à qui vous aviez affaire. Maintenant vous le savez — et moi aussi. Rangez cette pièce. Ne la ressortez que le jour où elle pourra vous sauver, pas aujourd'hui.\n\nR. MAZUR"
+		},
+		"confront_unproved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40921 : votre visite",
+			"body": "Inspecteur,\n\nVous venez m'accuser sans avoir démonté la pièce vous-même. Ce n'est pas une preuve, c'est une humeur.\n\nJe vais vous donner un conseil gratuit : quand vous viendrez m'accuser d'avoir transmis un faux, ayez le faux en main, prouvé. Sinon c'est vous qu'on fera descendre au sous-sol.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "report",
+		"rationale": "Divergence entre une copie versée (source de la procédure) et un original ressorti par un archiviste rétrogradé. Le module tient la copie pour authentique et l'original pour altéré.",
+		"factors": [
+			{
+				"id": "copy_official",
+				"label": "La copie versée fait foi (source de la procédure)",
+				"category": "state_source",
+				"weight": 6,
+				"decision": "report",
+				"document": "veritas_cover"
+			},
+			{
+				"id": "kremer_suspect",
+				"label": "Original fourni par l'archiviste KREMER, sous surveillance",
+				"category": "risk",
+				"weight": 5,
+				"decision": "report",
+				"document": "veritas_cover",
+				"contestable": true
+			},
+			{
+				"id": "closed_before",
+				"label": "L'original est clos le 22.10, avant l'ajout du 24 sur la copie",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "keep",
+				"document": "archive_original",
+				"requires_contradiction": "register.altered"
+			},
+			{
+				"id": "routed_by_mazur",
+				"label": "Dossier constitué le 24.10 et remis en main propre par MAZUR",
+				"category": "established_fact",
+				"weight": 8,
+				"decision": "keep",
+				"document": "routing_slip"
+			}
+		],
+		"note": "VERITAS retourne la charge : plutôt que de reconnaître l'ajout postérieur (tampon coiffé, encre différente), il déclare faux l'original et « fait foi » de la copie truquée. C'est la première fois que le joueur prend le module en flagrant délit de couverture."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "L'original du registre de déplacements du 40921, clos le 22.10, s'arrête au 14 octobre : SEDLAR n'a aucun passage enregistré le 21. Les deux lignes Velmira > Halvek du 21.10 ont été ajoutées le 24 sur la copie transmise, après la clôture, d'une autre encre, le tampon de clôture se retrouvant coiffé par les lignes neuves. Le dossier 40921 a été constitué ce même 24.10 et remis en main propre à VOSK par MAZUR, qui l'avait lui-même reçu déjà « complété » d'un échelon supérieur. La première contradiction du joueur avait été fabriquée pour lui.",
+		"involved": [
+			"53761",
+			"40921",
+			"kremer_h",
+			"mazur_r",
+			"sedlar_a"
+		]
+	},
+	"consultation": {
+		"from": "H. KREMER, sous-sol B",
+		"subject": "Votre question sur l'original",
+		"body": "Inspecteur,\n\nVous me demandez si je suis sûr. Regardez le tampon, pas les lignes. Un registre se clôt sous la dernière écriture. Ici, le tampon du 22 est coiffé par les lignes du 21 : on a écrit après avoir fermé.\n\nLe reste — qui a tenu la plume, qui a donné l'instruction — ce n'est plus de l'archivage. C'est votre métier, pas le mien.\n\nK."
+	}
+}

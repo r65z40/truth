@@ -69,6 +69,8 @@ func _run() -> void:
 		"test_case_53118",
 		"test_case_53402",
 		"test_case_53517",
+		"test_case_53760",
+		"test_case_53761_reveal",
 		"test_case_briefings",
 		"test_scene_gallery",
 		"test_document_field_icons",
@@ -1563,6 +1565,117 @@ func test_case_53517() -> void:
 	var turned := DecisionRules.resolve(case_data, proved, "turn")
 	check(turned.flags.get("53517.informer_reported", false) and turned.flags.get("milice.hostile", false),
 			"retourner le signalement vise l'informateur et fâche la Milice")
+
+
+## Acte 2 — L'ARCHIVE : le joueur juge son propre allié, l'archiviste KREMER,
+## signalé pour « vol de papier ». Le registre de prêt dément le vol.
+func test_case_53760() -> void:
+	var case_data := CaseLibrary.get_case("53760")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 53760 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS tient le signalement du contrôle interne pour fiable et pousse la révocation.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "transmit", "VERITAS recommande la révocation de KREMER")
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# Le registre de prêt (sorties toutes enregistrées) dément l'accusation de vol.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("kremer.theft" in keys, "le signalement et le registre des consultations se contredisent sur le vol")
+	# Le registre fait monter le classement, mais VERITAS le range en fait « établi par l'agent ».
+	check(Veritas.scores(case_data, {"contradictions_found": ["kremer.theft"]}).dismiss.score
+			> Veritas.scores(case_data).dismiss.score,
+			"démontrer l'absence de vol renforce le classement")
+	# Le mot de KREMER ne paraît qu'une fois l'archiviste entendu (document sur demande).
+	var state := GameState.get_condition_state()
+	state.cases = {"53760": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "kremer_word" in visible, "le mot de KREMER est invisible avant qu'on l'entende")
+	# Issues de décision : protéger KREMER donne l'accès aux originaux ; le transmettre scelle tout.
+	var proved := {"contradictions_found": ["kremer.theft"]}
+	var protect := DecisionRules.resolve(case_data, proved, "dismiss")
+	check(protect.response_id == "dismiss_proved" and protect.flags.get("kremer.protected", false)
+			and protect.flags.get("kremer.originals", false),
+			"classer KREMER le protège et ouvre l'accès aux originaux")
+	var expose := DecisionRules.resolve(case_data, proved, "transmit")
+	check(expose.response_id == "transmit_knowing" and expose.flags.get("kremer.arrested", false)
+			and expose.flags.get("archive.sealed", false),
+			"le transmettre malgré le registre le fait révoquer et scelle les archives")
+	var warn := DecisionRules.resolve(case_data, proved, "requalify")
+	check(warn.flags.get("kremer.warned", false), "requalifier place KREMER sous surveillance")
+	# Câblage : l'assignation attend l'acte 2 et la note de KREMER (kremer.contact).
+	var day6 := {"day_index": 6, "flags": {"kremer.contact": true}, "cases": {}, "fired_events": []}
+	var due6: Array = EventRules.due_events(day6).map(func(e: Dictionary) -> String: return e.id)
+	check("assign_53760" in due6, "le dossier 53760 est attribué à l'acte 2, une fois KREMER connu")
+
+
+## Acte 2 — révélation : KREMER remet l'original du registre du 40921. La comparaison
+## avec l'archive prouve que le trajet du 21 octobre a été ajouté après coup, et le
+## bordereau révèle que c'est MAZUR qui avait transmis le dossier truqué.
+func test_case_53761_reveal() -> void:
+	var case_data := CaseLibrary.get_case("53761")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 53761 est valide %s" % CaseLibrary.validate_case(case_data))
+	# Comparaison « avec l'archive » : pièces de registre, sans portrait.
+	var comparison := ComparisonRules.get_comparison(case_data)
+	check(not comparison.is_empty() and comparison.establishes == "register.altered",
+			"la révélation propose une comparaison avec l'archive")
+	check(not comparison.left.has("photo_document"), "comparaison de registres, sans portrait")
+	# La ligne du 21.10 est le trait décisif : absente de l'original, présente sur la copie.
+	var decisive := {}
+	for point in comparison.points:
+		if point.get("decisive", false):
+			decisive = point
+	check(decisive.id == "line_21" and ComparisonRules.compare_point(decisive, {}, {}).differs,
+			"la ligne du 21 octobre diffère : elle n'existe que sur la copie")
+	check(not ComparisonRules.compare_point(comparison.points[0], {}, {}).differs,
+			"l'en-tête concorde : le faux reprend la source authentique")
+	var verdicts := {}
+	for point in comparison.points:
+		verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(comparison, {}, {}, verdicts).all_ok, "comparaison correcte du registre")
+	var cry := verdicts.duplicate()
+	cry["header"] = true
+	check(not ComparisonRules.grade(comparison, {}, {}, cry).all_ok, "crier au faux sur un en-tête authentique : erreur")
+	# Appliquer la comparaison établit l'altération et verse les pièces clés au carnet.
+	GameState.new_game()
+	var advantage := GameState.apply_comparison("53761")
+	check(advantage.get("established", "") == "register.altered", "comparer établit register.altered")
+	check(GameState.flags.get("40921.register_altered") == true
+			and GameState.flags.get("act2.register_revealed") == true,
+			"la révélation pose les drapeaux d'altération du 40921")
+	var reveal_state := GameState.get_case_state("53761")
+	check("f_orig_notrip" in reveal_state.noted_facts and "f_bord_mazur" in reveal_state.noted_facts,
+			"l'original sans trajet et le bordereau de MAZUR sont versés au carnet")
+	# VERITAS retourne la charge : il accuse l'original et « fait foi » de la copie truquée.
+	check(Veritas.recommendation(case_data).decision_id == "report",
+			"par défaut, VERITAS retourne la charge et recommande de signaler")
+	# Même une fois l'altération prouvée, le module sous-pondère le fait établi et
+	# continue de couvrir : le joueur le prend en flagrant délit.
+	var scored := Veritas.scores(case_data, {"contradictions_found": ["register.altered"]})
+	check(scored.keep.score > Veritas.scores(case_data).keep.score and scored.report.score >= scored.keep.score,
+			"prouver l'altération renforce la pièce, mais VERITAS reste au-dessus : couverture flagrante")
+	check(Veritas.recommendation(case_data, {"contradictions_found": ["register.altered"]}).decision_id == "report",
+			"preuve en main, VERITAS maintient sa recommandation de signaler l'original")
+	# Le bordereau d'origine ne paraît qu'une fois demandé.
+	var state := GameState.get_condition_state()
+	state.cases = {"53761": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "routing_slip" in visible, "le bordereau d'origine est invisible avant la demande")
+	# Issues : garder la preuve, ou demander des comptes à MAZUR.
+	var proved := {"contradictions_found": ["register.altered"]}
+	var keep := DecisionRules.resolve(case_data, proved, "keep")
+	check(keep.response_id == "keep_proved" and keep.flags.get("act2.original_kept", false),
+			"garder l'original en fait une pièce conservée hors procédure")
+	check(DecisionRules.resolve(case_data, proved, "confront").flags.get("mazur.confronted", false),
+			"demander des comptes à MAZUR marque qu'il sait que le joueur sait")
+	# Câblage : la révélation n'arrive qu'à qui a protégé KREMER ; sinon les archives sont scellées.
+	var kept := {"day_index": 6, "flags": {"kremer.protected": true}, "cases": {}, "fired_events": []}
+	var kept_ids: Array = EventRules.due_events(kept).map(func(e: Dictionary) -> String: return e.id)
+	check("assign_53761_reveal" in kept_ids, "protéger KREMER fait arriver l'original du 40921")
+	var lost := {"day_index": 6, "flags": {"kremer.arrested": true}, "cases": {}, "fired_events": []}
+	var lost_ids: Array = EventRules.due_events(lost).map(func(e: Dictionary) -> String: return e.id)
+	check("kremer_archive_sealed" in lost_ids and not "assign_53761_reveal" in lost_ids,
+			"révoquer KREMER scelle les archives et ferme la révélation")
+	GameState.new_game()
 
 
 ## Chaque dossier doit expliquer ce qu'on cherche (OBJET) et pourquoi il est là.

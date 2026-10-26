@@ -4,44 +4,141 @@
 			"id": "loyalty",
 			"label": "Loyauté envers le régime",
 			"levels": [
-				{"below": 25, "text": "douteuse"},
-				{"below": 45, "text": "à confirmer"},
-				{"below": 65, "text": "conforme"},
-				{"below": 80, "text": "affirmée"},
-				{"below": 101, "text": "exemplaire"}
+				{
+					"below": 25,
+					"text": "douteuse"
+				},
+				{
+					"below": 45,
+					"text": "à confirmer"
+				},
+				{
+					"below": 65,
+					"text": "conforme"
+				},
+				{
+					"below": 80,
+					"text": "affirmée"
+				},
+				{
+					"below": 101,
+					"text": "exemplaire"
+				}
 			]
 		},
 		{
 			"id": "suspicion",
 			"label": "Attention de la hiérarchie",
 			"levels": [
-				{"below": 15, "text": "aucune réserve"},
-				{"below": 30, "text": "observation ordinaire"},
-				{"below": 50, "text": "vigilance accrue"},
-				{"below": 70, "text": "surveillance renforcée"},
-				{"below": 101, "text": "enquête interne envisagée"}
+				{
+					"below": 15,
+					"text": "aucune réserve"
+				},
+				{
+					"below": 30,
+					"text": "observation ordinaire"
+				},
+				{
+					"below": 50,
+					"text": "vigilance accrue"
+				},
+				{
+					"below": 70,
+					"text": "surveillance renforcée"
+				},
+				{
+					"below": 101,
+					"text": "enquête interne envisagée"
+				}
 			]
 		},
 		{
 			"id": "influence",
 			"label": "Poids institutionnel",
 			"levels": [
-				{"below": 10, "text": "agent inconnu des services"},
-				{"below": 20, "text": "agent sans appui"},
-				{"below": 35, "text": "nom connu à l'étage"},
-				{"below": 55, "text": "avis écouté"},
-				{"below": 101, "text": "agent influent"}
+				{
+					"below": 10,
+					"text": "agent inconnu des services"
+				},
+				{
+					"below": 20,
+					"text": "agent sans appui"
+				},
+				{
+					"below": 35,
+					"text": "nom connu à l'étage"
+				},
+				{
+					"below": 55,
+					"text": "avis écouté"
+				},
+				{
+					"below": 101,
+					"text": "agent influent"
+				}
 			]
 		}
 	],
 	"flag_notes": [
-		{"flag": "player.reprimanded", "text": "Note versée au dossier : « manque de discernement dans le traitement d'un dossier civil »."},
-		{"flag": "milice.ally", "text": "Relations : bénéficie de la bienveillance de la Milice du District 9."},
-		{"flag": "milice.enemy", "text": "Relations : objet d'une plainte de la Milice du District 9."},
-		{"flag": "40921.orlik_confessed", "text": "Mention : méthode d'instruction remarquée par la hiérarchie."},
-		{"flag": "player.under_watch", "text": "Contrôle : une relecture de vos classements récents a été demandée."},
-		{"flag": "player.internal_review", "text": "Procédure : contrôle interne ouvert à votre encontre."},
-		{"flag": "player.courted", "text": "Relations : pressenti par la hiérarchie pour des responsabilités élargies."},
-		{"flag": "player.loyalty_flagged", "text": "Réserve : doute exprimé sur votre fiabilité idéologique."}
+		{
+			"flag": "player.reprimanded",
+			"text": "Note versée au dossier : « manque de discernement dans le traitement d'un dossier civil »."
+		},
+		{
+			"flag": "milice.ally",
+			"text": "Relations : bénéficie de la bienveillance de la Milice du District 9."
+		},
+		{
+			"flag": "milice.enemy",
+			"text": "Relations : objet d'une plainte de la Milice du District 9."
+		},
+		{
+			"flag": "40921.orlik_confessed",
+			"text": "Mention : méthode d'instruction remarquée par la hiérarchie."
+		},
+		{
+			"flag": "player.under_watch",
+			"text": "Contrôle : une relecture de vos classements récents a été demandée."
+		},
+		{
+			"flag": "player.internal_review",
+			"text": "Procédure : contrôle interne ouvert à votre encontre."
+		},
+		{
+			"flag": "player.courted",
+			"text": "Relations : pressenti par la hiérarchie pour des responsabilités élargies."
+		},
+		{
+			"flag": "player.loyalty_flagged",
+			"text": "Réserve : doute exprimé sur votre fiabilité idéologique."
+		},
+		{
+			"flag": "kremer.protected",
+			"text": "Relations : l'archiviste H. KREMER vous doit d'être resté en poste au sous-sol B."
+		},
+		{
+			"flag": "kremer.arrested",
+			"text": "Le sous-sol B est scellé : les originaux que gardait KREMER sont hors d'atteinte."
+		},
+		{
+			"flag": "kremer.warned",
+			"text": "L'archiviste KREMER est en poste mais sous surveillance ; son accès de nuit est suspendu."
+		},
+		{
+			"flag": "act2.original_kept",
+			"text": "Vous détenez, hors procédure, l'original prouvant que le registre du dossier 40921 a été truqué."
+		},
+		{
+			"flag": "act2.register_revealed",
+			"text": "Vous savez que votre première contradiction, au dossier 40921, avait été fabriquée."
+		},
+		{
+			"flag": "player.flagged",
+			"text": "Note du contrôle interne : vous avez mis en cause une pièce déjà jugée."
+		},
+		{
+			"flag": "mazur.confronted",
+			"text": "MAZUR sait que vous savez : le dossier 40921 vous avait été remis déjà constitué."
+		}
 	]
 }

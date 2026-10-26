@@ -1,0 +1,439 @@
+{
+	"id": "53760",
+	"title": "Citoyen n° 53760",
+	"subject_name": "KREMER, Henrik",
+	"summary": "Signalement du contrôle interne. L'archiviste du sous-sol B est accusé de « vol de papier » : des originaux seraient sortis des archives sans autorisation.",
+	"briefing": {
+		"objective": "Établir si l'archiviste KREMER a soustrait des documents d'archive, ou si les consultations qu'on lui reproche étaient régulières.",
+		"context": "H. KREMER, ancien inspecteur de la Section 2 relégué aux archives, est signalé par le contrôle interne pour des sorties de documents « non enregistrées ». C'est lui qui vous a adressé une note sur le dossier 52310."
+	},
+	"priority": "sensible",
+	"guide": {
+		"note": "Dossier de l'acte 2 : le joueur doit juger son propre allié.",
+		"open": "Le contrôle interne vous confie un dossier gênant : l'archiviste KREMER, celui dont vous avez reçu la note. Ouvrez-le.",
+		"read": "Lisez d'abord le signalement, puis le registre des consultations du sous-sol B.",
+		"facts": "Le signalement parle de sorties « non enregistrées ». Le registre des consultations dit le contraire. Notez les deux.",
+		"notebook": "Sélectionnez l'accusation de vol et la mention « toutes sorties enregistrées », puis CONFRONTER.",
+		"notebook_retry": "Le vol suppose des sorties cachées. Le registre du sous-sol B dit que chaque consultation est enregistrée et contresignée. Confrontez ces deux affirmations.",
+		"conclusion": "À vous de décider ce que devient l'homme qui vous a aidé. Il n'y a pas de bonne réponse imposée."
+	},
+	"documents": [
+		{
+			"id": "identity",
+			"type": "identity",
+			"title": "Fiche d'identité civile",
+			"source": "Registre central de la population",
+			"reliability": "A",
+			"date": "1986-11-10",
+			"veritas_remark": "Ancien cadre de la Section 2. Rétrogradé en 1986. Accès de nuit aux archives centrales.",
+			"photo": {
+				"caption": "Cliché du 03.02.1986",
+				"face": "long",
+				"hair": "receding",
+				"gray": true,
+				"glasses": true,
+				"facial_hair": "none",
+				"mark": "none"
+			},
+			"fields": [
+				[
+					"Nom",
+					"KREMER"
+				],
+				[
+					"Prénom",
+					"Henrik"
+				],
+				[
+					"Né le",
+					"11.09.1926 à Velmira"
+				],
+				[
+					"N° de citoyen",
+					"53760"
+				],
+				[
+					"Profession",
+					"Archiviste, sous-sol B (archives centrales)"
+				],
+				[
+					"Ancienne fonction",
+					"Inspecteur, Section 2 (1961 – 1986)"
+				],
+				[
+					"Adresse",
+					"Bloc 2, escalier A, app. 3, rue des Tilleuls, District 1, Velmira"
+				],
+				[
+					"Parti",
+					"Membre (1961), rétrogradé par mesure de service en 1986"
+				],
+				[
+					"Famille",
+					"Veuf, sans enfant"
+				]
+			],
+			"facts": [
+				{
+					"id": "f_kr_role",
+					"key": "kremer.role",
+					"value": "Ancien inspecteur relégué aux archives",
+					"label": "Ancien inspecteur de la Section 2, relégué au sous-sol B en 1986",
+					"quote": "Inspecteur, Section 2 (1961 – 1986)"
+				},
+				{
+					"id": "f_kr_access",
+					"key": "kremer.access",
+					"value": "Garde les originaux du sous-sol B",
+					"label": "Seul détenteur des clés du sous-sol B, où dorment les originaux",
+					"quote": "Archiviste, sous-sol B (archives centrales)"
+				}
+			]
+		},
+		{
+			"id": "signalement",
+			"type": "letter",
+			"title": "Signalement du contrôle interne",
+			"source": "Bureau du contrôle interne",
+			"reliability": "C",
+			"date": "1986-11-10",
+			"veritas_remark": "Signalement émanant du contrôle interne. Priorité haute.",
+			"body": "Note confidentielle.\n\nL'archiviste KREMER, sous-sol B, est soupçonné de « vol de papier » : des originaux quitteraient les archives sans être portés au registre. Un ancien inspecteur connaît trop bien nos procédures pour que ces oublis soient innocents.\n\nIl convient d'établir la matérialité des sorties non enregistrées et d'en tirer les conséquences. Le dossier vous est confié plutôt qu'à la Section 2, dont KREMER est issu.\n\nPour le contrôle interne. B.",
+			"facts": [
+				{
+					"id": "f_sig_theft",
+					"key": "kremer.theft",
+					"value": "Sorties non enregistrées",
+					"label": "Accusation : des originaux sortent des archives « sans être portés au registre »",
+					"quote": "des originaux quitteraient les archives sans être portés au registre"
+				},
+				{
+					"id": "f_sig_controller",
+					"key": "controle.initial",
+					"value": "Signé « B. »",
+					"label": "Signalement signé d'une seule initiale : « B. », pour le contrôle interne",
+					"quote": "Pour le contrôle interne. B."
+				}
+			]
+		},
+		{
+			"id": "consultations",
+			"type": "register",
+			"title": "Registre des consultations du sous-sol B",
+			"source": "Archives centrales, registre de prêt",
+			"reliability": "A",
+			"date": "1986-11-10",
+			"veritas_remark": "Registre de prêt. Chaque ligne est contresignée par l'archiviste et par le demandeur.",
+			"columns": [
+				"Date",
+				"Original consulté",
+				"Demandeur",
+				"Contreseing"
+			],
+			"rows": [
+				[
+					"28.10.1986",
+					"Dossier 52310 (fiche de lecteur 1979)",
+					"Inspecteur A. VOSK",
+					"KREMER"
+				],
+				[
+					"30.10.1986",
+					"Dossier 40921 (registre de déplacements, original)",
+					"H. KREMER (vérification interne)",
+					"KREMER"
+				],
+				[
+					"04.11.1986",
+					"Série « frontière Halvek » (originaux)",
+					"H. KREMER (vérification interne)",
+					"KREMER"
+				],
+				[
+					"07.11.1986",
+					"Dossier 51307 (certificats, originaux)",
+					"H. KREMER (vérification interne)",
+					"KREMER"
+				]
+			],
+			"body": "Rappel de service : aucun original ne sort du sous-sol B sans inscription au présent registre et double contreseing. Toutes les lignes ci-dessus sont enregistrées et contresignées.",
+			"facts": [
+				{
+					"id": "f_reg_logged",
+					"key": "kremer.theft",
+					"value": "Toutes sorties enregistrées et contresignées",
+					"label": "Chaque consultation est inscrite au registre et contresignée : rien n'est « non enregistré »",
+					"quote": "Toutes les lignes ci-dessus sont enregistrées et contresignées."
+				},
+				{
+					"id": "f_reg_40921",
+					"key": "archive.40921_pulled",
+					"value": "Kremer a consulté l'original du 40921",
+					"label": "Le 30.10, KREMER a ressorti l'original du registre de déplacements du dossier 40921",
+					"quote": "Dossier 40921 (registre de déplacements, original)"
+				}
+			]
+		},
+		{
+			"id": "kremer_word",
+			"type": "letter",
+			"title": "Mot de KREMER, remis en main propre",
+			"source": "H. KREMER (sous-sol B)",
+			"reliability": "B",
+			"date": "1986-11-10",
+			"request": {
+				"label": "Entendre KREMER au sous-sol B",
+				"flags": {
+					"53760.kremer_heard": true
+				},
+				"effects": {
+					"suspicion": 1
+				}
+			},
+			"veritas_remark": "Déclaration de l'intéressé. Sans valeur probante opposable.",
+			"body": "Inspecteur,\n\nIls appellent ça du vol parce qu'ils n'osent pas appeler ça une vérification. Je ne sors rien : je compare. L'original reste au sous-sol, c'est la copie transmise à vos bureaux qui a changé.\n\nLe registre du 40921, celui que vous avez signé : il ne dit pas la même chose que l'original d'ici. La troisième ligne a été ajoutée après coup.\n\nSi vous me classez, je vous montrerai l'original. Si vous me transmettez, le sous-sol sera scellé le soir même, et personne ne reverra ce qu'il contient. À vous de voir ce que vous préférez ignorer.\n\nK.",
+			"facts": [
+				{
+					"id": "f_word_compare",
+					"key": "kremer.method",
+					"value": "Il compare, il ne vole pas",
+					"label": "KREMER : « Je ne sors rien, je compare » — l'original reste, c'est la copie qui a changé",
+					"quote": "Je ne sors rien : je compare."
+				},
+				{
+					"id": "f_word_40921",
+					"key": "register.altered",
+					"value": "La 3e ligne du registre 40921 ajoutée après coup",
+					"label": "Selon KREMER, la 3e ligne du registre de déplacements du 40921 a été ajoutée après coup",
+					"quote": "La troisième ligne a été ajoutée après coup."
+				}
+			]
+		},
+		{
+			"id": "veritas_link",
+			"type": "report",
+			"title": "Note de raccordement VERITAS",
+			"source": "VERITAS, recoupement automatique",
+			"reliability": "B",
+			"date": "1986-11-10",
+			"veritas_remark": "Raccordement établi par le module. Hypothèse retenue : atteinte à l'intégrité des archives d'État.",
+			"body": "RACCORDEMENT AUTOMATIQUE — dossier 53760.\n\nLe module relie l'accès nocturne de KREMER, son ancienneté à la Section 2 et les consultations d'originaux de dossiers clos. Un agent rétrogradé qui ressort d'anciens dossiers prépare, selon le module, une contestation de pièces jugées.\n\nHypothèse raccordée : KREMER falsifie ou soustrait des archives pour en contester les conclusions. Sabotage documentaire.",
+			"facts": [
+				{
+					"id": "f_link_sabotage",
+					"key": "kremer.motive",
+					"value": "Raccordé à un sabotage documentaire",
+					"label": "Raccordement : accès + ancienneté + dossiers clos = « sabotage documentaire »",
+					"quote": "KREMER falsifie ou soustrait des archives pour en contester les conclusions."
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "transmit",
+			"stamp": "RÉVOQUÉ",
+			"fate_line": "Révoqué, puis interné pour « atteinte aux archives d'État ». Le sous-sol B est scellé le soir même. Les originaux qu'il protégeait disparaissent derrière une porte de fer, et avec eux la seule preuve que vos propres dossiers avaient été retouchés.",
+			"fate_quote": "Il n'a pas protesté. Il a seulement demandé qu'on n'abîme pas les cartons du bas. Personne n'a répondu.",
+			"label": "Confirmer le vol et transmettre",
+			"description": "Donner suite au signalement : KREMER est révoqué et les archives sont placées sous scellés.",
+			"archive": "Révoqué sur signalement du contrôle interne. Sous-sol B scellé. Les originaux sont désormais inaccessibles.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 8,
+						"suspicion": -4,
+						"influence": 4
+					},
+					"response": "transmit_knowing",
+					"flags": {
+						"kremer.arrested": true,
+						"kremer.silenced": true,
+						"archive.sealed": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 6,
+						"suspicion": 0,
+						"influence": 2
+					},
+					"response": "transmit_blind",
+					"flags": {
+						"kremer.arrested": true,
+						"archive.sealed": true
+					}
+				}
+			]
+		},
+		{
+			"id": "dismiss",
+			"stamp": "CLASSÉ",
+			"label": "Classer le signalement",
+			"description": "Les consultations étaient enregistrées et régulières : aucun vol. KREMER garde son poste.",
+			"archive": "Signalement classé. KREMER conserve l'accès au sous-sol B. Le contrôle interne en a pris note.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 6,
+						"influence": 1
+					},
+					"response": "dismiss_proved",
+					"flags": {
+						"kremer.protected": true,
+						"kremer.originals": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -5,
+						"suspicion": 8,
+						"influence": 0
+					},
+					"response": "dismiss_unproved",
+					"flags": {
+						"kremer.protected": true,
+						"kremer.originals": true
+					}
+				}
+			]
+		},
+		{
+			"id": "requalify",
+			"stamp": "EN SURSIS",
+			"label": "Requalifier en irrégularité administrative",
+			"description": "Ni vol ni blanc-seing : un simple avertissement. KREMER reste en poste, mais sous surveillance, accès restreint.",
+			"archive": "Requalifié en manquement administratif. KREMER averti et placé sous surveillance ; son accès de nuit est suspendu.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 1,
+						"suspicion": 2,
+						"influence": 2
+					},
+					"response": "requalify_proved",
+					"flags": {
+						"kremer.warned": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 4,
+						"influence": 0
+					},
+					"response": "requalify_unproved",
+					"flags": {
+						"kremer.warned": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"transmit_knowing": {
+			"from": "Bureau du contrôle interne",
+			"subject": "Dossier 53760 : révocation de H. KREMER",
+			"body": "Inspecteur,\n\nVous aviez sous les yeux le registre des consultations : chaque sortie était inscrite et contresignée. Vous saviez qu'il n'y avait pas de vol. Vous avez transmis quand même.\n\nKREMER est révoqué, le sous-sol B scellé. Le contrôle interne retient votre docilité ; retenez, vous, ce que vous venez de laisser murer.\n\nB."
+		},
+		"transmit_blind": {
+			"from": "Bureau du contrôle interne",
+			"subject": "Dossier 53760 : révocation de H. KREMER",
+			"body": "Inspecteur,\n\nKREMER est révoqué sur votre conclusion. Vous n'avez pas cherché à savoir si les sorties qu'on lui reprochait étaient seulement enregistrées — elles l'étaient toutes.\n\nLe contrôle interne apprécie l'efficacité. Le sous-sol est scellé. Ce qu'il contenait ne vous sera plus d'aucun secours.\n\nB."
+		},
+		"dismiss_proved": {
+			"from": "H. KREMER, sous-sol B",
+			"subject": "(sans objet)",
+			"body": "Inspecteur,\n\nVous avez lu le registre et vous avez vu : pas une sortie qui ne soit inscrite. Vous avez classé. Je sais ce que cela vous coûte — le contrôle interne ne pardonne pas qu'on lui dise non.\n\nJ'ai une dette, maintenant. Descendez au sous-sol B quand le couloir sera vide. Je vous sortirai l'original du registre du 40921. Vous comprendrez pourquoi je compare.\n\nK."
+		},
+		"dismiss_unproved": {
+			"from": "H. KREMER, sous-sol B",
+			"subject": "(sans objet)",
+			"body": "Inspecteur,\n\nVous m'avez classé sans tout démontrer, mais vous m'avez classé. Le contrôle interne vous le fera payer en suspicion ; c'est le prix d'avoir gardé un homme honnête à sa place.\n\nVenez au sous-sol quand vous pourrez. Je vous dois l'original du 40921. Après, vous saurez.\n\nK."
+		},
+		"requalify_proved": {
+			"from": "Bureau du contrôle interne",
+			"subject": "Dossier 53760 : avertissement à H. KREMER",
+			"body": "Inspecteur,\n\nSolution prudente. Vous reconnaissez qu'il n'y a pas de vol, mais vous ne lavez pas tout à fait l'archiviste : avertissement, accès de nuit suspendu, surveillance.\n\nKREMER garde son tabouret et perd ses clés de nuit. Ni le contrôle interne ni lui ne vous en seront vraiment reconnaissants.\n\nB."
+		},
+		"requalify_unproved": {
+			"from": "Bureau du contrôle interne",
+			"subject": "Dossier 53760 : avertissement à H. KREMER",
+			"body": "Inspecteur,\n\nVous ménagez la chèvre et le chou : un avertissement, faute d'avoir tranché. KREMER reste, surveillé ; le contrôle interne reste, méfiant.\n\nUn jour il faudra choisir. Ce jour-là, ayez vos pièces.\n\nB."
+		}
+	},
+	"veritas": {
+		"recommendation": "transmit",
+		"rationale": "Ancien inspecteur rétrogradé, accès nocturne aux archives, consultations répétées d'originaux de dossiers clos. Profil compatible avec une entreprise de contestation des pièces jugées.",
+		"factors": [
+			{
+				"id": "controller",
+				"label": "Signalement du contrôle interne",
+				"category": "state_source",
+				"weight": 6,
+				"decision": "transmit",
+				"document": "signalement"
+			},
+			{
+				"id": "sabotage",
+				"label": "Raccordement : sabotage documentaire",
+				"category": "linked",
+				"weight": 7,
+				"decision": "transmit",
+				"document": "veritas_link",
+				"contestable": true
+			},
+			{
+				"id": "access",
+				"label": "Accès nocturne et ancienneté d'inspecteur",
+				"category": "risk",
+				"weight": 4,
+				"decision": "transmit",
+				"document": "identity"
+			},
+			{
+				"id": "logged",
+				"label": "Toutes les consultations sont enregistrées et contresignées",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "dismiss",
+				"document": "consultations",
+				"requires_contradiction": "kremer.theft"
+			},
+			{
+				"id": "method",
+				"label": "KREMER compare les copies aux originaux, il ne soustrait rien",
+				"category": "established_fact",
+				"weight": 6,
+				"decision": "dismiss",
+				"document": "kremer_word"
+			}
+		],
+		"note": "VERITAS traite le signalement du contrôle interne comme une source d'État fiable et surpondère le raccordement « sabotage ». Il range le registre de prêt — qui prouve l'absence de vol — parmi les faits « établis par l'agent », de faible poids. Il recommande la révocation même une fois le vol démenti."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "KREMER ne vole rien : il ressort les originaux du sous-sol B, les compare aux copies transmises aux bureaux, et constate que plusieurs ont été retouchées — dont le registre de déplacements du dossier 40921. Le contrôle interne (signé « B. ») veut le faire taire avant qu'il ne le prouve. En le classant, le joueur gagne l'accès aux originaux ; en le transmettant, il mure la seule preuve que ses propres dossiers ont été fabriqués.",
+		"involved": [
+			"53760",
+			"40921",
+			"kremer_h",
+			"brandt_b"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 53760 : votre question",
+		"body": "Inspecteur,\n\nKREMER. Je me demandais quand son nom reviendrait sur un bureau.\n\nUn conseil, et il ne sort pas d'ici : ne me parlez jamais de lui, et ne lui parlez jamais de moi. Lisez son registre de prêt plutôt que le signalement. Le reste ne me regarde pas — faites en sorte que ça ne vous regarde pas non plus.\n\nR. MAZUR"
+	}
+}
