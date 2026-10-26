@@ -136,7 +136,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
       visible dès le 2e jour, pour sentir vite que quelque chose autour du père est caché
       (s'ajoute aux traces existantes : intro, horloge sans aiguilles, soirées Lena/ADLER)
 - [ ] Levier n°3 (suite) : relier le motif de l'horloge au père, « atelier VOSK » entrevu, date 1971 qui revient
-- [ ] Levier n°2 : faire revenir les gens — validé par fen ; dépend des dossiers d'acte 3 (SEDLAR) à écrire
+- [x] Levier n°2 (acte 2) : les gens reviennent selon ce qu'on a signé — KOLB récidive
+      (on devient son outil), la mère de la chorale attend en bas, ou KOLB dénonce
+      l'inspecteur si on a classé ; retours PETRAS/informateur déjà en place
+- [ ] Levier n°2 (acte 3) : retour de la fille SEDLAR — avec l'écriture de l'acte 3
+- [ ] Mini-jeux (demande de fen du 26.10, doc de propositions) : comparer des pièces,
+      vérifier une signature, fenêtre de surveillance… — en attente du choix de fen
 
 ## Prochaine itération
 

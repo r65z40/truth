@@ -525,6 +525,16 @@ func test_event_conditions() -> void:
 	state["fired_events"] = ["once", "again"]
 	var due := EventRules.due_events(state, events)
 	check(due.size() == 1 and due[0].id == "again", "un événement ne se répète que s'il est repeatable")
+	# Les gens reviennent (levier 2) : la décision sur la chorale a des échos.
+	var choir_ids: Array = EventRules.due_events(
+			{"day_index": 11, "flags": {"53118.choir_arrested": true}, "cases": {}, "fired_events": []}
+			).map(func(e: Dictionary) -> String: return e.id)
+	check("53118_kolb_recidive" in choir_ids, "KOLB récidive après l'arrestation de la chorale sur sa parole")
+	check(not "53118_cleared_denounced" in choir_ids, "classer ne s'applique pas quand on a arrêté")
+	var cleared_ids: Array = EventRules.due_events(
+			{"day_index": 11, "flags": {"53118.choir_cleared": true}, "cases": {}, "fired_events": []}
+			).map(func(e: Dictionary) -> String: return e.id)
+	check("53118_cleared_denounced" in cleared_ids, "classer la chorale expose l'inspecteur (KOLB le dénonce)")
 
 
 func test_end_day_without_decision() -> void:

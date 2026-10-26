@@ -844,6 +844,58 @@
 				"subject": "(sans objet)",
 				"body": "Vous avez retourné le signalement de CHAUDRON contre lui. Peu d'inspecteurs comprennent qu'un informateur ment aussi, surtout quand il a quelque chose à cacher.\n\nORLIK voulait noyer son propre dossier sous celui d'un pauvre bougre. Vous l'avez vu. Mais la Milice protège ses hommes : vous venez de vous faire un ennemi qui porte l'uniforme. Ne me nommez pas. K."
 			}
+		},
+		{
+			"id": "53118_kolb_recidive",
+			"conditions": {
+				"min_day": 9,
+				"requires_flags": [
+					"53118.choir_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Bureau des signalements, District 2",
+				"subject": "Nouveau signalement — même déclarant",
+				"body": "Pour information et suite à donner.\n\nLe citoyen I. KOLB, dont le précédent signalement a conduit aux arrestations de la paroisse Sainte-Agathe, en dépose un second : il désigne cette fois le bedeau de la paroisse voisine, « qui sonne les cloches à des heures irrégulières ».\n\nLe Bureau note que vos conclusions sur le premier dossier ont établi la fiabilité du déclarant. Nous vous transmettons donc le suivant.\n\nBureau des signalements"
+			}
+		},
+		{
+			"id": "53118_mother_waits",
+			"conditions": {
+				"min_day": 10,
+				"requires_flags": [
+					"53118.innocents_condemned"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "(à titre personnel)",
+				"body": "Inspecteur,\n\nUne femme attend tous les matins, en bas, depuis que la chorale a été transférée. Celle qui disait que son fils ne faisait que chanter. Elle ne crie pas, elle ne demande rien ; elle reste debout jusqu'à ce qu'on la fasse sortir.\n\nLa Milice veut que je la fasse éloigner. Avant que je signe le papier, je voulais que vous le sachiez. C'est tout.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "53118_cleared_denounced",
+			"conditions": {
+				"min_day": 9,
+				"requires_flags": [
+					"53118.choir_cleared"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"vosk.denounced_by_kolb": true
+			},
+			"message": {
+				"from": "Bureau des signalements, District 2",
+				"subject": "Signalement vous concernant",
+				"body": "Pour information.\n\nLe citoyen I. KOLB a déposé un signalement visant « l'inspecteur qui a classé l'affaire de Sainte-Agathe malgré des preuves évidentes ». Il joint une copie de son premier courrier.\n\nAucune suite n'est donnée à ce stade. La pièce est versée à votre dossier. Un inspecteur qui classe un rassemblement signalé s'expose, c'est la règle.\n\nBureau des signalements"
+			}
 		}
 	]
 }
