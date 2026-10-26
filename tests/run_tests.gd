@@ -2399,8 +2399,16 @@ func test_document_windows() -> void:
 			and dossiers.get_node("%ProgressLabel").text.contains("0 contradiction"), "avancement lisible en une ligne")
 	check(dossiers.get_node("%ObjectiveLabel").visible \
 			and dossiers.get_node("%ObjectiveLabel").text.contains("OBJET DE L'ENQUÊTE"), "le briefing affiche l'objet de l'enquête")
+	# Pendant le tutoriel, l'en-tête du dossier est épuré : ni rappel « Vous
+	# pouvez… » ni compteur d'avancement (le bandeau « À FAIRE » du bureau guide).
+	check(not dossiers.get_node("%ActionsHelp").visible \
+			and not dossiers.get_node("%ProgressLabel").visible, "tutoriel : en-tête du dossier allégé")
+	# Une fois l'aide coupée (joueur rodé), le rappel des actions réapparaît.
+	Settings.set_guidance(false)
+	dossiers.select_case("40921")
 	check(dossiers.get_node("%ActionsHelp").visible \
-			and dossiers.get_node("%ActionsHelp").text.contains("confronter"), "les actions possibles sont expliquées sur les premières missions")
+			and dossiers.get_node("%ActionsHelp").text.contains("confronter"), "les actions possibles sont expliquées une fois le tutoriel passé")
+	Settings.set_guidance(true)
 
 	dossiers.select_document("work_report")
 	dossiers.open_current_aside()

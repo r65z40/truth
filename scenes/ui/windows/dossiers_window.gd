@@ -20,6 +20,11 @@ const STATUS_LABELS := {
 	"under_investigation": "ENQUÊTE COMPLÉMENTAIRE",
 }
 const MAX_SELECTED_FACTS := 2
+## Tant que le joueur n'a pas conclu ce nombre de dossiers, on considère qu'il
+## est en apprentissage : le haut du dossier est allégé (objet + pièces
+## seulement), car le bandeau « À FAIRE » du bureau guide déjà pas à pas.
+## Même seuil que desk.gd (TUTORIAL_BUBBLE_UNTIL_CONCLUDED).
+const TUTORIAL_UNTIL_CONCLUDED := 2
 
 ## Le joueur part sur le terrain (interrogatoire ou perquisition) : le bureau
 ## ouvre l'écran de scène.
@@ -165,10 +170,16 @@ func _apply_briefing(case_data: Dictionary) -> void:
 	_case_summary.visible = context != ""
 
 
-## Rappel des actions possibles, surtout utile sur les premières missions (acte 1).
-## Masqué ensuite pour alléger l'écran.
+## Vrai tant que le joueur apprend (aide activée et peu de dossiers conclus) :
+## on allège alors l'en-tête du dossier, le bandeau « À FAIRE » prenant le relais.
+func _in_tutorial() -> bool:
+	return Settings.guidance and GameState.concluded_case_count() < TUTORIAL_UNTIL_CONCLUDED
+
+
+## Rappel des actions possibles, utile une fois le tutoriel passé (acte 1).
+## Pendant le tutoriel il fait doublon avec le bandeau « À FAIRE » : on le masque.
 func _refresh_actions_help() -> void:
-	if current_case_id == "" or GameState.day_index >= 5:
+	if current_case_id == "" or GameState.day_index >= 5 or _in_tutorial():
 		_actions_help.visible = false
 		return
 	var parts: PackedStringArray = [
@@ -464,6 +475,9 @@ func _refresh_all() -> void:
 		status_text += "  //  " + CaseLibrary.get_decision(case_data, case_state.decision).get("label", "").to_upper()
 	_case_header.text = "DOSSIER N° %s  |  %s  |  %s" % [current_case_id, case_data.subject_name, status_text]
 	_progress_label.text = progress_text(case_data, case_state)
+	# Pendant l'apprentissage, on masque le compteur d'avancement : le bandeau
+	# « À FAIRE » dit déjà quoi faire, et l'en-tête reste épuré.
+	_progress_label.visible = not _in_tutorial()
 	var can_decide := GameState.can_decide(current_case_id)
 	_refresh_actions(can_decide)
 	_refresh_actions_help()
