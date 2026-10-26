@@ -733,6 +733,8 @@ func get_guide_target(part: String, case_id := "") -> Control:
 					return _doc_body
 			# Rien à noter sur cette pièce : les autres pièces.
 			return _document_tabs_scroll
+		"compare":
+			return _compare_button
 		"notebook":
 			return _confront_button if selected_facts.size() == MAX_SELECTED_FACTS else _notebook_list
 		"conclusion":

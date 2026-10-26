@@ -166,6 +166,9 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
         signature) ; la pièce s'affiche agrandie et centrée, fermeture au toucher.
         On peut compter les branches d'une étoile, lire un numéro de série, voir le
         tremblé d'une signature — « faut que le joueur se prenne au jeu »
+  - [x] Le coach (MAZUR) met en avant COMPARER + la loupe : quand un dossier propose
+        une confrontation de pièces accessible, l'aide y oriente le joueur avant la
+        confrontation classique (découvrabilité du mini-jeu)
   - [ ] Amplifier encore : un vrai sceau truqué (étoile à 4 branches) dans un dossier
         avec un faussaire au tampon ; billets de transport ; signatures côte à côte
   - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2, à écrire)
