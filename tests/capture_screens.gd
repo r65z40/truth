@@ -256,6 +256,11 @@ func _capture_all() -> void:
 	# Authentification des permis de passage (cachets visuels, « traquer les faussaires »).
 	desk.open_comparison("53402")
 	await _snap("39b_authentifier_permis")
+	# Loupe sur le sceau : compter les branches de l'étoile, lire le numéro de série.
+	desk.comparison_screen._left_zoom.pressed.emit()
+	await _snap("39d_loupe_sceau")
+	desk.comparison_screen._hide_loupe()
+	await get_tree().process_frame
 	var permit_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
 	var permit_cmp: Dictionary = ComparisonRules.get_comparison(CaseLibrary.get_case("53402"))
 	var permit_pts: Array = permit_cmp.points
@@ -274,6 +279,11 @@ func _capture_all() -> void:
 	GameState.flags["field.search_40921.mattress"] = true
 	desk.open_comparison("40921")
 	await _snap("40b_authentifier_signature")
+	# Loupe : examiner de près la signature imitée (tremblé du tracé au crayon).
+	desk.comparison_screen._right_zoom.pressed.emit()
+	await _snap("40d_loupe_signature")
+	desk.comparison_screen._hide_loupe()
+	await get_tree().process_frame
 	var sig_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
 	var sig_cmp: Dictionary = ComparisonRules.get_comparison(CaseLibrary.get_case("40921"))
 	var sig_pts: Array = sig_cmp.points
