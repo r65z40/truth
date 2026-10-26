@@ -311,7 +311,9 @@ func _refresh_header() -> void:
 ## Bandeau d'aide permanent, posé en haut du bureau pendant l'apprentissage.
 func _build_guide_bar() -> void:
 	_guide_bar = PanelContainer.new()
-	_guide_bar.theme_type_variation = &"DocumentPanel"
+	# Bandeau vert foncé « objectif » (même style que « OBJET DE L'ENQUÊTE ») : le
+	# texte clair y ressort nettement, alors qu'il disparaissait sur le parchemin.
+	_guide_bar.theme_type_variation = &"ObjectiveBar"
 	var pad := MarginContainer.new()
 	pad.add_theme_constant_override("margin_left", 14)
 	pad.add_theme_constant_override("margin_right", 14)

@@ -22,6 +22,7 @@ func _ready() -> void:
 func _run() -> void:
 	var tests := [
 		"test_case_index_and_loading",
+		"test_case_40000",
 		"test_case_40921_structure",
 		"test_case_40921_has_contradiction",
 		"test_document_rendering_escapes_bbcode",
@@ -139,6 +140,22 @@ func test_case_index_and_loading() -> void:
 				"le dossier %s est valide %s" % [case_id, CaseLibrary.validate_case(case_data)])
 	print("  (le message ERROR qui suit est attendu)")
 	check(CaseLibrary.get_case("inexistant").is_empty(), "un dossier inconnu renvoie {}")
+
+
+## Dossier zéro : tutoriel sur rails, deux pièces, une seule contradiction (l'adresse).
+func test_case_40000() -> void:
+	var case_data := CaseLibrary.get_case("40000")
+	check(not case_data.is_empty() and case_data.documents.size() == 2, "le dossier zéro a deux pièces")
+	check("40000" in CaseLibrary.get_starting_case_ids(), "le dossier zéro est un dossier de départ")
+	check(CaseLibrary.get_starting_case_ids()[0] == "40000", "le dossier zéro vient en premier")
+	var keys := CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("novak.address" in keys, "les deux pièces se contredisent sur l'adresse")
+	check(CaseLibrary.confront(case_data, "f_decl_address", "f_reg_address") == "novak.address",
+			"confronter les deux adresses établit la contradiction")
+	check(CaseLibrary.confront(case_data, "f_decl_address", "f_decl_job") == "",
+			"deux points différents ne se contredisent pas")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier zéro est structurellement valide %s" % [CaseLibrary.validate_case(case_data)])
 
 
 func test_case_40921_structure() -> void:
@@ -1304,6 +1321,7 @@ func test_act_review() -> void:
 
 
 func test_veritas() -> void:
+	GameState.cases.erase("40000")  # ce test porte sur le dossier 40921, pas sur le dossier zéro
 	var case_data := CaseLibrary.get_case("40921")
 	for document in case_data.documents:
 		check(Veritas.document_remark(document) != "", "VERITAS commente la pièce %s" % document.id)
@@ -1322,6 +1340,7 @@ func test_veritas() -> void:
 
 ## Joue le dossier 40921 avec une décision donnée, puis passe au lendemain.
 func test_veritas_model() -> void:
+	GameState.cases.erase("40000")  # ce test porte sur les vrais dossiers, pas sur le dossier zéro
 	var expected := {"40921": ["arrest", 87], "51307": ["close", 71], "52044": ["arrest_baker", 83], "52310": ["arrest", 91]}
 	for case_id in expected:
 		var case_data := CaseLibrary.get_case(case_id)
@@ -1844,22 +1863,20 @@ func test_guidance_steps() -> void:
 	var step := func() -> Dictionary: return Guidance.next_step(GameState.get_condition_state(), GameState.messages)
 	check(step.call().target == "messages" and step.call().text.contains("prise de fonction"), "1. lire le message de Mazur")
 	GameState.mark_message_read("welcome_mazur")
-	check(step.call().text.begins_with("Ouvrir le dossier n° 40921"), "2. ouvrir le dossier")
-	GameState.mark_document_viewed("40921", "identity")
-	check(step.call().text.contains("(1/4)"), "3. lire toutes les pièces")
-	for document_id in ["work_report", "intercept", "travel_log"]:
-		GameState.mark_document_viewed("40921", document_id)
+	# Le dossier zéro (tutoriel sur rails) est guidé en premier, avant le 40921.
+	check(step.call().text.begins_with("Ouvrir le dossier n° 40000"), "2. ouvrir le dossier zéro")
+	GameState.mark_document_viewed("40000", "declaration")
+	check(step.call().text.contains("(1/2)"), "3. lire toutes les pièces")
+	GameState.mark_document_viewed("40000", "registry")
 	check(step.call().text.begins_with("Noter"), "4. noter des éléments")
-	GameState.note_fact("40921", "f_report_presence")
-	GameState.note_fact("40921", "f_log_trip")
+	GameState.note_fact("40000", "f_decl_address")
+	GameState.note_fact("40000", "f_reg_address")
 	check(step.call().text.begins_with("Confronter"), "5. confronter")
-	GameState.confront_facts("40921", "f_report_presence", "f_log_trip")
+	GameState.confront_facts("40000", "f_decl_address", "f_reg_address")
 	check(step.call().text.begins_with("Rédiger"), "6. conclure")
-	GameState.apply_decision("40921", "investigate")
-	check(step.call().text.begins_with("Lire vos nouveaux messages"), "7. lire la réponse")
-	for message in GameState.messages:
-		GameState.mark_message_read(message.id)
-	check(step.call().target == "end_day", "8. terminer la journée")
+	GameState.apply_decision("40000", "regularize")
+	# Une fois le dossier zéro bouclé, la guidance enchaîne sur le premier vrai dossier.
+	check(step.call().text.begins_with("Ouvrir le dossier n° 40921"), "7. enchaîner sur le dossier n° 40921")
 
 
 func test_assessment() -> void:
@@ -1912,6 +1929,7 @@ func test_main_menu_scene() -> void:
 
 
 func test_desk_scene_flow() -> void:
+	GameState.cases.erase("40000")  # ce parcours porte sur le dossier 40921, pas sur le dossier zéro
 	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
@@ -2093,6 +2111,7 @@ func test_investigation_and_conclusion_flow() -> void:
 
 func test_end_day_in_desk() -> void:
 	SaveManager.delete_save()
+	GameState.cases.erase("40000")  # ce test porte sur le dossier 40921 et l'arrivée du 51307
 	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
@@ -2272,6 +2291,7 @@ func test_field_stage_3d() -> void:
 
 func test_friendly_desk() -> void:
 	SaveManager.delete_save()
+	GameState.cases.erase("40000")  # ce test porte sur l'accompagnement dans le dossier 40921
 	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
@@ -2434,8 +2454,16 @@ func test_document_windows() -> void:
 			and dossiers.get_node("%ProgressLabel").text.contains("0 contradiction"), "avancement lisible en une ligne")
 	check(dossiers.get_node("%ObjectiveLabel").visible \
 			and dossiers.get_node("%ObjectiveLabel").text.contains("OBJET DE L'ENQUÊTE"), "le briefing affiche l'objet de l'enquête")
+	# Pendant le tutoriel, l'en-tête du dossier est épuré : ni rappel « Vous
+	# pouvez… » ni compteur d'avancement (le bandeau « À FAIRE » du bureau guide).
+	check(not dossiers.get_node("%ActionsHelp").visible \
+			and not dossiers.get_node("%ProgressLabel").visible, "tutoriel : en-tête du dossier allégé")
+	# Une fois l'aide coupée (joueur rodé), le rappel des actions réapparaît.
+	Settings.set_guidance(false)
+	dossiers.select_case("40921")
 	check(dossiers.get_node("%ActionsHelp").visible \
-			and dossiers.get_node("%ActionsHelp").text.contains("confronter"), "les actions possibles sont expliquées sur les premières missions")
+			and dossiers.get_node("%ActionsHelp").text.contains("confronter"), "les actions possibles sont expliquées une fois le tutoriel passé")
+	Settings.set_guidance(true)
 
 	dossiers.select_document("work_report")
 	dossiers.open_current_aside()

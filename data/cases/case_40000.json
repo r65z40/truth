@@ -1,0 +1,230 @@
+{
+	"id": "40000",
+	"title": "Citoyen n° 40000",
+	"subject_name": "NOVAK, Ida",
+	"summary": "Renouvellement de carte de résidence. Vérification de forme confiée aux inspecteurs qui prennent leur poste.",
+	"briefing": {
+		"objective": "Vérifier la demande de renouvellement de carte de résidence d'Ida NOVAK et relever toute incohérence.",
+		"context": "Dossier de routine, sans gravité, remis aux nouveaux inspecteurs. Deux pièces seulement : c'est l'occasion d'apprendre la marche à suivre avant les vrais dossiers."
+	},
+	"priority": "ordinaire",
+	"guide": {
+		"note": "Dossier zéro : tutoriel sur rails, une seule contradiction évidente.",
+		"open": "Commencez par cette vérification de routine : dossier n° 40000, Ida NOVAK. Ouvrez-le.",
+		"read": "Un dossier se compose de pièces. Cliquez sur la pièce marquée « à lire » pour la consulter. Il n'y en a que deux ici.",
+		"facts": "Les passages soulignés en rouge sont des éléments. Cliquez dessus pour les copier dans votre carnet. La déclaration et l'extrait du registre parlent tous deux de son adresse.",
+		"notebook": "Votre carnet est à gauche. Prenez les deux notes qui parlent de l'adresse, sélectionnez-les, puis cliquez sur CONFRONTER : elles ne disent pas la même chose.",
+		"notebook_retry": "Cherchez les deux notes qui portent sur le même point — l'adresse d'Ida NOVAK. La déclaration dit District 4 depuis 1981 ; le registre dit District 7 depuis septembre 1986. Confrontez ces deux-là.",
+		"conclusion": "Contradiction établie : vous avez de quoi conclure. Cliquez sur RÉDIGER LA CONCLUSION, choisissez, signez. Rien de grave ici — c'est un exercice, il n'y a pas de bonne réponse imposée."
+	},
+	"documents": [
+		{
+			"id": "declaration",
+			"type": "report",
+			"title": "Déclaration de la citoyenne",
+			"source": "Guichet des cartes de résidence, District 4",
+			"reliability": "C",
+			"date": "1986-10-28",
+			"fields": [
+				[
+					"Nom",
+					"NOVAK"
+				],
+				[
+					"Prénom",
+					"Ida"
+				],
+				[
+					"N° de citoyen",
+					"40000"
+				],
+				[
+					"Profession",
+					"Couturière, atelier textile n° 2"
+				],
+				[
+					"Carte de résidence",
+					"RC-40-0088"
+				]
+			],
+			"body": "Je soussignée, Ida NOVAK, sollicite le renouvellement de ma carte de résidence.\n\nJe déclare résider au 8, rue des Tilleuls, District 4, Velmira, sans changement d'adresse depuis 1981.\n\nFait à Velmira, le 28 octobre 1986.",
+			"facts": [
+				{
+					"id": "f_decl_address",
+					"key": "novak.address",
+					"value": "District 4, sans changement depuis 1981",
+					"label": "Déclare résider au District 4 sans changement depuis 1981",
+					"quote": "sans changement d'adresse depuis 1981"
+				},
+				{
+					"id": "f_decl_job",
+					"key": "novak.job",
+					"value": "Couturière, atelier textile n° 2",
+					"label": "Couturière à l'atelier textile n° 2",
+					"quote": "Couturière, atelier textile n° 2"
+				}
+			],
+			"veritas_remark": "Pièce déclarative : source de fiabilité C. À recouper avec une source officielle."
+		},
+		{
+			"id": "registry",
+			"type": "report",
+			"title": "Extrait du registre des résidences",
+			"source": "Bureau des domiciliations, District 7",
+			"reliability": "A",
+			"date": "1986-10-20",
+			"columns": [
+				"Date",
+				"Citoyen",
+				"Adresse enregistrée",
+				"District",
+				"Agent"
+			],
+			"rows": [
+				[
+					"03.09.1986",
+					"NOVAK, Ida",
+					"12, allée du Four",
+					"District 7",
+					"D-14"
+				]
+			],
+			"body": "Rappel : tout changement de domicile doit être déclaré sous huit jours. La carte de résidence est mise à jour par le bureau du district d'arrivée.",
+			"facts": [
+				{
+					"id": "f_reg_address",
+					"key": "novak.address",
+					"value": "District 7, depuis le 03.09.1986",
+					"label": "Enregistrée au District 7",
+					"quote": "District 7"
+				},
+				{
+					"id": "f_reg_date",
+					"key": "novak.move",
+					"value": "Changement enregistré le 03.09.1986",
+					"label": "Changement de domicile enregistré le 03.09.1986",
+					"quote": "03.09.1986"
+				}
+			],
+			"veritas_remark": "Registre officiel, source de fiabilité A. Changement de domicile récent."
+		}
+	],
+	"decisions": [
+		{
+			"id": "regularize",
+			"stamp": "RÉGULARISÉ",
+			"label": "Demander la mise à jour du dossier",
+			"description": "Faire corriger l'adresse au registre et renouveler la carte.",
+			"archive": "Adresse corrigée au registre. Carte de résidence renouvelée.",
+			"fate_quote": "Ida NOVAK récupère sa carte au guichet et repart sans un mot.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 3,
+						"suspicion": 0,
+						"influence": 1
+					},
+					"response": "regularize_found",
+					"flags": {
+						"40000.regularized": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 1,
+						"suspicion": 1,
+						"influence": 0
+					},
+					"response": "regularize_default",
+					"flags": {}
+				}
+			]
+		},
+		{
+			"id": "dismiss",
+			"stamp": "CLASSÉ",
+			"label": "Classer le dossier",
+			"description": "Renouveler la carte sans porter de correction.",
+			"archive": "Carte renouvelée. Aucune correction portée au registre.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -2,
+						"suspicion": 4,
+						"influence": -1
+					},
+					"response": "dismiss_found",
+					"flags": {
+						"40000.dismissed_despite": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 0,
+						"suspicion": 2,
+						"influence": 0
+					},
+					"response": "dismiss_default",
+					"flags": {}
+				}
+			]
+		}
+	],
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "Ida NOVAK a déménagé au District 7 en septembre et a oublié de corriger sa déclaration au guichet du District 4. Simple négligence administrative, sans intention de dissimulation.",
+		"involved": [
+			"40000"
+		]
+	},
+	"responses": {
+		"regularize_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40000 : régularisation",
+			"body": "Inspecteur,\n\nParfait. Vous avez relevé l'écart entre la déclaration et le registre, et demandé la correction : c'est exactement le réflexe attendu.\n\nRien de grave dans ce dossier — une citoyenne qui a déménagé sans prévenir. Mais le geste est le bon. Passez au suivant.\n\nR. MAZUR"
+		},
+		"regularize_default": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40000 : régularisation",
+			"body": "Inspecteur,\n\nCarte renouvelée, dossier régularisé. Pour cet exercice, cela suffit.\n\nLa prochaine fois, confrontez les pièces avant de conclure : c'est en comparant la déclaration au registre que l'écart d'adresse apparaît.\n\nR. MAZUR"
+		},
+		"dismiss_found": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40000 : classement",
+			"body": "Inspecteur,\n\nVous avez vu l'écart d'adresse et vous avez classé sans rien corriger. Pour un exercice, ce n'est pas méchant ; dans un vrai dossier, ce serait une négligence.\n\nQuand une pièce en contredit une autre, on ne détourne pas le regard. Au suivant.\n\nR. MAZUR"
+		},
+		"dismiss_default": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 40000 : classement",
+			"body": "Inspecteur,\n\nCarte renouvelée, dossier classé. L'exercice est passé.\n\nUn conseil tout de même : lisez les deux pièces et confrontez-les. Ici, la déclaration et le registre ne donnaient pas la même adresse.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "regularize",
+		"rationale": "Adresse déclarée non conforme au registre des domiciliations. Défaut de mise à jour, sans facteur de risque.",
+		"factors": [
+			{
+				"id": "mismatch",
+				"label": "Adresse déclarée différente du registre",
+				"category": "established_fact",
+				"weight": 6,
+				"decision": "regularize",
+				"requires_contradiction": "novak.address"
+			},
+			{
+				"id": "routine",
+				"label": "Dossier de routine, aucun antécédent",
+				"category": "risk",
+				"weight": 2,
+				"decision": "regularize"
+			}
+		],
+		"note": "Cas sans enjeu de sécurité : VERITAS recommande la simple régularisation."
+	}
+}
