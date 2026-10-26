@@ -125,7 +125,7 @@ func assign_case(case_id: String) -> void:
 ## État minimal utilisé pour évaluer des conditions (événements, pièces).
 func get_condition_state() -> Dictionary:
 	return {"day_index": day_index, "flags": flags, "cases": cases, "fired_events": fired_events,
-			"evening_counts": EveningRules.counts(evenings)}
+			"indicators": indicators, "evening_counts": EveningRules.counts(evenings)}
 
 
 ## Le dossier tel que le joueur le voit : seulement les pièces disponibles.

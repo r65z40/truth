@@ -896,6 +896,102 @@
 				"subject": "Signalement vous concernant",
 				"body": "Pour information.\n\nLe citoyen I. KOLB a déposé un signalement visant « l'inspecteur qui a classé l'affaire de Sainte-Agathe malgré des preuves évidentes ». Il joint une copie de son premier courrier.\n\nAucune suite n'est donnée à ce stade. La pièce est versée à votre dossier. Un inspecteur qui classe un rassemblement signalé s'expose, c'est la règle.\n\nBureau des signalements"
 			}
+		},
+		{
+			"id": "pressure_watch",
+			"conditions": {
+				"min_day": 2,
+				"min_indicators": {
+					"suspicion": 50
+				},
+				"forbidden_flags": [
+					"player.under_watch"
+				]
+			},
+			"effects": {
+				"influence": -2
+			},
+			"set_flags": {
+				"player.under_watch": true
+			},
+			"message": {
+				"from": "Direction du personnel, Section 4",
+				"subject": "Révision de vos classements",
+				"body": "Inspecteur,\n\nVotre nom revient trop souvent dans les contestations transmises par les autres services. La hiérarchie a demandé une relecture de vos classements récents.\n\nCe n'est pas une sanction. C'est un avertissement. On vous regarde travailler.\n\nDirection du personnel"
+			}
+		},
+		{
+			"id": "pressure_internal_review",
+			"conditions": {
+				"min_day": 2,
+				"min_indicators": {
+					"suspicion": 70
+				},
+				"forbidden_flags": [
+					"player.internal_review"
+				]
+			},
+			"effects": {
+				"influence": -3
+			},
+			"set_flags": {
+				"player.internal_review": true
+			},
+			"message": {
+				"from": "Bureau du contrôle interne",
+				"subject": "Convocation",
+				"body": "Inspecteur,\n\nUne procédure de contrôle interne est ouverte à votre encontre. Vos décisions des derniers jours seront examinées une à une.\n\nPrésentez-vous mardi, 07h30, bureau 114. Venez avec vos dossiers. Un agent qui attire l'attention finit par la retenir.\n\nBureau du contrôle interne"
+			}
+		},
+		{
+			"id": "pressure_courted",
+			"conditions": {
+				"min_day": 3,
+				"min_indicators": {
+					"loyalty": 75,
+					"influence": 35
+				},
+				"max_indicators": {
+					"suspicion": 49
+				},
+				"forbidden_flags": [
+					"player.courted"
+				]
+			},
+			"effects": {
+				"influence": 3
+			},
+			"set_flags": {
+				"player.courted": true
+			},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Entre nous",
+				"body": "Inspecteur,\n\nVotre zèle n'est pas passé inaperçu. En haut, on sait désormais qui vous êtes.\n\nDes responsabilités plus larges pourraient vous revenir — à condition de continuer à voir les choses du bon côté. Je vous ai recommandé. Ne me faites pas regretter.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "pressure_loyalty_doubt",
+			"conditions": {
+				"min_day": 2,
+				"max_indicators": {
+					"loyalty": 24
+				},
+				"forbidden_flags": [
+					"player.loyalty_flagged"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"player.loyalty_flagged": true
+			},
+			"message": {
+				"from": "Direction du personnel, Section 4",
+				"subject": "Votre fiabilité",
+				"body": "Inspecteur,\n\nLe sens de vos décisions interroge. À force de clémence, on finit par se demander de quel côté penche un agent.\n\nUne réserve a été portée à votre dossier. Il vous appartient de la faire oublier.\n\nDirection du personnel"
+			}
 		}
 	]
 }
