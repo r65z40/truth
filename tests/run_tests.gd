@@ -1184,6 +1184,19 @@ func test_comparison() -> void:
 	check("f_death_horvat" in books_state.noted_facts, "le décès du titulaire est versé au carnet")
 	check(DecisionRules.resolve(books_case, books_state, "report_bureau").response_id == "bureau_proved",
 			"la comparaison débloque la mise en cause prouvée du Bureau")
+	# L'aide (Guidance) met en avant COMPARER quand une comparaison est accessible.
+	var guide_state := {"day_index": 1, "flags": {}, "cases": {}}
+	var guide_view := CaseLibrary.filter_case(CaseLibrary.get_case("52310"), guide_state)
+	var guide_docs: Array = guide_view.documents.map(func(d: Dictionary) -> String: return d.id)
+	guide_state.cases["52310"] = {"decision": "", "viewed_documents": guide_docs,
+			"noted_facts": ["f_rc_mark", "f_var_mark"], "contradictions_found": []}
+	var compare_step := Guidance.next_step(guide_state, [])
+	check(compare_step.part == "compare" and compare_step.text.begins_with("Comparer"),
+			"la guidance propose COMPARER quand une comparaison est accessible")
+	# Une fois la contradiction établie (par comparaison ou confrontation), on n'y pousse plus.
+	guide_state.cases["52310"].contradictions_found = ["varga.mark"]
+	check(Guidance.next_step(guide_state, []).text.begins_with("Rédiger"),
+			"comparaison faite : la guidance passe à la conclusion")
 	GameState.new_game()
 
 

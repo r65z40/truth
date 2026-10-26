@@ -21,8 +21,8 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 	for message in messages:
 		if message.id == "welcome_mazur" and not message.read:
 			return _step("Lire le message de prise de fonction de R. MAZUR.",
-					"Cliquez sur MESSAGES, à droite.", "messages", "",
-					"Bienvenue, inspecteur. Commencez par mon message : il est dans votre courrier.")
+					"Cliquez sur l'icône COURRIER, dans la colonne de gauche.", "messages", "",
+					"Bienvenue, inspecteur. Pas d'inquiétude : je vous guide pas à pas. Suivez le bandeau « À FAIRE », en haut, et l'icône qui clignote. Pour commencer, ouvrez votre courrier.")
 	var cases: Dictionary = state.get("cases", {})
 	for case_id in cases:
 		var case_state: Dictionary = cases[case_id]
@@ -51,6 +51,16 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 			return _case_step(case_id, _step("Noter les éléments importants du dossier n° %s dans votre carnet." % case_id,
 					"Cliquez sur les passages soulignés du texte (ou « + NOTER »).", "dossiers", "facts",
 					guide.get("facts", "Sous la pièce, cliquez sur les éléments qui vous semblent importants : ils vont dans votre carnet.")))
+		# Mini-jeu facultatif mais conseillé : quand le dossier propose une
+		# confrontation de pièces accessible, on la met en avant, avec la loupe
+		# pour examiner cachets et signatures de près.
+		var comparison: Dictionary = ComparisonRules.get_comparison(view)
+		if case_state.get("contradictions_found", []).is_empty() and not comparison.is_empty() \
+				and EventRules.are_conditions_met(comparison.get("conditions", {}), state):
+			return _case_step(case_id, _step(
+					"Comparer deux pièces du dossier n° %s, ou confronter deux éléments du carnet." % case_id,
+					"Bouton COMPARER. Touchez AGRANDIR pour examiner une pièce de près.", "dossiers", "compare",
+					guide.get("compare", "Deux pièces de ce dossier peuvent se contredire. Ouvrez COMPARER, et servez-vous de la loupe (AGRANDIR) pour examiner de près les cachets et les signatures.")))
 		if case_state.get("contradictions_found", []).is_empty():
 			return _case_step(case_id, _step("Confronter deux éléments du carnet, ou rédiger votre conclusion.",
 					"Sélectionnez deux éléments à gauche, puis CONFRONTER.", "dossiers", "notebook",
@@ -63,7 +73,7 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 		if not message.read:
 			unread += 1
 	if unread > 0:
-		return _step("Lire vos nouveaux messages (%d)." % unread, "Cliquez sur MESSAGES.", "messages", "",
+		return _step("Lire vos nouveaux messages (%d)." % unread, "Cliquez sur l'icône COURRIER, à gauche.", "messages", "",
 				"Du courrier est arrivé : la suite de vos décisions s'y trouve.")
 	return _step("Aucune tâche en attente : vous pouvez terminer votre journée.",
 			"Bouton FIN DE SERVICE, en bas à droite.", "end_day", "",

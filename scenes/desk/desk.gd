@@ -69,6 +69,10 @@ var current_step: Dictionary = {}
 var _coach_dismissed_step := ""
 var _pulse_tween: Tween
 var _toast_tween: Tween
+## Bandeau d'aide permanent (début de partie) : rappelle en clair la prochaine
+## étape, même si le joueur a fermé la bulle de MAZUR. S'efface une fois rodé.
+var _guide_bar: PanelContainer
+var _guide_bar_label: Label
 
 const TOOLTIPS := {
 	"DossiersButton": "Consulter les dossiers qui vous sont assignés.",
@@ -123,6 +127,7 @@ func _ready() -> void:
 	_day_transition.hide()
 	coach.target_provider = coach_target
 	coach.dismissed.connect(_on_coach_dismissed)
+	_build_guide_bar()
 	windows.dossiers.field_requested.connect(open_field)
 	windows.dossiers.comparison_requested.connect(open_comparison)
 	windows.dossiers.document_window_requested.connect(open_document_window)
@@ -303,13 +308,48 @@ func _refresh_header() -> void:
 	_refresh_objective()
 
 
-## Met à jour l'aide : la bulle et l'icône signalée clignotent doucement.
+## Bandeau d'aide permanent, posé en haut du bureau pendant l'apprentissage.
+func _build_guide_bar() -> void:
+	_guide_bar = PanelContainer.new()
+	_guide_bar.theme_type_variation = &"DocumentPanel"
+	var pad := MarginContainer.new()
+	pad.add_theme_constant_override("margin_left", 14)
+	pad.add_theme_constant_override("margin_right", 14)
+	pad.add_theme_constant_override("margin_top", 6)
+	pad.add_theme_constant_override("margin_bottom", 6)
+	_guide_bar.add_child(pad)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	pad.add_child(row)
+	var tag := Label.new()
+	tag.text = "▸ À FAIRE"
+	tag.theme_type_variation = &"HeaderLabel"
+	row.add_child(tag)
+	_guide_bar_label = Label.new()
+	_guide_bar_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_guide_bar_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_guide_bar_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(_guide_bar_label)
+	var main := get_node("Main")
+	main.add_child(_guide_bar)
+	main.move_child(_guide_bar, 0)
+	_guide_bar.visible = false
+
+
+## Met à jour l'aide : le bandeau, la bulle et l'icône signalée clignotent doucement.
 func _refresh_objective() -> void:
 	current_step = Guidance.next_step(GameState.get_condition_state(), GameState.messages)
+	var in_tutorial: bool = Settings.guidance \
+			and GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED
+	# Bandeau permanent : la prochaine étape en clair, toujours visible au début.
+	if _guide_bar:
+		_guide_bar.visible = in_tutorial
+		var hint: String = current_step.get("hint", "")
+		_guide_bar_label.text = current_step.get("text", "") \
+				+ ("   —   " + hint if hint != "" else "")
 	# La bulle détaillée s'estompe une fois le joueur rodé ou s'il la ferme ; le
 	# repère clignotant sur l'icône reste tant que l'aide est activée.
-	coach.visible = Settings.guidance \
-			and GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED \
+	coach.visible = in_tutorial \
 			and _step_key(current_step) != _coach_dismissed_step
 	if _pulse_tween:
 		_pulse_tween.kill()
