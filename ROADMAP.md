@@ -145,7 +145,10 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
         sur les mentions exactes des deux fiches ; pièges (nom/adresse identiques) ;
         bien juger établit `varga.mark` et verse les faits au carnet
         (ComparisonRules + ComparisonScreen + bouton COMPARER, photos facultatives)
-  - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2)
+  - [x] Comparer deux pièces — chorale 53118 (acte 2) : signalement vs archives
+        paroissiales, sans photo ; établit `choir.curfew` (veillée autorisée) et
+        débloque la relaxe prouvée
+  - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2, à écrire)
   - [ ] Vérifier une signature / un tampon (ORLIK acte 1, permis de la chorale)
   - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
 

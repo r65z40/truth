@@ -614,5 +614,49 @@
 		"subject": "Dossier 53118 : votre question",
 		"body": "Inspecteur,\n\nOnze noms d'un seul informateur, c'est beaucoup pour un homme qui regardait de loin. Et une chorale qui chante un dimanche précis chante rarement sans raison.\n\nLes cultes signent des permis. Les paroisses tiennent des registres. On garde ces papiers quelque part. Je ne vous en dis pas plus.\n\nR. MAZUR"
 	},
+	"comparison": {
+		"id": "signalement_vs_archives",
+		"title": "Signalement contre archives paroissiales",
+		"intro": "Le signalement de l'informateur et les pièces du fonds Sainte-Agathe parlent de la même soirée. Confrontez-les, point par point : ce qui concorde, et ce qui ne tient pas.",
+		"left": {
+			"label": "Signalement (I. KOLB)"
+		},
+		"right": {
+			"label": "Fonds Sainte-Agathe"
+		},
+		"points": [
+			{
+				"id": "date",
+				"label": "Soirée concernée",
+				"detail_left": "Dimanche 9 novembre, à l'église Sainte-Agathe",
+				"detail_right": "Veillée de la Sainte-Agathe, le 9 novembre"
+			},
+			{
+				"id": "count",
+				"label": "Nombre de participants",
+				"detail_left": "Onze participants dénoncés",
+				"detail_right": "Sept personnes ont émargé au registre de veillée"
+			},
+			{
+				"id": "authorized",
+				"label": "Autorisation de la veillée",
+				"detail_left": "Rassemblement non autorisé, après le couvre-feu",
+				"detail_right": "Permis de veillée n° 86/212, délivré le 14.10.1986 par le Bureau des cultes",
+				"decisive": true,
+				"note": "Un permis signé avant le durcissement du couvre-feu autorise la veillée : l'accusation de « rassemblement non autorisé » ne tient pas."
+			}
+		],
+		"establishes": "choir.curfew",
+		"advantage": {
+			"note_facts": [
+				"f_arc_permit",
+				"f_arc_register"
+			],
+			"set_flags": {
+				"53118.permit_compared": true
+			},
+			"text": "La veillée était autorisée, et sept personnes ont émargé, non onze. Le permis et le registre contredisent le signalement : vous pouvez les opposer lors de votre conclusion."
+		}
+	},
 	"field_scene": "visit_53118"
 }

@@ -230,6 +230,11 @@ func _capture_all() -> void:
 	await _snap("34_dossier_53118_raccordement")
 	desk.windows.dossiers.select_document("archive_parish")
 	await _snap("35_dossier_53118_archive")
+	# Comparaison sans portrait : le signalement confronté aux archives paroissiales.
+	desk.open_comparison("53118")
+	await _snap("35b_comparer_chorale")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.windows.dossiers.open_conclusion()
 	await _snap("36_dossier_53118_veritas")
 	desk.windows.dossiers.close()

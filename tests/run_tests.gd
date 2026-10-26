@@ -1088,6 +1088,22 @@ func test_comparison() -> void:
 	check(GameState.apply_comparison("52310").is_empty(), "l'avantage ne s'acquiert qu'une fois")
 	check(case_state.contradictions_found.count("varga.mark") == 1, "pas de doublon de contradiction")
 	check(GameState.flags.get("52310.identity_compared") == true, "drapeau de comparaison posé")
+	# Deuxième dossier : la chorale (53118), sans photo, contradiction exculpatoire.
+	var choir_case := CaseLibrary.get_case("53118")
+	var choir := ComparisonRules.get_comparison(choir_case)
+	check(not choir.is_empty() and choir.establishes == "choir.curfew", "la chorale propose une comparaison exculpatoire")
+	check(not choir.left.has("photo_document"), "comparaison de pièces sans portrait")
+	var choir_verdicts := {}
+	for point in choir.points:
+		choir_verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(choir, {}, {}, choir_verdicts).all_ok, "jugement correct de la chorale")
+	var choir_advantage := GameState.apply_comparison("53118")
+	check(choir_advantage.established == "choir.curfew", "la comparaison établit choir.curfew")
+	var choir_state := GameState.get_case_state("53118")
+	check("f_arc_permit" in choir_state.noted_facts and "f_arc_register" in choir_state.noted_facts,
+			"permis et registre versés au carnet")
+	check(DecisionRules.resolve(choir_case, choir_state, "clear").response_id == "clear_proved",
+			"la comparaison débloque la relaxe prouvée de la chorale")
 	GameState.new_game()
 
 
