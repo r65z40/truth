@@ -366,7 +366,8 @@
 	"decisions": [
 		{
 			"id": "arrest",
-			"stamp": "TRANSFÉRÉ",
+			"stamp": "CONDAMNÉ",
+			"fate_line": "Jugé pour complicité de franchissement clandestin : douze ans. Au km 47, un autre aiguilleur prend le poste. Les familles qu'il laissait passer ne passent plus.",
 			"label": "Transmettre à la sûreté des frontières",
 			"description": "Complicité de passage et faux en écritures : transmission au titre du décret 86-31.",
 			"archive": "Transmis à la sûreté des frontières. Jugé pour complicité de franchissement clandestin. Le poste de Brenec a été confié à un agent de la capitale.",

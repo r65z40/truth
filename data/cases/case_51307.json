@@ -436,7 +436,8 @@
 	"decisions": [
 		{
 			"id": "arrest",
-			"stamp": "TRANSFÉRÉ",
+			"stamp": "CONDAMNÉ",
+			"fate_line": "Condamné pour faux en écritures à huit ans de travail correctif. Transféré au camp de Dolenz. Les ouvriers qu'il couvrait sont, eux, portés sur une liste.",
 			"label": "Recommander l'arrestation",
 			"description": "Faux certificats et trafic : transmission au service des interpellations.",
 			"archive": "Arrêté pour faux en écritures. Exclu du Parti. La Milice du District 9 n'a pas commenté.",

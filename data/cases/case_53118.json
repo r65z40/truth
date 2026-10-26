@@ -384,8 +384,9 @@
 	"decisions": [
 		{
 			"id": "arrest_all",
-			"stamp": "TRANSFÉRÉS",
-			"fate_quote": "Une mère, au guichet : « Mon fils chantait. C'est tout. Il chantait. »",
+			"stamp": "DÉPORTÉS",
+			"fate_line": "Les onze sont déportés au camp de Dolenz. Roman FALK, 81 ans, meurt pendant le transfert ; le registre inscrit « défaillance cardiaque ». La chorale ne chantera plus.",
+			"fate_quote": "Une mère, au guichet, sans crier : « Mon fils chantait. C'est tout. Il chantait. »",
 			"label": "Recommander l'arrestation des onze",
 			"description": "Rassemblement de défiance après le couvre-feu : transmission de la liste au service des interpellations.",
 			"archive": "Les onze membres de la chorale Sainte-Agathe sont arrêtés. La Section 7 évoque un « réseau paroissial ».",
@@ -442,7 +443,8 @@
 		},
 		{
 			"id": "restrict",
-			"stamp": "TRANSFÉRÉE",
+			"stamp": "DÉPORTÉE",
+			"fate_line": "Ewa TILL est déportée seule, comme « organisatrice ». À Sainte-Agathe, l'orgue reste fermé ; personne n'ose en jouer.",
 			"label": "Ne retenir que l'organisatrice",
 			"description": "Écarter les simples choristes et ne transmettre que le nom de la chef de chœur, comme responsable du rassemblement.",
 			"archive": "Seule Ewa TILL est arrêtée, comme organisatrice. Les autres noms sont rayés de la liste.",

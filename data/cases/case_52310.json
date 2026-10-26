@@ -407,7 +407,8 @@
 	"decisions": [
 		{
 			"id": "arrest",
-			"stamp": "TRANSFÉRÉ",
+			"stamp": "EXÉCUTÉ",
+			"fate_line": "Jugé en deux heures, fusillé à l'aube du 19. L'homme n'était pas Teodor VARGA : la photo avait été changée. On a tué un nom, et un inconnu avec.",
 			"label": "Recommander l'arrestation de l'auteur",
 			"description": "Message codé à destination d'un réseau de passage : transmission au service des interpellations.",
 			"archive": "« Teodor VARGA » arrêté au quai des Tanneurs. Procès public annoncé par la Section 7.",

@@ -263,8 +263,8 @@
 	"decisions": [
 		{
 			"id": "transmit",
-			"stamp": "TRANSFÉRÉ",
-			"fate_quote": "Sa femme a perdu la pension d'invalidité le lendemain. Elle n'a pas écrit ; elle est venue, et elle est restée debout dans le couloir.",
+			"stamp": "DÉPORTÉ",
+			"fate_line": "Interpellé sur un seul signalement, déporté sans procès. Sa femme perd la pension d'invalidité le lendemain ; elle reste debout dans le couloir du Ministère, et personne ne la reçoit.",
 			"label": "Transmettre le signalement",
 			"description": "Donner suite au signalement de l'informateur : interpellation pour activité clandestine.",
 			"archive": "Interpellé sur signalement d'informateur. Son épouse a perdu la pension d'invalidité le temps de l'enquête.",

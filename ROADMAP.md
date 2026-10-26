@@ -124,9 +124,15 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
       (photo d'identité réutilisée, tampon TRANSFÉRÉ/RELAXÉ/MUTÉ…, ligne de
       conséquence = archive de la décision, parfois une phrase d'un proche ;
       `FateRules` + `ArchiveCard`, tampons dans les 7 dossiers)
-- [ ] Levier n°2 : faire revenir les gens (épargnés/condamnés) sur 2-3 figures
-- [ ] Levier n°3 : semer le père dès l'acte 1 (horloge, nom, date 1971)
-- [ ] Levier n°4 : rendre les conséquences visibles (journal, soirées, bureau)
+- [x] Levier n°4 (journal) : chaque décision des 7 dossiers a sa une du lendemain
+      dans « La Voix de Velmira » (version officielle, euphémismes qui contrastent
+      avec la carte de destin)
+- [x] Ton plus dur (demande de fen du 26.10) : camps (Dolenz), exécutions, morts,
+      déportations sur les dénouements graves (tampons DÉPORTÉ/EXÉCUTÉ/CONDAMNÉ +
+      `fate_line` crue sur la carte, archive officielle conservée plus pudique)
+- [ ] Levier n°4 (suite) : conséquences aussi dans les soirées et sur le bureau
+- [ ] Levier n°2 : faire revenir les gens (épargnés/condamnés) sur 2-3 figures — à proposer
+- [ ] Levier n°3 : semer le père dès l'acte 1 (horloge, nom, date 1971) — à proposer
 
 ## Prochaine itération
 

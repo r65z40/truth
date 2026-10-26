@@ -190,6 +190,10 @@ func _capture_all() -> void:
 	fate_state["contradictions_found"] = ["x"]
 	desk.archive_card.show_fate(FateRules.fate_for(CaseLibrary.get_case("40921"), fate_state))
 	await _snap("33b_carte_destin")
+	# Dénouement dur : la chorale déportée (tampon, camp, mort, voix d'une mère).
+	desk.archive_card.show_fate(FateRules.fate_for(CaseLibrary.get_case("53118"),
+			{"decision": "arrest_all", "contradictions_found": []}))
+	await _snap("33c_carte_destin_chorale")
 	desk.archive_card.hide()
 	# Acte 2 : dossier 53118 La Chorale (RACCORDEMENT + comparaison avec l'archive).
 	GameState.day_index = 6

@@ -214,6 +214,10 @@ func test_news() -> void:
 	check(not "d1_40921_arrest" in titles and not "d1_40921_investigate" in titles, "dossier classé : le journal se tait")
 	check(NewsRules.are_conditions_met({"after_decision": {"case": "40921"}}, decided), "sans liste : n'importe quelle décision")
 	check(NewsRules.edition({"day_index": 30, "flags": {}, "cases": {}}).articles.size() == 2, "un jour sans actualité : les articles par défaut")
+	# Les dossiers de l'acte 2 ont aussi leur conséquence au journal, en langue officielle.
+	var choir := {"day_index": 7, "flags": {}, "cases": {}, "decisions": [{"case_id": "53118", "decision_id": "arrest_all", "day_index": 6}]}
+	check("d_53118_arrest" in NewsRules.edition(choir).articles.map(func(a: Dictionary) -> String: return a.id),
+			"la déportation de la chorale fait la une, en version officielle")
 	var ids := {}
 	for article in NewsRules.data().articles:
 		check(not ids.has(article.id) and article.get("headline", "") != "" and article.get("body", "") != "", "article %s complet et unique" % article.id)
@@ -1009,6 +1013,12 @@ func test_fate_card() -> void:
 	var harsh := FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921"))
 	check(harsh.stamp == "TRANSFÉRÉ", "arrestation : sujet transféré")
 	check(harsh.quote != "", "une phrase de la famille accompagne l'arrestation")
+	# Les dénouements les plus durs montrent la réalité crue (camp, mort), pas l'archive polie.
+	var choir := FateRules.fate_for(CaseLibrary.get_case("53118"),
+			{"decision": "arrest_all", "contradictions_found": []})
+	check(choir.stamp == "DÉPORTÉS", "arrêter la chorale : déportation")
+	check(choir.line.contains("camp de Dolenz") and choir.line.contains("meurt"),
+			"la carte dit le camp et la mort, pas l'euphémisme officiel")
 	# Sans décision, aucune carte.
 	GameState.new_game()
 	_advance_until_assigned("40921")

@@ -337,6 +337,7 @@
 		{
 			"id": "arrest",
 			"stamp": "TRANSFÉRÉ",
+			"fate_line": "Détention provisoire à la prison de la rue Sokol. Interrogé six nuits de suite. Sa femme attend un jugement qui ne vient pas ; ses deux enfants sont retirés à l'école du Bloc 3.",
 			"fate_quote": "Sa femme : « Il était à l'atelier. Demandez à ses camarades. » Personne n'a été interrogé.",
 			"label": "Recommander une arrestation",
 			"description": "Transmettre le dossier au service des interpellations.",

@@ -26,7 +26,9 @@ static func fate_for(case_data: Dictionary, case_state: Dictionary) -> Dictionar
 		"subject_name": case_data.get("subject_name", case_data.get("title", "")),
 		"photo": _subject_photo(case_data),
 		"stamp": outcome.get("stamp", decision.get("stamp", "CLASSÉ")),
-		"line": decision.get("archive", ""),
+		# La carte montre la réalité crue (fate_line) si elle est écrite ; sinon la
+		# ligne d'archive officielle, plus pudique.
+		"line": outcome.get("fate_line", decision.get("fate_line", decision.get("archive", ""))),
 		"quote": outcome.get("fate_quote", decision.get("fate_quote", "")),
 	}
 
