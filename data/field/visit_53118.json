@@ -1,0 +1,66 @@
+{
+	"note": "Visite de la salle de la chorale Sainte-Agathe (dossier 53118). Donne un autre chemin vers les vérités du dossier : veillée autorisée (permis), sept présents et non onze, informateur écarté du poste d'organiste. Chaque choix pose field.visit_53118.<id> ; les éléments du compte rendu en dépendent. spot : zone cliquable en FRACTIONS de l'image [x, y, l, h] (0 à 1). À peaufiner avec l'éditeur de zones (F2).",
+	"id": "visit_53118",
+	"case_id": "53118",
+	"type": "search",
+	"button": "VISITE",
+	"image": "res://assets/field/lieu_53118_chorale.webp",
+	"title": "VISITE  //  SALLE DE LA CHORALE, PAROISSE SAINTE-AGATHE",
+	"time_action": "search_home",
+	"turns": 4,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"53118"
+			]
+		}
+	],
+	"start_flags": {
+		"53118.parish_visited": true
+	},
+	"art": "",
+	"verb": "Vous examinez : ",
+	"hint": "Cliquez sur un endroit de l'image pour l'examiner. Ce que vous relevez est versé au dossier.",
+	"turns_label": "%d endroit(s) à examiner",
+	"intro": "La salle de répétition de Sainte-Agathe, le lendemain de la veillée. Ewa TILL range des partitions sans se presser.\n\n« Vous venez pour dimanche soir. Entrez, inspecteur. Il n'y a rien à cacher ici. »\n\nVous pouvez examiner quatre endroits.",
+	"options": [
+		{
+			"id": "organ",
+			"label": "L'harmonium et ses partitions",
+			"spot": [0.03, 0.45, 0.22, 0.35],
+			"text": "Sur le pupitre, la partition de la veillée, annotée de la main d'Ewa TILL : « Office de la Sainte-Agathe, 9 novembre ». Ce n'était pas un chant au hasard, mais la fête de la patronne de la paroisse.",
+			"note": ["f_cho_vigil"]
+		},
+		{
+			"id": "entrance_book",
+			"label": "La feuille d'émargement, près de l'entrée",
+			"spot": [0.33, 0.5, 0.1, 0.2],
+			"text": "La feuille de présence de la veillée, laissée sur le lutrin d'entrée. Sept personnes ont signé à la main. Pas onze. Deux lignes portent une mention : « excusé ».",
+			"note": ["f_cho_register"]
+		},
+		{
+			"id": "board",
+			"label": "Le panneau d'affichage",
+			"spot": [0.66, 0.3, 0.17, 0.22],
+			"text": "Épinglé au panneau, l'avis du Bureau des cultes : permis de veillée n° 86/212, délivré le 14 octobre. À côté, un mot de la chorale : « prompt rétablissement à Roman FALK, hôpital n° 2 ».",
+			"note": ["f_cho_permit", "f_cho_absent"]
+		},
+		{
+			"id": "vestry",
+			"label": "Les aubes de la chorale",
+			"spot": [0.84, 0.28, 0.1, 0.38],
+			"text": "Pliée au fond d'un tiroir de la sacristie, une ancienne candidature au poste d'organiste titulaire, datée de 1985, au nom d'Ignác KOLB. Le conseil de paroisse y a porté, au crayon : « poste attribué à Mme TILL ».",
+			"note": ["f_cho_kolb"]
+		},
+		{
+			"id": "prayer_book",
+			"label": "Le banc d'Ewa TILL",
+			"spot": [0.26, 0.68, 0.1, 0.1],
+			"text": "Son livre de cantiques, ouvert. Dedans, une photo de Josef TILL en tenue de cheminot et un brin de bruyère séché. Ewa TILL vous regarde le refermer. Rien pour le dossier.",
+			"set_flags": {
+				"53118.respectful_visit": true
+			}
+		}
+	],
+	"outro": "Sur le seuil, Ewa TILL vous raccompagne. « KOLB voulait l'orgue. Il ne l'a pas eu. Ce n'est pas un crime de chanter pour une sainte. » Elle referme la porte sans bruit."
+}

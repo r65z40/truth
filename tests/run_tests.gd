@@ -54,6 +54,7 @@ func _run() -> void:
 		"test_field_rooms",
 		"test_field_bakery_visit",
 		"test_field_benes_search",
+		"test_field_chorale",
 		"test_field_stages_are_valid",
 		"test_field_stage_3d",
 		"test_act_review",
@@ -725,7 +726,7 @@ func test_evenings() -> void:
 
 
 func test_field_scenes_are_valid() -> void:
-	for case_id in ["40921", "51307", "52044", "52310", "53402", "53517"]:
+	for case_id in ["40921", "51307", "52044", "52310", "53118", "53402", "53517"]:
 		var case_data := CaseLibrary.get_case(case_id)
 		var scene := FieldRules.scene_for_case(case_data)
 		check(scene.case_id == case_id and int(scene.turns) > 0 and scene.has("intro") and scene.has("outro"), "%s : scène de terrain" % scene.id)
@@ -950,6 +951,41 @@ func test_field_benes_search() -> void:
 			"le bail suffit à prouver l'erreur d'identité")
 	var fired := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
 	check("field_52310_section7" in fired and GameState.get_indicator("suspicion") >= suspicion + 2, "la Section 7 sait")
+	GameState.new_game()
+
+
+func test_field_chorale() -> void:
+	GameState.new_game()
+	for i in 12:
+		if GameState.cases.has("53118"):
+			break
+		GameState.end_day()
+	check(GameState.cases.has("53118"), "le dossier de la chorale est attribué (acte 2, jour 5)")
+	check(GameState.can_start_field("53118"), "la visite de la salle de la chorale est possible")
+	GameState.start_field("53118")
+	check(GameState.flags.get("53118.parish_visited") == true, "la visite de la paroisse est connue")
+	check(GameState.flags.get("field.visit_53118.started") == true, "le drapeau de départ de la scène est posé")
+	# Quatre endroits examinés : budget de tours exact (4).
+	GameState.field_choose("visit_53118", "organ")
+	GameState.field_choose("visit_53118", "entrance_book")
+	GameState.field_choose("visit_53118", "board")
+	GameState.field_choose("visit_53118", "vestry")
+	var noted: Array = GameState.get_case_state("53118").noted_facts
+	for fact_id in ["f_cho_vigil", "f_cho_register", "f_cho_permit", "f_cho_absent", "f_cho_kolb"]:
+		check(fact_id in noted, "relevé sur place versé au carnet : %s" % fact_id)
+	# Le compte rendu de visite n'existe qu'une fois la scène commencée.
+	check(not CaseLibrary.get_document(GameState.get_case_view("53118"), "visit_report").is_empty(),
+			"le compte rendu de visite apparaît après la visite")
+	# Les relevés contredisent le signalement de l'informateur.
+	check(GameState.confront_facts("53118", "f_cho_register", "f_sig_count") == "choir.list",
+			"sept émargements contredisent les onze noms dénoncés")
+	check(GameState.confront_facts("53118", "f_cho_permit", "f_sig_curfew") == "choir.curfew",
+			"le permis de veillée contredit le rassemblement non autorisé")
+	check(GameState.confront_facts("53118", "f_cho_kolb", "f_sig_single") == "choir.source",
+			"le rival écarté du poste d'organiste éclaire la source unique")
+	GameState.apply_decision("53118", "clear")
+	check(GameState.flags.get("53118.choir_cleared") == true and GameState.flags.get("kremer.contact") == true,
+			"la visite seule suffit à classer la veillée comme autorisée")
 	GameState.new_game()
 
 

@@ -307,6 +307,78 @@
 					"quote": "Le conseil de paroisse lui a préféré Mme Ewa TILL"
 				}
 			]
+		},
+		{
+			"id": "visit_report",
+			"type": "report",
+			"title": "Compte rendu de visite, salle de la chorale Sainte-Agathe",
+			"source": "Section 4, visite conduite par l'inspecteur A. VOSK",
+			"reliability": "B",
+			"date": "1986-11-10",
+			"conditions": {
+				"requires_flags": [
+					"field.visit_53118.started"
+				]
+			},
+			"veritas_remark": "Éléments relevés sur place, après les faits. Valeur administrative limitée selon le système.",
+			"body": "Visite de la salle de répétition de la paroisse Sainte-Agathe, en présence d'Ewa TILL. Éléments relevés :",
+			"facts": [
+				{
+					"id": "f_cho_vigil",
+					"key": "choir.curfew",
+					"value": "Veillée de la fête patronale",
+					"label": "Partition annotée : la veillée chantait l'office de la Sainte-Agathe (9 novembre)",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.organ"
+						]
+					}
+				},
+				{
+					"id": "f_cho_register",
+					"key": "choir.list",
+					"value": "Sept émargements",
+					"label": "Feuille d'émargement de la veillée : sept signatures, non onze",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.entrance_book"
+						]
+					}
+				},
+				{
+					"id": "f_cho_permit",
+					"key": "choir.curfew",
+					"value": "Permis de veillée affiché",
+					"label": "Avis du Bureau des cultes (permis n° 86/212) encore épinglé au panneau",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.board"
+						]
+					}
+				},
+				{
+					"id": "f_cho_absent",
+					"key": "choir.absent",
+					"value": "FALK hospitalisé",
+					"label": "Mot de la chorale au panneau : prompt rétablissement à Roman FALK, hôpital n° 2",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.board"
+						]
+					}
+				},
+				{
+					"id": "f_cho_kolb",
+					"key": "choir.source",
+					"value": "Rival écarté du poste d'organiste",
+					"label": "Sacristie : candidature d'organiste d'Ignác KOLB (1985), poste attribué à TILL",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_53118.vestry"
+						]
+					}
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -535,5 +607,6 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 53118 : votre question",
 		"body": "Inspecteur,\n\nOnze noms d'un seul informateur, c'est beaucoup pour un homme qui regardait de loin. Et une chorale qui chante un dimanche précis chante rarement sans raison.\n\nLes cultes signent des permis. Les paroisses tiennent des registres. On garde ces papiers quelque part. Je ne vous en dis pas plus.\n\nR. MAZUR"
-	}
+	},
+	"field_scene": "visit_53118"
 }
