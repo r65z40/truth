@@ -21,8 +21,8 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 	for message in messages:
 		if message.id == "welcome_mazur" and not message.read:
 			return _step("Lire le message de prise de fonction de R. MAZUR.",
-					"Cliquez sur MESSAGES, à droite.", "messages", "",
-					"Bienvenue, inspecteur. Commencez par mon message : il est dans votre courrier.")
+					"Cliquez sur l'icône COURRIER, dans la colonne de gauche.", "messages", "",
+					"Bienvenue, inspecteur. Pas d'inquiétude : je vous guide pas à pas. Suivez le bandeau « À FAIRE », en haut, et l'icône qui clignote. Pour commencer, ouvrez votre courrier.")
 	var cases: Dictionary = state.get("cases", {})
 	for case_id in cases:
 		var case_state: Dictionary = cases[case_id]
@@ -73,7 +73,7 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 		if not message.read:
 			unread += 1
 	if unread > 0:
-		return _step("Lire vos nouveaux messages (%d)." % unread, "Cliquez sur MESSAGES.", "messages", "",
+		return _step("Lire vos nouveaux messages (%d)." % unread, "Cliquez sur l'icône COURRIER, à gauche.", "messages", "",
 				"Du courrier est arrivé : la suite de vos décisions s'y trouve.")
 	return _step("Aucune tâche en attente : vous pouvez terminer votre journée.",
 			"Bouton FIN DE SERVICE, en bas à droite.", "end_day", "",

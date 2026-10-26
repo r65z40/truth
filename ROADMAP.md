@@ -76,6 +76,9 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 
 - [x] Introduction illustrée en 4 pages
 - [x] Bulle d'aide de MAZUR qui montre où cliquer, conseils propres au premier dossier
+- [x] Bandeau « À FAIRE » permanent en haut du bureau (prochaine étape en clair, même
+      si la bulle est fermée) pendant l'apprentissage ; message d'accueil rassurant ;
+      libellés alignés sur les icônes réelles (COURRIER, à gauche)
 - [x] Première journée allégée, fonctions débloquées le lendemain
 - [x] Écran principal plus visuel : remplacé par la refonte « bureau à fenêtres » ci-dessous
 
