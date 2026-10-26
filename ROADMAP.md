@@ -157,7 +157,13 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
         dans OfficialMark) ; le nom concorde (piège : ne pas accuser un nom exact),
         la graphie trahit la copie ; confrontable seulement après la perquisition
         (matelas) ; établit `sedlar.papers.forged` → l'arrestation devient appuyée
-  - [ ] Amplifier encore : sceau truqué (étoile à 4 branches) + billets de transport
+  - [x] Authentifier un carnet de rationnement — carnets du cimetière (KOVAC, 52044) :
+        carnet VRAI (tampon District 4 dessiné, OfficialMark) au nom d'un homme mort
+        sept semaines plus tôt ; piège « faussaire » inversé (ne pas accuser le vrai
+        carnet, la fraude est au Bureau) ; établit `horvat.status` → disculpe la
+        gérante et débloque la mise en cause prouvée du Bureau (DRAZEK)
+  - [ ] Amplifier encore : un vrai sceau truqué (étoile à 4 branches) dans un dossier
+        avec un faussaire au tampon ; billets de transport ; signatures côte à côte
   - [ ] Comparer deux pièces — registre modifié de SEDLAR (révélation d'acte 2, à écrire)
   - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
 

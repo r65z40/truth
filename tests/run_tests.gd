@@ -1157,6 +1157,33 @@ func test_comparison() -> void:
 	check(GameState.flags.get("40921.forgery_authenticated") == true, "drapeau d'authentification posé")
 	check(DecisionRules.resolve(forgery_case, forgery_state, "arrest").response_id == "arrest_found",
 			"le faux démasqué appuie l'arrestation")
+	# Cinquième dossier : les carnets du cimetière (52044). Le piège « faussaire » est
+	# inversé : le carnet est authentique (ne pas crier au faux), le titulaire est mort.
+	var books_case := CaseLibrary.get_case("52044")
+	var books := ComparisonRules.get_comparison(books_case)
+	check(not books.is_empty() and books.left.mark.kind == "stamp", "52044 a une comparaison avec tampon")
+	check(not ComparisonRules.compare_point(books.points[1], {}, {}).differs, "le carnet est authentique : tampon concorde")
+	var status := {}
+	for point in books.points:
+		if point.get("decisive", false):
+			status = point
+	check(status.id == "status" and ComparisonRules.compare_point(status, {}, {}).differs,
+			"la situation du titulaire est le trait décisif et diffère (carnet à un mort)")
+	var books_verdicts := {}
+	for point in books.points:
+		books_verdicts[point.id] = ComparisonRules.compare_point(point, {}, {}).differs
+	check(ComparisonRules.grade(books, {}, {}, books_verdicts).all_ok, "comparaison correcte des carnets")
+	# Accuser le carnet authentique de faux est l'erreur que VERITAS commettrait.
+	var cry_forgery := books_verdicts.duplicate()
+	cry_forgery["stamp"] = true
+	check(not ComparisonRules.grade(books, {}, {}, cry_forgery).all_ok, "crier au faux sur un vrai carnet : erreur")
+	# L'avantage : établir horvat.status disculpe la boulangère et met en cause le Bureau.
+	GameState.new_game()
+	check(GameState.apply_comparison("52044").established == "horvat.status", "la comparaison établit horvat.status")
+	var books_state := GameState.get_case_state("52044")
+	check("f_death_horvat" in books_state.noted_facts, "le décès du titulaire est versé au carnet")
+	check(DecisionRules.resolve(books_case, books_state, "report_bureau").response_id == "bureau_proved",
+			"la comparaison débloque la mise en cause prouvée du Bureau")
 	GameState.new_game()
 
 

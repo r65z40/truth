@@ -285,6 +285,21 @@ func _capture_all() -> void:
 	await _snap("40c_faux_demasque")
 	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
 	await get_tree().process_frame
+	# Les carnets du cimetière (52044) : carnet authentique au nom d'un mort (piège inversé).
+	GameState.assign_case("52044")
+	desk.open_comparison("52044")
+	await _snap("36b_authentifier_carnet")
+	var book_cards: Array = desk.comparison_screen.get_node("%PointsBox").get_children()
+	var book_cmp: Dictionary = ComparisonRules.get_comparison(CaseLibrary.get_case("52044"))
+	var book_pts: Array = book_cmp.points
+	for i in book_pts.size():
+		var differs: bool = ComparisonRules.compare_point(book_pts[i], {}, {}).differs
+		var vbox: Node = book_cards[i].get_child(0).get_child(0)
+		vbox.get_child(vbox.get_child_count() - 1).get_child(1 if differs else 0).button_pressed = true
+	desk.comparison_screen.get_node("%ValidateButton").pressed.emit()
+	await _snap("36c_carnet_resultat")
+	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
+	await get_tree().process_frame
 	desk.queue_free()
 	# Socle de traduction : l'interface bascule en anglais (contenu des dossiers en repli FR).
 	Localization.set_locale("en")
