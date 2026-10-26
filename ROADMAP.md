@@ -110,7 +110,8 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Décors 3D (demande de fen du 25.10) : moteur `FieldStage3D`, audition d'ORLIK et appartement des SEDLAR en formes simples, réglage 2D/3D
 - [x] Images de terrain livrées par fen : clé `image` par scène, affichées en fond (cadrage « cover »), prioritaires sur la 3D (réglage `field_3d` désormais optionnel, désactivé par défaut)
 - [x] Perquisition en plusieurs pièces : clé `rooms` + `doors`, on clique une porte pour changer de pièce (gratuit), budget de fouilles commun. Pilote : 40921 (salon + chambre)
-- [ ] Repositionner les zones cliquables (`spot`) pour coller aux objets des images livrées
+- [x] Zones cliquables en fractions de l'image (calées sur l'objet), image affichée en entier (cadre 16:9) + éditeur de zones (F2 : glisser un rectangle → coordonnées copiées)
+- [ ] Repositionner finement les zones des autres scènes (51307, 52044, 52310, 53517) avec l'éditeur
 - [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
 - [ ] Décors 3D de la boulangerie n° 12 et de l'appartement 40
 

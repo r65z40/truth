@@ -45,8 +45,33 @@ func _offset() -> Vector2:
 	return (size - CANVAS * get_canvas_scale()) / 2.0
 
 
-## Zone [x, y, w, h] du repère de dessin, en coordonnées du contrôle.
+## Rectangle où l'image de fond est réellement affichée : ajustée pour tenir en
+## entier sans être déformée ni rognée (« contain »). Sans image, c'est le repère
+## de dessin CANVAS mis à l'échelle. Les zones cliquables exprimées en fractions
+## s'y réfèrent, donc elles tombent toujours au même endroit de l'image.
+func image_rect() -> Rect2:
+	if _texture == null:
+		return Rect2(_offset(), CANVAS * get_canvas_scale())
+	var tex := _texture.get_size()
+	var fit := minf(size.x / tex.x, size.y / tex.y)
+	var draw_size := tex * fit
+	return Rect2((size - draw_size) / 2.0, draw_size)
+
+
+## Une zone est-elle donnée en fractions (toutes ses valeurs entre 0 et 1) ?
+static func is_fractional(area: Array) -> bool:
+	return area.size() == 4 and area.all(func(v: float) -> bool: return absf(v) <= 1.0)
+
+
+## Zone [x, y, w, h] en coordonnées du contrôle. Deux conventions :
+## - fractions de l'image affichée (valeurs entre 0 et 1) : recommandé pour les
+##   scènes avec image, les zones restent calées sur l'image à toute taille ;
+## - pixels du repère de dessin 640 x 300 (hérité) : pour les décors dessinés.
 func to_local_rect(area: Array) -> Rect2:
+	if is_fractional(area):
+		var base := image_rect()
+		return Rect2(base.position + Vector2(area[0], area[1]) * base.size,
+				Vector2(area[2], area[3]) * base.size)
 	var factor := get_canvas_scale()
 	return Rect2(_offset() + Vector2(area[0], area[1]) * factor, Vector2(area[2], area[3]) * factor)
 
@@ -65,12 +90,9 @@ func _draw() -> void:
 	# l'image dans le repère de dessin, alignée sur les zones cliquables (spots).
 	if _texture != null:
 		draw_rect(Rect2(Vector2.ZERO, size), _c("paper_dark").darkened(0.6))
-		# L'image couvre tout le contrôle en gardant ses proportions (recadrée si besoin),
-		# pour ne pas la déformer quel que soit le format livré.
-		var tex_size := _texture.get_size()
-		var cover := maxf(size.x / tex_size.x, size.y / tex_size.y)
-		var draw_size := tex_size * cover
-		draw_texture_rect(_texture, Rect2((size - draw_size) / 2.0, draw_size), false)
+		# L'image est affichée en entier, sans déformation ni rognage, pour que les
+		# zones cliquables (en fractions) tombent exactement sur ses objets.
+		draw_texture_rect(_texture, image_rect(), false)
 		return
 	# Le décor déborde du repère : mur en haut, sol en bas, sans bandes noires.
 	var horizon := _offset().y + 230.0 * get_canvas_scale()

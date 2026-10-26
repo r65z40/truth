@@ -15,6 +15,10 @@ var _log: PackedStringArray = []
 var _stage: FieldStage3D
 ## Pièce courante dans une perquisition à plusieurs pièces ("" si la scène n'en a pas).
 var _room_id := ""
+## Éditeur de zones (outil de développement, touche F2).
+var _editor: Control
+var _placing := false
+var _drag_start := Vector2.INF
 
 @onready var _title_label: Label = %TitleLabel
 @onready var _turns_label: Label = %TurnsLabel
@@ -34,6 +38,15 @@ func _ready() -> void:
 	_stage.hide()
 	_art.get_parent().add_child(_stage)
 	_stage.spot_pressed.connect(_on_stage_spot)
+	# Éditeur de zones : surface posée au-dessus de l'image (même cadre 16:9 que
+	# l'Art, géré par l'AspectRatioContainer), inerte tant qu'il n'est pas activé.
+	_editor = Control.new()
+	_editor.name = "SpotEditor"
+	_editor.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_editor.hide()
+	_art.get_parent().add_child(_editor)
+	_editor.gui_input.connect(_on_editor_input)
+	_editor.draw.connect(_on_editor_draw)
 
 
 ## Commence la scène de terrain du dossier. Renvoie false si elle est impossible.
@@ -247,6 +260,64 @@ func _on_stage_spot(option_id: String) -> void:
 		show_presentation_list(true)
 	else:
 		choose(option_id)
+
+
+# --- Éditeur de zones (outil de dev) -----------------------------------------
+#
+# F2 active le mode placement : on glisse un rectangle sur un objet de l'image,
+# et les coordonnées en fractions [x, y, w, h] sont imprimées et copiées dans le
+# presse-papiers, prêtes à coller dans le "spot" de la scène. Inactif en jeu.
+
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F2:
+		_placing = not _placing
+		_editor.visible = _placing
+		_editor.mouse_filter = Control.MOUSE_FILTER_STOP if _placing else Control.MOUSE_FILTER_IGNORE
+		_drag_start = Vector2.INF
+		_hint_label.text = "ÉDITEUR DE ZONES (F2) : glissez un rectangle sur l'objet ; les coordonnées sont copiées." \
+				if _placing else scene.get("hint", "")
+		_editor.queue_redraw()
+		get_viewport().set_input_as_handled()
+
+
+func _on_editor_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			_drag_start = _editor.get_local_mouse_position()
+		elif _drag_start != Vector2.INF:
+			_emit_spot(_drag_start, _editor.get_local_mouse_position())
+			_drag_start = Vector2.INF
+		_editor.queue_redraw()
+	elif event is InputEventMouseMotion and _drag_start != Vector2.INF:
+		_editor.queue_redraw()
+
+
+func _on_editor_draw() -> void:
+	var img := _art.image_rect()
+	_editor.draw_rect(img, Color(1, 1, 1, 0.2), false, 2.0)
+	if _drag_start != Vector2.INF:
+		var rect := _rect_between(_drag_start, _editor.get_local_mouse_position())
+		_editor.draw_rect(rect, Color(1, 0.85, 0.2, 0.25))
+		_editor.draw_rect(rect, Color(1, 0.85, 0.2, 0.9), false, 2.0)
+
+
+func _rect_between(a: Vector2, b: Vector2) -> Rect2:
+	return Rect2(Vector2(minf(a.x, b.x), minf(a.y, b.y)), (b - a).abs())
+
+
+## Convertit le rectangle tracé en fractions de l'image, l'imprime et le copie.
+func _emit_spot(a: Vector2, b: Vector2) -> void:
+	var img := _art.image_rect()
+	if img.size.x <= 0.0 or img.size.y <= 0.0:
+		return
+	var rect := _rect_between(a, b).intersection(img)
+	var spot := "\"spot\": [%s, %s, %s, %s]" % [
+			snappedf((rect.position.x - img.position.x) / img.size.x, 0.001),
+			snappedf((rect.position.y - img.position.y) / img.size.y, 0.001),
+			snappedf(rect.size.x / img.size.x, 0.001),
+			snappedf(rect.size.y / img.size.y, 0.001)]
+	DisplayServer.clipboard_set(spot)
+	print("[ÉDITEUR DE ZONES] ", spot)
 
 
 func _scroll_log_to_end() -> void:

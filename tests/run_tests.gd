@@ -737,9 +737,7 @@ func test_field_scenes_are_valid() -> void:
 			check(room.get("image", "").begins_with("res://"), "%s : pièce %s avec image" % [scene.id, room.get("id", "")])
 			for door: Dictionary in room.get("doors", []):
 				check(door.get("to", "") in room_ids, "%s : la porte de %s mène à une pièce connue" % [scene.id, room.get("id", "")])
-				var d: Array = door.get("spot", [0, 0, 0, 0])
-				check(d[0] >= 0 and d[1] >= 0 and d[0] + d[2] <= FieldArt.CANVAS.x and d[1] + d[3] <= FieldArt.CANVAS.y,
-						"%s : porte de %s dans le cadre" % [scene.id, room.get("id", "")])
+				check(_spot_in_bounds(door.get("spot", [0, 0, 0, 0])), "%s : porte de %s dans le cadre" % [scene.id, room.get("id", "")])
 		for result in FieldRules.all_options(scene) + scene.get("presentations", []):
 			for fact_id in result.get("note", []):
 				var fact := CaseLibrary.get_fact(case_data, fact_id)
@@ -748,9 +746,7 @@ func test_field_scenes_are_valid() -> void:
 			for fact_id in result.get("facts", []):
 				check(not CaseLibrary.get_fact(case_data, fact_id).is_empty(), "%s : élément présenté %s existant" % [scene.id, fact_id])
 			if result.has("spot"):
-				var area: Array = result.spot
-				check(area[0] >= 0 and area[1] >= 0 and area[0] + area[2] <= FieldArt.CANVAS.x and area[1] + area[3] <= FieldArt.CANVAS.y,
-						"%s : zone %s dans le dessin" % [scene.id, result.id])
+				check(_spot_in_bounds(result.spot), "%s : zone %s dans le cadre" % [scene.id, result.id])
 		check(CaseLibrary.validate_case(case_data).is_empty(), "%s : dossier toujours valide" % case_id)
 
 
@@ -764,7 +760,23 @@ func test_field_background_image() -> void:
 	check(not art.has_image(), "une image manquante retombe sur le dessin")
 	art.image_path = ""
 	check(not art.has_image(), "pas d'image de fond par défaut")
+	# Les zones en fractions se calent sur l'image affichée, quelle que soit la taille.
+	check(FieldArt.is_fractional([0.1, 0.2, 0.3, 0.4]) and not FieldArt.is_fractional([40, 150, 120, 50]),
+			"une zone est reconnue comme fraction ou comme pixels")
+	art.image_path = "res://ui/icons/f_person.png"
+	art.size = Vector2(640, 360)
+	var img := art.image_rect()
+	var r := art.to_local_rect([0.25, 0.5, 0.5, 0.25])
+	check(is_equal_approx(r.position.x, img.position.x + img.size.x * 0.25) and is_equal_approx(r.size.x, img.size.x * 0.5),
+			"une zone en fractions tombe exactement sur l'image")
 	art.free()
+
+
+## Une zone est-elle dans le cadre (fractions 0..1, ou pixels du repère 640 x 300) ?
+func _spot_in_bounds(area: Array) -> bool:
+	if FieldArt.is_fractional(area):
+		return area[0] >= 0.0 and area[1] >= 0.0 and area[0] + area[2] <= 1.0 and area[1] + area[3] <= 1.0
+	return area[0] >= 0 and area[1] >= 0 and area[0] + area[2] <= FieldArt.CANVAS.x and area[1] + area[3] <= FieldArt.CANVAS.y
 
 
 func test_field_interrogation() -> void:
@@ -1944,11 +1956,16 @@ func test_field_stage_3d() -> void:
 	Settings.field_3d = true
 	check(screen.preview("40921") and not screen.is_3d() and screen.get_node("%Art").visible \
 			and screen.get_node("%Art").has_image(), "une image livrée prime sur la 3D")
-	check(screen.preview("53402") and screen.is_3d() and screen.get_stage().active_spots.size() > 0,
+	# Scène sans image livrée : la 3D s'affiche si le réglage est actif, sinon le dessin.
+	var no_image := FieldRules.get_scene("audition_53402").duplicate(true)
+	no_image.erase("image")
+	GameState.field_scenes[no_image.id] = {"turns_used": 0, "chosen": [], "finished": false}
+	screen._show_scene(no_image)
+	check(screen.is_3d() and screen.get_stage().active_spots.size() > 0,
 			"sans image, la 3D s'affiche si le réglage est actif")
 	Settings.field_3d = false
-	check(screen.preview("53402") and not screen.is_3d() and screen.get_node("%Art").visible,
-			"réglage 2D : décor dessiné")
+	screen._show_scene(no_image)
+	check(not screen.is_3d() and screen.get_node("%Art").visible, "réglage 2D : décor dessiné")
 	screen.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://6d33rn5gbf0w"
-path="res://.godot/imported/search_52310_chambre_proposition.webp-bba56469eb27a16b2a8667451f503dd0.ctex"
+uid="uid://cewli2tsjyfns"
+path="res://.godot/imported/lieu_53118_chorale.webp-7691ec23b2afd4873817d25e486ea4b3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/field/search_52310_chambre_proposition.webp"
-dest_files=["res://.godot/imported/search_52310_chambre_proposition.webp-bba56469eb27a16b2a8667451f503dd0.ctex"]
+source_file="res://assets/field/lieu_53118_chorale.webp"
+dest_files=["res://.godot/imported/lieu_53118_chorale.webp-7691ec23b2afd4873817d25e486ea4b3.ctex"]
 
 [params]
 
