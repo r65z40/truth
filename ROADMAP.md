@@ -216,6 +216,27 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
       `kremer.arrested`) ; notes de dossier personnel pour les nouveaux drapeaux
       (`kremer.*`, `act2.*`, `player.flagged`, `mazur.confronted`). Tests ajoutés.
 
+## Fait : acte 3 — La peur (début) (2026-10-27)
+
+- [x] Dossier 54001 L'EXPLOSION : la Centrale thermique n° 3 saute, trois morts. La
+      Direction veut un saboteur avant le bulletin de 20 h ; le registre d'entretien et
+      l'expertise établissent la défaillance (soupape jamais livrée, réquisitions visées
+      et détournées par le capitaine L. ORLIK). Trois voies : désigner Mira SEDLAR (la
+      fille du 40921, couvre ORLIK, `54001.scapegoat`), établir la défaillance (accuse
+      ORLIK, `milice.hostile`, `orlik.captain_hostile`), ou refuser de nommer avant le
+      bulletin. Levier n°2 : condamner la fille après avoir arrêté le père brise la
+      famille SEDLAR (`54001_sedlar_line_broken`).
+- [x] Dossier 54012 LE TÉMOIN : le seul survivant posté près de la chaudière a « signé »
+      une déposition de sabotage à 04 h, alors que la fiche médicale le dit inconscient
+      jusqu'à 10 h. Registre des visites (brigade ORLIK entrée avant tout réveil) et
+      rétractation sur demande. Retenir la déposition = faux témoin ; l'écarter établit
+      `temoin.coached`.
+- [x] Câblage : `assign_54001` (jour 10, priorité absolue), `assign_54012` (jour 11),
+      `54001_orlik_reprisal` (si ORLIK accusé). Notes de dossier personnel ajoutées, tests.
+- [ ] Acte 3 (suite) : 54030 L'HORLOGER (fil du père, lève n°3), 54100 VOSK A. (dossier
+      du joueur, consultable seulement), révélation de fin d'acte (BRANDT = contrôleuse,
+      MAZUR arrêté ou en fuite).
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
