@@ -60,7 +60,52 @@ static func available_options(scene: Dictionary, scene_state: Dictionary, state:
 		return []
 	var chosen: Array = scene_state.get("chosen", [])
 	return all_options(scene).filter(func(option: Dictionary) -> bool:
-		return not option.id in chosen and are_conditions_met(option.get("conditions", {}), state, noted))
+		return not option.id in chosen \
+				and are_conditions_met(option.get("conditions", {}), state, noted) \
+				and composure_ok(option, scene, scene_state))
+
+
+# --- Tension d'un interrogatoire (sang-froid du sujet) ------------------------
+#
+# Une scène peut déclarer "tension": {"start": int, "label"?} pour varier le
+# ressenti (acte 3). Le sang-froid du sujet part de "start" et bouge selon la
+# clé "composure_delta" des questions et présentations choisies (négatif = on le
+# pousse, positif = on le ménage). Certaines options ne s'ouvrent que dans une
+# fenêtre de sang-froid : "requires_composure": {"min"?, "max"?} — par ex. un
+# aveu quand le sujet est ébranlé (sang-froid bas) mais pas encore muré (pas
+# trop bas). Une scène sans "tension" se comporte comme avant.
+
+static func has_tension(scene: Dictionary) -> bool:
+	return not scene.get("tension", {}).is_empty()
+
+
+## Sang-froid courant du sujet (0-100), ou -1 si la scène n'a pas de tension.
+static func composure(scene: Dictionary, scene_state: Dictionary) -> int:
+	var tension: Dictionary = scene.get("tension", {})
+	if tension.is_empty():
+		return -1
+	var value := int(tension.get("start", 50))
+	var chosen: Array = scene_state.get("chosen", [])
+	for entry in all_options(scene) + scene.get("presentations", []):
+		if entry.get("id", "") in chosen:
+			value += int(entry.get("composure_delta", 0))
+	return clampi(value, 0, 100)
+
+
+## L'option est-elle dans la fenêtre de sang-froid requise ? (vrai si aucune
+## fenêtre, ou si la scène n'a pas de tension).
+static func composure_ok(option: Dictionary, scene: Dictionary, scene_state: Dictionary) -> bool:
+	var band: Dictionary = option.get("requires_composure", {})
+	if band.is_empty():
+		return true
+	var value := composure(scene, scene_state)
+	if value < 0:
+		return true
+	if band.has("min") and value < int(band.min):
+		return false
+	if band.has("max") and value > int(band.max):
+		return false
+	return true
 
 
 static func get_option(scene: Dictionary, option_id: String) -> Dictionary:

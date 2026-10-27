@@ -55,6 +55,7 @@ func _run() -> void:
 		"test_field_scenes_are_valid",
 		"test_field_background_image",
 		"test_field_interrogation",
+		"test_field_tension",
 		"test_field_search",
 		"test_field_rooms",
 		"test_field_bakery_visit",
@@ -62,6 +63,8 @@ func _run() -> void:
 		"test_field_chorale",
 		"test_fate_card",
 		"test_comparison",
+		"test_timeline",
+		"test_timeline_screen",
 		"test_field_stages_are_valid",
 		"test_field_stage_3d",
 		"test_act_review",
@@ -1005,6 +1008,33 @@ func test_field_interrogation() -> void:
 	GameState.new_game()
 
 
+## Interrogatoire sous tension (acte 3, piloté sur l'audition de VRABEC) : le
+## sang-froid du sujet baisse quand on le pousse ; l'aveu ne s'ouvre que dans une
+## fenêtre — ébranlé, mais pas encore muré. Trop pousser le referme.
+func test_field_tension() -> void:
+	GameState.new_game()
+	var scene := FieldRules.get_scene("audition_53402")
+	check(FieldRules.has_tension(scene), "l'audition de VRABEC a une tension")
+	check(FieldRules.composure(scene, {"turns_used": 0, "chosen": [], "finished": false}) == 70, "le sang-froid part de 70")
+	# Installe la scène directement, sans dépendre du calendrier des dossiers.
+	GameState.field_scenes["audition_53402"] = {"turns_used": 0, "chosen": [], "finished": false}
+	var ids := func() -> Array: return GameState.get_field_options("audition_53402").map(func(o: Dictionary) -> String: return o.id)
+	check(not "q_confess" in ids.call(), "pas d'aveu tant que VRABEC garde son sang-froid")
+	GameState.field_choose("audition_53402", "q_threat")
+	check(GameState.field_composure("audition_53402") == 45 and "q_confess" in ids.call(), "ébranlé (45), l'aveu s'ouvre")
+	GameState.note_fact("53402", "f_link_network")
+	GameState.field_present("audition_53402", "f_link_network")
+	check(GameState.field_composure("audition_53402") == 25 and "q_confess" in ids.call(), "à 25, l'aveu tient encore")
+	GameState.field_choose("audition_53402", "q_delays")
+	check(GameState.field_composure("audition_53402") == 15 and not "q_confess" in ids.call(), "trop poussé (15), VRABEC se mure")
+	# Dans la fenêtre, l'aveu clôt l'audition et est consigné.
+	GameState.field_scenes["audition_53402"] = {"turns_used": 0, "chosen": [], "finished": false}
+	GameState.field_choose("audition_53402", "q_threat")
+	var r := GameState.field_choose("audition_53402", "q_confess")
+	check(r.finished and GameState.flags.get("53402.vrabec_confessed") == true, "l'aveu termine l'audition et pose le drapeau")
+	GameState.new_game()
+
+
 func test_field_search() -> void:
 	GameState.new_game()
 	GameState.apply_decision("40921", "close")
@@ -1190,6 +1220,57 @@ func test_fate_card() -> void:
 	_advance_until_assigned("40921")
 	check(FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921")).is_empty(),
 			"aucune carte tant que le dossier n'est pas signé")
+	GameState.new_game()
+
+
+## Frise chronologique (acte 2) : remettre les repères dans l'ordre révèle que les
+## retards du train couvraient les passages, et l'établit au carnet.
+func test_timeline() -> void:
+	var case_data := CaseLibrary.get_case("53402")
+	var timeline := TimelineRules.get_timeline(case_data)
+	check(not timeline.is_empty(), "le dossier 53402 propose une frise chronologique")
+	var sol := TimelineRules.solution(timeline)
+	check(sol == ["t_son", "t_decret", "t_permits", "t_delays", "t_border", "t_audition"], "la solution suit les dates : %s" % [sol])
+	check(TimelineRules.grade(timeline, sol).correct, "la frise dans l'ordre est juste")
+	var jumbled := ["t_border", "t_son", "t_decret", "t_permits", "t_delays", "t_audition"]
+	check(not TimelineRules.grade(timeline, jumbled).correct, "une frise dans le désordre est fausse")
+	check(not TimelineRules.grade(timeline, ["t_son"]).correct, "une frise incomplète est fausse")
+	# Une frise fausse n'établit rien.
+	GameState.new_game()
+	check(GameState.apply_timeline("53402", jumbled).is_empty(), "une frise fausse n'établit rien")
+	check(not "delays.cover_crossings" in GameState.get_case_state("53402").contradictions_found, "rien établi tant que la frise est fausse")
+	# La bonne frise établit la contradiction, verse les pièces au carnet, pose le drapeau.
+	var before := GameState.get_indicator("suspicion")
+	var r := GameState.apply_timeline("53402", sol)
+	check(r.get("established", "") == "delays.cover_crossings", "la bonne frise établit que les retards couvraient les passages")
+	check("delays.cover_crossings" in GameState.get_case_state("53402").contradictions_found, "contradiction au carnet")
+	check("f_manifest_expired" in GameState.get_case_state("53402").noted_facts, "les permis échus sont versés au carnet")
+	check(GameState.flags.get("53402.timeline_solved") == true, "drapeau de frise résolue")
+	check(GameState.get_indicator("suspicion") == before + 1, "le remarquer expose un peu l'agent")
+	check(r.text.contains("signalisation") or r.text.contains("passages"), "texte de révélation")
+	# Idempotent : refaire la frise déjà résolue ne redonne rien.
+	check(GameState.apply_timeline("53402", sol).is_empty(), "la frise déjà résolue ne redonne rien")
+	GameState.new_game()
+
+
+## L'écran de la frise se construit, se pilote et résout le dossier sans erreur
+## (couverture d'exécution ; le ressenti visuel se teste à la main dans Godot).
+func test_timeline_screen() -> void:
+	GameState.new_game()
+	var screen: TimelineScreen = load("res://scenes/ui/timeline_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	check(screen.open_case("53402"), "la frise s'ouvre pour le dossier 53402")
+	check(not screen.open_case("40921"), "aucune frise pour un dossier qui n'en a pas")
+	screen.open_case("53402")
+	var sol := TimelineRules.solution(TimelineRules.get_timeline(CaseLibrary.get_case("53402")))
+	for entry_id in sol:
+		screen._on_marker(entry_id)
+	screen._on_validate()
+	check("delays.cover_crossings" in GameState.get_case_state("53402").contradictions_found,
+			"résoudre la frise à l'écran établit la contradiction")
+	check(screen._result.visible and not screen._result.text.is_empty(), "le résultat s'affiche après résolution")
+	screen.queue_free()
+	await get_tree().process_frame
 	GameState.new_game()
 
 
