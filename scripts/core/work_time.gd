@@ -37,7 +37,12 @@ static func remaining(hours_used: int) -> int:
 
 ## L'action est-elle possible ? {ok, overtime} ; overtime = elle déborde sur la soirée.
 static func check(hours_used: int, action: String) -> Dictionary:
-	var hours := cost(action)
+	return check_hours(hours_used, cost(action))
+
+
+## Comme check(), mais pour un nombre d'heures donné (coût variable, par ex. le
+## prix d'une contradiction à prouver).
+static func check_hours(hours_used: int, hours: int) -> Dictionary:
 	return {"ok": hours <= remaining(hours_used), "overtime": hours_used + hours > day_hours()}
 
 

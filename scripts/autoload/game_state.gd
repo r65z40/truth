@@ -30,7 +30,8 @@ const CASE_UNDER_INVESTIGATION := "under_investigation"
 var player: Dictionary = {}
 var day_index: int = 0
 var indicators: Dictionary = {}
-## case_id -> {status, viewed_documents, noted_facts, contradictions_found, decision}
+## case_id -> {status, viewed_documents, noted_facts, contradictions_found,
+##             contradictions_noticed, decision}
 var cases: Dictionary = {}
 ## Messages reçus : {id, from, subject, date_label, body, read}
 var messages: Array = []
@@ -163,13 +164,76 @@ func note_fact(case_id: String, fact_id: String) -> void:
 
 ## Confronte deux éléments notés. Enregistre la contradiction si elle existe.
 ## Renvoie la clé contredite, ou "" si les éléments ne se contredisent pas.
+##
+## Repérer une contradiction est toujours gratuit. Si elle porte un prix (voir
+## CaseLibrary.contradiction_price), elle n'est que REPÉRÉE ici : il faudra la
+## PROUVER (prove_contradiction) pour qu'elle compte. Sinon, elle est établie
+## tout de suite, comme avant.
 func confront_facts(case_id: String, fact_a_id: String, fact_b_id: String) -> String:
-	var key := CaseLibrary.confront(CaseLibrary.get_case(case_id), fact_a_id, fact_b_id)
+	var case_data := CaseLibrary.get_case(case_id)
+	var key := CaseLibrary.confront(case_data, fact_a_id, fact_b_id)
+	if key == "":
+		return ""
 	var case_state := get_case_state(case_id)
-	if key != "" and not key in case_state.contradictions_found:
+	if key in case_state.contradictions_found:
+		return key
+	if CaseLibrary.contradiction_price(case_data, key).is_empty():
 		case_state.contradictions_found.append(key)
 		state_changed.emit()
+	elif not key in case_state.contradictions_noticed:
+		case_state.contradictions_noticed.append(key)
+		state_changed.emit()
 	return key
+
+
+## État de l'établissement d'une contradiction, pour l'interface :
+## {priced, noticed, established, price, missing_favor, affordable, overtime}.
+## "affordable" = on peut la prouver maintenant (faveur présente et heures
+## disponibles) ; "overtime" = la prouver déborderait sur la soirée.
+func contradiction_prove_state(case_id: String, key: String) -> Dictionary:
+	var case_state := get_case_state(case_id)
+	var price := CaseLibrary.contradiction_price(CaseLibrary.get_case(case_id), key)
+	var established: bool = key in case_state.contradictions_found
+	var favor: String = price.get("requires_flag", "")
+	var missing_favor: bool = favor != "" and flags.get(favor) != true
+	var time := WorkTime.check_hours(hours_used, int(price.get("hours", 0)))
+	return {
+		"priced": not price.is_empty(),
+		"noticed": key in case_state.contradictions_noticed,
+		"established": established,
+		"price": price,
+		"missing_favor": missing_favor,
+		"affordable": not established and not missing_favor and time.ok,
+		"overtime": time.overtime,
+	}
+
+
+## Paie le prix et établit officiellement une contradiction repérée.
+## Renvoie {ok, reason, text} : ok=false si déjà établie, non repérée, faveur
+## manquante ou journée trop courte. Déterministe et idempotent.
+func prove_contradiction(case_id: String, key: String) -> Dictionary:
+	var case_data := CaseLibrary.get_case(case_id)
+	var case_state := get_case_state(case_id)
+	var price := CaseLibrary.contradiction_price(case_data, key)
+	if price.is_empty():
+		return {"ok": false, "reason": "non_tarifee"}
+	if key in case_state.contradictions_found:
+		return {"ok": false, "reason": "deja_etablie"}
+	if not key in case_state.contradictions_noticed:
+		return {"ok": false, "reason": "non_reperee"}
+	var state := contradiction_prove_state(case_id, key)
+	if state.missing_favor:
+		return {"ok": false, "reason": "faveur_manquante"}
+	var hours := int(price.get("hours", 0))
+	if not WorkTime.check_hours(hours_used, hours).ok:
+		return {"ok": false, "reason": "temps_insuffisant"}
+	hours_used += hours
+	if WorkTime.is_overtime(hours_used) and not day_index in overtime_days:
+		overtime_days.append(day_index)
+	_apply_effects({"suspicion": int(price.get("suspicion", 0))})
+	case_state.contradictions_found.append(key)
+	state_changed.emit()
+	return {"ok": true, "reason": "", "text": price.get("label", "")}
 
 
 ## Mini-jeu « comparer deux pièces » : confronte les deux pièces désignées par le
@@ -668,4 +732,5 @@ func from_dict(data: Dictionary) -> void:
 
 func _new_case_state() -> Dictionary:
 	return {"status": CASE_OPEN, "viewed_documents": [], "noted_facts": [],
-			"contradictions_found": [], "decision": "", "requested_documents": {}, "consulted": false}
+			"contradictions_found": [], "contradictions_noticed": [], "decision": "",
+			"requested_documents": {}, "consulted": false}

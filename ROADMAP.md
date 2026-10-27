@@ -66,6 +66,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Onglets des pièces sur une ligne défilante (dossiers de 8 pièces)
 - [ ] Fondations de la localisation (français, anglais)
 - [x] Horloge de service (8 h + 2 h), demander une pièce (livrée le lendemain), consulter Mazur
+- [x] Le prix de la vérité : certaines contradictions (secondaires) ne s'établissent qu'en PROUVANT — payer une heure, un risque (suspicion) ou une faveur (appui requis). Repérer reste gratuit ; données par dossier (`contradiction_prices`). Démonstration sur 51307 (mobile et passé d'informateur d'ORLIK) ; extensible à d'autres dossiers au choix de fen
 - [x] Soirées : 5 soirées de l'acte 1 (Lena, radio d'Aldria, M. ADLER, visites), perdues en heures supplémentaires
 - [x] Calendrier en 20 journées de service, ellipses entre les actes
 - [x] Profil du joueur dans `data/campaign.json` (préparation des extensions)
