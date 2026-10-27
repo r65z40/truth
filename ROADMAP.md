@@ -160,7 +160,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Levier n°2 (acte 2) : les gens reviennent selon ce qu'on a signé — KOLB récidive
       (on devient son outil), la mère de la chorale attend en bas, ou KOLB dénonce
       l'inspecteur si on a classé ; retours PETRAS/informateur déjà en place
-- [ ] Levier n°2 (acte 3) : retour de la fille SEDLAR — avec l'écriture de l'acte 3
+- [x] Levier n°2 (actes 3-4) : les gens jugés reviennent — Vera SEDLAR réécrit
+      quand sa fille Mira est condamnée (après le père), le témoin coaché REIS est
+      « versé à la liste des témoins fiables » (ou, discrédité, l'accusé rentre et
+      REIS remercie), l'atelier d'ADLER scellé rend la pendule VOSK de 1971 (ou,
+      relâché, ADLER laisse une montre « à l'heure juste »). Données pures
+      (events.json), test `test_act3_returns`.
 - [x] Pression de la hiérarchie selon le profil de l'agent (demande de fen du 26.10
       « amplifier les conséquences ») : les conditions d'événements acceptent des
       seuils d'indicateurs (`min_indicators`/`max_indicators`). La hiérarchie réagit
