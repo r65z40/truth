@@ -47,6 +47,7 @@ func _run() -> void:
 		"test_work_time",
 		"test_request_and_consultation",
 		"test_evenings_file_is_valid",
+		"test_evenings_acts_2_4",
 		"test_evenings",
 		"test_career_evaluation",
 		"test_field_scenes_are_valid",
@@ -748,7 +749,42 @@ func test_evenings_file_is_valid() -> void:
 			var last: Dictionary = action.results[-1]
 			check(not last.has("conditions"), "%s : la dernière variante est sans condition" % action.id)
 		check(unconditional >= 2, "soirée %d : au moins 2 actions toujours possibles" % evening.day)
-	check(days == [0, 1, 2, 3, 4], "une soirée par jour de l'acte 1 : %s" % [days])
+	days.sort()
+	check(days == range(20), "une soirée par jour de service, des actes 1 à 4 : %s" % [days])
+
+
+## Les soirées des actes 2 à 4 réagissent au sort des personnages et ne décident
+## jamais d'une fin (les fins se jouent au bureau, pas dans l'appartement).
+func test_evenings_acts_2_4() -> void:
+	var data := EveningRules.get_data()
+	var mk := func(day: int, flags: Dictionary) -> Dictionary:
+		return {"day_index": day, "flags": flags, "cases": {}, "fired_events": [],
+				"indicators": {}, "evening_counts": {}}
+	var blast := EveningRules.evening_for_day(10, data)
+	check(not blast.is_empty() and blast.get("intro", "").contains("Centrale"),
+			"le soir de l'explosion de la Centrale existe (jour 10)")
+	check(EveningRules.available_actions(blast, mk.call(10, {})).size() >= 2,
+			"ce soir-là laisse toujours au moins deux actions")
+	var free_ids := EveningRules.available_actions(blast, mk.call(10, {})).map(func(a: Dictionary) -> String: return a.id)
+	var jailed_ids := EveningRules.available_actions(blast, mk.call(10, {"adler.arrested": true})).map(func(a: Dictionary) -> String: return a.id)
+	check("adler_10" in free_ids and not "adler_10" in jailed_ids,
+			"ADLER n'est plus proposé une fois arrêté")
+	var adler12 := EveningRules.get_action(EveningRules.evening_for_day(12, data), "adler_12")
+	check(EveningRules.resolve(adler12, mk.call(12, {"adler.arrested": true})).text.contains("scellé"),
+			"atelier scellé si ADLER est arrêté")
+	check(EveningRules.resolve(adler12, mk.call(12, {"adler.freed": true})).text.contains("entrouverte"),
+			"atelier rouvert si ADLER est relâché")
+	check(not EveningRules.resolve(adler12, mk.call(12, {})).text.is_empty(),
+			"une variante par défaut existe toujours")
+	var ending_flags := ["act4.father_truth", "act2.original_kept", "mazur.fled",
+			"milice.ally", "player.internal_review", "act4.mirror_signed_clean"]
+	for evening in data.evenings:
+		for action in evening.actions:
+			for f in action.get("set_flags", {}):
+				check(not f in ending_flags, "une soirée ne doit pas déclencher une fin : %s" % f)
+			for followup in action.get("followups", []):
+				for f in followup.get("set_flags", {}):
+					check(not f in ending_flags, "une suite de soirée ne déclenche pas de fin : %s" % f)
 
 
 func test_evenings() -> void:
