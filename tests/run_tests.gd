@@ -59,6 +59,8 @@ func _run() -> void:
 		"test_field_chorale",
 		"test_fate_card",
 		"test_comparison",
+		"test_timeline",
+		"test_timeline_screen",
 		"test_field_stages_are_valid",
 		"test_field_stage_3d",
 		"test_act_review",
@@ -1098,6 +1100,57 @@ func test_fate_card() -> void:
 	_advance_until_assigned("40921")
 	check(FateRules.fate_for(CaseLibrary.get_case("40921"), GameState.get_case_state("40921")).is_empty(),
 			"aucune carte tant que le dossier n'est pas signé")
+	GameState.new_game()
+
+
+## Frise chronologique (acte 2) : remettre les repères dans l'ordre révèle que les
+## retards du train couvraient les passages, et l'établit au carnet.
+func test_timeline() -> void:
+	var case_data := CaseLibrary.get_case("53402")
+	var timeline := TimelineRules.get_timeline(case_data)
+	check(not timeline.is_empty(), "le dossier 53402 propose une frise chronologique")
+	var sol := TimelineRules.solution(timeline)
+	check(sol == ["t_son", "t_decret", "t_permits", "t_delays", "t_border", "t_audition"], "la solution suit les dates : %s" % [sol])
+	check(TimelineRules.grade(timeline, sol).correct, "la frise dans l'ordre est juste")
+	var jumbled := ["t_border", "t_son", "t_decret", "t_permits", "t_delays", "t_audition"]
+	check(not TimelineRules.grade(timeline, jumbled).correct, "une frise dans le désordre est fausse")
+	check(not TimelineRules.grade(timeline, ["t_son"]).correct, "une frise incomplète est fausse")
+	# Une frise fausse n'établit rien.
+	GameState.new_game()
+	check(GameState.apply_timeline("53402", jumbled).is_empty(), "une frise fausse n'établit rien")
+	check(not "delays.cover_crossings" in GameState.get_case_state("53402").contradictions_found, "rien établi tant que la frise est fausse")
+	# La bonne frise établit la contradiction, verse les pièces au carnet, pose le drapeau.
+	var before := GameState.get_indicator("suspicion")
+	var r := GameState.apply_timeline("53402", sol)
+	check(r.get("established", "") == "delays.cover_crossings", "la bonne frise établit que les retards couvraient les passages")
+	check("delays.cover_crossings" in GameState.get_case_state("53402").contradictions_found, "contradiction au carnet")
+	check("f_manifest_expired" in GameState.get_case_state("53402").noted_facts, "les permis échus sont versés au carnet")
+	check(GameState.flags.get("53402.timeline_solved") == true, "drapeau de frise résolue")
+	check(GameState.get_indicator("suspicion") == before + 1, "le remarquer expose un peu l'agent")
+	check(r.text.contains("signalisation") or r.text.contains("passages"), "texte de révélation")
+	# Idempotent : refaire la frise déjà résolue ne redonne rien.
+	check(GameState.apply_timeline("53402", sol).is_empty(), "la frise déjà résolue ne redonne rien")
+	GameState.new_game()
+
+
+## L'écran de la frise se construit, se pilote et résout le dossier sans erreur
+## (couverture d'exécution ; le ressenti visuel se teste à la main dans Godot).
+func test_timeline_screen() -> void:
+	GameState.new_game()
+	var screen: TimelineScreen = load("res://scenes/ui/timeline_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	check(screen.open_case("53402"), "la frise s'ouvre pour le dossier 53402")
+	check(not screen.open_case("40921"), "aucune frise pour un dossier qui n'en a pas")
+	screen.open_case("53402")
+	var sol := TimelineRules.solution(TimelineRules.get_timeline(CaseLibrary.get_case("53402")))
+	for entry_id in sol:
+		screen._on_marker(entry_id)
+	screen._on_validate()
+	check("delays.cover_crossings" in GameState.get_case_state("53402").contradictions_found,
+			"résoudre la frise à l'écran établit la contradiction")
+	check(screen._result.visible and not screen._result.text.is_empty(), "le résultat s'affiche après résolution")
+	screen.queue_free()
+	await get_tree().process_frame
 	GameState.new_game()
 
 

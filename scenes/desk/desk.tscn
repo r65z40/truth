@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/field/field_screen.tscn" id="11_field"]
 [ext_resource type="PackedScene" path="res://scenes/ui/archive_card.tscn" id="11_archive"]
 [ext_resource type="PackedScene" path="res://scenes/ui/comparison_screen.tscn" id="12_compare"]
+[ext_resource type="PackedScene" path="res://scenes/ui/timeline_screen.tscn" id="13_timeline"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/terminal_window.tscn" id="12_terminal_window"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/settings_window.tscn" id="13_settings"]
 [ext_resource type="Script" path="res://scenes/desk/desktop_wallpaper.gd" id="14_wallpaper"]
@@ -339,6 +340,9 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 
 [node name="ComparisonScreen" parent="." instance=ExtResource("12_compare")]
+unique_name_in_owner = true
+
+[node name="TimelineScreen" parent="." instance=ExtResource("13_timeline")]
 unique_name_in_owner = true
 
 [node name="DayTransition" type="ColorRect" parent="."]

@@ -31,6 +31,8 @@ const TUTORIAL_UNTIL_CONCLUDED := 2
 signal field_requested(case_id: String)
 ## Le joueur ouvre le mini-jeu « comparer deux pièces » (facultatif).
 signal comparison_requested(case_id: String)
+## Le joueur ouvre le mini-jeu « frise chronologique » (facultatif).
+signal timeline_requested(case_id: String)
 ## Le joueur veut poser une pièce à côté, dans sa propre fenêtre.
 signal document_window_requested(case_id: String, document_id: String)
 ## Le formulaire de conclusion demande l'avis de VERITAS.
@@ -79,6 +81,7 @@ var _doc_icon: TextureRect
 @onready var _consult_button: Button = %ConsultButton
 @onready var _field_button: Button = %FieldButton
 @onready var _compare_button: Button = %CompareButton
+@onready var _timeline_button: Button = %TimelineButton
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
 
 
@@ -90,8 +93,9 @@ func _ready() -> void:
 	_consult_button.pressed.connect(consult_superior)
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
 	_compare_button.pressed.connect(func() -> void: comparison_requested.emit(current_case_id))
+	_timeline_button.pressed.connect(func() -> void: timeline_requested.emit(current_case_id))
 	# Actions secondaires en plus petit, pour que le pied de pièce tienne sur une ligne.
-	for button: Button in [_request_button, _consult_button, _field_button, _compare_button]:
+	for button: Button in [_request_button, _consult_button, _field_button, _compare_button, _timeline_button]:
 		button.add_theme_font_size_override("font_size", 14)
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
@@ -566,6 +570,14 @@ func _refresh_actions(can_decide: bool) -> void:
 		var done: bool = comparison.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
 		_compare_button.text = "COMPARER : FAIT" if done else "COMPARER"
 		_compare_button.tooltip_text = comparison.get("title", "")
+	# Frise chronologique : même logique, mini-jeu facultatif de certains dossiers.
+	var timeline := TimelineRules.get_timeline(CaseLibrary.get_case(current_case_id))
+	_timeline_button.visible = not timeline.is_empty() \
+			and EventRules.are_conditions_met(timeline.get("conditions", {}), GameState.get_condition_state())
+	if _timeline_button.visible:
+		var tdone: bool = timeline.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
+		_timeline_button.text = "FRISE : FAITE" if tdone else "FRISE"
+		_timeline_button.tooltip_text = timeline.get("title", "")
 
 
 ## Libellés des pièces demandées aujourd'hui, pas encore arrivées.

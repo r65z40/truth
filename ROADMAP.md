@@ -116,6 +116,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 ## En cours : le terrain (validé par fen le 25.10, `docs/design/TERRAIN.md`)
 
 - [x] Moteur des scènes de terrain (`FieldRules`, `data/field/`), 2 h, une fois par dossier, tours limités
+- [x] Varier le ressenti par acte — frise chronologique (acte 2) : `TimelineRules` + écran `TimelineScreen`, on remet des repères datés dans l'ordre pour révéler une anomalie et l'établir au carnet (comme la comparaison de pièces). Pilote : dossier 53402 (les retards du train couvraient les passages à la frontière). Données par dossier (bloc `timeline`). À suivre : interrogatoire plus tendu (acte 3)
 - [x] Audition d'ORLIK (51307) : questions, éléments du carnet à présenter, procès-verbal versé au dossier
 - [x] Perquisition chez SEDLAR (40921) : endroits cliquables sur le dessin, rapport versé au dossier
 - [x] Indice L'HEURE JUSTE : l'horloge sans aiguilles (escalier, soirée 1, puis poêle de SEDLAR)

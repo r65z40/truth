@@ -277,6 +277,12 @@ custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "COMPARER"
 
+[node name="TimelineButton" type="Button" parent="Layout/Content/Columns/DocumentColumn/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "FRISE"
+
 [node name="ConclusionButton" type="Button" parent="Layout/Content/Columns/DocumentColumn/Footer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
