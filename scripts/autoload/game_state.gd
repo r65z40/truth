@@ -264,6 +264,34 @@ func apply_comparison(case_id: String) -> Dictionary:
 	return {"established": established, "notes": notes, "text": advantage.get("text", "")}
 
 
+## Mini-jeu « frise chronologique » (acte 2) : le joueur a remis `order` (liste
+## d'identifiants de repères) dans un ordre. Si la frise est juste, établit la
+## contradiction du bloc "timeline" et verse son avantage au carnet, comme une
+## comparaison réussie. Déterministe et idempotent.
+## Renvoie {established, notes, text}, ou {} si la frise est fausse, absente, ou
+## son avantage déjà acquis.
+func apply_timeline(case_id: String, order: Array) -> Dictionary:
+	var case_data := CaseLibrary.get_case(case_id)
+	var timeline := TimelineRules.get_timeline(case_data)
+	if timeline.is_empty() or not TimelineRules.grade(timeline, order).correct:
+		return {}
+	var case_state := get_case_state(case_id)
+	var established: String = timeline.get("establishes", "")
+	if established != "" and established in case_state.contradictions_found:
+		return {}
+	var advantage: Dictionary = timeline.get("advantage", {})
+	if established != "":
+		case_state.contradictions_found.append(established)
+	var notes: Array = []
+	for fact_id in advantage.get("note_facts", []):
+		note_fact(case_id, fact_id)
+		notes.append(CaseLibrary.get_fact(case_data, fact_id).get("label", fact_id))
+	_merge_flags(advantage.get("set_flags", {}))
+	_apply_effects(advantage.get("effects", {}))
+	state_changed.emit()
+	return {"established": established, "notes": notes, "text": advantage.get("text", "")}
+
+
 ## Fonction débloquée à ce stade de la partie (voir Features).
 func is_feature_unlocked(feature: String) -> bool:
 	return Features.is_unlocked(feature, get_condition_state())
@@ -422,6 +450,12 @@ func start_field(case_id: String) -> Dictionary:
 	_apply_effects(scene.get("start_effects", {}))
 	state_changed.emit()
 	return scene
+
+
+## Sang-froid du sujet dans l'interrogatoire en cours (0-100), ou -1 si la scène
+## n'a pas de tension (voir FieldRules).
+func field_composure(scene_id: String) -> int:
+	return FieldRules.composure(FieldRules.get_scene(scene_id), get_field_state(scene_id))
 
 
 ## Choix encore possibles dans la scène en cours.

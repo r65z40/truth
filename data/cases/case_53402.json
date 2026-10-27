@@ -642,5 +642,58 @@
 			},
 			"text": "Les sceaux sont authentiques et les voyageurs sont des résidents de Brenec : ce ne sont pas des agents, mais des familles. Leurs permis n'étaient pas faux — ils ont seulement expiré le jour où le régime des passages s'est durci."
 		}
+	},
+	"timeline": {
+		"id": "frise_53402",
+		"title": "Frise des nuits du train 2241",
+		"intro": "Posez les repères dans l'ordre. Quand la frise est juste, on voit sur quelles nuits l'aiguilleur a retardé le train — et ce qui se jouait ces nuits-là.",
+		"entries": [
+			{
+				"id": "t_son",
+				"label": "Le fils de VRABEC passe à l'étranger",
+				"date": "1981-06-01"
+			},
+			{
+				"id": "t_decret",
+				"label": "Décret 86-31 : l'exposition frontalière est durcie",
+				"date": "1986-09-15"
+			},
+			{
+				"id": "t_permits",
+				"label": "Les permis familiaux des voyageurs échoient",
+				"date": "1986-10-20"
+			},
+			{
+				"id": "t_delays",
+				"label": "Première des cinq nuits de retard du train 2241",
+				"date": "1986-10-22"
+			},
+			{
+				"id": "t_border",
+				"label": "La garde-frontière voit un groupe non identifié passer",
+				"date": "1986-10-24",
+				"decisive": true,
+				"note": "Les retards commencent juste après l'échéance des permis : le train s'arrêtait les nuits où des voisins ne pouvaient plus passer en règle."
+			},
+			{
+				"id": "t_audition",
+				"label": "Audition : VRABEC admet avoir retardé le train",
+				"date": "1986-11-03"
+			}
+		],
+		"establishes": "delays.cover_crossings",
+		"advantage": {
+			"note_facts": [
+				"f_manifest_expired",
+				"f_border_group"
+			],
+			"set_flags": {
+				"53402.timeline_solved": true
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"text": "La frise parle d'elle-même : les cinq nuits de retard tombent après l'échéance des permis, et sur l'une d'elles un groupe passe la frontière. La « signalisation défaillante » couvrait les passages. Vous le notez — en sachant que le remarquer vous expose."
+		}
 	}
 }

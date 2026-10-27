@@ -36,7 +36,8 @@
 			"text": "« La signalisation gèle, l'hiver, au km 47. Ça s'enraye, il faut descendre, dégager l'aiguille à la main. Je note ce que je vois. Qu'est-ce que je devrais noter d'autre ? »",
 			"note": [
 				"f_vaud_delays"
-			]
+			],
+			"composure_delta": -10
 		},
 		{
 			"id": "q_passengers",
@@ -44,7 +45,8 @@
 			"text": "Il hésite. « Qui voulez-vous qui monte à Brenec la nuit ? Des gens du village. Ceux qui travaillent de l'autre côté, ceux qui ont de la famille à Halvek. Ce n'est pas un crime de prendre le train. »",
 			"note": [
 				"f_vaud_passengers"
-			]
+			],
+			"composure_delta": -10
 		},
 		{
 			"id": "q_son",
@@ -57,12 +59,27 @@
 			"text": "Les mains se crispent. « Pavel est parti en 81. Par cette voie, oui, celle que je garde. Vous vouliez l'entendre ? Voilà, c'est dit. Je connais ceux qui restent de ce côté, et ce que c'est, d'attendre quelqu'un de l'autre. »",
 			"note": [
 				"f_vaud_son"
-			]
+			],
+			"composure_delta": -15
 		},
 		{
 			"id": "q_threat",
 			"label": "« Vous savez ce que le décret prévoit, pour la frontière ? »",
-			"text": "VRABEC relève la tête. « Je sais lire les bulletins, inspecteur. Le décret, la sévérité, les agents de l'étranger. » Il écarte les mains. « Faites votre travail. Moi j'ai fait le mien pendant trente ans : tenir la voie ouverte. » Vous n'obtenez rien de plus."
+			"text": "VRABEC relève la tête. « Je sais lire les bulletins, inspecteur. Le décret, la sévérité, les agents de l'étranger. » Il écarte les mains. « Faites votre travail. Moi j'ai fait le mien pendant trente ans : tenir la voie ouverte. » Vous n'obtenez rien de plus.",
+			"composure_delta": -25
+		},
+		{
+			"id": "q_confess",
+			"label": "« Pourquoi, Marek ? » (à voix basse)",
+			"requires_composure": {
+				"min": 20,
+				"max": 45
+			},
+			"ends": true,
+			"set_flags": {
+				"53402.vrabec_confessed": true
+			},
+			"text": "Il regarde ses mains noires. « Mon fils est passé par là, en 81. Je ne pouvais plus le suivre, alors je gardais la porte ouverte pour les autres. Cinq nuits. Je retardais le train le temps qu'ils franchissent la voie. » Un silence. « Écrivez ce que vous voulez. J'ai tenu l'heure, pas la frontière. »"
 		}
 	],
 	"presentations": [
@@ -77,7 +94,8 @@
 			],
 			"set_flags": {
 				"53402.vrabec_admitted": true
-			}
+			},
+			"composure_delta": -10
 		},
 		{
 			"id": "p_manifest",
@@ -87,7 +105,8 @@
 			"text": "« Vous avez les noms. Irena, Stefan... des voisins. » Il hausse les épaules. « Et vous cherchez quoi, au bout de la liste ? Mon compte en banque ? Je n'ai jamais pris un sou. Pas une pièce, pas un œuf. Demandez à Brenec. »",
 			"note": [
 				"f_vaud_nothing"
-			]
+			],
+			"composure_delta": 10
 		},
 		{
 			"id": "p_link",
@@ -97,16 +116,22 @@
 			"text": "Il lit le mot « filière » et quelque chose se casse dans son visage — pas de la peur, de la fatigue.\n\n« Une filière. » Il rit sans bruit. « Ce sont des mères et des fils, inspecteur, pas des espions. Il n'y a pas de chef, pas d'argent, pas d'étranger. Il y a une frontière au milieu d'un village, et un train qui passe une fois par nuit. C'est tout ce qu'il y a. »",
 			"note": [
 				"f_vaud_no_network"
-			]
+			],
+			"composure_delta": -20
 		},
 		{
 			"id": "p_border",
 			"facts": [
 				"f_border_group"
 			],
-			"text": "« Un groupe non identifié. » Il secoue la tête. « Le 23, oui. Les permis venaient d'être annulés, le 20. Alors ils sont montés quand même, parce que de l'autre côté une vieille femme ne passera pas l'hiver. Votre groupe non identifié, c'étaient quatre personnes qui savaient déjà qu'elles ne reviendraient pas. »"
+			"text": "« Un groupe non identifié. » Il secoue la tête. « Le 23, oui. Les permis venaient d'être annulés, le 20. Alors ils sont montés quand même, parce que de l'autre côté une vieille femme ne passera pas l'hiver. Votre groupe non identifié, c'étaient quatre personnes qui savaient déjà qu'elles ne reviendraient pas. »",
+			"composure_delta": -15
 		}
 	],
 	"present_default": "VRABEC regarde le papier, puis vous. « Je ne vois pas ce que vous voulez que j'en dise, inspecteur. »",
-	"outro": "Le planton raccompagne VRABEC. Sur le seuil, il se retourne : « Le 2241 part à 22h40. S'il part à l'heure cette nuit, c'est que personne n'attendait. » Il ne vous souhaite pas bonne continuation."
+	"outro": "Le planton raccompagne VRABEC. Sur le seuil, il se retourne : « Le 2241 part à 22h40. S'il part à l'heure cette nuit, c'est que personne n'attendait. » Il ne vous souhaite pas bonne continuation.",
+	"tension": {
+		"start": 70,
+		"label": "Sang-froid de VRABEC"
+	}
 }

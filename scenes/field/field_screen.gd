@@ -197,6 +197,12 @@ func _refresh() -> void:
 	var left := FieldRules.turns_left(scene, scene_state)
 	_turns_label.text = "TERMINÉ" if done else \
 			scene.get("turns_label", "%d question(s) restante(s)" if is_interrogation() else "%d fouille(s) restante(s)") % left
+	# Interrogatoire sous tension : on montre le sang-froid du sujet, qui baisse
+	# quand on le pousse (voir FieldRules). Les scènes sans tension n'affichent rien.
+	if not done and FieldRules.has_tension(scene):
+		var value := FieldRules.composure(scene, scene_state)
+		var tension: Dictionary = scene.get("tension", {})
+		_turns_label.text += "   ·   %s : %d" % [tension.get("label", "Sang-froid"), value]
 	_log_label.text = "\n\n".join(_log)
 	_scroll_log_to_end.call_deferred()
 	for child in _options_box.get_children():
