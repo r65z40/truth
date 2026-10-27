@@ -25,9 +25,11 @@ func select_message(message_id: String) -> void:
 		if message.id != message_id:
 			continue
 		current_message_id = message_id
-		_message_header.text = "DE : %s\nÀ : %s, Section 4\nDATE : %s" % [message.from, GameState.player.name, message.date_label]
-		_message_subject.text = "OBJET : %s" % message.subject
-		_message_body.text = message.body.replace("[", "[lb]")
+		# Un pli reçu avant un changement de langue se traduit à l'affichage.
+		_message_header.text = tr("DE : %s\nÀ : %s, Section 4\nDATE : %s") % [Localization.text(message.from),
+				GameState.player.name, message.date_label]
+		_message_subject.text = tr("OBJET : %s") % Localization.text(message.subject)
+		_message_body.text = Localization.text(message.body).replace("[", "[lb]")
 		GameState.mark_message_read(message_id)
 		_refresh_list()
 		return
@@ -53,11 +55,11 @@ func _refresh_list() -> void:
 			unread += 1
 		var button := Button.new()
 		button.name = "Message_" + message.id.validate_node_name()
-		button.text = "%s\n%s  //  %s" % [message.subject, message.from, message.date_label]
+		button.text = "%s\n%s  //  %s" % [Localization.text(message.subject), Localization.text(message.from), message.date_label]
 		button.icon = PixelIcons.get_icon("messages" if not message.read else "mail_open", 2)
 		button.set_meta("unread", not message.read)
 		button.theme_type_variation = &"DocumentTabNew" if not message.read else &"DocumentTab"
-		button.tooltip_text = "Pli non lu." if not message.read else "Pli lu."
+		button.tooltip_text = tr("Pli non lu.") if not message.read else tr("Pli lu.")
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.add_theme_font_size_override("font_size", 15)
@@ -67,6 +69,6 @@ func _refresh_list() -> void:
 		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(select_message.bind(message.id))
 		_message_list.add_child(button)
-	_list_title.text = "PLIS REÇUS (%d non lu%s)" % [unread, "s" if unread > 1 else ""] if unread > 0 else "PLIS REÇUS"
+	_list_title.text = (tr("PLIS REÇUS (%d non lus)" if unread > 1 else "PLIS REÇUS (%d non lu)") % unread) if unread > 0 else tr("PLIS REÇUS")
 	_letter.visible = current_message_id != ""
 	_empty_hint.visible = not _letter.visible

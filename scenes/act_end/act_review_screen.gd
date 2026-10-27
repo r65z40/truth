@@ -17,6 +17,7 @@ signal finished
 
 
 func _ready() -> void:
+	Backdrop.add_to(self, "act_review_background")
 	_accept_button.pressed.connect(decide.bind(true))
 	_refuse_button.pressed.connect(decide.bind(false))
 	_continue_button.pressed.connect(_on_continue)
@@ -27,13 +28,13 @@ func open() -> bool:
 	var review := GameState.get_act_review()
 	if review.is_empty():
 		return false
-	_title_label.text = "FIN DE L'ACTE %d  //  %s" % [review.act, review.title]
+	_title_label.text = tr("FIN DE L'ACTE %d  //  %s") % [review.act, review.title]
 	for child in _subjects_box.get_children():
 		_subjects_box.remove_child(child)
 		child.queue_free()
 	for subject: Dictionary in review.subjects:
 		var heading := Label.new()
-		heading.text = "%s  //  dossier %s  //  %s" % [subject.name, subject.case_id, subject.decision]
+		heading.text = tr("%s  //  dossier %s  //  %s") % [subject.name, subject.case_id, subject.decision]
 		heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_subjects_box.add_child(heading)
 		var fate := Label.new()
@@ -43,7 +44,7 @@ func open() -> bool:
 		_subjects_box.add_child(fate)
 	var lines: PackedStringArray = []
 	for criterion: Dictionary in review.evaluation.criteria:
-		lines.append("[%s]  %s" % ["OUI" if criterion.ok else "NON", criterion.label])
+		lines.append("[%s]  %s" % [tr("OUI") if criterion.ok else tr("NON"), criterion.label])
 	_criteria_label.text = "\n".join(lines)
 	var eligible: bool = review.evaluation.eligible
 	_letter_label.text = review.letter

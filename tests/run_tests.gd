@@ -120,8 +120,16 @@ func _run() -> void:
 		"test_news",
 		"test_news_acts3_4",
 		"test_localization",
+		"test_english_version",
 		"test_music_rules",
 		"test_music_player",
+		"test_media_library",
+		"test_sound_rules",
+		"test_sound_player",
+		"test_image_slots",
+		"test_media_catalog",
+		"test_desk_traces",
+		"test_evening_echoes",
 		"test_time_in_desk",
 		"test_endings",
 		"test_end_of_game_in_desk",
@@ -221,16 +229,19 @@ func test_localization() -> void:
 	Localization.set_locale("en")
 	check(TranslationServer.translate("NOUVELLE PARTIE") == "NEW GAME", "l'interface se traduit en anglais")
 	check(TranslationServer.translate("Texte sans traduction") == "Texte sans traduction", "une chaîne non traduite reste en français")
-	# Surcouche de dossier : fusion par id, repli sur le français.
-	var base := {"id": "x", "title": "Titre FR", "summary": "Résumé FR",
-			"documents": [{"id": "d1", "title": "Pièce FR", "facts": [{"id": "f1", "label": "FR"}]}]}
-	var overlay := {"title": "Title EN", "documents": [{"id": "d1", "facts": [{"id": "f1", "label": "EN"}]}]}
-	var merged: Dictionary = Localization._merge(base.duplicate(true), overlay)
-	check(merged.title == "Title EN" and merged.summary == "Résumé FR", "le titre est traduit, le résumé reste en français")
-	check(merged.documents[0].title == "Pièce FR" and merged.documents[0].facts[0].label == "EN",
-			"la fusion apparie les pièces et les éléments par id")
-	# Sans surcouche livrée, un dossier reste en français même en anglais.
-	check(CaseLibrary.get_case("40921").title == "Citoyen n° 40921", "sans surcouche, le dossier reste en français")
+	# Contenu : chaque texte français est remplacé par sa traduction à la lecture ;
+	# identifiants, drapeaux et textes sans traduction restent intacts.
+	var saved := DataLoader.translations
+	DataLoader.translations = {"Titre FR": "Title EN"}
+	var data: Dictionary = DataLoader.translate({"id": "Titre FR", "title": "Titre FR", "summary": "Résumé FR",
+			"flags": {"Titre FR": true}, "list": ["Titre FR", "autre"]})
+	check(data.title == "Title EN" and data.list[0] == "Title EN", "les textes sont traduits, y compris dans les listes")
+	check(data.summary == "Résumé FR" and data.list[1] == "autre", "un texte sans traduction reste en français")
+	check(data.flags.has("Titre FR"), "les clés (drapeaux, identifiants) ne sont jamais traduites")
+	DataLoader.translations = saved
+	check(not DataLoader.translations.is_empty(), "l'anglais charge les traductions de contenu (data/locale/en/)")
+	check(CaseLibrary.get_case("40921").title != "Citoyen n° 40921", "en anglais, le dossier est traduit")
+	check(Localization.text(CaseLibrary.get_case("40921").title) != "", "Localization.text renvoie toujours un texte")
 	Localization.set_locale("fr")
 	check(CaseLibrary.get_case("40921").title == "Citoyen n° 40921" and not Localization.is_translated(),
 			"retour au français : langue source")
@@ -334,16 +345,7 @@ func test_desk_apps() -> void:
 
 
 func test_document_passages() -> void:
-	var all_found := true
-	for case_id in CaseLibrary.get_case_ids():
-		for document in CaseLibrary.get_case(case_id).documents:
-			var bbcode := DossiersWindow.render_document_bbcode(document, {"noted": [], "link": "8e1f1f", "highlight": "edc76b"})
-			for fact in DossiersWindow.quoted_facts(document):
-				var found: bool = bbcode.count("[url=fact:%s]" % fact.id) == 1
-				if not found:
-					print("  citation introuvable : %s/%s/%s" % [case_id, document.id, fact.id])
-				all_found = all_found and found
-	check(all_found, "chaque citation se trouve une fois dans le texte de sa pièce")
+	check(_all_quotes_found(), "chaque citation se trouve une fois dans le texte de sa pièce")
 	var intercept := CaseLibrary.get_document(CaseLibrary.get_case("40921"), "intercept")
 	var plain := DossiersWindow.render_document_bbcode(intercept)
 	check(not plain.contains("[url="), "sans réglage : texte simple, sans lien")
@@ -357,6 +359,45 @@ func test_document_passages() -> void:
 		for document in CaseLibrary.get_case(case_id).documents:
 			quoted += DossiersWindow.quoted_facts(document).size()
 	check(quoted >= 50, "les dossiers de l'acte 1 ont des passages à noter (%d)" % quoted)
+
+
+## Vrai si chaque citation d'élément apparaît une seule fois dans le texte de sa pièce.
+func _all_quotes_found() -> bool:
+	var all_found := true
+	for case_id in CaseLibrary.get_case_ids():
+		for document in CaseLibrary.get_case(case_id).documents:
+			var bbcode := DossiersWindow.render_document_bbcode(document, {"noted": [], "link": "8e1f1f", "highlight": "edc76b"})
+			for fact in DossiersWindow.quoted_facts(document):
+				var found: bool = bbcode.count("[url=fact:%s]" % fact.id) == 1
+				if not found:
+					print("  citation introuvable : %s/%s/%s" % [case_id, document.id, fact.id])
+				all_found = all_found and found
+	return all_found
+
+
+func test_english_version() -> void:
+	Localization.set_locale("en")
+	check(_all_quotes_found(), "en anglais aussi, chaque citation se trouve dans le texte de sa pièce")
+	var untranslated: Array = []
+	for case_id in CaseLibrary.get_case_ids():
+		var case_data := CaseLibrary.get_case(case_id)
+		for key in ["title", "summary", "objective"]:
+			var value: String = case_data.get(key, "")
+			if value != "" and value == Localization.text(value) and value.contains("é"):
+				untranslated.append("%s.%s" % [case_id, key])
+	check(untranslated.is_empty(), "titres, résumés et objectifs des dossiers traduits %s" % str(untranslated))
+	check(FictionalCalendar.format_long(0) == "MONDAY 3 NOVEMBER 1986", "date en anglais : %s" % FictionalCalendar.format_long(0))
+	check(FictionalCalendar.format_compact(0).begins_with("MON."), "date courte en anglais")
+	var progress := DossiersWindow.progress_text({"documents": [{}, {}]},
+			{"decision": "", "viewed_documents": ["a"], "noted_facts": ["x"], "contradictions_found": []})
+	check(progress == "Progress: 1/2 documents read  ·  1 item noted  ·  no contradictions established.", "avancement en anglais : %s" % progress)
+	check(Career.rank_title(0) == "Inspector, 3rd class", "grade en anglais")
+	check(TerminalCommands.parse("files").target == "dossiers" and TerminalCommands.parse("mail").target == "messages",
+			"le terminal comprend les commandes anglaises")
+	var evening := EveningRules.intro_text(DataLoader.load_json("res://data/evenings.json").evenings[0], GameState.get_condition_state())
+	check(evening.begins_with("The heating"), "soirée traduite : %s" % evening.left(40))
+	Localization.set_locale("fr")
+	check(FictionalCalendar.format_long(0) == "LUNDI 3 NOVEMBRE 1986", "retour au français pour les dates")
 
 
 func test_calendar() -> void:
@@ -3005,7 +3046,7 @@ func test_document_windows() -> void:
 			"les pièces non lues sont marquées « à lire »")
 	check(tabs.get_node("Tab_work_report").theme_type_variation == &"DocumentTabNew", "pièce à lire mise en avant")
 	check(dossiers.get_node("%ProgressLabel").text.contains("1/4 pièces lues") \
-			and dossiers.get_node("%ProgressLabel").text.contains("0 contradiction"), "avancement lisible en une ligne")
+			and dossiers.get_node("%ProgressLabel").text.contains("aucune contradiction"), "avancement lisible en une ligne")
 	check(dossiers.get_node("%ObjectiveLabel").visible \
 			and dossiers.get_node("%ObjectiveLabel").text.contains("OBJET DE L'ENQUÊTE"), "le briefing affiche l'objet de l'enquête")
 	# Pendant le tutoriel, l'en-tête du dossier est épuré : ni rappel « Vous
@@ -3103,6 +3144,225 @@ func test_music_player() -> void:
 	await get_tree().process_frame
 
 
+
+## Fichiers de médias : extension libre, absence sans erreur, lecture en boucle.
+func test_media_library() -> void:
+	check(MediaLibrary.resolve("res://assets/music/menu.ogg") == "res://assets/music/menu.ogg", "fichier présent : trouvé tel quel")
+	check(MediaLibrary.resolve("res://assets/music/menu.mp3") == "res://assets/music/menu.ogg",
+			"autre extension audio : le fichier du même nom est trouvé")
+	check(MediaLibrary.resolve("res://assets/textures/menu_fond.webp") == "res://assets/textures/menu_fond.png",
+			"autre extension d'image : le fichier du même nom est trouvé")
+	check(MediaLibrary.resolve("res://assets/sounds/effets/inexistant.ogg") == "", "fichier absent : chemin vide")
+	check(MediaLibrary.load_stream("res://assets/sounds/effets/inexistant.ogg") == null, "son absent : null, sans erreur")
+	check(MediaLibrary.load_texture("") == null, "chemin vide : null")
+	var stream := MediaLibrary.load_stream("res://assets/music/menu.ogg", true)
+	check(stream != null and stream.get("loop") == true, "les morceaux bouclent sans réglage d'import")
+
+
+## Bruitages et ambiances déclarés en données.
+func test_sound_rules() -> void:
+	for effect_id in ["ui_click", "window_open", "window_close", "paper", "note", "confront_success",
+			"confront_fail", "stamp", "typewriter", "notification", "mail", "day_end", "door"]:
+		check(not SoundRules.get_effect(effect_id).get("files", []).is_empty(), "le son %s est déclaré" % effect_id)
+	var valid := true
+	for effect_id in SoundRules.get_effect_ids():
+		for file: String in SoundRules.get_effect(effect_id).files:
+			valid = valid and file.begins_with("res://assets/sounds/effets/")
+	check(valid, "chaque bruitage est rangé dans assets/sounds/effets/")
+	check(SoundRules.pick_file("stamp", 0.5) == "" or MediaLibrary.exists(SoundRules.pick_file("stamp", 0.5)),
+			"variante tirée parmi les fichiers présents (ou silence)")
+	check(SoundRules.pick_file("inconnu", 0.5) == "", "son inconnu : silence")
+	var state := {"day_index": 0, "flags": {}, "cases": {}, "indicators": {}}
+	check(SoundRules.ambiance_for("menu", state) == "rain", "menu : pluie")
+	check(SoundRules.ambiance_for("desk", state) == "office", "bureau : ambiance du bureau")
+	check(SoundRules.ambiance_for("evening", state) == "apartment", "soirée : appartement")
+	check(SoundRules.ambiance_for("field_interrogation", state) == "interrogation_room", "audition : salle d'interrogatoire")
+	check(SoundRules.ambiance_for("act_review", state) == "", "fin d'acte : pas d'ambiance")
+	for rule in SoundRules.data().ambiance_rules:
+		check(not SoundRules.get_ambiance(rule.ambiance).is_empty(), "l'ambiance %s est déclarée" % rule.ambiance)
+	for signal_name in SoundRules.game_events():
+		check(GameState.has_signal(signal_name), "game_events : GameState émet %s" % signal_name)
+
+
+## Lecteur de sons : boutons, signaux du jeu, ambiance, volumes.
+func test_sound_player() -> void:
+	Sound.last_effect = ""
+	Sound.play("stamp")
+	check(Sound.last_effect == "stamp", "un son est demandé par son nom (absent : silence, sans erreur)")
+	var button := Button.new()
+	get_tree().root.add_child(button)
+	Sound.last_effect = ""
+	button.pressed.emit()
+	check(Sound.last_effect == "ui_click", "tout bouton fait un clic, sans code dans la scène")
+	button.set_meta("sound", "")
+	Sound.last_effect = ""
+	button.pressed.emit()
+	check(Sound.last_effect == "", "métadonnée sound vide : bouton muet")
+	button.queue_free()
+	Sound.last_effect = ""
+	GameState.decision_applied.emit("40921", "arrest", "")
+	check(Sound.last_effect == "stamp", "conclusion transmise : coup de tampon")
+	Music.play_context("desk")
+	check(Sound.current_ambiance == "office", "l'ambiance suit le moment du jeu annoncé à la musique")
+	Music.play_context("evening")
+	check(Sound.current_ambiance == "apartment", "soirée : l'ambiance change")
+	Music.stop()
+	check(Sound.current_ambiance == "", "plus de contexte : plus d'ambiance")
+	var saved := [Settings.sfx_volume, Settings.ambience_volume, Settings.sound_muted]
+	Settings.sfx_volume = 0.0
+	Settings.sound_muted = true
+	Sound.apply_volume()
+	check(AudioServer.is_bus_mute(AudioServer.get_bus_index(Sound.SFX_BUS)), "bruitages à zéro : coupés")
+	check(AudioServer.is_bus_mute(AudioServer.get_bus_index("Master")), "son coupé : tout se tait")
+	Settings.sfx_volume = saved[0]
+	Settings.sound_muted = saved[2]
+	Sound.apply_volume()
+	check(not AudioServer.is_bus_mute(AudioServer.get_bus_index(Sound.SFX_BUS)), "volume des bruitages rétabli")
+	var window: Node = load("res://scenes/ui/windows/settings_window.tscn").instantiate()
+	get_tree().root.add_child(window)
+	window.open()
+	check(window.get_node("%AmbienceOption").item_count == Settings.MUSIC_LEVELS.size()
+			and window.get_node("%SfxOption").item_count == Settings.MUSIC_LEVELS.size(),
+			"Paramètres : volumes des ambiances et des bruitages")
+	window.queue_free()
+	# Bouton du son dans la barre des tâches.
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	var sound_button: Button = desk.get_node("%SoundButton")
+	check(sound_button.button_pressed == not Settings.sound_muted and sound_button.icon != null,
+			"barre des tâches : bouton du son avec son icône")
+	sound_button.button_pressed = false
+	check(Settings.sound_muted, "le bouton coupe le son")
+	sound_button.button_pressed = true
+	check(not Settings.sound_muted, "et le remet")
+	Settings.set_sound_muted(saved[2])
+	Sound.last_effect = ""
+	desk.open_app("messages")
+	check(Sound.last_effect == "window_open", "ouvrir une fenêtre fait son bruit")
+	desk.windows.messages.close()
+	check(Sound.last_effect == "window_close", "la fermer aussi")
+	desk.queue_free()
+	Music.stop()
+	await get_tree().process_frame
+
+
+## Images remplaçables déclarées dans data/images.json.
+func test_image_slots() -> void:
+	check(ImageSlots.has_image("menu_background") and ImageSlots.texture("menu_background") != null,
+			"fond du menu fourni par son emplacement")
+	check(ImageSlots.texture("inconnu") == null, "emplacement inconnu : pas d'image, sans erreur")
+	for slot_id in ImageSlots.get_slot_ids():
+		check(ImageSlots.get_slot(slot_id).get("usage", "") != "", "l'emplacement %s dit où il sert" % slot_id)
+	for art in ["city", "badge", "dossier", "clock", "signature"]:
+		check(not ImageSlots.get_slot("intro_" + art).is_empty(), "l'image de l'introduction « %s » est remplaçable" % art)
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	check(menu.get_node("%MenuBackground").texture != null, "le menu affiche l'image de son emplacement")
+	menu.queue_free()
+	var art := IntroArt.new()
+	art.image = ImageSlots.texture("intro_inexistant")
+	check(art.image == null, "introduction sans image : le dessin reste")
+	art.free()
+	var screen: Control = load("res://scenes/evening/evening_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	var backdrop := screen.get_node_or_null("Backdrop") as TextureRect
+	check(backdrop != null and backdrop.get_index() == 0 and backdrop.texture != null,
+			"soirée : image de fond derrière le texte")
+	screen.queue_free()
+	var bare := Control.new()
+	check(Backdrop.add_to(bare, "act_review_background") == null or ImageSlots.has_image("act_review_background"),
+			"fond absent : rien n'est ajouté")
+	bare.free()
+	await get_tree().process_frame
+
+
+## Inventaire des médias (outil de la visite des scènes).
+func test_media_catalog() -> void:
+	var list := MediaCatalog.entries()
+	var kinds := {}
+	for entry: Dictionary in list:
+		kinds[entry.kind] = true
+	check(kinds.has_all(["music", "ambiance", "effect", "image", "field"]), "l'inventaire couvre musiques, sons, images et décors")
+	var salon := list.filter(func(e: Dictionary) -> bool: return e.id == "search_40921:salon")
+	check(salon.size() == 1 and salon[0].present == 1, "les décors de terrain pièce par pièce sont inventoriés")
+	var count := MediaCatalog.summary(list)
+	check(count.total == list.size() and count.present > 0 and count.present < count.total, "compte des médias fournis")
+	var view := MediaCheck.new()
+	get_tree().root.add_child(view)
+	check(view.find_child("Column", true, false).get_child_count() > list.size(), "l'écran Médias liste chaque fichier")
+	view.queue_free()
+	await get_tree().process_frame
+
+
+## Traces sur le bureau : suites visibles des signatures et fil du père.
+func test_desk_traces() -> void:
+	var state := {"day_index": 1, "flags": {}, "cases": {}, "indicators": {}}
+	var ids := func(s: Dictionary) -> Array:
+		return DeskTraces.visible_traces(s).map(func(t: Dictionary) -> String: return t.id)
+	check("pendule_section4" in ids.call(state), "acte 1 : la plaque « atelier VOSK » sur la pendule du couloir")
+	state.flags["40921.sedlar_arrested"] = true
+	check("sedlar_receipt" in ids.call(state), "SEDLAR arrêté : l'accusé de réception traîne sur le bureau")
+	state.day_index = 5
+	check(not "sedlar_receipt" in ids.call(state), "la trace disparaît après quelques jours")
+	state.day_index = 7
+	check("atelier_vosk" in ids.call(state), "acte 2 : l'avis sur l'ancien atelier VOSK, saisi en 1971")
+	for flag in ["kremer.protected", "player.flagged", "world.border_crackdown", "milice.hostile"]:
+		state.flags[flag] = true
+	check(DeskTraces.visible_traces(state).size() == DeskTraces.MAX_VISIBLE, "au plus trois papiers à la fois")
+	var known := {}
+	for path in ["res://data/cases", "res://data/events", "res://data"]:
+		for file_name in DirAccess.get_files_at(path):
+			if file_name.ends_with(".json"):
+				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))
+	for trace: Dictionary in DeskTraces.get_data().traces:
+		for flag in trace.get("conditions", {}).get("requires_flags", []):
+			check(known.has(flag), "trace %s : le drapeau %s est posé quelque part" % [trace.id, flag])
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	GameState.day_index = 1
+	desk.refresh_traces()
+	await get_tree().process_frame
+	check(desk.get_node("Wallpaper/Traces").get_child_count() == 1, "le bureau affiche les papiers du jour")
+	desk.queue_free()
+	GameState.new_game()
+	await get_tree().process_frame
+
+
+## Drapeaux posés (valeur true) dans un fichier de données JSON.
+func _flags_set_in(text: String) -> Dictionary:
+	var found := {}
+	var regex := RegEx.create_from_string("\"([a-z0-9_]+\\.[a-z0-9_.]+)\"\\s*:\\s*true")
+	for result in regex.search_all(text):
+		found[result.get_string(1)] = true
+	return found
+
+
+## Soirées : les échos des signatures passées s'ajoutent à l'arrivée.
+func test_evening_echoes() -> void:
+	var evening := EveningRules.evening_for_day(7)
+	var state := {"day_index": 7, "flags": {}, "cases": {}, "evening_counts": {}}
+	var plain := EveningRules.intro_text(evening, state)
+	check(plain == evening.intro, "sans signature marquante : l'intro seule")
+	state.flags["53118.choir_arrested"] = true
+	check(EveningRules.intro_text(evening, state).contains("Sainte-Agathe"), "chorale arrêtée : les cloches se taisent le soir")
+	state.flags = {"53118.choir_cleared": true}
+	check(EveningRules.intro_text(evening, state).contains("répète"), "chorale relaxée : elle répète")
+	check(EveningRules.intro_text(EveningRules.evening_for_day(2), {"day_index": 2, "flags": {}}).contains("horloge"),
+			"acte 1 : l'horloge de la gare rappelle le père")
+	var known := {}
+	for path in ["res://data/cases", "res://data/events", "res://data"]:
+		for file_name in DirAccess.get_files_at(path):
+			if file_name.ends_with(".json"):
+				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))
+	for day_evening: Dictionary in EveningRules.get_data().evenings:
+		for echo: Dictionary in day_evening.get("echoes", []):
+			for flag in echo.get("conditions", {}).get("requires_flags", []):
+				check(known.has(flag), "écho du jour %d : le drapeau %s est posé quelque part" % [day_evening.day, flag])
+
 func test_time_in_desk() -> void:
 	GameState.new_game()
 	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
@@ -3132,54 +3392,6 @@ func test_time_in_desk() -> void:
 	desk.queue_free()
 	await get_tree().process_frame
 
-
-## Les actes 3-4 font revenir les gens jugés : la mère SEDLAR, le témoin coaché,
-## l'horloger. Conséquences différées conditionnées par les drapeaux.
-func test_act3_returns() -> void:
-	var ids := func(flags: Dictionary, day: int) -> Array:
-		return EventRules.due_events({"day_index": day, "flags": flags, "cases": {},
-				"fired_events": [], "indicators": {}}).map(func(e: Dictionary) -> String: return e.id)
-	check("54001_sedlar_mother_returns" in ids.call({"54001.sedlar_daughter_condemned": true}, 12),
-			"Vera SEDLAR revient quand sa fille est condamnée")
-	check("54012_reis_reused" in ids.call({"54012.false_witness": true}, 13),
-			"le témoin coaché est versé à la liste des témoins fiables")
-	check("54012_reis_recants" in ids.call({"54012.testimony_discredited": true}, 13),
-			"témoignage écarté : l'accusé rentre, REIS écrit")
-	check("54030_adler_shop_sealed" in ids.call({"adler.arrested": true}, 14),
-			"l'atelier d'ADLER est scellé après son transfert (pendule VOSK 1971)")
-	check("54030_adler_freed_note" in ids.call({"adler.freed": true}, 14),
-			"ADLER relâché laisse une montre et un mot")
-	check("54030_adler_shop_sealed" not in ids.call({"adler.freed": true}, 14),
-			"pas d'atelier scellé si ADLER est libre (issues exclusives)")
-	check("54001_sedlar_mother_returns" not in ids.call({}, 12),
-			"aucun retour sans la condamnation correspondante")
-
-## Les actes 3 et 4 ont aussi leur une, en langue officielle : l'explosion, la
-## réécriture MIROIR qui paraît comme la vérité, l'horloger relâché.
-func test_news_acts3_4() -> void:
-	var ids := func(state: Dictionary) -> Array:
-		return NewsRules.edition(state).articles.map(func(a: Dictionary) -> String: return a.id)
-
-	# Verdict de l'explosion : sabotage → bouc émissaire à la une le lendemain.
-	var blast := {"day_index": 11, "flags": {}, "cases": {},
-			"decisions": [{"case_id": "54001", "decision_id": "sabotage", "day_index": 10}]}
-	check("d_54001_sabotage" in ids.call(blast), "le sabotage désigné fait la une (version officielle)")
-	blast.decisions[0].decision_id = "accident"
-	check("d_54001_accident" in ids.call(blast) and "d_54001_sabotage" not in ids.call(blast),
-			"l'accident établi devient un « incident technique »")
-
-	# MIROIR : la réécriture paraît comme la vérité établie.
-	var mirror := {"day_index": 16, "flags": {}, "cases": {},
-			"decisions": [{"case_id": "60002", "decision_id": "name_scapegoat", "day_index": 15}]}
-	check("d_mirror_centrale" in ids.call(mirror), "la réécriture MIROIR de la Centrale fait la une")
-	# La résistance, elle, ne se publie pas : le journal garde le silence.
-	mirror.decisions[0].decision_id = "name_truth"
-	check("d_mirror_centrale" not in ids.call(mirror), "rétablir la vérité ne paraît pas au journal")
-
-	# L'horloger relâché : une note discrète, clin d'œil à L'HEURE JUSTE.
-	var clock := {"day_index": 13, "flags": {}, "cases": {},
-			"decisions": [{"case_id": "54030", "decision_id": "release", "day_index": 12}]}
-	check("d_54030_reopened" in ids.call(clock), "l'atelier rouvert fait une brève")
 
 # --- Fin de partie -----------------------------------------------------------
 
@@ -3281,3 +3493,49 @@ func test_endings_discovered_counter() -> void:
 	Settings.endings_discovered = original
 	Settings.save_settings()
 	await get_tree().process_frame
+## Les actes 3 et 4 ont aussi leur une, en langue officielle : l'explosion, la
+## réécriture MIROIR qui paraît comme la vérité, l'horloger relâché.
+func test_news_acts3_4() -> void:
+	var ids := func(state: Dictionary) -> Array:
+		return NewsRules.edition(state).articles.map(func(a: Dictionary) -> String: return a.id)
+
+	# Verdict de l'explosion : sabotage → bouc émissaire à la une le lendemain.
+	var blast := {"day_index": 11, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "54001", "decision_id": "sabotage", "day_index": 10}]}
+	check("d_54001_sabotage" in ids.call(blast), "le sabotage désigné fait la une (version officielle)")
+	blast.decisions[0].decision_id = "accident"
+	check("d_54001_accident" in ids.call(blast) and "d_54001_sabotage" not in ids.call(blast),
+			"l'accident établi devient un « incident technique »")
+
+	# MIROIR : la réécriture paraît comme la vérité établie.
+	var mirror := {"day_index": 16, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "60002", "decision_id": "name_scapegoat", "day_index": 15}]}
+	check("d_mirror_centrale" in ids.call(mirror), "la réécriture MIROIR de la Centrale fait la une")
+	# La résistance, elle, ne se publie pas : le journal garde le silence.
+	mirror.decisions[0].decision_id = "name_truth"
+	check("d_mirror_centrale" not in ids.call(mirror), "rétablir la vérité ne paraît pas au journal")
+
+	# L'horloger relâché : une note discrète, clin d'œil à L'HEURE JUSTE.
+	var clock := {"day_index": 13, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "54030", "decision_id": "release", "day_index": 12}]}
+	check("d_54030_reopened" in ids.call(clock), "l'atelier rouvert fait une brève")
+## Les actes 3-4 font revenir les gens jugés : la mère SEDLAR, le témoin coaché,
+## l'horloger. Conséquences différées conditionnées par les drapeaux.
+func test_act3_returns() -> void:
+	var ids := func(flags: Dictionary, day: int) -> Array:
+		return EventRules.due_events({"day_index": day, "flags": flags, "cases": {},
+				"fired_events": [], "indicators": {}}).map(func(e: Dictionary) -> String: return e.id)
+	check("54001_sedlar_mother_returns" in ids.call({"54001.sedlar_daughter_condemned": true}, 12),
+			"Vera SEDLAR revient quand sa fille est condamnée")
+	check("54012_reis_reused" in ids.call({"54012.false_witness": true}, 13),
+			"le témoin coaché est versé à la liste des témoins fiables")
+	check("54012_reis_recants" in ids.call({"54012.testimony_discredited": true}, 13),
+			"témoignage écarté : l'accusé rentre, REIS écrit")
+	check("54030_adler_shop_sealed" in ids.call({"adler.arrested": true}, 14),
+			"l'atelier d'ADLER est scellé après son transfert (pendule VOSK 1971)")
+	check("54030_adler_freed_note" in ids.call({"adler.freed": true}, 14),
+			"ADLER relâché laisse une montre et un mot")
+	check("54030_adler_shop_sealed" not in ids.call({"adler.freed": true}, 14),
+			"pas d'atelier scellé si ADLER est libre (issues exclusives)")
+	check("54001_sedlar_mother_returns" not in ids.call({}, 12),
+			"aucun retour sans la condamnation correspondante")

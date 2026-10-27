@@ -135,12 +135,12 @@ static func explain(case_data: Dictionary, case_state: Dictionary = {}, show_mul
 	factors.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return absf(a.contribution) > absf(b.contribution))
 	for factor in factors.slice(0, EXPLAIN_COUNT):
 		var source := " (%s)" % factor.document_title if factor.document_title != "" else ""
-		var mark := "  — contesté (écarté du calcul)" if factor.get("contested", false) else ""
+		var mark: String = UiText.of("  — contesté (écarté du calcul)") if factor.get("contested", false) else ""
 		if show_multipliers:
-			lines.append("%s%s : poids %s x %s = %s%s" % [factor.label, source, _number(factor.weight),
+			lines.append(UiText.of("%s%s : poids %s x %s = %s%s") % [factor.label, source, _number(factor.weight),
 					_number(factor.multiplier), _number(factor.contribution), mark])
 		else:
-			lines.append("%s%s : poids %s%s" % [factor.label, source, _number(factor.weight), mark])
+			lines.append(UiText.of("%s%s : poids %s%s") % [factor.label, source, _number(factor.weight), mark])
 	return lines
 
 
@@ -177,7 +177,7 @@ static func case_report(case_data: Dictionary, case_state: Dictionary, show_mult
 ## state : GameState.get_condition_state() (dossiers, drapeaux, jour).
 ## args : "POURQUOI" détaille les facteurs de la recommandation.
 static func terminal_reply(state: Dictionary, args: PackedStringArray = PackedStringArray()) -> String:
-	var why := not args.is_empty() and args[0] == "POURQUOI"
+	var why := not args.is_empty() and args[0] in ["POURQUOI", "WHY"]
 	var cases: Dictionary = state.get("cases", {})
 	for case_id in cases:
 		var case_state: Dictionary = cases[case_id]
@@ -186,15 +186,18 @@ static func terminal_reply(state: Dictionary, args: PackedStringArray = PackedSt
 		var case_data := CaseLibrary.filter_case(CaseLibrary.get_case(case_id), state)
 		var unread := unread_count(case_data, case_state)
 		if unread > 0:
-			return "Dossier %s : %d pièce(s) non consultée(s). Je recommande une lecture complète avant toute conclusion." % [case_id, unread]
+			return UiText.of("Dossier %s : %d pièce(s) non consultée(s). Je recommande une lecture complète avant toute conclusion.") % [case_id, unread]
 		var flags: Dictionary = state.get("flags", {})
 		var advice := recommendation(case_data, case_state, flags)
 		if not advice.is_empty():
-			var reply := "Dossier %s : je recommande « %s ». Indice de conformité : %d." % [case_id, advice.label, advice.confidence]
+			var reply := UiText.of("Dossier %s : je recommande « %s ». Indice de conformité : %d.") % [case_id, advice.label, advice.confidence]
 			if why:
 				var show: bool = flags.get(PARAMS_FLAG, false) == true
-				reply += "\nFacteurs principaux :\n- " + "\n- ".join(explain(case_data, case_state, show, flags))
+				reply += UiText.of("
+Facteurs principaux :
+- ") + "\n- ".join(explain(case_data, case_state, show, flags))
 			else:
-				reply += "\nTapez VERITAS POURQUOI pour le détail."
+				reply += UiText.of("
+Tapez VERITAS POURQUOI pour le détail.")
 			return reply
-	return "Aucun dossier en attente. Je reste à votre disposition, inspecteur."
+	return UiText.of("Aucun dossier en attente. Je reste à votre disposition, inspecteur.")

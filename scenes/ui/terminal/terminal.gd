@@ -39,8 +39,8 @@ func _ready() -> void:
 	_input.text_submitted.connect(_on_input_submitted)
 	for command in QUICK_COMMANDS:
 		var button := Button.new()
-		button.text = command
-		button.tooltip_text = QUICK_TOOLTIPS.get(command, "")
+		button.text = tr(command)
+		button.tooltip_text = tr(QUICK_TOOLTIPS.get(command, ""))
 		button.custom_minimum_size = Vector2(0, 44)
 		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(submit_command.bind(command))
@@ -59,15 +59,15 @@ func set_advanced_visible(show_advanced: bool) -> void:
 ## Séquence d'ouverture de session affichée à l'arrivée au bureau.
 func boot(agent_name: String, date_label: String, unread: int) -> void:
 	clear()
-	print_line("SYSTÈME CENTRAL DU MINISTÈRE  //  TERMINAL T-4/112", COLOR_DIM)
-	print_line("Module d'analyse VERITAS v0.9 ........ [color=#3ce07a]EN LIGNE[/color]", COLOR_DIM)
-	print_line("Liaison sécurisée .................... [color=#3ce07a]ÉTABLIE[/color]", COLOR_DIM)
+	print_line(tr("SYSTÈME CENTRAL DU MINISTÈRE  //  TERMINAL T-4/112"), COLOR_DIM)
+	print_line(tr("Module d'analyse VERITAS v0.9 ........ [color=#3ce07a]EN LIGNE[/color]"), COLOR_DIM)
+	print_line(tr("Liaison sécurisée .................... [color=#3ce07a]ÉTABLIE[/color]"), COLOR_DIM)
 	print_line("")
-	print_line("SESSION OUVERTE : %s" % agent_name)
-	print_line("DATE : %s" % date_label)
+	print_line(tr("SESSION OUVERTE : %s") % agent_name)
+	print_line(tr("DATE : %s") % date_label)
 	if unread > 0:
-		print_line("%d message(s) non lu(s). Tapez MESSAGES." % unread, COLOR_ALERT)
-	print_line("Tapez AIDE pour la liste des commandes.", COLOR_DIM)
+		print_line(tr("%d message(s) non lu(s). Tapez MESSAGES.") % unread, COLOR_ALERT)
+	print_line(tr("Tapez AIDE pour la liste des commandes."), COLOR_DIM)
 
 
 ## Exécute une commande comme si elle avait été tapée.
@@ -79,17 +79,17 @@ func submit_command(raw: String) -> void:
 	match command.action:
 		TerminalCommands.Action.HELP:
 			for line in TerminalCommands.HELP_LINES:
-				print_line(line)
+				print_line(tr(line))
 		TerminalCommands.Action.OPEN_APP:
-			print_line("Ouverture du module %s..." % command.target.to_upper(), COLOR_DIM)
+			print_line(tr("Ouverture du module %s...") % tr(command.target.to_upper()), COLOR_DIM)
 			app_requested.emit(command.target)
 		TerminalCommands.Action.CLEAR:
 			clear()
 		TerminalCommands.Action.DATE:
 			print_line("%s  //  %s" % [GameState.get_date_long(), GameState.get_clock_text()])
 		TerminalCommands.Action.IDENT:
-			print_line("AGENT : %s   MATRICULE : %s" % [GameState.player.name, GameState.player.badge])
-			print_line("GRADE : %s   AFFECTATION : Section 4" % GameState.get_rank_title())
+			print_line(tr("AGENT : %s   MATRICULE : %s") % [GameState.player.name, GameState.player.badge])
+			print_line(tr("GRADE : %s   AFFECTATION : Section 4") % GameState.get_rank_title())
 		TerminalCommands.Action.SAVE:
 			save_requested.emit()
 		TerminalCommands.Action.END_DAY:
@@ -103,9 +103,9 @@ func submit_command(raw: String) -> void:
 				print_line("[DEV] Loyauté %d  Suspicion %d  Influence %d" % [GameState.get_indicator("loyalty"),
 						GameState.get_indicator("suspicion"), GameState.get_indicator("influence")], COLOR_DIM)
 			else:
-				print_line("COMMANDE INCONNUE : %s. Tapez AIDE." % command.input, COLOR_ALERT)
+				print_line(tr("COMMANDE INCONNUE : %s. Tapez AIDE.") % command.input, COLOR_ALERT)
 		TerminalCommands.Action.UNKNOWN:
-			print_line("COMMANDE INCONNUE : %s. Tapez AIDE." % command.input, COLOR_ALERT)
+			print_line(tr("COMMANDE INCONNUE : %s. Tapez AIDE.") % command.input, COLOR_ALERT)
 
 
 ## Ajoute une ligne au journal, avec un effet de frappe.
@@ -139,6 +139,7 @@ func _animate_typing() -> void:
 	if _typing_tween:
 		_typing_tween.kill()
 	var target := _output.get_total_character_count()
+	Sound.play("typewriter")
 	var duration := maxf((target - _output.visible_characters) / CHARS_PER_SECOND, 0.01)
 	_typing_tween = create_tween()
 	_typing_tween.tween_property(_output, "visible_characters", target, duration)

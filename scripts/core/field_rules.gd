@@ -167,4 +167,4 @@ static func presentation_for(scene: Dictionary, scene_state: Dictionary, fact_id
 	for presentation in scene.get("presentations", []):
 		if fact_id in presentation.get("facts", []) and not presentation.id in scene_state.get("chosen", []):
 			return presentation
-	return {"id": "", "text": scene.get("present_default", "Rien."), "note": []}
+	return {"id": "", "text": scene.get("present_default", UiText.of("Rien.")), "note": []}

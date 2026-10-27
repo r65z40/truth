@@ -13,7 +13,9 @@ func _ready() -> void:
 
 
 func _on_opened() -> void:
-	_identity.text = "AGENT : %s     MATRICULE : %s\nGRADE : %s     AFFECTATION : Section 4\nÉVALUATION AU : %s" % [
+	_identity.text = tr("AGENT : %s     MATRICULE : %s
+GRADE : %s     AFFECTATION : Section 4
+ÉVALUATION AU : %s") % [
 		GameState.player.name, GameState.player.badge, GameState.get_rank_title(), GameState.get_date_short()]
 	var assessment := Assessment.describe(GameState.indicators, GameState.flags)
 	var lines: PackedStringArray = []
@@ -22,21 +24,21 @@ func _on_opened() -> void:
 	# quelque chose, autour du père, est tenu hors de portée.
 	var record: Dictionary = GameState.player.get("record", {})
 	if not record.is_empty():
-		lines.append("[b]ÉTAT CIVIL (EXTRAIT) :[/b]")
+		lines.append(tr("[b]ÉTAT CIVIL (EXTRAIT) :[/b]"))
 		for field in ["born", "father", "sealed"]:
 			if record.get(field, "") != "":
 				lines.append(record[field])
 		lines.append("")
-	lines.append("[b]APPRÉCIATIONS DE LA HIÉRARCHIE[/b]")
+	lines.append(tr("[b]APPRÉCIATIONS DE LA HIÉRARCHIE[/b]"))
 	lines.append("")
 	for line in assessment.lines:
 		lines.append("[b]%s :[/b] %s" % [line.label.to_upper(), line.text])
 	lines.append("")
-	lines.append("[b]OBSERVATIONS :[/b]")
+	lines.append(tr("[b]OBSERVATIONS :[/b]"))
 	if assessment.notes.is_empty():
-		lines.append("Néant.")
+		lines.append(tr("Néant."))
 	for note in assessment.notes:
 		lines.append("- " + note)
 	lines.append("")
-	lines.append("[b]DÉCISIONS SIGNÉES :[/b] %d" % GameState.decisions.size())
+	lines.append(tr("[b]DÉCISIONS SIGNÉES :[/b] %d") % GameState.decisions.size())
 	_text.text = "\n".join(lines)

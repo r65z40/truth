@@ -76,6 +76,10 @@ var _toast_tween: Tween
 var _guide_bar: PanelContainer
 var _guide_bar_label: Label
 
+## Largeur des papiers posés sur le bureau et marge par rapport aux bords.
+const TRACE_WIDTH := 300
+const TRACE_MARGIN := Vector2(24, 76)
+
 const TOOLTIPS := {
 	"DossiersButton": "Consulter les dossiers qui vous sont assignés.",
 	"MessagesButton": "Lire le courrier interne et les réponses de la hiérarchie.",
@@ -86,6 +90,7 @@ const TOOLTIPS := {
 	"TerminalButton": "Le terminal du ministère, pour les commandes tapées au clavier.",
 	"StartButton": "Menu du ministère : identité, terminal, paramètres, sauvegarde.",
 	"EndDayButton": "Terminer la journée : la suite de vos décisions arrive le lendemain.",
+	"SoundButton": "Couper ou remettre le son (musique, ambiance, bruitages).",
 	"SaveButton": "Enregistrer la partie.",
 	"MenuButton": "Revenir au menu principal.",
 }
@@ -109,6 +114,9 @@ func _ready() -> void:
 	%SaveButton.pressed.connect(terminal.submit_command.bind("SAUVER"))
 	%MenuButton.pressed.connect(terminal.submit_command.bind("MENU"))
 	%EndDayButton.pressed.connect(terminal.submit_command.bind("FIN"))
+	%SoundButton.toggled.connect(func(on: bool) -> void: Settings.set_sound_muted(not on))
+	Settings.changed.connect(_refresh_sound_button)
+	_refresh_sound_button()
 	_start_button.toggled.connect(_start_menu.set_visible)
 	%StartPersonnel.pressed.connect(terminal.submit_command.bind("PROFIL"))
 	%StartTerminal.pressed.connect(open_app.bind("terminal"))
@@ -124,7 +132,7 @@ func _ready() -> void:
 		for button: Button in _task_buttons.get_children():
 			button.custom_minimum_size.x = _task_button_width())
 	for button_name in TOOLTIPS:
-		(get_node("%" + button_name) as Control).tooltip_text = TOOLTIPS[button_name]
+		(get_node("%" + button_name) as Control).tooltip_text = tr(TOOLTIPS[button_name])
 	_toast.hide()
 	_day_transition.hide()
 	coach.target_provider = coach_target
@@ -138,6 +146,7 @@ func _ready() -> void:
 	windows.archives.case_requested.connect(open_case)
 	field_screen.finished.connect(_on_field_finished)
 	_refresh_header()
+	refresh_traces()
 	_boot_terminal()
 	Music.play_context("desk")
 	has_unsaved_changes = false
@@ -174,10 +183,10 @@ func close_start_menu() -> void:
 func save_game() -> void:
 	if SaveManager.save_game() == OK:
 		has_unsaved_changes = false
-		terminal.print_line("Session enregistrée le %s." % GameState.get_date_short())
-		show_toast("Partie sauvegardée.")
+		terminal.print_line(tr("Session enregistrée le %s.") % GameState.get_date_short())
+		show_toast(tr("Partie sauvegardée."))
 	else:
-		terminal.print_line("ÉCHEC DE L'ENREGISTREMENT.", Terminal.COLOR_ALERT)
+		terminal.print_line(tr("ÉCHEC DE L'ENREGISTREMENT."), Terminal.COLOR_ALERT)
 
 
 ## Termine la journée. Si un dossier attend une conclusion, demande une confirmation
@@ -186,9 +195,10 @@ func request_end_day() -> void:
 	var pending := _undecided_case_ids()
 	if not pending.is_empty() and not _end_day_armed:
 		_end_day_armed = true
-		terminal.print_line("ATTENTION : dossier(s) sans conclusion : %s." % ", ".join(pending), Terminal.COLOR_ALERT)
-		terminal.print_line("Répétez FIN pour quitter votre poste malgré tout.", Terminal.COLOR_ALERT)
-		show_toast("Dossier(s) sans conclusion : %s.\nCliquez encore sur FIN DE SERVICE pour partir malgré tout." % ", ".join(pending), 4.0)
+		terminal.print_line(tr("ATTENTION : dossier(s) sans conclusion : %s.") % ", ".join(pending), Terminal.COLOR_ALERT)
+		terminal.print_line(tr("Répétez FIN pour quitter votre poste malgré tout."), Terminal.COLOR_ALERT)
+		show_toast(tr("Dossier(s) sans conclusion : %s.
+Cliquez encore sur FIN DE SERVICE pour partir malgré tout.") % ", ".join(pending), 4.0)
 		return
 	end_day()
 
@@ -228,15 +238,20 @@ func _end_game() -> void:
 func _start_next_day() -> void:
 	var next_day := GameState.day_index + 1
 	var gap := FictionalCalendar.days_since_previous(next_day)
-	var ellipsis := "\n\n%d jours plus tard" % gap if gap > 2 else ""
-	_day_transition_label.text = "FIN DE SERVICE%s\n\n%s" % [ellipsis, FictionalCalendar.format_long(next_day)]
+	var ellipsis := tr("
+
+%d jours plus tard") % gap if gap > 2 else ""
+	_day_transition_label.text = tr("FIN DE SERVICE%s
+
+%s") % [ellipsis, FictionalCalendar.format_long(next_day)]
 	_day_transition.modulate.a = 0.0
 	_day_transition.show()
+	Sound.play("day_end")
 	GameState.end_day()
 	if SaveManager.save_game() == OK:
 		has_unsaved_changes = false
 	_boot_terminal()
-	terminal.print_line("Session enregistrée automatiquement.", Terminal.COLOR_DIM)
+	terminal.print_line(tr("Session enregistrée automatiquement."), Terminal.COLOR_DIM)
 	var tween := create_tween()
 	tween.tween_property(_day_transition, "modulate:a", 1.0, 0.4)
 	tween.tween_interval(1.4)
@@ -248,16 +263,25 @@ func _start_next_day() -> void:
 func return_to_menu() -> void:
 	if has_unsaved_changes and not _logout_armed:
 		_logout_armed = true
-		terminal.print_line("ATTENTION : modifications non sauvegardées depuis votre dernier enregistrement.", Terminal.COLOR_ALERT)
-		terminal.print_line("Cliquez sur SAUVEGARDER, ou répétez DÉCONNEXION pour quitter sans sauvegarder.", Terminal.COLOR_ALERT)
-		show_toast("Modifications non sauvegardées.\nSauvegardez, ou choisissez encore Déconnexion pour quitter.", 4.0)
+		terminal.print_line(tr("ATTENTION : modifications non sauvegardées depuis votre dernier enregistrement."), Terminal.COLOR_ALERT)
+		terminal.print_line(tr("Cliquez sur SAUVEGARDER, ou répétez DÉCONNEXION pour quitter sans sauvegarder."), Terminal.COLOR_ALERT)
+		show_toast(tr("Modifications non sauvegardées.
+Sauvegardez, ou choisissez encore Déconnexion pour quitter."), 4.0)
 		return
-	terminal.print_line("Fermeture de session...", Terminal.COLOR_DIM)
+	terminal.print_line(tr("Fermeture de session..."), Terminal.COLOR_DIM)
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+
+
+## Bouton du son de la barre des tâches : enfoncé quand le son est actif.
+func _refresh_sound_button() -> void:
+	var button: Button = %SoundButton
+	button.set_pressed_no_signal(not Settings.sound_muted)
+	button.icon = PixelIcons.get_icon("sound_off" if Settings.sound_muted else "sound_on", 2)
 
 
 ## Affiche brièvement une notification en bas de l'écran.
 func show_toast(text: String, duration := 1.8) -> void:
+	Sound.play("notification")
 	_toast_label.text = text
 	_toast.show()
 	_toast.modulate.a = 1.0
@@ -286,6 +310,56 @@ func _on_state_changed() -> void:
 	has_unsaved_changes = true
 	_logout_armed = false
 	_refresh_header()
+	refresh_traces()
+
+
+## Petits papiers posés sur le bureau (DeskTraces) : les suites des signatures
+## et le fil du père, en bas à droite, derrière les fenêtres.
+func refresh_traces() -> void:
+	var box := $Wallpaper.get_node_or_null("Traces") as VBoxContainer
+	if box == null:
+		box = VBoxContainer.new()
+		box.name = "Traces"
+		box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.alignment = BoxContainer.ALIGNMENT_END
+		box.add_theme_constant_override("separation", 10)
+		$Wallpaper.add_child(box)
+		box.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+		box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+		box.offset_right = -TRACE_MARGIN.x
+		box.offset_bottom = -TRACE_MARGIN.y
+	for child in box.get_children():
+		child.queue_free()
+	var state := GameState.get_condition_state()
+	state["indicators"] = GameState.indicators
+	var traces := DeskTraces.visible_traces(state)
+	for i in traces.size():
+		box.add_child(_build_trace(traces[i], i))
+
+
+func _build_trace(trace: Dictionary, index: int) -> Control:
+	var paper := PanelContainer.new()
+	paper.name = "Trace_" + str(trace.get("id", index)).validate_node_name()
+	paper.theme_type_variation = &"DocumentPanel"
+	paper.custom_minimum_size = Vector2(TRACE_WIDTH, 0)
+	paper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Papiers posés de travers, comme jetés sur le bureau.
+	paper.rotation_degrees = [-1.5, 1.0, -0.5][index % 3]
+	var column := VBoxContainer.new()
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	paper.add_child(column)
+	var from := Label.new()
+	from.text = trace.get("from", "")
+	from.theme_type_variation = &"DocumentMeta"
+	from.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(from)
+	var text := Label.new()
+	text.text = trace.get("text", "")
+	text.theme_type_variation = &"DocumentLabel"
+	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(text)
+	return paper
 
 
 ## Ligne d'horloge : heure de service et temps restant (terminal, fin de journée).
@@ -297,11 +371,11 @@ func clock_line() -> String:
 func hours_text() -> String:
 	var hours := GameState.hours_used
 	if WorkTime.is_overtime(hours):
-		return "HEURES SUPPLÉMENTAIRES"
+		return tr("HEURES SUPPLÉMENTAIRES")
 	var left := WorkTime.day_hours() - hours
 	if left <= 0:
-		return "FIN DE SERVICE"
-	return "%d h restantes" % left
+		return tr("FIN DE SERVICE")
+	return tr("%d h restantes") % left
 
 
 func _refresh_header() -> void:
@@ -314,11 +388,11 @@ func _refresh_header() -> void:
 	var unread := GameState.get_unread_count()
 	var pending := _undecided_case_ids().size()
 	_messages_button.badge = unread
-	_messages_button.tooltip_text = "%s\n%s" % [TOOLTIPS.MessagesButton,
-			"%d message(s) non lu(s)." % unread if unread > 0 else "Aucun nouveau message."]
+	_messages_button.tooltip_text = "%s\n%s" % [tr(TOOLTIPS.MessagesButton),
+			tr("%d message(s) non lu(s).") % unread if unread > 0 else tr("Aucun nouveau message.")]
 	%DossiersButton.badge = pending
-	%DossiersButton.tooltip_text = "%s\n%s" % [TOOLTIPS.DossiersButton,
-			"%d dossier(s) à traiter." % pending if pending > 0 else "Aucun dossier en attente."]
+	%DossiersButton.tooltip_text = "%s\n%s" % [tr(TOOLTIPS.DossiersButton),
+			tr("%d dossier(s) à traiter.") % pending if pending > 0 else tr("Aucun dossier en attente.")]
 	%NewsButton.badge = 0 if news_read_day == GameState.day_index else 1
 	%ArchivesButton.visible = GameState.is_feature_unlocked("archives")
 	%PersonnelButton.visible = GameState.is_feature_unlocked("personnel")
@@ -343,7 +417,7 @@ func _build_guide_bar() -> void:
 	row.add_theme_constant_override("separation", 12)
 	pad.add_child(row)
 	var tag := Label.new()
-	tag.text = "▸ À FAIRE"
+	tag.text = tr("▸ À FAIRE")
 	tag.theme_type_variation = &"HeaderLabel"
 	row.add_child(tag)
 	_guide_bar_label = Label.new()
@@ -479,19 +553,19 @@ func open_case(case_id: String) -> void:
 func open_field(case_id: String) -> void:
 	if field_screen.open(case_id):
 		Music.play_context("field_" + field_screen.scene.get("type", "search"))
-		terminal.print_line("Départ sur le terrain : %s." % field_screen.scene.get("title", ""))
+		terminal.print_line(tr("Départ sur le terrain : %s.") % field_screen.scene.get("title", ""))
 
 
 ## Ouvre le mini-jeu « comparer deux pièces » pour ce dossier (facultatif).
 func open_comparison(case_id: String) -> void:
 	if comparison_screen.open_case(case_id):
-		terminal.print_line("Confrontation de pièces : dossier n° %s." % case_id)
+		terminal.print_line(tr("Confrontation de pièces : dossier n° %s.") % case_id)
 
 
 ## Ouvre le mini-jeu « frise chronologique » pour ce dossier (facultatif).
 func open_timeline(case_id: String) -> void:
 	if timeline_screen.open_case(case_id):
-		terminal.print_line("Frise chronologique : dossier n° %s." % case_id)
+		terminal.print_line(tr("Frise chronologique : dossier n° %s.") % case_id)
 
 
 ## Retour du terrain : le dossier se rouvre sur le procès-verbal.
@@ -530,8 +604,8 @@ func _on_decision_applied(case_id: String, _decision_id: String, message_id: Str
 	var fate := FateRules.fate_for(CaseLibrary.get_case(case_id), GameState.get_case_state(case_id))
 	if archive_card.show_fate(fate):
 		await archive_card.continued
-	terminal.print_line("Rapport n° %s transmis à la hiérarchie." % case_id)
-	terminal.print_line("Nouveau message reçu.", Terminal.COLOR_ALERT)
+	terminal.print_line(tr("Rapport n° %s transmis à la hiérarchie.") % case_id)
+	terminal.print_line(tr("Nouveau message reçu."), Terminal.COLOR_ALERT)
 	open_app("messages")
 	windows.messages.select_message(message_id)
 

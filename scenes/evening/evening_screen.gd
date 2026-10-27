@@ -17,6 +17,7 @@ signal finished
 
 
 func _ready() -> void:
+	Backdrop.add_to(self, "evening_background")
 	_continue_button.pressed.connect(_on_continue)
 
 
@@ -34,7 +35,7 @@ func open() -> bool:
 		_choice_label.hide()
 		_show_continue()
 	else:
-		_intro_label.text = GameState.get_evening().get("intro", "")
+		_intro_label.text = GameState.get_evening_intro()
 		_choice_label.show()
 		for action: Dictionary in GameState.get_evening_actions():
 			_add_action(action)

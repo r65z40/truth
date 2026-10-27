@@ -50,6 +50,16 @@ static func are_conditions_met(conditions: Dictionary, state: Dictionary) -> boo
 	return true
 
 
+## Texte d'arrivée de la soirée : l'intro, suivie des « échos » dont les
+## conditions sont remplies (les suites visibles des signatures passées).
+static func intro_text(evening: Dictionary, state: Dictionary) -> String:
+	var texts: PackedStringArray = [evening.get("intro", "")]
+	for echo in evening.get("echoes", []):
+		if are_conditions_met(echo.get("conditions", {}), state):
+			texts.append(echo.get("text", ""))
+	return "\n\n".join(texts)
+
+
 ## Actions proposées ce soir, dans l'ordre du fichier.
 static func available_actions(evening: Dictionary, state: Dictionary) -> Array:
 	return evening.get("actions", []).filter(func(action: Dictionary) -> bool:

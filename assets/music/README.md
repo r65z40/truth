@@ -1,8 +1,9 @@
 # Musique
 
-Déposer ici les morceaux au format **.ogg** (Ogg Vorbis, stéréo, 44,1 kHz).
-Dans Godot : sélectionner le fichier > onglet **Import** > cocher **Loop** >
-**Réimporter**. Noter la provenance et la licence dans `assets/LICENCES.md`
+Déposer ici les morceaux au format **.ogg** (Ogg Vorbis, stéréo, 44,1 kHz) ;
+`.mp3` ou `.wav` du même nom conviennent aussi. Les morceaux bouclent tout seuls
+(pas besoin de cocher Loop à l'import ; `"loop": false` dans `data/music.json`
+pour un morceau joué une seule fois). Guide général : `docs/MEDIAS.md`. Noter la provenance et la licence dans `assets/LICENCES.md`
 (et la mention « contenu généré par IA » si c'est le cas, pour Steam).
 
 Le choix du morceau se fait dans `data/music.json` (règles par moment du jeu,

@@ -41,6 +41,18 @@ const COMMANDS := {
 	"VERITAS": [Action.VERITAS, ""],
 	# Réservé au développement : affiche les indicateurs internes (versions debug uniquement).
 	"ETAT": [Action.DEBUG_STATE, ""],
+	# Mots-clés anglais (version traduite du jeu).
+	"FILES": [Action.OPEN_APP, "dossiers"],
+	"FILE": [Action.OPEN_APP, "dossiers"],
+	"MAIL": [Action.OPEN_APP, "messages"],
+	"INBOX": [Action.OPEN_APP, "messages"],
+	"PROFILE": [Action.OPEN_APP, "personnel"],
+	"TIME": [Action.DATE, ""],
+	"STATUS": [Action.IDENT, ""],
+	"SAVE": [Action.SAVE, ""],
+	"END": [Action.END_DAY, ""],
+	"LOGOUT": [Action.MENU, ""],
+	"QUIT": [Action.MENU, ""],
 }
 
 const HELP_LINES := [

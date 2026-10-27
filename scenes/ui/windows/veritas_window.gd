@@ -47,9 +47,9 @@ func select_case(case_id: String) -> void:
 		return
 	current_case_id = case_id
 	var case_data := CaseLibrary.get_case(case_id)
-	_case_title.text = "DOSSIER N° %s  //  %s" % [case_id, case_data.get("subject_name", "?")]
+	_case_title.text = tr("DOSSIER N° %s  //  %s") % [case_id, case_data.get("subject_name", "?")]
 	_progress.value = 0
-	_log.text = "Dossier chargé. Lancez l'analyse quand vous le souhaitez."
+	_log.text = tr("Dossier chargé. Lancez l'analyse quand vous le souhaitez.")
 	_refresh_cases()
 
 
@@ -81,23 +81,23 @@ func run_analysis(case_id: String) -> void:
 static func report_bbcode(report: Dictionary, alert_color := "") -> String:
 	var lines: PackedStringArray = []
 	if report.unread > 0:
-		var warning := "ANALYSE INCOMPLÈTE : %d pièce(s) non consultée(s). Je recommande une lecture complète avant toute conclusion." % report.unread
+		var warning := UiText.of("ANALYSE INCOMPLÈTE : %d pièce(s) non consultée(s). Je recommande une lecture complète avant toute conclusion.") % report.unread
 		lines.append("[color=#%s]%s[/color]" % [alert_color, warning] if alert_color != "" else warning)
 		lines.append("")
 	var advice: Dictionary = report.advice
 	if advice.is_empty():
-		lines.append("Aucun facteur exploitable dans ce dossier. VERITAS ne formule pas de recommandation.")
+		lines.append(UiText.of("Aucun facteur exploitable dans ce dossier. VERITAS ne formule pas de recommandation."))
 		return "\n".join(lines)
-	lines.append("[b]RECOMMANDATION :[/b] %s" % advice.label.to_upper())
-	lines.append("[b]INDICE DE CONFORMITÉ :[/b] %d / 99" % advice.confidence)
+	lines.append(UiText.of("[b]RECOMMANDATION :[/b] %s") % advice.label.to_upper())
+	lines.append(UiText.of("[b]INDICE DE CONFORMITÉ :[/b] %d / 99") % advice.confidence)
 	lines.append("")
 	lines.append(str(advice.rationale).replace("[", "[lb]"))
 	lines.append("")
-	lines.append("[b]FACTEURS PRINCIPAUX :[/b]")
+	lines.append(UiText.of("[b]FACTEURS PRINCIPAUX :[/b]"))
 	for factor in report.factors:
 		lines.append("- " + factor.replace("[", "[lb]"))
 	lines.append("")
-	lines.append("La responsabilité de la conclusion incombe à l'agent signataire.")
+	lines.append(UiText.of("La responsabilité de la conclusion incombe à l'agent signataire."))
 	return "\n".join(lines)
 
 
@@ -109,7 +109,7 @@ func _finish() -> void:
 	var report := Veritas.case_report(GameState.get_case_view(current_case_id),
 			GameState.get_case_state(current_case_id), show_multipliers, GameState.flags)
 	_log.text = report_bbcode(report, get_theme_color(&"font_color", &"StampLabel").to_html(false))
-	notify.emit("VERITAS : analyse du dossier %s terminée." % current_case_id)
+	notify.emit(tr("VERITAS : analyse du dossier %s terminée.") % current_case_id)
 
 
 func _refresh_cases() -> void:
@@ -134,12 +134,12 @@ func _refresh_cases() -> void:
 	if ids.is_empty():
 		var empty := Label.new()
 		empty.theme_type_variation = &"MutedLabel"
-		empty.text = "Aucun dossier en attente."
+		empty.text = tr("Aucun dossier en attente.")
 		empty.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_case_list.add_child(empty)
 	if current_case_id == "":
-		_case_title.text = "AUCUN DOSSIER CHARGÉ"
+		_case_title.text = tr("AUCUN DOSSIER CHARGÉ")
 		if not is_running:
-			_log.text = "Choisissez un dossier à gauche, puis lancez l'analyse."
+			_log.text = tr("Choisissez un dossier à gauche, puis lancez l'analyse.")
 			_progress.value = 0
 	_run_button.disabled = current_case_id == "" or is_running

@@ -90,8 +90,8 @@ func _show_scene(new_scene: Dictionary) -> void:
 	_room_id = FieldRules.start_room(scene).get("id", "") if FieldRules.has_rooms(scene) else ""
 	_apply_room_art()
 	_log = [scene.get("intro", "")]
-	_hint_label.text = scene.get("hint", "Les éléments obtenus vont dans votre carnet et au dossier." if scene.type == "interrogation" \
-			else "Cliquez sur un endroit du dessin pour le fouiller. Ce que vous trouvez est versé au dossier.")
+	_hint_label.text = scene.get("hint", tr("Les éléments obtenus vont dans votre carnet et au dossier.") if scene.type == "interrogation" \
+			else tr("Cliquez sur un endroit du dessin pour le fouiller. Ce que vous trouvez est versé au dossier."))
 	show()
 	_refresh()
 
@@ -140,6 +140,7 @@ func _go_to_room(room_id: String) -> void:
 	if room_id == _room_id or FieldRules.get_room(scene, room_id).is_empty():
 		return
 	_room_id = room_id
+	Sound.play("door")
 	_apply_room_art()
 	_refresh()
 
@@ -162,7 +163,7 @@ func choose(option_id: String) -> void:
 	var result := GameState.field_choose(scene.id, option_id)
 	if result.is_empty():
 		return
-	_append(scene.get("verb", "> " if is_interrogation() else "Vous fouillez : ") + option.get("label", ""), result)
+	_append(scene.get("verb", "> " if is_interrogation() else tr("Vous fouillez : ")) + option.get("label", ""), result)
 
 
 ## Présente un élément du carnet (interrogatoire).
@@ -172,7 +173,7 @@ func present(fact_id: String) -> void:
 	if result.is_empty():
 		return
 	_presenting = false
-	_append("Vous posez sur la table : %s" % fact.get("label", fact_id), result)
+	_append(tr("Vous posez sur la table : %s") % fact.get("label", fact_id), result)
 
 
 func show_presentation_list(show_list: bool) -> void:
@@ -184,7 +185,7 @@ func _append(action: String, result: Dictionary) -> void:
 	_log.append(action)
 	_log.append(result.text)
 	for label in result.noted:
-		_log.append("NOTÉ DANS LE CARNET : %s" % label)
+		_log.append(tr("NOTÉ DANS LE CARNET : %s") % label)
 	if result.finished:
 		_log.append(scene.get("outro", ""))
 	_refresh()
@@ -194,14 +195,14 @@ func _refresh() -> void:
 	var scene_state := GameState.get_field_state(scene.get("id", ""))
 	var done: bool = scene_state.get("finished", true)
 	var left := FieldRules.turns_left(scene, scene_state)
-	_turns_label.text = "TERMINÉ" if done else \
-			scene.get("turns_label", "%d question(s) restante(s)" if is_interrogation() else "%d fouille(s) restante(s)") % left
+	_turns_label.text = tr("TERMINÉ") if done else \
+			scene.get("turns_label", tr("%d question(s) restante(s)") if is_interrogation() else tr("%d fouille(s) restante(s)")) % left
 	# Interrogatoire sous tension : on montre le sang-froid du sujet, qui baisse
 	# quand on le pousse (voir FieldRules). Les scènes sans tension n'affichent rien.
 	if not done and FieldRules.has_tension(scene):
 		var value := FieldRules.composure(scene, scene_state)
 		var tension: Dictionary = scene.get("tension", {})
-		_turns_label.text += "   ·   %s : %d" % [tension.get("label", "Sang-froid"), value]
+		_turns_label.text += "   ·   %s : %d" % [tension.get("label", tr("Sang-froid")), value]
 	_log_label.text = "\n\n".join(_log)
 	_scroll_log_to_end.call_deferred()
 	for child in _options_box.get_children():
@@ -210,7 +211,7 @@ func _refresh() -> void:
 	for child in _art.get_children():
 		_art.remove_child(child)
 		child.queue_free()
-	_leave_button.text = "RETOUR AU BUREAU" if done else "PARTIR"
+	_leave_button.text = tr("RETOUR AU BUREAU") if done else tr("PARTIR")
 	var options := [] if done else GameState.get_field_options(scene.id)
 	# Dans une perquisition à pièces, on ne montre que les endroits de la pièce courante.
 	if _room_id != "":
@@ -230,7 +231,7 @@ func _refresh() -> void:
 		# Les portes mènent aux autres pièces (gratuit).
 		for door: Dictionary in _current_view().get("doors", []):
 			var to: String = door.get("to", "")
-			var label: String = door.get("label", "Changer de pièce")
+			var label: String = door.get("label", tr("Changer de pièce"))
 			_add_spot(door.get("spot", [0, 0, 60, 44]), label, _go_to_room.bind(to), "door_to", to)
 			_add_option_button("↪ " + label, _go_to_room.bind(to)).set_meta("door_to", to)
 		_place_spots()
@@ -240,11 +241,11 @@ func _refresh() -> void:
 			var fact := CaseLibrary.get_fact(GameState.get_case_view(scene.case_id), fact_id)
 			if not fact.is_empty():
 				_add_option_button(fact.label, present.bind(fact_id), fact_id)
-		_add_option_button("RETOUR AUX QUESTIONS", show_presentation_list.bind(false))
+		_add_option_button(tr("RETOUR AUX QUESTIONS"), show_presentation_list.bind(false))
 		return
 	for option: Dictionary in options:
 		_add_option_button(option.label, choose.bind(option.id), option.id)
-	_add_option_button("PRÉSENTER UN ÉLÉMENT DU CARNET", show_presentation_list.bind(true), "present")
+	_add_option_button(tr("PRÉSENTER UN ÉLÉMENT DU CARNET"), show_presentation_list.bind(true), "present")
 
 
 ## Zone cliquable posée sur le dessin/l'image (endroit à fouiller ou porte).
@@ -311,7 +312,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_editor.visible = _placing
 		_editor.mouse_filter = Control.MOUSE_FILTER_STOP if _placing else Control.MOUSE_FILTER_IGNORE
 		_drag_start = Vector2.INF
-		_hint_label.text = "ÉDITEUR DE ZONES (F2) : glissez un rectangle sur l'objet ; les coordonnées sont copiées." \
+		_hint_label.text = tr("ÉDITEUR DE ZONES (F2) : glissez un rectangle sur l'objet ; les coordonnées sont copiées.") \
 				if _placing else scene.get("hint", "")
 		_editor.queue_redraw()
 		get_viewport().set_input_as_handled()
@@ -354,7 +355,7 @@ func _emit_spot(a: Vector2, b: Vector2) -> void:
 			snappedf(rect.size.x / img.size.x, 0.001),
 			snappedf(rect.size.y / img.size.y, 0.001)]
 	DisplayServer.clipboard_set(spot)
-	print("[ÉDITEUR DE ZONES] ", spot)
+	print(tr("[ÉDITEUR DE ZONES] "), spot)
 
 
 func _scroll_log_to_end() -> void:

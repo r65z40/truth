@@ -45,9 +45,10 @@ func setup(new_case_id: String, new_document_id: String) -> void:
 
 ## Ligne d'origine d'une pièce : source, fiabilité, date.
 static func describe_source(document: Dictionary) -> String:
-	return "Source : %s\nFiabilité : %s     Date : %s" % [
+	return UiText.of("Source : %s
+Fiabilité : %s     Date : %s") % [
 		document.get("source", "?"),
-		DossiersWindow.RELIABILITY_LABELS.get(document.get("reliability", ""), document.get("reliability", "?")),
+		UiText.of(DossiersWindow.RELIABILITY_LABELS.get(document.get("reliability", ""), document.get("reliability", "?"))),
 		DossiersWindow.format_iso_date(document.get("date", "")),
 	]
 
@@ -64,11 +65,11 @@ static func fill_facts(list: Container, title: Label, document: Dictionary, note
 		if fact.get("quote", "") == "":
 			list.add_child(make_fact_button(fact, fact.id in noted, on_note))
 	if quoted.is_empty():
-		title.text = "À NOTER : cliquez sur un élément pour le copier dans votre carnet"
+		title.text = UiText.of("À NOTER : cliquez sur un élément pour le copier dans votre carnet")
 	elif left > 0:
-		title.text = "PASSAGES SOULIGNÉS : cliquez dessus dans le texte pour les noter (%d à noter)" % left
+		title.text = UiText.of("PASSAGES SOULIGNÉS : cliquez dessus dans le texte pour les noter (%d à noter)") % left
 	else:
-		title.text = "Tous les passages soulignés de cette pièce sont dans votre carnet."
+		title.text = UiText.of("Tous les passages soulignés de cette pièce sont dans votre carnet.")
 	list.visible = list.get_child_count() > 0
 
 
@@ -82,9 +83,9 @@ static func on_passage_clicked(meta: String, on_note: Callable) -> void:
 static func make_fact_button(fact: Dictionary, is_noted: bool, on_pressed: Callable) -> Button:
 	var button := Button.new()
 	button.name = "Fact_" + fact.id
-	button.text = ("NOTÉ : " if is_noted else "+ NOTER : ") + fact.label
+	button.text = (UiText.of("NOTÉ : ") if is_noted else UiText.of("+ NOTER : ")) + fact.label
 	button.disabled = is_noted
-	button.tooltip_text = "Déjà dans votre carnet." if is_noted else "Ajouter cet élément à votre carnet d'enquête."
+	button.tooltip_text = UiText.of("Déjà dans votre carnet.") if is_noted else UiText.of("Ajouter cet élément à votre carnet d'enquête.")
 	button.custom_minimum_size = Vector2(0, 44)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -96,10 +97,10 @@ static func make_fact_button(fact: Dictionary, is_noted: bool, on_pressed: Calla
 
 func note_fact(fact_id: String) -> void:
 	if fact_id in GameState.get_case_state(case_id).noted_facts:
-		notify.emit("Déjà dans votre carnet.")
+		notify.emit(tr("Déjà dans votre carnet."))
 		return
 	GameState.note_fact(case_id, fact_id)
-	notify.emit("Élément noté dans votre carnet.")
+	notify.emit(tr("Élément noté dans votre carnet."))
 
 
 func _document() -> Dictionary:

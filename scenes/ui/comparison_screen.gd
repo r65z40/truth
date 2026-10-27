@@ -63,10 +63,10 @@ func _ready() -> void:
 ## Bouton « AGRANDIR », posé sous une pièce, pour ouvrir la loupe.
 func _make_zoom_button(holder: Control) -> Button:
 	var button := Button.new()
-	button.text = "AGRANDIR ⌕"
+	button.text = tr("AGRANDIR ⌕")
 	button.custom_minimum_size = Vector2(0, 44)
 	button.add_theme_font_size_override("font_size", 13)
-	button.tooltip_text = "Examiner la pièce de près"
+	button.tooltip_text = tr("Examiner la pièce de près")
 	button.visible = false
 	holder.get_parent().add_child(button)
 	return button
@@ -107,7 +107,7 @@ func _build_loupe() -> void:
 	_loupe_stage.add_child(_loupe_mark)
 	box.add_child(_loupe_stage)
 	var hint := Label.new()
-	hint.text = "Touchez l'écran pour fermer."
+	hint.text = tr("Touchez l'écran pour fermer.")
 	hint.theme_type_variation = &"DocumentLabel"
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(hint)
@@ -182,7 +182,7 @@ func open_case(case_id: String) -> bool:
 	_result.visible = false
 	_validate_button.disabled = true
 	_validate_button.visible = true
-	_close_button.text = "FERMER"
+	_close_button.text = tr("FERMER")
 	show()
 	return true
 
@@ -229,7 +229,7 @@ func _judgement_row(point_id: String) -> HBoxContainer:
 	var group := ButtonGroup.new()
 	for is_diff in [false, true]:
 		var button := Button.new()
-		button.text = "DIFFÈRE" if is_diff else "CONCORDE"
+		button.text = tr("DIFFÈRE") if is_diff else tr("CONCORDE")
 		button.toggle_mode = true
 		button.button_group = group
 		button.custom_minimum_size = Vector2(0, 44)
@@ -256,7 +256,7 @@ func _on_validate() -> void:
 	if report.all_ok:
 		_resolve()
 	else:
-		_feedback.text = "%d trait(s) mal jugé(s). Reprenez : une fiche mal lue condamne un innocent — ou épargne un coupable." % report.wrong
+		_feedback.text = tr("%d trait(s) mal jugé(s). Reprenez : une fiche mal lue condamne un innocent — ou épargne un coupable.") % report.wrong
 		_feedback.visible = true
 
 
@@ -265,9 +265,9 @@ func _resolve() -> void:
 	var advantage := GameState.apply_comparison(_case_id)
 	_feedback.visible = false
 	_validate_button.visible = false
-	_result.text = advantage.get("text", "") if not advantage.is_empty() else "La contradiction était déjà établie."
+	_result.text = advantage.get("text", "") if not advantage.is_empty() else tr("La contradiction était déjà établie.")
 	_result.visible = true
-	_close_button.text = "VERSER AU CARNET"
+	_close_button.text = tr("VERSER AU CARNET")
 	_close_button.grab_focus()
 
 

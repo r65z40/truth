@@ -23,7 +23,7 @@ const RULES_PATH := "res://data/rules/promotion.json"
 
 
 static func rank_title(rank: int) -> String:
-	return RANK_TITLES.get(rank, "Grade inconnu")
+	return UiText.of(RANK_TITLES.get(rank, "Grade inconnu"))
 
 
 ## Règle de promotion de l'acte, ou {} s'il n'y en a pas.
@@ -59,10 +59,10 @@ static func evaluate(rules: Dictionary, state: Dictionary) -> Dictionary:
 			favor = true
 	var bought := not quality and favor
 	var criteria := [
-		{"label": "Tous les dossiers conclus", "ok": all_decided},
-		{"label": "Conclusions appuyées par une contradiction établie", "ok": quality or bought},
-		{"label": "Loyauté au moins conforme", "ok": loyal},
-		{"label": "Pas de surveillance renforcée", "ok": trusted},
+		{"label": UiText.of("Tous les dossiers conclus"), "ok": all_decided},
+		{"label": UiText.of("Conclusions appuyées par une contradiction établie"), "ok": quality or bought},
+		{"label": UiText.of("Loyauté au moins conforme"), "ok": loyal},
+		{"label": UiText.of("Pas de surveillance renforcée"), "ok": trusted},
 	]
 	var eligible := all_decided and (quality or bought) and loyal and trusted
 	return {"eligible": eligible, "bought": bought and eligible, "criteria": criteria}

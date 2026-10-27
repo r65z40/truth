@@ -67,7 +67,7 @@ static func get_case(case_id: String) -> Dictionary:
 		if data.is_empty():
 			return {}
 		_cache[case_id] = data
-	return Localization.localize_case(_cache[case_id])
+	return _cache[case_id]
 
 
 ## Renvoie un document d'un dossier par son identifiant.

@@ -26,6 +26,8 @@ signal restored
 const TITLE_BUTTON_SIZE := 44
 ## Partie de la fenêtre qui doit rester visible quand on la déplace.
 const KEEP_VISIBLE := Vector2(140, 44)
+## Durée de l'apparition d'une fenêtre (fondu).
+const OPEN_SECONDS := 0.12
 
 @export var window_title := "FENÊTRE"
 @export var classification := "DIFFUSION RESTREINTE"
@@ -51,6 +53,7 @@ var _maximize_button: Button
 var _dragging := false
 var _drag_offset := Vector2.ZERO
 var _restore_rect := Rect2()
+var _open_tween: Tween
 
 
 func _ready() -> void:
@@ -63,6 +66,9 @@ func _ready() -> void:
 
 
 func open() -> void:
+	if not visible:
+		Sound.play("window_open")
+		_animate_appearance()
 	show()
 	is_minimized = false
 	opened.emit()
@@ -72,6 +78,7 @@ func open() -> void:
 func close() -> void:
 	if not visible and not is_minimized:
 		return
+	Sound.play("window_close")
 	hide()
 	is_minimized = false
 	closed.emit()
@@ -88,6 +95,8 @@ func minimize() -> void:
 
 ## Ressort une fenêtre réduite, dans l'état où on l'avait laissée.
 func restore() -> void:
+	if not visible:
+		_animate_appearance()
 	show()
 	is_minimized = false
 	restored.emit()
@@ -111,6 +120,15 @@ func refresh_title() -> void:
 
 func short_title() -> String:
 	return task_title if task_title != "" else window_title
+
+
+## La fenêtre apparaît en fondu (sa taille et sa place ne bougent pas).
+func _animate_appearance() -> void:
+	if _open_tween:
+		_open_tween.kill()
+	modulate.a = 0.0
+	_open_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_open_tween.tween_property(self, "modulate:a", 1.0, OPEN_SECONDS)
 
 
 ## Barre de titre colorée pour la fenêtre au premier plan, grise pour les autres.
@@ -231,11 +249,14 @@ func _build_title_bar() -> PanelContainer:
 		stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		row.add_child(stamp)
 
-	_minimize_button = _title_button("MinimizeButton", "_", "Réduire dans la barre des tâches", minimize)
+	_minimize_button = _title_button("MinimizeButton", "_", tr("Réduire dans la barre des tâches"), minimize)
 	row.add_child(_minimize_button)
-	_maximize_button = _title_button("MaximizeButton", "[ ]", "Agrandir / rétablir", toggle_maximize)
+	_maximize_button = _title_button("MaximizeButton", "[ ]", tr("Agrandir / rétablir"), toggle_maximize)
 	row.add_child(_maximize_button)
-	row.add_child(_title_button("CloseButton", "X", "Fermer", close))
+	var close_button := _title_button("CloseButton", "X", "Fermer", close)
+	# La fermeture a son propre son (window_close), pas le clic ordinaire.
+	close_button.set_meta("sound", "")
+	row.add_child(close_button)
 	return bar
 
 

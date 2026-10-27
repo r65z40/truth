@@ -28,7 +28,7 @@ func _on_opened() -> void:
 		button.text = "N° %s  //  %s\n%s  //  %s" % [entry.case_id, entry.subject, entry.decision, entry.status]
 		button.icon = PixelIcons.get_icon("dossiers", 2)
 		button.theme_type_variation = &"DocumentTab"
-		button.tooltip_text = "Rouvrir le dossier n° %s." % entry.case_id
+		button.tooltip_text = tr("Rouvrir le dossier n° %s.") % entry.case_id
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.custom_minimum_size = Vector2(0, 64)
@@ -36,7 +36,8 @@ func _on_opened() -> void:
 		button.pressed.connect(case_requested.emit.bind(entry.case_id))
 		_archive_list.add_child(button)
 	_empty_hint.visible = _archive_list.get_child_count() == 0
-	_clearance.text = "ACCÈS AUX ARCHIVES HISTORIQUES : HABILITATION DE NIVEAU 3 REQUISE.\nVotre habilitation actuelle : niveau 1 (%s)." % GameState.get_rank_title()
+	_clearance.text = tr("ACCÈS AUX ARCHIVES HISTORIQUES : HABILITATION DE NIVEAU 3 REQUISE.
+Votre habilitation actuelle : niveau 1 (%s).") % GameState.get_rank_title()
 
 
 ## Dossiers conclus par l'agent : {case_id, subject, decision, status}.
@@ -51,6 +52,6 @@ static func archived_cases() -> Array[Dictionary]:
 			"case_id": case_id,
 			"subject": case_data.get("subject_name", "?"),
 			"decision": CaseLibrary.get_decision(case_data, case_state.decision).get("label", "?"),
-			"status": "en cours d'enquête" if case_state.status == GameState.CASE_UNDER_INVESTIGATION else "clos",
+			"status": UiText.of("en cours d'enquête") if case_state.status == GameState.CASE_UNDER_INVESTIGATION else "clos",
 		})
 	return entries

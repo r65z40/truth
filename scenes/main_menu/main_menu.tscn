@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" path="res://scenes/main_menu/main_menu.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/settings_window.tscn" id="2_settings"]
-[ext_resource type="Texture2D" path="res://assets/textures/menu_fond.png" id="3_menubg"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -24,6 +23,7 @@ mouse_filter = 2
 color = Color(0.043, 0.051, 0.047, 1)
 
 [node name="MenuBackground" type="TextureRect" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,7 +31,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("3_menubg")
 expand_mode = 1
 stretch_mode = 6
 
