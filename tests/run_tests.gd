@@ -44,6 +44,8 @@ func _run() -> void:
 		"test_delayed_consequences",
 		"test_save_migration_from_v2",
 		"test_save_migration_from_v3",
+		"test_save_migration_from_v5",
+		"test_price_of_truth",
 		"test_work_time",
 		"test_request_and_consultation",
 		"test_evenings_file_is_valid",
@@ -684,6 +686,55 @@ func test_save_migration_from_v3() -> void:
 	SaveManager.load_game(GameState, TEST_SAVE_PATH)
 	check(GameState.hours_used == 1 and GameState.get_case_state("40921").requested_documents.has("medical_halvek"),
 			"horloge et demandes sauvegardées")
+
+
+func test_save_migration_from_v5() -> void:
+	var data := GameState.to_dict()
+	for case_state in data.cases.values():
+		case_state.erase("contradictions_noticed")
+	var file := FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"save_version": 5, "state": data}))
+	file.close()
+	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "une sauvegarde v5 se charge")
+	check(GameState.get_case_state("40921").contradictions_noticed == [], "champ des contradictions repérées ajouté aux dossiers")
+
+
+## Le prix de la vérité : certaines contradictions (actes 1-2) ne s'établissent
+## qu'en payant une heure, un risque ou une faveur. Repérer reste gratuit.
+func test_price_of_truth() -> void:
+	GameState.new_game()
+	# Sans prix : établie dès qu'on la repère (comportement inchangé).
+	check(GameState.confront_facts("52310", "f_var_mark", "f_rc_mark") == "varga.mark", "la contradiction est repérée")
+	check("varga.mark" in GameState.get_case_state("52310").contradictions_found, "une contradiction sans prix s'établit aussitôt")
+	# Prix en heures + risque (51307, le mobile d'ORLIK) : repérée, pas encore établie.
+	check(GameState.confront_facts("51307", "f_anon_motive", "f_hearing_motive") == "orlik.motive", "la contradiction tarifée est repérée")
+	var cs := GameState.get_case_state("51307")
+	check(not "orlik.motive" in cs.contradictions_found and "orlik.motive" in cs.contradictions_noticed,
+			"une contradiction tarifée est seulement repérée")
+	var st := GameState.contradiction_prove_state("51307", "orlik.motive")
+	check(st.priced and st.noticed and not st.established and st.affordable, "elle est prouvable (2 h sur 8 disponibles)")
+	# Pas assez d'heures : preuve refusée, rien n'est dépensé ni établi.
+	GameState.hours_used = WorkTime.day_hours() + WorkTime.overtime_hours() - 1
+	check(not GameState.prove_contradiction("51307", "orlik.motive").ok, "impossible de prouver sans les heures")
+	check(not "orlik.motive" in GameState.get_case_state("51307").contradictions_found, "rien n'est établi si le temps manque")
+	# Avec les heures : prouver coûte 2 h, fait monter la suspicion (risque) et établit, puis idempotent.
+	GameState.hours_used = 0
+	var before := GameState.get_indicator("suspicion")
+	var r := GameState.prove_contradiction("51307", "orlik.motive")
+	check(r.ok and r.text.contains("registres"), "la contradiction est prouvée, avec son texte")
+	check(GameState.hours_used == 2 and "orlik.motive" in GameState.get_case_state("51307").contradictions_found,
+			"prouver a coûté deux heures et établit la contradiction")
+	check(GameState.get_indicator("suspicion") == before + 3, "le prouver expose aussi l'agent (risque)")
+	check(not GameState.prove_contradiction("51307", "orlik.motive").ok and GameState.hours_used == 2,
+			"on ne prouve pas deux fois (pas de double dépense)")
+	# Faveur (51307, ORLIK informateur) : ne se prouve qu'avec le contact KREMER.
+	GameState.new_game()
+	GameState.confront_facts("51307", "f_kremer_informant", "f_aud_chaudron")
+	check(GameState.contradiction_prove_state("51307", "orlik.informant").missing_favor, "sans le contact KREMER, la faveur manque")
+	check(GameState.prove_contradiction("51307", "orlik.informant").reason == "faveur_manquante", "preuve refusée sans la faveur")
+	GameState.flags["kremer.contact"] = true
+	check(GameState.prove_contradiction("51307", "orlik.informant").ok and GameState.hours_used == 1,
+			"avec le contact, la faveur permet de prouver (et coûte une heure)")
 
 
 func test_work_time() -> void:

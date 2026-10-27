@@ -20,6 +20,9 @@ const STATUS_LABELS := {
 	"under_investigation": "ENQUÊTE COMPLÉMENTAIRE",
 }
 const MAX_SELECTED_FACTS := 2
+## Libellés du bouton d'action du carnet selon le mode (confronter / prouver).
+const CONFRONT_LABEL := "CONFRONTER (2 ÉLÉMENTS)"
+const PROVE_LABEL := "PROUVER CETTE CONTRADICTION"
 ## Tant que le joueur n'a pas conclu ce nombre de dossiers, on considère qu'il
 ## est en apprentissage : le haut du dossier est allégé (objet + pièces
 ## seulement), car le bandeau « À FAIRE » du bureau guide déjà pas à pas.
@@ -43,6 +46,9 @@ var current_document_id := ""
 var last_confront_failed := false
 ## Éléments du carnet sélectionnés pour une confrontation (au plus 2).
 var selected_facts: Array[String] = []
+## Contradiction repérée mais pas encore prouvée (voir « le prix de la vérité ») :
+## le bouton CONFRONTER devient alors PROUVER le temps de la payer. "" sinon.
+var _prove_key := ""
 var _tab_group := ButtonGroup.new()
 var _open_aside_button: Button
 ## Pièce pour laquelle la bulle d'aide a déjà fait défiler jusqu'aux éléments.
@@ -84,7 +90,7 @@ var _doc_icon: TextureRect
 
 func _ready() -> void:
 	super()
-	_confront_button.pressed.connect(confront_selected)
+	_confront_button.pressed.connect(_on_confront_button)
 	_conclusion_button.pressed.connect(open_conclusion)
 	_request_button.pressed.connect(request_next_document)
 	_consult_button.pressed.connect(consult_superior)
@@ -144,6 +150,7 @@ func select_case(case_id: String) -> void:
 		selected_facts.clear()
 		_set_confront_result("")
 		last_confront_failed = false
+		_prove_key = ""
 	current_case_id = case_id
 	_apply_briefing(case_data)
 	_build_document_tabs(case_data)
@@ -264,6 +271,15 @@ func toggle_fact_selection(fact_id: String) -> void:
 	_refresh_notebook()
 
 
+## Bouton d'action du carnet : confronter deux éléments, ou payer pour prouver
+## une contradiction déjà repérée (« le prix de la vérité »).
+func _on_confront_button() -> void:
+	if _prove_key != "":
+		prove_noticed()
+	else:
+		confront_selected()
+
+
 ## Confronte les deux éléments sélectionnés et affiche le verdict.
 func confront_selected() -> void:
 	if selected_facts.size() != MAX_SELECTED_FACTS:
@@ -278,9 +294,37 @@ func confront_selected() -> void:
 	elif key in already_found:
 		_set_confront_result("Contradiction déjà établie.")
 	else:
+		var state := GameState.contradiction_prove_state(current_case_id, key)
+		if state.priced and not state.established:
+			# Contradiction repérée mais payante : le bouton passe en mode PROUVER.
+			_prove_key = key
+			_set_confront_result("CONTRADICTION REPÉRÉE. Pour qu'elle compte, il faut la PROUVER. "
+					+ state.price.get("label", ""))
+			notify.emit("CONTRADICTION REPÉRÉE — à prouver")
+		else:
+			_set_confront_result("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport.")
+			notify.emit("CONTRADICTION ÉTABLIE")
+	selected_facts.clear()
+	_refresh_all()
+
+
+## Paie le prix de la contradiction repérée et l'établit, ou explique ce qui
+## manque (le temps de la journée, ou une faveur pas encore acquise).
+func prove_noticed() -> void:
+	if _prove_key == "":
+		return
+	var result := GameState.prove_contradiction(current_case_id, _prove_key)
+	if result.ok:
 		_set_confront_result("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport.")
 		notify.emit("CONTRADICTION ÉTABLIE")
-	selected_facts.clear()
+		_prove_key = ""
+	elif result.reason == "faveur_manquante":
+		_set_confront_result("Vous ne pouvez pas encore la prouver : il vous manque un appui. "
+				+ GameState.contradiction_prove_state(current_case_id, _prove_key).price.get("label", ""), true)
+	elif result.reason == "temps_insuffisant":
+		_set_confront_result("La journée est trop courte pour la prouver. Revenez quand l'horloge le permet.", true)
+	else:
+		_prove_key = ""
 	_refresh_all()
 
 
@@ -634,6 +678,14 @@ func _refresh_notebook() -> void:
 	# Le carnet n'apparaît qu'une fois un premier élément noté : écran plus clair
 	# au début, le carnet se révèle quand il sert.
 	_notebook.visible = current_case_id != "" and not case_state.noted_facts.is_empty()
+	# Mode PROUVER : contradiction repérée et payante, pas encore établie. Le bouton
+	# reste actif pour payer son prix, quel que soit l'état de la sélection.
+	if _prove_key != "" and not _prove_key in case_state.contradictions_found:
+		_confront_button.text = PROVE_LABEL
+		_confront_button.disabled = false
+		return
+	_prove_key = ""
+	_confront_button.text = CONFRONT_LABEL
 	_confront_button.disabled = selected_facts.size() != MAX_SELECTED_FACTS
 	# Indice « où chercher » : tant qu'aucune contradiction n'est établie (et hors
 	# échec de confrontation affiché), on oriente le joueur sans donner la réponse.
