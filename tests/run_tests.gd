@@ -117,6 +117,7 @@ func _run() -> void:
 		"test_time_in_desk",
 		"test_endings",
 		"test_end_of_game_in_desk",
+		"test_endings_discovered_counter",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -3036,4 +3037,29 @@ func test_end_of_game_in_desk() -> void:
 	check(not desk.ending_screen.visible, "RETOUR AU MENU referme l'écran de fin")
 	desk.queue_free()
 	GameState.new_game()
+	await get_tree().process_frame
+
+
+## Le compteur « fins découvertes » du menu : persistance dans les paramètres
+## (hors sauvegarde de partie), sans doublon, alimenté par finish_game.
+func test_endings_discovered_counter() -> void:
+	var original: Array = Settings.endings_discovered.duplicate()
+	Settings.endings_discovered = []
+	Settings.record_ending("fin_silence")
+	Settings.record_ending("fin_silence")  # doublon ignoré
+	Settings.record_ending("fin_miroir")
+	check(Settings.endings_discovered.size() == 2, "deux fins distinctes consignées (doublon ignoré)")
+	GameState.new_game()
+	GameState.finish_game("fin_correction")
+	check("fin_correction" in Settings.endings_discovered, "finish_game consigne la fin atteinte au menu")
+	check(GameState.flags.get("game.ending") == "fin_correction", "la fin est aussi notée dans l'état de la partie")
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	var total := EndingRules.get_endings().size()
+	check(menu.get_node("%EndingsLabel").text.contains("/ %d" % total),
+			"le menu affiche le compteur de fins découvertes")
+	menu.queue_free()
+	Settings.endings_discovered = original
+	Settings.save_settings()
 	await get_tree().process_frame
