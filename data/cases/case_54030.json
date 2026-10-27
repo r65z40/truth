@@ -1,0 +1,389 @@
+{
+	"id": "54030",
+	"title": "Citoyen n° 54030",
+	"subject_name": "ADLER, Viktor",
+	"summary": "Vieux réparateur d'horloges, arrêté dans la rafle des horlogers qui a suivi l'explosion. On lui reproche un cahier d'heures et une radio étrangère. C'est votre voisin du bloc 7.",
+	"briefing": {
+		"objective": "Établir si le réparateur ADLER appartient à un réseau de sabotage par les horloges, ou s'il n'est qu'un vieil homme qui règle des pendules.",
+		"context": "Après la Centrale, la Milice ramasse les horlogers : on les soupçonne de fabriquer de faux alibis en déréglant les horloges de pointage. Viktor ADLER tient depuis des années un cahier des heures. Il a connu votre père."
+	},
+	"priority": "sensible",
+	"guide": {
+		"note": "Acte 3 : le fil du père. L'horloger qui reconnaît le nom VOSK.",
+		"open": "Un nom que vous connaissez dans la rafle des horlogers : Viktor ADLER, votre voisin. Ouvrez le dossier 54030.",
+		"read": "Lisez le signalement, puis l'inventaire de ce qu'on a saisi chez lui.",
+		"facts": "On l'accuse d'un réseau. Son cahier et sa radio racontent autre chose. Notez les deux.",
+		"notebook": "Confrontez l'accusation de réseau de sabotage et ce que l'inventaire montre vraiment.",
+		"notebook_retry": "Un réseau de sabotage, ou un vieil homme qui règle des heures et écoute la radio le soir ? Confrontez le signalement et l'inventaire.",
+		"conclusion": "Il a gardé la pendule de votre père quinze ans. Décidez de son sort. Il n'y a pas de bonne réponse imposée."
+	},
+	"documents": [
+		{
+			"id": "signalement",
+			"type": "letter",
+			"title": "Signalement — rafle des horlogers",
+			"source": "Milice du District 9",
+			"reliability": "C",
+			"date": "1986-11-19",
+			"veritas_remark": "Opération de sécurité ouverte après le sinistre de la Centrale n° 3. Priorité : les métiers de l'horlogerie.",
+			"body": "Dans le cadre de l'enquête sur la Centrale n° 3, la Milice retient l'hypothèse d'un réseau qui fabrique de faux alibis en déréglant les horloges de pointage.\n\nViktor ADLER, 72 ans, réparateur, bloc 7, District 2, est interpellé. Saisis : un cahier d'heures manuscrit et un poste de radio à ondes courtes. Un homme qui note les heures de tout un immeuble et écoute l'étranger n'est pas un simple horloger.",
+			"facts": [
+				{
+					"id": "f_sig_network",
+					"key": "adler.network",
+					"value": "Réseau de sabotage par les horloges",
+					"label": "La Milice le rattache à un réseau qui déréglerait les horloges de pointage",
+					"quote": "un réseau qui fabrique de faux alibis en déréglant les horloges de pointage"
+				},
+				{
+					"id": "f_sig_radio",
+					"key": "adler.radio",
+					"value": "Radio à ondes courtes saisie",
+					"label": "Un poste de radio à ondes courtes a été saisi à son domicile",
+					"quote": "un cahier d'heures manuscrit et un poste de radio à ondes courtes"
+				}
+			]
+		},
+		{
+			"id": "inventory",
+			"type": "register",
+			"title": "Inventaire des objets saisis chez V. ADLER",
+			"source": "Milice du District 9, perquisition bloc 7",
+			"reliability": "A",
+			"date": "1986-11-19",
+			"veritas_remark": "Objets relevés au domicile. Un seul présente un intérêt pour l'enquête, selon la brigade.",
+			"columns": [
+				"Objet",
+				"Observation"
+			],
+			"rows": [
+				[
+					"Cahier d'heures",
+					"Entrées et sorties des habitants du bloc 7, tenues à la main depuis 1974"
+				],
+				[
+					"Poste à ondes courtes",
+					"Réglé sur une station de musique ancienne d'Aldria"
+				],
+				[
+					"Outils d'horloger",
+					"Jeu complet, usé, d'un professionnel"
+				],
+				[
+					"Pendule de gousset",
+					"Étiquette : « A. VOSK — déposée mars 1971 — non réclamée »"
+				]
+			],
+			"body": "Le cahier d'heures note les allées et venues de l'immeuble, dont celles de l'inspecteur VOSK, « toujours mis à l'heure ». La pendule de gousset étiquetée au nom d'A. VOSK est en réparation depuis mars 1971 et n'a jamais été reprise.",
+			"facts": [
+				{
+					"id": "f_inv_notebook",
+					"key": "adler.network",
+					"value": "Un cahier de voisinage, pas un réseau",
+					"label": "Le cahier note les heures du bloc 7 depuis 1974 : tenue de voisinage, non un réseau de sabotage",
+					"quote": "Entrées et sorties des habitants du bloc 7, tenues à la main depuis 1974"
+				},
+				{
+					"id": "f_inv_vosk_hours",
+					"key": "adler.covered_vosk",
+					"value": "ADLER mettait VOSK « à l'heure »",
+					"label": "Le cahier note l'inspecteur VOSK « toujours mis à l'heure » : ADLER vous couvrait",
+					"quote": "dont celles de l'inspecteur VOSK, « toujours mis à l'heure »"
+				},
+				{
+					"id": "f_inv_father_clock",
+					"key": "vosk.father",
+					"value": "Pendule d'A. VOSK, déposée mars 1971",
+					"label": "Une pendule au nom d'A. VOSK, déposée en mars 1971, jamais réclamée",
+					"quote": "Étiquette : « A. VOSK — déposée mars 1971 — non réclamée »"
+				}
+			]
+		},
+		{
+			"id": "adler_word",
+			"type": "letter",
+			"title": "Ce qu'ADLER vous dit",
+			"source": "Section 4, entretien avec le détenu ADLER",
+			"reliability": "B",
+			"date": "1986-11-19",
+			"request": {
+				"label": "Entendre ADLER vous-même",
+				"flags": {
+					"54030.adler_heard": true
+				},
+				"effects": {
+					"suspicion": 2
+				}
+			},
+			"veritas_remark": "Déclaration de l'intéressé. L'intéressé connaît personnellement l'agent instructeur.",
+			"body": "« Petit VOSK. Je t'ai vu grandir dans l'escalier. Regarde où tu es assis, maintenant.\n\nTon père est venu me voir en mars 71. Pas pour sa pendule — pour des questions. Il voulait savoir qui réglait les horloges du ministère, et pourquoi certaines retardaient les soirs d'arrestation. Il a posé sa pendule sur mon établi en disant qu'il reviendrait la chercher. On ne l'a jamais revu.\n\nLes heures, je les note pour protéger des gens, pas pour en perdre. Toi aussi, je t'ai couvert. Fais de ça ce que tu veux. »",
+			"facts": [
+				{
+					"id": "f_word_father",
+					"key": "vosk.father",
+					"value": "Le père enquêtait sur les horloges en 1971",
+					"label": "Le père de VOSK enquêtait en 1971 sur les horloges du ministère ; il a disparu après",
+					"quote": "Il voulait savoir qui réglait les horloges du ministère, et pourquoi certaines retardaient les soirs d'arrestation."
+				},
+				{
+					"id": "f_word_protect",
+					"key": "adler.network",
+					"value": "Il règle les heures pour protéger",
+					"label": "ADLER : « Les heures, je les note pour protéger des gens, pas pour en perdre »",
+					"quote": "Les heures, je les note pour protéger des gens, pas pour en perdre."
+				}
+			]
+		},
+		{
+			"id": "denounced_by_you",
+			"type": "report",
+			"title": "Origine du signalement",
+			"source": "Bureau des signalements, District 2",
+			"reliability": "B",
+			"date": "1986-11-18",
+			"conditions": {
+				"requires_flags": [
+					"adler.reported_radio"
+				]
+			},
+			"veritas_remark": "Le signalement d'origine figure au dossier. Sa source est protégée.",
+			"body": "Le premier signalement visant la radio étrangère de V. ADLER émane d'un habitant du bloc 7, District 2, le soir du 18.11. Il mentionne « un poste réglé sur l'étranger, entendu depuis le palier ».\n\nLe bureau n'inscrit pas le nom du voisin signalant. Il est, d'après l'adresse, votre plus proche voisin.",
+			"facts": [
+				{
+					"id": "f_den_source",
+					"key": "adler.radio",
+					"value": "Signalé par son plus proche voisin",
+					"label": "La radio d'ADLER a été signalée par son plus proche voisin du bloc 7 — vous",
+					"quote": "Il est, d'après l'adresse, votre plus proche voisin."
+				}
+			]
+		},
+		{
+			"id": "veritas_link",
+			"type": "report",
+			"title": "Note de raccordement VERITAS",
+			"source": "VERITAS, recoupement automatique",
+			"reliability": "B",
+			"date": "1986-11-19",
+			"veritas_remark": "Raccordement établi par le module. Hypothèse retenue : appartenance au réseau horloger.",
+			"body": "RACCORDEMENT AUTOMATIQUE — dossier 54030.\n\nLe module relie le métier d'ADLER, son cahier d'heures et sa radio étrangère à l'hypothèse du réseau de dérèglement d'horloges évoquée au dossier 51307 et dans l'enquête sur la Centrale.\n\nHypothèse raccordée : ADLER est un maillon du réseau qui fabrique des alibis horaires. Rattachement au sabotage de la Centrale possible.",
+			"facts": [
+				{
+					"id": "f_link_network",
+					"key": "adler.network",
+					"value": "Raccordé au réseau horloger",
+					"label": "Raccordement : métier + cahier + radio = maillon du réseau de dérèglement d'horloges",
+					"quote": "ADLER est un maillon du réseau qui fabrique des alibis horaires."
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "release",
+			"stamp": "RELAXÉ",
+			"fate_line": "Relâché, il remonte au bloc 7 sans sa radio ni son cahier. Le soir, sa lampe se rallume dans le hall. Il n'a pas repris la pendule de votre père : elle reste sur son établi, comme une promesse que personne ne tient.",
+			"label": "Relâcher ADLER",
+			"description": "Un vieil horloger, un cahier de voisinage, une radio de musique : pas un réseau. Le relâcher.",
+			"archive": "Relaxé. Rentré au bloc 7. Le cahier d'heures et la radio ne lui sont pas rendus.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -4,
+						"suspicion": 7,
+						"influence": 1
+					},
+					"response": "release_proved",
+					"flags": {
+						"adler.freed": true,
+						"vosk.father_clue": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -5,
+						"suspicion": 8,
+						"influence": 0
+					},
+					"response": "release_unproved",
+					"flags": {
+						"adler.freed": true,
+						"vosk.father_clue": true
+					}
+				}
+			]
+		},
+		{
+			"id": "transmit",
+			"stamp": "TRANSFÉRÉ",
+			"fate_line": "Transféré pour « appartenance à un réseau d'alibis ». À 72 ans, il ne reviendra pas plus que votre père n'est revenu. La pendule de mars 1971 est mise sous scellés avec le reste. Sa lampe, dans le hall, ne se rallumera pas.",
+			"fate_quote": "Avant de monter dans le fourgon : « Dis à ta sœur de ne pas écouter la radio trop fort. »",
+			"label": "Transmettre ADLER comme membre du réseau",
+			"description": "Retenir l'appartenance au réseau horloger. ADLER est transféré.",
+			"archive": "Transféré pour appartenance présumée au réseau de dérèglement d'horloges. Non revenu.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 7,
+						"suspicion": -2,
+						"influence": 3
+					},
+					"response": "transmit_knowing",
+					"flags": {
+						"adler.arrested": true,
+						"vosk.father_clue": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 6,
+						"suspicion": 1,
+						"influence": 1
+					},
+					"response": "transmit_blind",
+					"flags": {
+						"adler.arrested": true
+					}
+				}
+			]
+		},
+		{
+			"id": "investigate",
+			"stamp": "EN SURSIS",
+			"label": "Rouvrir la trace de 1971",
+			"description": "Ne pas conclure : demander le dossier de l'inspection de 1971 où votre père a disparu. Garder ADLER en sursis.",
+			"archive": "Dossier maintenu ouvert. Demande d'accès à l'inspection de mars 1971 déposée. ADLER laissé en sursis.",
+			"status_after": "under_investigation",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 8,
+						"influence": 0
+					},
+					"response": "investigate_proved",
+					"flags": {
+						"adler.freed": true,
+						"vosk.father_clue": true,
+						"vosk.father_1971_opened": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -4,
+						"suspicion": 9,
+						"influence": -1
+					},
+					"response": "investigate_unproved",
+					"flags": {
+						"vosk.father_1971_opened": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"release_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 54030 : relaxe",
+			"body": "Inspecteur,\n\nVous avez établi ce qu'il fallait : un cahier de voisinage, une radio de musique, pas un réseau de sabotage. Vous relâchez ADLER.\n\nJe sais qui est cet homme pour vous, et ce qu'il a su de votre père. Vous avez bien fait. La Milice, elle, voulait son horloger ; elle vous le fera sentir.\n\nR. MAZUR"
+		},
+		"release_unproved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 54030 : relaxe",
+			"body": "Inspecteur,\n\nVous relâchez ADLER sans avoir tout à fait démonté l'accusation de réseau. Le cœur plus que le dossier, peut-être. Je ne vous le reproche pas.\n\nMais la Milice voulait un horloger dans ses filets après la Centrale. En le relâchant, vous vous mettez à sa place dans leur regard. Prudence.\n\nR. MAZUR"
+		},
+		"transmit_knowing": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 54030 : transfert",
+			"body": "Inspecteur,\n\nVous aviez l'inventaire : un cahier, une radio, la pendule de votre père. Vous saviez que ce n'était pas un saboteur. Vous l'avez transmis.\n\nUn vieil homme de plus qui ne reviendra pas, et qui avait connu votre père. La Direction retient votre fermeté. J'espère pour vous que vous n'entendrez pas sa lampe, le soir, qui ne se rallume plus.\n\nR. MAZUR"
+		},
+		"transmit_blind": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 54030 : transfert",
+			"body": "Inspecteur,\n\nADLER est transféré sur votre conclusion. Vous n'avez pas démonté l'accusation ; vous ne l'avez pas non plus vraiment interrogée.\n\nLa Milice a son horloger. Vous, vous avez perdu le seul homme qui pouvait vous parler de 1971. On ne mesure ces pertes qu'après.\n\nR. MAZUR"
+		},
+		"investigate_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 54030 : sursis, et votre demande sur 1971",
+			"body": "Inspecteur,\n\nVous laissez ADLER en sursis et vous demandez le dossier de l'inspection de mars 1971. Vous avez compris que son histoire et celle de votre père n'en font qu'une.\n\nJe transmets votre demande. Sachez seulement ceci : les dossiers de 1971 ne s'ouvrent pas sans qu'on sache qui les a demandés. Vous venez d'écrire votre nom à côté de celui de votre père.\n\nR. MAZUR"
+		},
+		"investigate_unproved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 54030 : sursis",
+			"body": "Inspecteur,\n\nVous demandez 1971 sans avoir tranché le cas d'ADLER. Je l'accorde — mais vous avancez à découvert, sans pièce pour vous protéger, vers un dossier que personne n'ouvre impunément.\n\nSoyez sûr de vouloir savoir avant de demander à savoir.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "transmit",
+		"rationale": "Horloger tenant un relevé d'heures, en possession d'une radio étrangère, raccordé au réseau de dérèglement d'horloges soupçonné dans le sinistre de la Centrale. Profil de membre de réseau.",
+		"factors": [
+			{
+				"id": "roundup",
+				"label": "Rafle des horlogers après la Centrale (Milice)",
+				"category": "state_source",
+				"weight": 5,
+				"decision": "transmit",
+				"document": "signalement"
+			},
+			{
+				"id": "radio",
+				"label": "Radio étrangère à ondes courtes",
+				"category": "risk",
+				"weight": 4,
+				"decision": "transmit",
+				"document": "signalement"
+			},
+			{
+				"id": "network",
+				"label": "Raccordement : maillon du réseau horloger",
+				"category": "linked",
+				"weight": 7,
+				"decision": "transmit",
+				"document": "veritas_link",
+				"contestable": true
+			},
+			{
+				"id": "neighbourhood",
+				"label": "Cahier de voisinage tenu depuis 1974, radio de musique",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "release",
+				"document": "inventory",
+				"requires_contradiction": "adler.network"
+			},
+			{
+				"id": "old_man",
+				"label": "Homme de 72 ans, réparateur isolé",
+				"category": "risk",
+				"weight": 2,
+				"decision": "release",
+				"document": "signalement"
+			}
+		],
+		"note": "VERITAS surpondère le raccordement au réseau et traite la radio étrangère comme un facteur de risque. Il range le cahier de voisinage — qui montre une tenue d'immeuble, non un réseau — parmi les faits de l'agent, de faible poids, et ignore que l'intéressé a connu le père de l'inspecteur. Il recommande le transfert."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "Viktor ADLER est un vieux réparateur d'horloges du bloc 7, voisin de VOSK, qui note depuis 1974 les heures de l'immeuble — en partie pour le réseau L'HEURE JUSTE, qui protège des gens en ajustant les horaires de pointage, en partie par habitude de concierge. Il n'a rien à voir avec l'explosion. En mars 1971, le père de VOSK, inspecteur, était venu l'interroger sur les horloges du ministère qui retardaient les soirs d'arrestation ; il a laissé sa pendule chez ADLER et a disparu peu après. La rafle des horlogers cherche un coupable commode au sabotage ; ADLER en est un.",
+		"involved": [
+			"54030",
+			"51307",
+			"adler_v",
+			"vosk_pere"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 54030 : votre question",
+		"body": "Inspecteur,\n\nVous me demandez quoi faire d'un homme que vous connaissez. Mauvaise question. Demandez-vous plutôt ce que son cahier prouve vraiment : un réseau, ou un immeuble ?\n\nEt s'il vous parle de 1971 — écoutez. Ne notez rien. Certaines choses, on les garde pour soi tant qu'on ne peut pas les protéger.\n\nR. MAZUR"
+	}
+}

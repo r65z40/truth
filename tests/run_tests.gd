@@ -73,6 +73,9 @@ func _run() -> void:
 		"test_case_53761_reveal",
 		"test_case_54001",
 		"test_case_54012",
+		"test_case_54030",
+		"test_case_54100_self",
+		"test_act3_reveal_wiring",
 		"test_case_briefings",
 		"test_scene_gallery",
 		"test_document_field_icons",
@@ -1761,6 +1764,97 @@ func test_case_54012() -> void:
 	var day11 := {"day_index": 11, "flags": {}, "cases": {}, "fired_events": []}
 	check("assign_54012" in EventRules.due_events(day11).map(func(e: Dictionary) -> String: return e.id),
 			"le dossier 54012 est attribué à l'acte 3")
+
+
+## Acte 3 — L'HORLOGER : le vieux voisin ADLER, arrêté dans la rafle des horlogers.
+## Il a connu le père de VOSK. Fil rouge du père (levier n°3).
+func test_case_54030() -> void:
+	var case_data := CaseLibrary.get_case("54030")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 54030 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS raccorde ADLER au réseau horloger et pousse le transfert.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "transmit", "VERITAS recommande le transfert d'ADLER")
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# L'accusation de réseau se heurte au cahier de voisinage.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("adler.network" in keys, "le signalement et l'inventaire se contredisent sur le réseau")
+	# Le mot d'ADLER n'existe qu'une fois demandé ; l'origine du signalement, que si on l'a dénoncé.
+	var state := GameState.get_condition_state()
+	state.cases = {"54030": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "adler_word" in visible, "le mot d'ADLER est sur demande")
+	check(not "denounced_by_you" in visible, "l'origine du signalement n'apparaît pas par défaut")
+	var guilty := {"day_index": 12, "flags": {"adler.reported_radio": true}, "cases": {}}
+	var guilty_docs: Array = CaseLibrary.filter_case(case_data, guilty).documents.map(func(d: Dictionary) -> String: return d.id)
+	check("denounced_by_you" in guilty_docs, "si le joueur a dénoncé la radio d'ADLER, le dossier le lui renvoie")
+	# Issues : transférer (il disparaît comme le père) ou relâcher ; dans tous les cas, l'indice sur 1971.
+	var proved := {"contradictions_found": ["adler.network"]}
+	var transmit := DecisionRules.resolve(case_data, proved, "transmit")
+	check(transmit.response_id == "transmit_knowing" and transmit.flags.get("adler.arrested", false),
+			"transmettre ADLER en connaissance de cause le fait disparaître")
+	var release := DecisionRules.resolve(case_data, proved, "release")
+	check(release.response_id == "release_proved" and release.flags.get("adler.freed", false)
+			and release.flags.get("vosk.father_clue", false),
+			"relâcher ADLER le rend libre et laisse l'indice sur le père")
+	check(DecisionRules.resolve(case_data, proved, "investigate").flags.get("vosk.father_1971_opened", false),
+			"rouvrir 1971 ouvre la trace scellée du père")
+	# Câblage : le dossier arrive à l'acte 3.
+	var day12 := {"day_index": 12, "flags": {}, "cases": {}, "fired_events": []}
+	check("assign_54030" in EventRules.due_events(day12).map(func(e: Dictionary) -> String: return e.id),
+			"le dossier 54030 est attribué à l'acte 3")
+
+
+## Acte 3 — VOSK, A. : un dossier au nom du joueur. Lecture seule. Il révèle que
+## l'inspectrice affable du poste voisin, I. BRANDT, est la contrôleuse.
+func test_case_54100_self() -> void:
+	var case_data := CaseLibrary.get_case("54100")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 54100 est valide %s" % CaseLibrary.validate_case(case_data))
+	# Lecture seule : une seule issue, « refermer », sans jugement.
+	check(case_data.decisions.size() == 1 and case_data.decisions[0].id == "close",
+			"le dossier à son propre nom ne se referme, il ne se juge pas")
+	var closed := DecisionRules.resolve(case_data, {"contradictions_found": []}, "close")
+	check(closed.response_id == "closed" and closed.flags.get("54100.consulted", false),
+			"refermer le dossier marque qu'on l'a consulté")
+	# La révélation : I. BRANDT, voisine de couloir, est la contrôleuse (et le « B. » du 53760).
+	var reveal := CaseLibrary.get_document(case_data, "signatory")
+	check(reveal.body.contains("I. BRANDT") and reveal.body.contains("contrôleuse"),
+			"le dossier révèle que I. BRANDT est la contrôleuse")
+	# Le fil du père : filiation scellée de 1971.
+	var filiation := CaseLibrary.get_document(case_data, "filiation")
+	check(filiation.body.contains("1971") and filiation.body.contains("SCELLÉ"),
+			"le dossier relie le joueur à l'inspection scellée de son père en 1971")
+	# L'annexe de procédure ne paraît que si le joueur est déjà sous contrôle interne.
+	var calm := {"day_index": 13, "flags": {}, "cases": {}}
+	check(not "internal_review_note" in CaseLibrary.filter_case(case_data, calm).documents.map(func(d: Dictionary) -> String: return d.id),
+			"sans procédure ouverte, l'annexe reste absente")
+	var flagged := {"day_index": 13, "flags": {"player.internal_review": true}, "cases": {}}
+	check("internal_review_note" in CaseLibrary.filter_case(case_data, flagged).documents.map(func(d: Dictionary) -> String: return d.id),
+			"sous contrôle interne, le dossier s'alourdit d'une annexe de procédure")
+
+
+## Acte 3 — câblage de la révélation de fin d'acte : BRANDT confirmée, et MAZUR
+## qui s'enfuit (si KREMER protégé) ou qui est arrêté (sinon).
+func test_act3_reveal_wiring() -> void:
+	var to_ids := func(events: Array) -> Array: return events.map(func(e: Dictionary) -> String: return e.id)
+	# 54100 arrive à l'acte 3 ; la confirmation de BRANDT suit sa consultation.
+	var day13 := {"day_index": 13, "flags": {}, "cases": {}, "fired_events": []}
+	check("assign_54100" in to_ids.call(EventRules.due_events(day13)), "le dossier au nom du joueur arrive à l'acte 3")
+	check(not "brandt_revealed" in to_ids.call(EventRules.due_events(day13)),
+			"BRANDT ne se confirme pas avant qu'on ait lu le dossier 54100")
+	var seen := {"day_index": 13, "flags": {"54100.consulted": true}, "cases": {}, "fired_events": []}
+	check("brandt_revealed" in to_ids.call(EventRules.due_events(seen)),
+			"une fois le dossier 54100 lu, BRANDT se confirme comme contrôleuse")
+	# Fin d'acte 3 : le sort de MAZUR dépend d'avoir protégé KREMER (l'archive ouverte).
+	var protected := {"day_index": 14, "flags": {"kremer.protected": true}, "cases": {}, "fired_events": []}
+	var prot_ids: Array = to_ids.call(EventRules.due_events(protected))
+	check("mazur_flees" in prot_ids and not "mazur_arrested" in prot_ids,
+			"avoir protégé KREMER permet au réseau d'exfiltrer MAZUR")
+	var exposed := {"day_index": 14, "flags": {"kremer.arrested": true}, "cases": {}, "fired_events": []}
+	var exp_ids: Array = to_ids.call(EventRules.due_events(exposed))
+	check("mazur_arrested" in exp_ids and not "mazur_flees" in exp_ids,
+			"avoir livré KREMER resserre le filet : MAZUR est arrêté")
 
 
 ## Chaque dossier doit expliquer ce qu'on cherche (OBJET) et pourquoi il est là.

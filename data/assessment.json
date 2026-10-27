@@ -167,6 +167,38 @@
 		{
 			"flag": "temoin.coached",
 			"text": "Vous avez établi que la Milice fait signer des dépositions à des témoins hors d'état de témoigner."
+		},
+		{
+			"flag": "vosk.father_clue",
+			"text": "Vous savez que votre père enquêtait sur les horloges du ministère en 1971, et qu'il a disparu après."
+		},
+		{
+			"flag": "vosk.father_1971_opened",
+			"text": "Vous avez demandé le dossier scellé de l'inspection de mars 1971 — celui de votre père."
+		},
+		{
+			"flag": "adler.freed",
+			"text": "V. ADLER, votre vieux voisin horloger, vous doit d'être rentré chez lui."
+		},
+		{
+			"flag": "adler.arrested",
+			"text": "Vous avez laissé transférer V. ADLER, le voisin qui avait connu votre père."
+		},
+		{
+			"flag": "brandt.revealed",
+			"text": "Relations : l'inspectrice I. BRANDT, votre voisine de couloir, est la contrôleuse chargée de vous."
+		},
+		{
+			"flag": "vosk.subject",
+			"text": "Un dossier d'inspection (n° 54100) est désormais ouvert à votre nom."
+		},
+		{
+			"flag": "mazur.fled",
+			"text": "R. MAZUR a disparu avant qu'on l'arrête : un quai, une heure, le mot « juste »."
+		},
+		{
+			"flag": "mazur.arrested_fate",
+			"text": "R. MAZUR a été relevé et remis au contrôle interne. Votre supérieur ne reviendra pas."
 		}
 	]
 }

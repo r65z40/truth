@@ -1123,6 +1123,106 @@
 				"subject": "Nous allons nous revoir",
 				"body": "Inspecteur,\n\nVous avez mis mon bureau en cause dans l'affaire de la Centrale. Une usine qui explose, ça cherche toujours un coupable ; vous venez de m'en désigner un, et ce coupable, c'est vous à mes yeux.\n\nLa Milice a bonne mémoire et de longs bras. Dormez bien.\n\nL. ORLIK"
 			}
+		},
+		{
+			"id": "assign_54030",
+			"conditions": {
+				"min_day": 12
+			},
+			"assign_cases": [
+				"54030"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier : n° 54030",
+				"body": "Inspecteur,\n\nLa Milice ramasse les horlogers depuis la Centrale — elle les croit tous mêlés à une histoire d'alibis truqués. Un nom dans la liste vous concerne de près : Viktor ADLER, bloc 7, District 2. Votre immeuble.\n\nLe dossier 54030 vous est attribué. Je sais ce que cet homme est pour vous. Lisez son inventaire avant de signer quoi que ce soit.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "assign_54100",
+			"conditions": {
+				"min_day": 13
+			},
+			"assign_cases": [
+				"54100"
+			],
+			"effects": {
+				"suspicion": 1
+			},
+			"message": {
+				"from": "Bureau du contrôle interne",
+				"subject": "Dossier 54100 — pour information",
+				"body": "Un dossier a été ouvert dans votre liste de travail. Vous constaterez qu'il porte un numéro de citoyen : 54100.\n\nVous êtes autorisé à le consulter. Vous n'êtes pas autorisé à l'instruire. Lisez-le, puis refermez-le."
+			}
+		},
+		{
+			"id": "brandt_revealed",
+			"conditions": {
+				"min_day": 13,
+				"requires_flags": [
+					"54100.consulted"
+				],
+				"forbidden_flags": [
+					"brandt.revealed"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"brandt.revealed": true
+			},
+			"message": {
+				"from": "I. BRANDT, poste voisin",
+				"subject": "Un thé ?",
+				"body": "Inspecteur, vous avez l'air fatigué. Je vous ai mis une tasse de côté.\n\nComment va votre sœur ? Elle commence à l'hôpital n° 2, c'est ça ?\n\n— La même écriture penchée que le « B. » du dossier 53760. La même main qui tient, au bout du couloir, le dossier qui porte votre nom. Elle sourit, et vous rendez le sourire, parce qu'il n'y a rien d'autre à faire."
+			}
+		},
+		{
+			"id": "mazur_flees",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"kremer.protected"
+				],
+				"forbidden_flags": [
+					"mazur.arrested_fate"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"mazur.fled": true
+			},
+			"message": {
+				"from": "(sans expéditeur — glissé sous votre porte)",
+				"subject": "(vide)",
+				"body": "Le bureau de MAZUR est vide ce matin. Sa chaise, sa lampe, son cendrier : partis dans la nuit.\n\nSur votre sous-main, un billet, trois mots d'une écriture rapide :\n\n« 05 h 05. Quai 2. Juste. »\n\nVous comprenez, trop tard, de quel côté il était depuis le début. Le réseau l'a sorti pendant qu'il en était encore temps — parce que vous aviez laissé les archives ouvertes."
+			}
+		},
+		{
+			"id": "mazur_arrested",
+			"conditions": {
+				"min_day": 14,
+				"forbidden_flags": [
+					"kremer.protected",
+					"mazur.fled"
+				]
+			},
+			"effects": {
+				"loyalty": -2,
+				"suspicion": 3
+			},
+			"set_flags": {
+				"mazur.arrested_fate": true
+			},
+			"message": {
+				"from": "Direction de la Section 4",
+				"subject": "Changement de direction adjointe",
+				"body": "À l'attention des agents de la Section 4.\n\nR. MAZUR est relevé de ses fonctions, avec effet immédiat, et placé à la disposition du contrôle interne. Les dossiers en cours seront réattribués.\n\nAucun commentaire ne sera reçu à ce sujet. Le travail continue."
+			}
 		}
 	]
 }
