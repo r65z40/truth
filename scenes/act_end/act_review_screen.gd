@@ -17,6 +17,7 @@ signal finished
 
 
 func _ready() -> void:
+	Backdrop.add_to(self, "act_review_background")
 	_accept_button.pressed.connect(decide.bind(true))
 	_refuse_button.pressed.connect(decide.bind(false))
 	_continue_button.pressed.connect(_on_continue)

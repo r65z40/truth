@@ -1,0 +1,37 @@
+{
+	"_comment": "Bruitages et ambiances. Un fichier absent donne du silence, sans erreur ; l'extension est libre (.ogg, .wav ou .mp3, même nom). effects : sons brefs joués par Sound.play(id) ; plusieurs fichiers = une variante tirée au hasard ; pitch_variation : écart de hauteur aléatoire (0.05 = 5 %). ambiances : boucles de fond, choisies par contexte comme la musique (mêmes conditions que data/music.json). game_events : son joué automatiquement quand GameState émet ce signal. Guide : docs/MEDIAS.md.",
+	"effects": {
+		"ui_click": {"files": ["res://assets/sounds/effets/clic.ogg"], "volume_db": -8, "pitch_variation": 0.04, "usage": "clic sur un bouton (tous les boutons, sauf ceux qui ont leur propre son)"},
+		"ui_hover": {"files": ["res://assets/sounds/effets/survol.ogg"], "volume_db": -18, "usage": "survol d'un bouton (facultatif, laisser absent si gênant)"},
+		"window_open": {"files": ["res://assets/sounds/effets/fenetre_ouvrir.ogg"], "volume_db": -8, "usage": "ouverture d'une fenêtre du bureau"},
+		"window_close": {"files": ["res://assets/sounds/effets/fenetre_fermer.ogg"], "volume_db": -8, "usage": "fermeture d'une fenêtre"},
+		"paper": {"files": ["res://assets/sounds/effets/papier_01.ogg", "res://assets/sounds/effets/papier_02.ogg", "res://assets/sounds/effets/papier_03.ogg"], "volume_db": -6, "pitch_variation": 0.06, "usage": "lecture d'une pièce, page tournée"},
+		"note": {"files": ["res://assets/sounds/effets/crayon.ogg"], "volume_db": -6, "pitch_variation": 0.05, "usage": "élément noté dans le carnet"},
+		"confront_success": {"files": ["res://assets/sounds/effets/contradiction.ogg"], "volume_db": -4, "usage": "contradiction établie"},
+		"confront_fail": {"files": ["res://assets/sounds/effets/refus.ogg"], "volume_db": -8, "usage": "confrontation sans contradiction"},
+		"stamp": {"files": ["res://assets/sounds/effets/tampon_01.ogg", "res://assets/sounds/effets/tampon_02.ogg"], "volume_db": 0, "pitch_variation": 0.04, "usage": "conclusion signée et tamponnée"},
+		"typewriter": {"files": ["res://assets/sounds/effets/machine_a_ecrire_01.ogg", "res://assets/sounds/effets/machine_a_ecrire_02.ogg", "res://assets/sounds/effets/machine_a_ecrire_03.ogg"], "volume_db": -10, "pitch_variation": 0.08, "usage": "texte qui s'affiche au terminal"},
+		"notification": {"files": ["res://assets/sounds/effets/notification.ogg"], "volume_db": -10, "usage": "notification brève en bas du bureau"},
+		"mail": {"files": ["res://assets/sounds/effets/courrier.ogg"], "volume_db": -6, "usage": "début de journée : courrier et événements arrivés"},
+		"day_end": {"files": ["res://assets/sounds/effets/fin_de_service.ogg"], "volume_db": -4, "usage": "fin de service (transition vers le lendemain)"},
+		"door": {"files": ["res://assets/sounds/effets/porte.ogg"], "volume_db": -6, "pitch_variation": 0.05, "usage": "changement de pièce pendant une perquisition"}
+	},
+	"ambiances": {
+		"rain": {"file": "res://assets/sounds/ambiances/pluie.ogg", "volume_db": -10, "usage": "menu principal et introduction"},
+		"office": {"file": "res://assets/sounds/ambiances/bureau.ogg", "volume_db": -14, "usage": "bureau : néons, ventilation, machines au loin"},
+		"apartment": {"file": "res://assets/sounds/ambiances/appartement.ogg", "volume_db": -12, "usage": "soirées : appartement, radio lointaine, rue"},
+		"interrogation_room": {"file": "res://assets/sounds/ambiances/salle_interrogatoire.ogg", "volume_db": -12, "usage": "auditions"},
+		"search": {"file": "res://assets/sounds/ambiances/logement.ogg", "volume_db": -12, "usage": "perquisitions et visites"}
+	},
+	"ambiance_rules": [
+		{"context": ["menu", "intro"], "ambiance": "rain"},
+		{"context": "desk", "ambiance": "office"},
+		{"context": "evening", "ambiance": "apartment"},
+		{"context": "field_interrogation", "ambiance": "interrogation_room"},
+		{"context": ["field_search", "field_visit"], "ambiance": "search"}
+	],
+	"game_events": {
+		"decision_applied": "stamp",
+		"day_started": "mail"
+	}
+}

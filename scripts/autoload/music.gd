@@ -5,31 +5,25 @@ extends Node
 ##
 ## Un fichier absent n'est pas une erreur : la musique se tait.
 
+## Émis quand une scène annonce un nouveau moment du jeu (les ambiances suivent).
+signal context_changed(context: String)
+
 const BUS := "Music"
 const FADE_SECONDS := 1.5
-const SILENT_DB := -60.0
 
 ## Contexte demandé en dernier ("menu", "desk", "evening"...).
 var current_context := ""
 ## Morceau choisi pour ce contexte ("" : silence), même si son fichier manque.
 var current_track := ""
 
-var _players: Array[AudioStreamPlayer] = []
-var _active := 0
-var _tween: Tween
+var _player: CrossfadePlayer
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	if AudioServer.get_bus_index(BUS) == -1:
-		AudioServer.add_bus()
-		AudioServer.set_bus_name(AudioServer.bus_count - 1, BUS)
-	for i in 2:
-		var player := AudioStreamPlayer.new()
-		player.bus = BUS
-		player.volume_db = SILENT_DB
-		add_child(player)
-		_players.append(player)
+	CrossfadePlayer.ensure_bus(BUS)
+	_player = CrossfadePlayer.new(BUS, FADE_SECONDS)
+	add_child(_player)
 	Settings.changed.connect(apply_volume)
 	GameState.state_changed.connect(refresh)
 	apply_volume()
@@ -37,8 +31,11 @@ func _ready() -> void:
 
 ## Passe au contexte donné ; le morceau change seulement s'il est différent.
 func play_context(context: String) -> void:
+	var changed := context != current_context
 	current_context = context
 	refresh()
+	if changed:
+		context_changed.emit(context)
 
 
 ## Réévalue le morceau (l'acte, un drapeau ou un indicateur a pu changer).
@@ -55,34 +52,20 @@ func refresh() -> void:
 func stop() -> void:
 	current_context = ""
 	_play_track("")
+	context_changed.emit("")
 
 
 func is_playing() -> bool:
-	return _players[_active].playing
+	return _player.is_playing()
 
 
 func apply_volume() -> void:
-	var index := AudioServer.get_bus_index(BUS)
-	AudioServer.set_bus_volume_db(index, linear_to_db(maxf(Settings.music_volume, 0.0001)))
-	AudioServer.set_bus_mute(index, Settings.music_volume <= 0.0)
+	CrossfadePlayer.set_bus_level(BUS, Settings.music_volume)
 
 
 func _play_track(track_id: String) -> void:
 	current_track = track_id
 	var track := MusicRules.get_track(track_id)
-	var file: String = track.get("file", "")
-	var stream: AudioStream = load(file) if file != "" and ResourceLoader.exists(file) else null
-	var old := _players[_active]
-	if _tween:
-		_tween.kill()
-	# Fondu enchaîné : l'ancien morceau baisse pendant que le nouveau monte.
-	_tween = create_tween().set_parallel()
-	_tween.tween_property(old, "volume_db", SILENT_DB, FADE_SECONDS)
-	if stream != null:
-		_active = 1 - _active
-		var new := _players[_active]
-		new.stream = stream
-		new.volume_db = SILENT_DB
-		new.play()
-		_tween.tween_property(new, "volume_db", float(track.get("volume_db", 0.0)), FADE_SECONDS)
-	_tween.chain().tween_callback(old.stop)
+	# Les morceaux bouclent sans réglage d'import (sauf "loop": false).
+	var stream := MediaLibrary.load_stream(track.get("file", ""), bool(track.get("loop", true)))
+	_player.crossfade_to(stream, float(track.get("volume_db", 0.0)))

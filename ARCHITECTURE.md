@@ -32,6 +32,7 @@ data/
   field/stages/<décor>.json   décors 3D des scènes de terrain (caméra, lumières, objets)
 assets/
   models/field/, textures/field/  modèles .glb et images des décors 3D (facultatifs)
+  music/, sounds/effets/, sounds/ambiances/, images/   médias (voir docs/MEDIAS.md)
   LICENCES.md                 origine et licence de chaque fichier
   assessment.json             paliers d'appréciation des indicateurs, observations
 scripts/
@@ -51,6 +52,12 @@ scripts/
     guidance.gd               objectif du jour affiché au bureau (étape suivante)
     field_rules.gd            scènes de terrain (interrogatoires, perquisitions)
     music_rules.gd            choix du morceau selon le moment et l'état de la partie
+    sound_rules.gd            bruitages et ambiances (data/sounds.json)
+    image_slots.gd            images remplaçables par emplacement (data/images.json)
+    media_library.gd          fichiers de médias : extension libre, absence sans erreur, boucle
+    media_catalog.gd          inventaire des médias attendus (écran « Médias »)
+  audio/crossfade_player.gd   lecteur en boucle à fondu enchaîné (musique, ambiances)
+  ui/backdrop.gd              image de fond assombrie d'un écran (emplacement d'image)
   ui/ministry_window.gd       cadre commun des fenêtres (titre, réduire, agrandir, fermer, déplacer)
   ui/window_manager.gd        zone de travail : ordre des fenêtres, premier plan, petit écran
   ui/pixel_icons.gd           icônes en pixels (grilles 16 x 16 aux couleurs du thème)
@@ -74,8 +81,18 @@ tests/                        tests automatiques et captures d'écran
 | `Settings` | Préférences d'affichage, appliquées au démarrage |
 | `GameState` | État de la partie ; toute modification émet `state_changed` |
 | `SaveManager` | `save_game()`, `load_game()`, `has_save()` ; format versionné |
-| `Music` | Musique : `play_context("desk")`, morceau choisi par `MusicRules` (`data/music.json`), fondus |
+| `Music` | Musique : `play_context("desk")`, morceau choisi par `MusicRules` (`data/music.json`), fondus ; émet `context_changed` |
+| `Sound` | Bruitages `play("stamp")` et ambiances (`data/sounds.json`) ; clic automatique de tous les boutons (métadonnée `sound`) ; sons liés aux signaux de `GameState` |
 | `CrtOverlay` | Filtre visuel global (CanvasLayer 100) |
+
+## Médias (sons et images)
+
+Aucun chemin de média dans le code : musiques (`data/music.json`), ambiances et
+bruitages (`data/sounds.json`), images d'écran (`data/images.json`, par
+emplacement) et décors de terrain (`data/field/*.json`). Un fichier absent donne
+silence ou dessin de repli ; l'extension est libre. Trois bus audio (`Music`,
+`Ambience`, `Sfx`) réglés dans Paramètres ; bouton de la barre des tâches pour
+tout couper. Guide pour ajouter des médias : `docs/MEDIAS.md`.
 
 ## Flux principaux
 

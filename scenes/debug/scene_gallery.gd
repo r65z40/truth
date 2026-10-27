@@ -86,6 +86,10 @@ func _build_list() -> Control:
 	back_menu.pressed.connect(func() -> void: get_tree().change_scene_to_file(MENU_SCENE))
 	column.add_child(back_menu)
 
+	_add_section(column, "OUTILS")
+	_add_entry(column, "Médias : ce qui est fourni, ce qui manque (écouter, voir)",
+			func() -> void: _mount(MediaCheck.new()))
+
 	_add_section(column, "ÉCRANS")
 	_add_entry(column, "Menu principal", func() -> void: _open_scene(MENU_SCENE))
 	_add_entry(column, "Introduction", func() -> void: _open_scene(INTRO_SCENE))

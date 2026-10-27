@@ -25,6 +25,7 @@ Localization="*res://scripts/autoload/localization.gd"
 GameState="*res://scripts/autoload/game_state.gd"
 SaveManager="*res://scripts/autoload/save_manager.gd"
 Music="*res://scripts/autoload/music.gd"
+Sound="*res://scripts/autoload/sound.gd"
 CrtOverlay="*res://scenes/ui/crt_overlay/crt_overlay.tscn"
 
 [display]

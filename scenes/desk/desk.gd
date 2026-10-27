@@ -84,6 +84,7 @@ const TOOLTIPS := {
 	"TerminalButton": "Le terminal du ministère, pour les commandes tapées au clavier.",
 	"StartButton": "Menu du ministère : identité, terminal, paramètres, sauvegarde.",
 	"EndDayButton": "Terminer la journée : la suite de vos décisions arrive le lendemain.",
+	"SoundButton": "Couper ou remettre le son (musique, ambiance, bruitages).",
 	"SaveButton": "Enregistrer la partie.",
 	"MenuButton": "Revenir au menu principal.",
 }
@@ -107,6 +108,9 @@ func _ready() -> void:
 	%SaveButton.pressed.connect(terminal.submit_command.bind("SAUVER"))
 	%MenuButton.pressed.connect(terminal.submit_command.bind("MENU"))
 	%EndDayButton.pressed.connect(terminal.submit_command.bind("FIN"))
+	%SoundButton.toggled.connect(func(on: bool) -> void: Settings.set_sound_muted(not on))
+	Settings.changed.connect(_refresh_sound_button)
+	_refresh_sound_button()
 	_start_button.toggled.connect(_start_menu.set_visible)
 	%StartPersonnel.pressed.connect(terminal.submit_command.bind("PROFIL"))
 	%StartTerminal.pressed.connect(open_app.bind("terminal"))
@@ -213,6 +217,7 @@ func _start_next_day() -> void:
 	_day_transition_label.text = "FIN DE SERVICE%s\n\n%s" % [ellipsis, FictionalCalendar.format_long(next_day)]
 	_day_transition.modulate.a = 0.0
 	_day_transition.show()
+	Sound.play("day_end")
 	GameState.end_day()
 	if SaveManager.save_game() == OK:
 		has_unsaved_changes = false
@@ -237,8 +242,16 @@ func return_to_menu() -> void:
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
+## Bouton du son de la barre des tâches : enfoncé quand le son est actif.
+func _refresh_sound_button() -> void:
+	var button: Button = %SoundButton
+	button.set_pressed_no_signal(not Settings.sound_muted)
+	button.icon = PixelIcons.get_icon("sound_off" if Settings.sound_muted else "sound_on", 2)
+
+
 ## Affiche brièvement une notification en bas de l'écran.
 func show_toast(text: String, duration := 1.8) -> void:
+	Sound.play("notification")
 	_toast_label.text = text
 	_toast.show()
 	_toast.modulate.a = 1.0

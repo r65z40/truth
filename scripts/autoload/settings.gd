@@ -12,7 +12,7 @@ const UI_SCALES := [0.9, 1.0, 1.15, 1.3, 1.5]
 const WINDOW_SIZES: Array[Vector2i] = [
 	Vector2i(1280, 720), Vector2i(1366, 768), Vector2i(1600, 900), Vector2i(1920, 1080),
 ]
-## Crans du volume de la musique proposés dans Paramètres.
+## Crans de volume proposés dans Paramètres (musique, ambiances, bruitages).
 const MUSIC_LEVELS := [0.0, 0.25, 0.5, 0.8, 1.0]
 
 var fullscreen := false
@@ -27,6 +27,12 @@ var ui_scale := 1.0
 var field_3d := false
 ## Volume de la musique, de 0 (coupée) à 1.
 var music_volume := 0.8
+## Volume des ambiances (pluie, bureau, appartement...), de 0 à 1.
+var ambience_volume := 0.8
+## Volume des bruitages (tampon, machine à écrire, clics...), de 0 à 1.
+var sfx_volume := 0.8
+## Coupe tout le son d'un coup (bouton de la barre des tâches).
+var sound_muted := false
 ## Langue de l'interface et des dossiers ("fr" ou "en").
 var language := "fr"
 
@@ -47,6 +53,9 @@ func load_settings() -> void:
 	ui_scale = config.get_value("display", "ui_scale", ui_scale)
 	field_3d = config.get_value("display", "field_3d", field_3d)
 	music_volume = config.get_value("audio", "music_volume", music_volume)
+	ambience_volume = config.get_value("audio", "ambience_volume", ambience_volume)
+	sfx_volume = config.get_value("audio", "sfx_volume", sfx_volume)
+	sound_muted = config.get_value("audio", "sound_muted", sound_muted)
 	language = config.get_value("general", "language", language)
 
 
@@ -59,6 +68,9 @@ func save_settings() -> void:
 	config.set_value("display", "ui_scale", ui_scale)
 	config.set_value("display", "field_3d", field_3d)
 	config.set_value("audio", "music_volume", music_volume)
+	config.set_value("audio", "ambience_volume", ambience_volume)
+	config.set_value("audio", "sfx_volume", sfx_volume)
+	config.set_value("audio", "sound_muted", sound_muted)
 	config.set_value("general", "language", language)
 	config.save(PATH)
 
@@ -105,6 +117,21 @@ func set_field_3d(value: bool) -> void:
 
 func set_music_volume(value: float) -> void:
 	music_volume = clampf(value, 0.0, 1.0)
+	_commit()
+
+
+func set_ambience_volume(value: float) -> void:
+	ambience_volume = clampf(value, 0.0, 1.0)
+	_commit()
+
+
+func set_sfx_volume(value: float) -> void:
+	sfx_volume = clampf(value, 0.0, 1.0)
+	_commit()
+
+
+func set_sound_muted(value: bool) -> void:
+	sound_muted = value
 	_commit()
 
 

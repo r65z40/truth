@@ -140,6 +140,7 @@ func _go_to_room(room_id: String) -> void:
 	if room_id == _room_id or FieldRules.get_room(scene, room_id).is_empty():
 		return
 	_room_id = room_id
+	Sound.play("door")
 	_apply_room_art()
 	_refresh()
 

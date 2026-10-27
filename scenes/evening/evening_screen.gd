@@ -17,6 +17,7 @@ signal finished
 
 
 func _ready() -> void:
+	Backdrop.add_to(self, "evening_background")
 	_continue_button.pressed.connect(_on_continue)
 
 

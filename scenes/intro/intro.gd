@@ -38,6 +38,8 @@ func _show_page(index: int) -> void:
 	page_index = index
 	var page: Dictionary = pages[index]
 	_art.scene = page.get("art", "city")
+	# Une image fournie (data/images.json, « intro_<art> ») remplace le dessin.
+	_art.image = ImageSlots.texture("intro_" + _art.scene)
 	_title_label.text = page.get("title", "")
 	_text_label.text = page.get("text", "")
 	_page_label.text = "%d / %d" % [index + 1, pages.size()]
