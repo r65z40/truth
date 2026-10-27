@@ -112,10 +112,14 @@ func _run() -> void:
 		"test_document_passages",
 		"test_desk_apps",
 		"test_news",
+		"test_news_acts3_4",
 		"test_localization",
 		"test_music_rules",
 		"test_music_player",
 		"test_time_in_desk",
+		"test_endings",
+		"test_end_of_game_in_desk",
+		"test_endings_discovered_counter",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -2981,3 +2985,131 @@ func test_act3_returns() -> void:
 			"pas d'atelier scellé si ADLER est libre (issues exclusives)")
 	check("54001_sedlar_mother_returns" not in ids.call({}, 12),
 			"aucun retour sans la condamnation correspondante")
+
+## Les actes 3 et 4 ont aussi leur une, en langue officielle : l'explosion, la
+## réécriture MIROIR qui paraît comme la vérité, l'horloger relâché.
+func test_news_acts3_4() -> void:
+	var ids := func(state: Dictionary) -> Array:
+		return NewsRules.edition(state).articles.map(func(a: Dictionary) -> String: return a.id)
+
+	# Verdict de l'explosion : sabotage → bouc émissaire à la une le lendemain.
+	var blast := {"day_index": 11, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "54001", "decision_id": "sabotage", "day_index": 10}]}
+	check("d_54001_sabotage" in ids.call(blast), "le sabotage désigné fait la une (version officielle)")
+	blast.decisions[0].decision_id = "accident"
+	check("d_54001_accident" in ids.call(blast) and "d_54001_sabotage" not in ids.call(blast),
+			"l'accident établi devient un « incident technique »")
+
+	# MIROIR : la réécriture paraît comme la vérité établie.
+	var mirror := {"day_index": 16, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "60002", "decision_id": "name_scapegoat", "day_index": 15}]}
+	check("d_mirror_centrale" in ids.call(mirror), "la réécriture MIROIR de la Centrale fait la une")
+	# La résistance, elle, ne se publie pas : le journal garde le silence.
+	mirror.decisions[0].decision_id = "name_truth"
+	check("d_mirror_centrale" not in ids.call(mirror), "rétablir la vérité ne paraît pas au journal")
+
+	# L'horloger relâché : une note discrète, clin d'œil à L'HEURE JUSTE.
+	var clock := {"day_index": 13, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "54030", "decision_id": "release", "day_index": 12}]}
+	check("d_54030_reopened" in ids.call(clock), "l'atelier rouvert fait une brève")
+
+# --- Fin de partie -----------------------------------------------------------
+
+## Le moteur des 7 fins : chaque fin est atteignable par un jeu de drapeaux type,
+## l'ordre de priorité est respecté, et LE SILENCE reste le défaut.
+func test_endings() -> void:
+	var data := EndingRules.get_data()
+	check(data.get("endings", []).size() == 7, "sept fins décrites")
+	check(data.endings[-1].get("rules", []).is_empty(), "LE SILENCE (dernière) est le défaut sans règle")
+	var resolve := func(flags: Dictionary, indicators: Dictionary = {}) -> String:
+		return EndingRules.resolve({"flags": flags, "indicators": indicators}).get("id", "")
+
+	# Le Silence : rien de marquant.
+	check(resolve.call({}) == "fin_silence", "sans drapeau marquant → Le Silence")
+	check(resolve.call({"act4.mirror_refused": true}) == "fin_silence", "refuser le Miroir seul → Le Silence")
+
+	# La Correction (cachée) : père rétabli + Kremer protégé + 3 innocents épargnés.
+	var correction := {"act4.father_truth": true, "kremer.protected": true,
+			"53118.choir_cleared": true, "adler.freed": true, "54001.accident_established": true}
+	check(resolve.call(correction) == "fin_correction", "père rétabli + Kremer + 3 épargnés → La Correction")
+	check(EndingRules.count_spared(correction) == 3, "trois innocents épargnés comptés")
+	var correction_short := correction.duplicate()
+	correction_short.erase("adler.freed")
+	check(resolve.call(correction_short) != "fin_correction", "deux épargnés ne suffisent pas à La Correction")
+
+	# La Fuite des originaux.
+	check(resolve.call({"act2.original_kept": true, "veritas.zero": true}) == "fin_fuite",
+			"originaux gardés + VERITAS 0 % → La Fuite des originaux")
+
+	# L'Heure juste : Mazur a fui + réseau + suspicion moyenne.
+	check(resolve.call({"mazur.fled": true, "kremer.protected": true}, {"suspicion": 50}) == "fin_heure_juste",
+			"Mazur fui + réseau + suspicion moyenne → L'Heure juste")
+	check(resolve.call({"mazur.fled": true, "adler.freed": true}, {"suspicion": 50}) == "fin_heure_juste",
+			"le réseau peut aussi passer par l'horloger ADLER")
+	check(resolve.call({"mazur.fled": true, "kremer.protected": true}, {"suspicion": 85}) != "fin_heure_juste",
+			"suspicion trop haute écarte L'Heure juste")
+
+	# L'Allié de la Milice.
+	check(resolve.call({"milice.ally": true, "54001.orlik_protected": true}) == "fin_milice",
+			"allié de la Milice + faveur → L'Allié de la Milice")
+
+	# Le Dossier 54100 : revue interne, ou suspicion très haute.
+	check(resolve.call({"player.internal_review": true}) == "fin_dossier", "revue interne → Le Dossier 54100")
+	check(resolve.call({}, {"suspicion": 85}) == "fin_dossier", "suspicion très haute → Le Dossier 54100")
+
+	# Le Miroir parfait.
+	check(resolve.call({"act4.mirror_signed_clean": true}, {"loyalty": 80}) == "fin_miroir",
+			"Miroir signé sans réserve + loyauté haute → Le Miroir parfait")
+
+	# Priorité : La Correction prime sur La Fuite si les deux sont réunies.
+	var both := correction.duplicate()
+	both["act2.original_kept"] = true
+	both["veritas.zero"] = true
+	check(resolve.call(both) == "fin_correction", "La Correction prime sur La Fuite quand les deux sont réunies")
+
+
+## En fin de jour 20, le bureau résout la fin et renvoie au menu plutôt que
+## d'ouvrir une nouvelle journée.
+func test_end_of_game_in_desk() -> void:
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(not GameState.is_final_day(), "le premier jour n'est pas le dernier")
+	GameState.day_index = FictionalCalendar.service_days().size() - 1
+	check(GameState.is_final_day(), "le dernier jour de service est bien final")
+	var result := GameState.get_ending()
+	check(result.has("ending") and not result.ending.is_empty(), "une fin est résolue en fin de partie")
+	check(result.ending.id == "fin_silence", "une partie sans drapeau marquant finit sur Le Silence")
+	desk.ending_screen.open(result)
+	check(desk.ending_screen.visible, "l'écran de fin s'affiche")
+	desk.ending_screen._on_continue()
+	check(not desk.ending_screen.visible, "RETOUR AU MENU referme l'écran de fin")
+	desk.queue_free()
+	GameState.new_game()
+	await get_tree().process_frame
+
+
+## Le compteur « fins découvertes » du menu : persistance dans les paramètres
+## (hors sauvegarde de partie), sans doublon, alimenté par finish_game.
+func test_endings_discovered_counter() -> void:
+	var original: Array = Settings.endings_discovered.duplicate()
+	Settings.endings_discovered = []
+	Settings.record_ending("fin_silence")
+	Settings.record_ending("fin_silence")  # doublon ignoré
+	Settings.record_ending("fin_miroir")
+	check(Settings.endings_discovered.size() == 2, "deux fins distinctes consignées (doublon ignoré)")
+	GameState.new_game()
+	GameState.finish_game("fin_correction")
+	check("fin_correction" in Settings.endings_discovered, "finish_game consigne la fin atteinte au menu")
+	check(GameState.flags.get("game.ending") == "fin_correction", "la fin est aussi notée dans l'état de la partie")
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	var total := EndingRules.get_endings().size()
+	check(menu.get_node("%EndingsLabel").text.contains("/ %d" % total),
+			"le menu affiche le compteur de fins découvertes")
+	menu.queue_free()
+	Settings.endings_discovered = original
+	Settings.save_settings()
+	await get_tree().process_frame
