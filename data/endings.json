@@ -1,0 +1,168 @@
+{
+	"note": "Résolution de la fin de partie (fin du jour 20, terme de l'acte 4). Logique pure dans scripts/core/ending_rules.gd : on évalue les fins dans l'ordre et la première dont une règle est satisfaite gagne ; LE SILENCE, sans règle, est le défaut et reste en dernier. Chaque règle reprend la grammaire des conditions d'événement (requires_flags, forbidden_flags, min_indicators, max_indicators), évaluée par EventRules ; 'spared' y est injecté comme un pseudo-indicateur = nombre d'innocents épargnés (spared_flags). Aucune donnée réelle, aucune décision prise par le moteur : la fin découle des drapeaux déjà posés par les actes 1 à 4.",
+	"spared_flags": [
+		"40921.closed_unchecked",
+		"40921.closed_despite_evidence",
+		"52044.drazek_exposed",
+		"53118.choir_cleared",
+		"53517.petras_cleared",
+		"adler.freed",
+		"54001.accident_established"
+	],
+	"endings": [
+		{
+			"id": "fin_correction",
+			"title": "LA CORRECTION",
+			"stamp": "RECTIFIÉ",
+			"hidden": true,
+			"rules": [
+				{
+					"requires_flags": [
+						"act4.father_truth",
+						"kremer.protected"
+					],
+					"min_indicators": {
+						"spared": 3
+					}
+				}
+			],
+			"lines": [
+				"Le Ministère ne tombe pas. Aucun régime ne tombe parce qu'un inspecteur a dit la vérité un samedi de décembre.",
+				"Mais le dossier de votre père porte de nouveau les mots que l'on avait effacés en 1971 : les horloges truquées, l'enquête étouffée, le nom qu'il n'aurait pas dû écrire. Et au sous-sol B, derrière une porte que KREMER n'a jamais laissé sceller, dorment les originaux que vous avez refusé de brûler.",
+				"On vous surveille, désormais. Vous le savez. Mais quelque part dans l'archive truquée, une ligne reste vraie — et elle est de vous."
+			],
+			"true_line": "VOSK, A., horloger. A découvert en 1971 le trucage des horloges de l'État. N'a pas émigré : a été réduit au silence. — rétabli."
+		},
+		{
+			"id": "fin_fuite",
+			"title": "LA FUITE DES ORIGINAUX",
+			"stamp": "INTROUVABLE",
+			"rules": [
+				{
+					"requires_flags": [
+						"act2.original_kept",
+						"veritas.zero"
+					]
+				}
+			],
+			"lines": [
+				"Vous n'avez rien dénoncé, rien publié, rien crié. Vous avez seulement gardé : l'original du registre que MAZUR avait truqué, et cette feuille absurde où VERITAS, nourri des vrais documents, affiche « sabotage : 0 % ».",
+				"Un matin, votre casier est vide et votre badge ne passe plus. On ne vous arrête pas — on ne veut pas de procès autour de ce que vous détenez. Les papiers, eux, ont quitté le Ministère dans une doublure de manteau.",
+				"Quelque part, hors d'atteinte, la preuve existe. C'est peu. C'est tout ce qui compte."
+			]
+		},
+		{
+			"id": "fin_heure_juste",
+			"title": "L'HEURE JUSTE",
+			"stamp": "DISPARU",
+			"rules": [
+				{
+					"requires_flags": [
+						"mazur.fled",
+						"kremer.protected"
+					],
+					"min_indicators": {
+						"suspicion": 35
+					},
+					"max_indicators": {
+						"suspicion": 70
+					}
+				},
+				{
+					"requires_flags": [
+						"mazur.fled",
+						"adler.freed"
+					],
+					"min_indicators": {
+						"suspicion": 35
+					},
+					"max_indicators": {
+						"suspicion": 70
+					}
+				}
+			],
+			"lines": [
+				"MAZUR a pris un train avant qu'on vienne le relever. Un quai, une horloge, un mot griffonné : « juste ». Vous avez compris, et vous n'avez rien dit.",
+				"Vous restez. Inspecteur discret, ni zélé ni suspect, vous avez appris à lire l'heure que le pays n'affiche pas. De temps en temps, une pendule s'arrête une minute trop tôt dans une cage d'escalier : c'est un message, et il est pour vous.",
+				"On ne gagne pas. On se tient prêt. L'HEURE JUSTE compte un membre de plus."
+			]
+		},
+		{
+			"id": "fin_milice",
+			"title": "L'ALLIÉ DE LA MILICE",
+			"stamp": "PROMU",
+			"rules": [
+				{
+					"requires_flags": [
+						"milice.ally",
+						"54001.orlik_protected"
+					]
+				},
+				{
+					"requires_flags": [
+						"milice.ally",
+						"milice.favor_owed"
+					]
+				}
+			],
+			"lines": [
+				"Vous avez choisi le camp qui ne perd jamais : celui qui a les clés, les voitures et la mémoire longue. Un capitaine vous doit son silence, et vous lui devez le vôtre.",
+				"On vous monte. Bureau plus grand, dossiers plus lourds, moins de questions. Vous signez vite, et bien.",
+				"Simplement, il existe maintenant, quelque part, un dossier à votre nom aussi. On ne vous l'a jamais dit. On n'en a pas besoin : vous le savez."
+			]
+		},
+		{
+			"id": "fin_dossier",
+			"title": "LE DOSSIER 54100",
+			"stamp": "SUJET",
+			"rules": [
+				{
+					"requires_flags": [
+						"player.internal_review"
+					]
+				},
+				{
+					"min_indicators": {
+						"suspicion": 80
+					}
+				}
+			],
+			"lines": [
+				"Vous avez trop cherché, trop noté, trop hésité. Le contrôle interne tient ces choses pour des symptômes, pas pour de la conscience.",
+				"Le dossier 54100 ne se referme pas : il grossit. Votre nom, vos dates, vos heures de service, la ligne scellée de votre père. L'inspectrice BRANDT, votre voisine de couloir, signe la couverture d'un trait égal.",
+				"Vous étiez l'inspecteur. Vous êtes devenu le sujet. La boucle se ferme, comme elle s'était fermée sur lui."
+			]
+		},
+		{
+			"id": "fin_miroir",
+			"title": "LE MIROIR PARFAIT",
+			"stamp": "IRRÉPROCHABLE",
+			"rules": [
+				{
+					"requires_flags": [
+						"act4.mirror_signed_clean"
+					],
+					"min_indicators": {
+						"loyalty": 70
+					}
+				}
+			],
+			"lines": [
+				"Vous avez tout signé. SEDLAR, la Centrale, et jusqu'au dossier de votre propre père — réécrit d'une main qui n'a pas tremblé. « Émigré de son plein gré. » Classé.",
+				"Le Ministère vous cite en exemple. Grade supérieur, bureau au premier étage, une plaque à votre nom. Sur le papier, vous êtes parfait : pas une contradiction, pas un remords, pas un vide.",
+				"Pas un vide, sauf un. Mais celui-là, vous l'avez signé vous-même, et personne ne viendra jamais le rouvrir."
+			]
+		},
+		{
+			"id": "fin_silence",
+			"title": "LE SILENCE",
+			"stamp": "CLASSÉ",
+			"rules": [],
+			"lines": [
+				"Vous n'avez ni renversé la table ni léché les bottes. Vous avez fait votre travail, refermé les dossiers, rangé les tampons, et le samedi 6 décembre vous avez éteint la lampe comme les autres soirs.",
+				"Personne ne se souviendra de vous en particulier. Ni héros, ni complice : un rouage, parmi des milliers, qui a tourné sans grincer.",
+				"Le pays continue. Les horloges aussi. On n'entend que ça, maintenant : le silence, et le tic-tac derrière."
+			]
+		}
+	]
+}

@@ -1,0 +1,106 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/act_end/ending_screen.gd" id="1_script"]
+
+[node name="EndingScreen" type="ColorRect"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.025, 0.022, 1)
+script = ExtResource("1_script")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 120
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 120
+theme_override_constants/margin_bottom = 32
+
+[node name="Panel" type="PanelContainer" parent="Margin"]
+layout_mode = 2
+theme_type_variation = &"TerminalPanel"
+
+[node name="Outer" type="VBoxContainer" parent="Margin/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/Panel/Outer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Inner" type="MarginContainer" parent="Margin/Panel/Outer/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 20
+
+[node name="Layout" type="VBoxContainer" parent="Margin/Panel/Outer/Scroll/Inner"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleLabel" type="Label" parent="Margin/Panel/Outer/Scroll/Inner/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+
+[node name="LinesLabel" type="Label" parent="Margin/Panel/Outer/Scroll/Inner/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="TrueLineHeader" type="Label" parent="Margin/Panel/Outer/Scroll/Inner/Layout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "LA SEULE LIGNE VRAIE QUI SURVIT"
+
+[node name="TrueLineLabel" type="Label" parent="Margin/Panel/Outer/Scroll/Inner/Layout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="SubjectsHeader" type="Label" parent="Margin/Panel/Outer/Scroll/Inner/Layout"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "DERNIÈRE PAGE D'ARCHIVE"
+
+[node name="SubjectsBox" type="VBoxContainer" parent="Margin/Panel/Outer/Scroll/Inner/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Footer" type="MarginContainer" parent="Margin/Panel/Outer"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 16
+
+[node name="FooterLayout" type="VBoxContainer" parent="Margin/Panel/Outer/Footer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Panel/Outer/Footer/FooterLayout"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 12
+
+[node name="ContinueButton" type="Button" parent="Margin/Panel/Outer/Footer/FooterLayout/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 48)
+layout_mode = 2
+text = "RETOUR AU MENU"
