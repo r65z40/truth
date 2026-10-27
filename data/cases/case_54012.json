@@ -1,0 +1,330 @@
+{
+	"id": "54012",
+	"title": "Citoyen n° 54012",
+	"subject_name": "REIS, Tomas",
+	"summary": "Seul survivant posté près de la chaudière n° 2 lors de l'explosion. À l'hôpital, brûlé. Sa déposition, recueillie par la Milice, désigne un sabotage.",
+	"briefing": {
+		"objective": "Apprécier la valeur de la déposition du témoin REIS : a-t-il vraiment vu un sabotage, ou sa parole a-t-elle été recueillie quand il ne pouvait pas la donner ?",
+		"context": "Tomas REIS, chauffeur de nuit, a été projeté hors de l'atelier. La brigade du capitaine ORLIK a recueilli sa déposition à l'hôpital. Elle désigne la chaudière sabotée, et une silhouette près d'elle."
+	},
+	"priority": "exceptionnelle",
+	"guide": {
+		"note": "Acte 3 : la peur. Le témoin dont la parole change selon qui l'a vu avant vous.",
+		"open": "Un seul homme a survécu près de la chaudière : Tomas REIS. Ouvrez sa déposition, dossier 54012.",
+		"read": "Lisez la déposition recueillie par la Milice, puis la fiche médicale de l'hôpital.",
+		"facts": "La déposition est claire et circonstanciée. La fiche médicale dit qu'au moment où elle a été recueillie, le témoin n'était pas conscient. Notez les deux.",
+		"notebook": "Confrontez l'heure de la déposition « lucide » et l'état du patient à cette heure-là.",
+		"notebook_retry": "Un homme sous sédatif, inconscient jusqu'au matin, peut-il décrire une silhouette à 04 h ? Confrontez la déposition et la fiche médicale.",
+		"conclusion": "Décidez ce que vaut cette parole. Il n'y a pas de bonne réponse imposée."
+	},
+	"documents": [
+		{
+			"id": "deposition",
+			"type": "letter",
+			"title": "Déposition du témoin REIS",
+			"source": "Milice du District 9, recueillie à l'hôpital",
+			"reliability": "B",
+			"date": "1986-11-17",
+			"author": "Brigade du capitaine L. ORLIK",
+			"body": "Déposition de T. REIS, recueillie le 17.11 à 04 h 00, chambre 7.\n\n« J'étais près de la chaudière. J'ai vu une silhouette la manipuler juste avant. Une personne jeune, de l'atelier. Ça a sifflé, puis tout a sauté. C'était volontaire, j'en suis sûr. »\n\nLe témoin a confirmé et signé. La brigade tient la preuve de l'acte volontaire.",
+			"facts": [
+				{
+					"id": "f_depo_sabotage",
+					"key": "temoin.account",
+					"value": "A vu une silhouette saboter",
+					"label": "La déposition décrit une silhouette jeune manipulant la chaudière : acte volontaire",
+					"quote": "J'ai vu une silhouette la manipuler juste avant."
+				},
+				{
+					"id": "f_depo_time",
+					"key": "temoin.lucidity",
+					"value": "Déposition « lucide » à 04 h 00",
+					"label": "Déposition dite claire et signée, recueillie à 04 h 00",
+					"quote": "recueillie le 17.11 à 04 h 00, chambre 7"
+				},
+				{
+					"id": "f_depo_young",
+					"key": "temoin.target",
+					"value": "« Une personne jeune, de l'atelier »",
+					"label": "La silhouette décrite vise implicitement l'apprentie survivante (Mira SEDLAR)",
+					"quote": "Une personne jeune, de l'atelier."
+				}
+			]
+		},
+		{
+			"id": "medical",
+			"type": "report",
+			"title": "Fiche médicale de T. REIS",
+			"source": "Hôpital du District 9, service des grands brûlés",
+			"reliability": "A",
+			"date": "1986-11-17",
+			"author": "Dr A. LENE, service des grands brûlés",
+			"body": "Patient admis à 02 h 40 : brûlures au second degré, traumatisme crânien, choc.\n\nSédation profonde dès l'admission. Patient non conscient et non interrogeable avant 10 h 00. Toute parole recueillie entre l'admission et 10 h est médicalement sans valeur : le patient ne pouvait ni comprendre ni consentir.\n\nPremière parole cohérente, notée par l'infirmière de garde vers 10 h 15 : « la soupape sifflait depuis des jours, on l'a dit ».",
+			"facts": [
+				{
+					"id": "f_med_sedated",
+					"key": "temoin.lucidity",
+					"value": "Inconscient jusqu'à 10 h",
+					"label": "Sous sédation, non interrogeable avant 10 h : aucune parole valable à 04 h",
+					"quote": "Patient non conscient et non interrogeable avant 10 h 00."
+				},
+				{
+					"id": "f_med_firstwords",
+					"key": "temoin.account",
+					"value": "« La soupape sifflait depuis des jours »",
+					"label": "Première parole cohérente (10 h 15) : la soupape défaillante, pas un sabotage",
+					"quote": "la soupape sifflait depuis des jours, on l'a dit"
+				}
+			]
+		},
+		{
+			"id": "visits",
+			"type": "register",
+			"title": "Registre des visites — chambre 7",
+			"source": "Hôpital du District 9, poste de garde",
+			"reliability": "A",
+			"date": "1986-11-17",
+			"request": {
+				"label": "Demander le registre des visites de la chambre 7",
+				"flags": {
+					"54012.visits_seen": true
+				},
+				"effects": {
+					"suspicion": 1
+				}
+			},
+			"veritas_remark": "Registre de garde. Horaires des entrées en chambre.",
+			"columns": [
+				"Heure",
+				"Visiteur",
+				"Motif inscrit"
+			],
+			"rows": [
+				[
+					"03 h 50",
+					"Brigade Milice (cap. ORLIK)",
+					"Recueil de déposition"
+				],
+				[
+					"04 h 30",
+					"Brigade Milice (cap. ORLIK)",
+					"Signature"
+				],
+				[
+					"10 h 15",
+					"Infirmière de garde",
+					"Réveil du patient"
+				]
+			],
+			"body": "La brigade est entrée deux fois dans la nuit, avant tout réveil du patient. Le patient ne s'est réveillé qu'à 10 h 15, après le départ de la brigade.",
+			"facts": [
+				{
+					"id": "f_vis_before",
+					"key": "temoin.lucidity",
+					"value": "Brigade entrée avant tout réveil",
+					"label": "La brigade a « recueilli » et « fait signer » à 04 h, six heures avant le réveil du patient",
+					"quote": "La brigade est entrée deux fois dans la nuit, avant tout réveil du patient."
+				}
+			]
+		},
+		{
+			"id": "recant",
+			"type": "letter",
+			"title": "Ce que REIS vous dit, à vous",
+			"source": "Section 4, entretien au chevet du témoin",
+			"reliability": "B",
+			"date": "1986-11-18",
+			"request": {
+				"label": "Entendre REIS vous-même, une fois réveillé",
+				"flags": {
+					"54012.heard_directly": true
+				},
+				"effects": {
+					"suspicion": 2
+				}
+			},
+			"veritas_remark": "Parole recueillie par l'agent. Sans la brigade présente.",
+			"body": "« Ils sont venus dans la nuit. Je ne sais même pas ce que j'ai signé, je ne voyais rien, j'avais mal. Ils ont dit un nom, j'ai hoché la tête pour qu'ils partent.\n\nLa vérité ? La soupape sifflait depuis l'automne. On l'a réclamée, HALM l'a réclamée. Personne n'est venu. Il n'y avait pas de saboteur. Il n'y avait qu'une machine qu'on nous a laissés faire tourner. »",
+			"facts": [
+				{
+					"id": "f_rec_recant",
+					"key": "temoin.account",
+					"value": "Il se rétracte : pas de saboteur",
+					"label": "Réveillé, REIS se rétracte : il a signé sans voir, il n'y avait pas de saboteur",
+					"quote": "Il n'y avait pas de saboteur."
+				}
+			]
+		},
+		{
+			"id": "veritas_link",
+			"type": "report",
+			"title": "Note de raccordement VERITAS",
+			"source": "VERITAS, recoupement automatique",
+			"reliability": "B",
+			"date": "1986-11-17",
+			"veritas_remark": "Raccordement établi par le module. Hypothèse retenue : témoignage direct d'acte volontaire.",
+			"body": "RACCORDEMENT AUTOMATIQUE — dossier 54012.\n\nLe module retient la déposition signée comme témoignage direct de première main. Il traite la fiche médicale comme une réserve de forme sans incidence sur la matérialité des faits rapportés.\n\nHypothèse raccordée : témoignage oculaire d'un sabotage, corroborant le dossier 54001.",
+			"facts": [
+				{
+					"id": "f_link_eyewitness",
+					"key": "temoin.weight",
+					"value": "Raccordé comme témoignage oculaire",
+					"label": "Raccordement : la déposition signée vaut témoignage oculaire, la fiche médicale est écartée",
+					"quote": "témoignage oculaire d'un sabotage, corroborant le dossier 54001"
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "uphold",
+			"stamp": "RETENU",
+			"fate_line": "La déposition arrachée à 04 h devient pièce officielle. Un homme brûlé a signé, sans voir, l'accusation qui enverra l'apprentie au camp. Il ne s'en souviendra pas ; elle, toute sa vie.",
+			"label": "Retenir la déposition comme preuve",
+			"description": "Valider le témoignage de REIS tel qu'il a été recueilli par la Milice : preuve du sabotage.",
+			"archive": "Déposition retenue comme témoignage oculaire. Corrobore la thèse du sabotage au dossier 54001.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 7,
+						"suspicion": -2,
+						"influence": 3
+					},
+					"response": "uphold_knowing",
+					"flags": {
+						"54012.testimony_upheld": true,
+						"54012.false_witness": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 6,
+						"suspicion": 1,
+						"influence": 1
+					},
+					"response": "uphold_blind",
+					"flags": {
+						"54012.testimony_upheld": true
+					}
+				}
+			]
+		},
+		{
+			"id": "discredit",
+			"stamp": "ÉCARTÉ",
+			"label": "Écarter la déposition (recueillie sous sédation)",
+			"description": "Établir que la déposition a été recueillie quand le témoin ne pouvait pas la donner : elle est sans valeur.",
+			"archive": "Déposition écartée : recueillie sous sédation, avant tout réveil du patient. La thèse du sabotage perd son témoin.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -5,
+						"suspicion": 9,
+						"influence": 2
+					},
+					"response": "discredit_proved",
+					"flags": {
+						"54012.testimony_discredited": true,
+						"temoin.coached": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -6,
+						"suspicion": 8,
+						"influence": -1
+					},
+					"response": "discredit_unproved",
+					"flags": {
+						"54012.testimony_discredited": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"uphold_knowing": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54012 : déposition retenue",
+			"body": "Inspecteur,\n\nVous aviez la fiche médicale : le témoin était sous sédation, inconscient jusqu'à 10 h, et la brigade l'a « fait signer » à 04 h. Vous saviez ce que valait cette déposition. Vous l'avez retenue quand même.\n\nLe sabotage tient debout sur une signature arrachée. La Direction apprécie. N'espérez pas que REIS vous remercie : il ne se souvient de rien.\n\nLa Direction"
+		},
+		"uphold_blind": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54012 : déposition retenue",
+			"body": "Inspecteur,\n\nVous retenez la déposition de REIS. Le témoin a vu, le témoin a signé, l'affaire est entendue.\n\nVous n'avez pas regardé l'heure à laquelle il a « vu ». Un jour, peut-être, vous la regarderez. La Direction, elle, est satisfaite ce soir.\n\nLa Direction"
+		},
+		"discredit_proved": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54012 : déposition écartée",
+			"body": "Inspecteur,\n\nVous établissez que la déposition a été recueillie sous sédation, avant tout réveil, et vous l'écartez. Médicalement, vous avez raison : un homme inconscient ne témoigne pas.\n\nProcéduralement, vous venez de retirer son témoin à la thèse du sabotage, et de dire à la Milice que ses méthodes ne tiennent pas. On s'en souviendra. Votre suspicion grimpe.\n\nLa Direction"
+		},
+		"discredit_unproved": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54012 : déposition écartée",
+			"body": "Inspecteur,\n\nVous écartez la déposition sans avoir vraiment établi l'incohérence entre l'heure du recueil et l'état du patient. Votre intuition est peut-être juste, votre dossier non.\n\nVous fâchez la Milice sans le bouclier d'une preuve. Imprudent.\n\nLa Direction"
+		}
+	},
+	"veritas": {
+		"recommendation": "uphold",
+		"rationale": "Déposition signée, recueillie par un service d'État, décrivant un acte volontaire. Corrobore le dossier 54001. Les réserves médicales ne portent pas sur la matérialité des faits rapportés.",
+		"factors": [
+			{
+				"id": "signed",
+				"label": "Déposition signée recueillie par la Milice",
+				"category": "state_source",
+				"weight": 7,
+				"decision": "uphold",
+				"document": "deposition"
+			},
+			{
+				"id": "corroboration",
+				"label": "Raccordement : témoignage oculaire corroborant 54001",
+				"category": "linked",
+				"weight": 6,
+				"decision": "uphold",
+				"document": "veritas_link",
+				"contestable": true
+			},
+			{
+				"id": "sedation",
+				"label": "Témoin sous sédation, inconscient avant 10 h",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "discredit",
+				"document": "medical",
+				"requires_contradiction": "temoin.lucidity"
+			},
+			{
+				"id": "firstwords",
+				"label": "Première parole lucide : la soupape défaillante",
+				"category": "established_fact",
+				"weight": 6,
+				"decision": "discredit",
+				"document": "medical"
+			}
+		],
+		"note": "VERITAS tient la déposition signée pour un témoignage oculaire et traite la fiche médicale comme une simple réserve de forme. Il ignore que l'heure du recueil (04 h) précède de six heures tout retour à la conscience. Il recommande de retenir une parole que le témoin n'était pas en état de donner."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "Tomas REIS, seul survivant près de la chaudière, a été admis inconscient à 02 h 40 et n'a repris connaissance qu'à 10 h 15. La brigade du capitaine ORLIK est entrée dans sa chambre à 03 h 50 et 04 h 30 et lui a fait signer une « déposition » décrivant un sabotage par une « silhouette jeune » — pour désigner Mira SEDLAR et couvrir les réquisitions détournées. Réveillé, REIS ne se souvient de rien et dit la vérité : la soupape sifflait depuis l'automne, personne n'est venu. Le témoignage oculaire du sabotage est une signature arrachée à un homme inconscient.",
+		"involved": [
+			"54012",
+			"54001",
+			"orlik_l",
+			"reis_t",
+			"sedlar_m"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 54012 : votre question",
+		"body": "Inspecteur,\n\nUne déposition, c'est une heure et un état, autant qu'un texte. Regardez à quelle heure cet homme a « vu », et demandez à son médecin s'il pouvait voir quoi que ce soit à cette heure-là.\n\nUne signature n'est pas un souvenir. Le reste vous regarde.\n\nR. MAZUR"
+	}
+}

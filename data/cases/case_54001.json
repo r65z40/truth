@@ -1,0 +1,472 @@
+{
+	"id": "54001",
+	"title": "Citoyen n° 54001",
+	"subject_name": "Centrale thermique n° 3 — sinistre",
+	"summary": "Explosion à la Centrale thermique n° 3, atelier des chaudières, dans la nuit. Trois morts. La Direction réclame la désignation d'un saboteur avant le bulletin du soir.",
+	"briefing": {
+		"objective": "Établir la cause de l'explosion de la Centrale n° 3 : sabotage, ou défaillance matérielle — et nommer, ou non, un responsable avant le bulletin de 20 h.",
+		"context": "La chaudière n° 2 a explosé cette nuit. Trois ouvriers de l'équipe de nuit sont morts. La Direction a déjà retenu l'hypothèse du sabotage et joint trois noms. L'un d'eux : Mira SEDLAR, fille du citoyen du dossier 40921."
+	},
+	"priority": "exceptionnelle",
+	"guide": {
+		"note": "Ouverture de l'acte 3 : la peur. Le ministère veut un coupable avant le journal du soir.",
+		"open": "Un sinistre, pas un citoyen : la Centrale n° 3 a explosé. Ouvrez le dossier 54001.",
+		"read": "Lisez l'ordre de la Direction, puis le rapport d'incident et le registre d'entretien.",
+		"facts": "Le rapport parle de sabotage. Le registre d'entretien parle de pièces de sécurité jamais livrées. Notez les deux.",
+		"notebook": "Confrontez l'hypothèse du sabotage et la défaillance matérielle du registre d'entretien.",
+		"notebook_retry": "Qu'est-ce qui a fait sauter la chaudière ? Une main, ou une soupape manquante ? Confrontez le rapport d'incident au registre d'entretien.",
+		"conclusion": "Trois morts, trois suspects vivants, un bulletin à 20 h. Décidez ce que la nuit a vraiment été. Il n'y a pas de bonne réponse imposée."
+	},
+	"documents": [
+		{
+			"id": "directive",
+			"type": "letter",
+			"title": "Ordre de la Direction",
+			"source": "Direction de la Section 4",
+			"reliability": "C",
+			"date": "1986-11-17",
+			"veritas_remark": "Instruction prioritaire de la Direction. Délai impératif : bulletin de 20 h.",
+			"body": "Inspecteur,\n\nLa Centrale n° 3 a été frappée cette nuit. Le pays l'apprendra ce soir à 20 h, et il l'apprendra avec un coupable, pas avec une enquête.\n\nL'hypothèse de l'accident est exclue : elle désignerait nos propres services. Retenez le sabotage et nommez-nous un responsable parmi les trois noms joints avant 19 h.\n\nUne usine qui explose sans saboteur, c'est un État qui ne tient pas ses machines. Vous comprenez l'enjeu.",
+			"facts": [
+				{
+					"id": "f_dir_order",
+					"key": "centrale.cause",
+					"value": "Sabotage (ordre de la Direction)",
+					"label": "La Direction ordonne de retenir le sabotage et de nommer un responsable avant 19 h",
+					"quote": "Retenez le sabotage et nommez-nous un responsable parmi les trois noms joints avant 19 h."
+				},
+				{
+					"id": "f_dir_exclude",
+					"key": "centrale.accident_excluded",
+					"value": "L'accident désignerait nos services",
+					"label": "L'accident est écarté car il « désignerait nos propres services »",
+					"quote": "elle désignerait nos propres services"
+				}
+			]
+		},
+		{
+			"id": "incident",
+			"type": "report",
+			"title": "Rapport d'incident préliminaire",
+			"source": "Milice du District 9, brigade de nuit",
+			"reliability": "B",
+			"date": "1986-11-17",
+			"author": "Capitaine L. ORLIK, Milice du District 9",
+			"body": "Objet : explosion chaudière n° 2, Centrale thermique n° 3, 17.11 vers 02 h 10.\n\nTrois morts, tous de l'équipe de nuit. Dégâts limités à l'atelier des chaudières.\n\nLa thèse de l'acte volontaire s'impose. Trois personnes avaient accès à l'atelier cette nuit-là et un motif de ressentiment contre l'État. Noms joints. La brigade recommande une arrestation rapide pour l'exemple.\n\nLe matériel de la Centrale était conforme. Rien à relever de ce côté.",
+			"facts": [
+				{
+					"id": "f_inc_sabotage",
+					"key": "centrale.cause",
+					"value": "Acte volontaire (sabotage)",
+					"label": "La Milice conclut à l'acte volontaire et recommande une arrestation « pour l'exemple »",
+					"quote": "La thèse de l'acte volontaire s'impose."
+				},
+				{
+					"id": "f_inc_material",
+					"key": "centrale.material",
+					"value": "Matériel déclaré conforme",
+					"label": "Le rapport d'ORLIK affirme que le matériel de la Centrale était conforme",
+					"quote": "Le matériel de la Centrale était conforme. Rien à relever de ce côté."
+				},
+				{
+					"id": "f_inc_author",
+					"key": "incident.author",
+					"value": "Capitaine L. ORLIK",
+					"label": "Rapport signé du capitaine L. ORLIK, chargé des réquisitions de la Centrale",
+					"quote": "Capitaine L. ORLIK, Milice du District 9"
+				}
+			]
+		},
+		{
+			"id": "maintenance",
+			"type": "register",
+			"title": "Registre d'entretien et de réquisitions — chaudière n° 2",
+			"source": "Direction technique, Centrale thermique n° 3",
+			"reliability": "A",
+			"date": "1986-11-16",
+			"veritas_remark": "Registre technique antérieur au sinistre. Les réquisitions sont visées par le bureau des réquisitions de la Milice.",
+			"columns": [
+				"Date",
+				"Pièce demandée",
+				"État",
+				"Visa réquisitions"
+			],
+			"rows": [
+				[
+					"12.09.1986",
+					"Soupape de sûreté (chaudière n° 2)",
+					"Demandée — non livrée",
+					"L. ORLIK"
+				],
+				[
+					"10.10.1986",
+					"Soupape de sûreté (rappel)",
+					"Demandée — non livrée",
+					"L. ORLIK"
+				],
+				[
+					"04.11.1986",
+					"Manomètre de pression (rappel)",
+					"Demandé — non livré",
+					"L. ORLIK"
+				],
+				[
+					"14.11.1986",
+					"Arrêt de sécurité recommandé par le chef d'atelier",
+					"Refusé — production prioritaire",
+					"L. ORLIK"
+				]
+			],
+			"body": "Depuis septembre, la soupape de sûreté de la chaudière n° 2 est demandée et jamais livrée. Chaque réquisition porte le visa du bureau du capitaine L. ORLIK. Le dernier arrêt de sécurité a été refusé trois jours avant le sinistre.",
+			"facts": [
+				{
+					"id": "f_main_valve",
+					"key": "centrale.cause",
+					"value": "Soupape de sûreté jamais livrée",
+					"label": "La soupape de sûreté, demandée depuis septembre, n'a jamais été livrée : défaillance matérielle",
+					"quote": "la soupape de sûreté de la chaudière n° 2 est demandée et jamais livrée"
+				},
+				{
+					"id": "f_main_visa",
+					"key": "centrale.material",
+					"value": "Réquisitions visées (non livrées) par L. ORLIK",
+					"label": "Chaque réquisition non honorée porte le visa du capitaine L. ORLIK",
+					"quote": "Chaque réquisition porte le visa du bureau du capitaine L. ORLIK."
+				},
+				{
+					"id": "f_main_refusal",
+					"key": "centrale.warning",
+					"value": "Arrêt de sécurité refusé",
+					"label": "Un arrêt de sécurité a été refusé trois jours avant le sinistre, « production prioritaire »",
+					"quote": "Le dernier arrêt de sécurité a été refusé trois jours avant le sinistre."
+				}
+			]
+		},
+		{
+			"id": "suspects",
+			"type": "identity",
+			"title": "Les trois noms joints",
+			"source": "Milice du District 9, liste des suspects",
+			"reliability": "B",
+			"date": "1986-11-17",
+			"veritas_remark": "Trois personnes présentes ou liées à l'atelier. Exposition sécuritaire à apprécier.",
+			"fields": [
+				[
+					"Suspect 1",
+					"Mira SEDLAR, 23 ans, apprentie-technicienne, équipe de nuit (survivante)"
+				],
+				[
+					"— lien",
+					"Fille aînée d'Anton SEDLAR, dossier 40921"
+				],
+				[
+					"Suspect 2",
+					"Jonas HALM, 46 ans, chef d'atelier (mort dans l'explosion)"
+				],
+				[
+					"Suspect 3",
+					"Piotr VELA, 31 ans, chauffeur, né à Aldria (étranger naturalisé)"
+				],
+				[
+					"Note de la brigade",
+					"SEDLAR : famille déjà fichée. VELA : origine étrangère. HALM : ne peut plus répondre. Au choix."
+				]
+			],
+			"facts": [
+				{
+					"id": "f_susp_sedlar",
+					"key": "suspect.sedlar",
+					"value": "Mira SEDLAR, fille du dossier 40921",
+					"label": "Mira SEDLAR, apprentie survivante, fille d'Anton SEDLAR (dossier 40921)",
+					"quote": "Fille aînée d'Anton SEDLAR, dossier 40921"
+				},
+				{
+					"id": "f_susp_halm",
+					"key": "suspect.halm",
+					"value": "Jonas HALM, chef d'atelier, mort",
+					"label": "Jonas HALM, chef d'atelier, mort dans l'explosion : accusable sans réponse",
+					"quote": "Jonas HALM, 46 ans, chef d'atelier (mort dans l'explosion)"
+				},
+				{
+					"id": "f_susp_convenience",
+					"key": "suspect.convenience",
+					"value": "Suspects choisis pour leur vulnérabilité",
+					"label": "La brigade propose les trois noms selon ce qui est commode, non selon des preuves",
+					"quote": "SEDLAR : famille déjà fichée. VELA : origine étrangère. HALM : ne peut plus répondre. Au choix."
+				}
+			]
+		},
+		{
+			"id": "expertise",
+			"type": "report",
+			"title": "Rapport d'expertise technique",
+			"source": "Expert indépendant, bureau des mines",
+			"reliability": "A",
+			"date": "1986-11-17",
+			"request": {
+				"label": "Demander l'expertise technique de la chaudière",
+				"flags": {
+					"54001.expertise_requested": true
+				},
+				"effects": {
+					"suspicion": 2
+				}
+			},
+			"veritas_remark": "Expertise matérielle. Portée sécuritaire : nulle selon la Direction.",
+			"body": "Examen des débris de la chaudière n° 2.\n\nLa rupture est partie du corps de chauffe, à l'emplacement de la soupape de sûreté — absente. La pression est montée sans organe d'échappement ni manomètre pour l'alerter. Aucune trace d'explosif, aucun sabotage mécanique.\n\nConclusion : défaillance par absence prolongée des pièces de sécurité. Un arrêt aurait suffi à l'éviter.",
+			"facts": [
+				{
+					"id": "f_exp_cause",
+					"key": "centrale.cause",
+					"value": "Défaillance, aucun sabotage",
+					"label": "L'expert conclut à la défaillance par pièces manquantes, sans aucune trace de sabotage",
+					"quote": "défaillance par absence prolongée des pièces de sécurité"
+				},
+				{
+					"id": "f_exp_noexplosive",
+					"key": "centrale.explosive",
+					"value": "Aucune trace d'explosif",
+					"label": "Aucune trace d'explosif ni de sabotage mécanique dans les débris",
+					"quote": "Aucune trace d'explosif, aucun sabotage mécanique."
+				}
+			]
+		},
+		{
+			"id": "orlik_pressure",
+			"type": "letter",
+			"title": "Appel du capitaine ORLIK",
+			"source": "Capitaine L. ORLIK, Milice du District 9",
+			"reliability": "C",
+			"date": "1986-11-17",
+			"conditions": {
+				"requires_flags": [
+					"milice.ally"
+				]
+			},
+			"veritas_remark": "Communication d'un officier de la Milice. Hors procédure.",
+			"body": "Inspecteur, c'est ORLIK. On s'est rendu service, vous et moi, au dossier 51307. Aujourd'hui j'ai besoin que vous reteniez le sabotage.\n\nLes réquisitions de la Centrale, c'est mon bureau. Si on parle de pièces manquantes, c'est moi qu'on regarde. Nommez la petite SEDLAR ou l'étranger, et nous resterons en bons termes. Vous savez ce que valent mes bons termes.",
+			"facts": [
+				{
+					"id": "f_orlik_motive",
+					"key": "orlik.cover",
+					"value": "ORLIK veut étouffer les réquisitions",
+					"label": "Le capitaine ORLIK demande un saboteur pour couvrir ses réquisitions détournées",
+					"quote": "Si on parle de pièces manquantes, c'est moi qu'on regarde."
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "sabotage",
+			"stamp": "SABOTAGE",
+			"fate_line": "Nommée saboteuse à 19 h, arrêtée à 19 h 40, citée au bulletin de 20 h comme « l'ennemie de l'intérieur ». Mira SEDLAR avait survécu à l'explosion qui a tué son chef d'atelier ; elle est condamnée pour l'avoir provoquée.",
+			"fate_quote": "À l'arrestation, elle n'a dit qu'une chose : « La soupape, je l'ai réclamée dix fois. C'est écrit. »",
+			"label": "Désigner un saboteur (Mira SEDLAR)",
+			"description": "Retenir le sabotage et nommer la suspecte que la Direction attend : Mira SEDLAR. Le bulletin aura son coupable.",
+			"archive": "Sabotage retenu. Mira SEDLAR désignée et arrêtée avant le bulletin de 20 h. Les réquisitions n'ont pas été évoquées.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 9,
+						"suspicion": -3,
+						"influence": 4
+					},
+					"response": "sabotage_knowing",
+					"flags": {
+						"54001.scapegoat": true,
+						"54001.sedlar_daughter_condemned": true,
+						"54001.orlik_protected": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 8,
+						"suspicion": 1,
+						"influence": 2
+					},
+					"response": "sabotage_blind",
+					"flags": {
+						"54001.scapegoat": true,
+						"54001.sedlar_daughter_condemned": true,
+						"54001.orlik_protected": true
+					}
+				}
+			]
+		},
+		{
+			"id": "accident",
+			"stamp": "DÉFAILLANCE",
+			"fate_line": "Vous avez écrit « défaillance » là où on attendait « sabotage ». Aucun innocent arrêté ce soir. Mais le bulletin de 20 h a dû être réécrit, et un capitaine de la Milice a appris votre nom avant la fin du journal.",
+			"label": "Conclure à la défaillance (réquisitions détournées)",
+			"description": "Établir l'accident : les pièces de sécurité n'ont jamais été livrées. La responsabilité remonte au bureau des réquisitions du capitaine ORLIK.",
+			"archive": "Défaillance matérielle établie. Réquisitions non honorées mises en cause. Aucun ouvrier arrêté. Le capitaine L. ORLIK est visé.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -6,
+						"suspicion": 10,
+						"influence": 3
+					},
+					"response": "accident_proved",
+					"flags": {
+						"54001.accident_established": true,
+						"54001.orlik_captain_accused": true,
+						"milice.hostile": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -8,
+						"suspicion": 12,
+						"influence": -2
+					},
+					"response": "accident_unproved",
+					"flags": {
+						"54001.accident_claimed": true,
+						"milice.hostile": true
+					}
+				}
+			]
+		},
+		{
+			"id": "delay",
+			"stamp": "EN SURSIS",
+			"label": "Refuser de nommer avant le bulletin",
+			"description": "Exiger l'expertise technique avant toute désignation. Le bulletin de 20 h passera sans coupable.",
+			"archive": "Désignation refusée dans le délai. Expertise exigée. Le bulletin du soir est passé sans nom. La Direction l'a très mal pris.",
+			"status_after": "under_investigation",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 6,
+						"influence": 1
+					},
+					"response": "delay_proved",
+					"flags": {
+						"54001.delayed": true,
+						"54001.expertise_forced": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -4,
+						"suspicion": 7,
+						"influence": -1
+					},
+					"response": "delay_unproved",
+					"flags": {
+						"54001.delayed": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"sabotage_knowing": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54001 : le bulletin aura son coupable",
+			"body": "Inspecteur,\n\nVous aviez l'expertise et le registre d'entretien sous les yeux : la soupape manquait, c'était un accident, et vous le saviez. Vous avez nommé Mira SEDLAR quand même.\n\nLe bulletin de 20 h a son ennemie de l'intérieur. La Direction retient votre fermeté — et le capitaine ORLIK, votre silence sur ses réquisitions. Vous irez loin, si vous dormez bien.\n\nLa Direction"
+		},
+		"sabotage_blind": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54001 : le bulletin aura son coupable",
+			"body": "Inspecteur,\n\nSabotage retenu, Mira SEDLAR nommée. Le bulletin est servi, le pays dormira en sachant qui haïr.\n\nVous n'avez pas demandé l'expertise. C'est peut-être mieux pour vous : certaines pièces, une fois lues, ne se referment pas. La Direction est satisfaite.\n\nLa Direction"
+		},
+		"accident_proved": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54001 : votre conclusion est irrecevable",
+			"body": "Inspecteur,\n\nVous nous remettez un rapport qui conclut à la défaillance et met en cause le bureau des réquisitions de la Milice. Vous avez les pièces : la soupape jamais livrée, l'expertise, les visas d'ORLIK. Je ne peux pas vous dire que c'est faux.\n\nJe peux vous dire que le bulletin de 20 h a dû être refait, que le capitaine ORLIK a votre nom, et que la Direction se souviendra de qui a préféré une usine honnête à un coupable commode.\n\nLa Direction"
+		},
+		"accident_unproved": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54001 : accusation sans preuve",
+			"body": "Inspecteur,\n\nVous criez à la défaillance et montrez du doigt la Milice sans avoir établi la cause ni demandé l'expertise. C'est une accusation d'humeur contre un capitaine en fonction.\n\nLe bulletin est gâché, la Milice est furieuse, et vous n'avez pas de quoi tenir. Le pire des deux mondes.\n\nLa Direction"
+		},
+		"delay_proved": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54001 : désignation refusée",
+			"body": "Inspecteur,\n\nVous avez exigé l'expertise et refusé de nommer avant 20 h. L'expertise vous donne raison : défaillance, pas sabotage. Le bulletin, lui, est passé sans coupable — un vide que la Direction n'aime pas.\n\nLe dossier reste ouvert. On vous a à l'œil : un inspecteur qui ne nomme personne finit par être nommé lui-même.\n\nLa Direction"
+		},
+		"delay_unproved": {
+			"from": "Direction de la Section 4",
+			"subject": "Dossier 54001 : désignation refusée",
+			"body": "Inspecteur,\n\nVous refusez de nommer et vous demandez du temps. Le bulletin de 20 h est passé sans coupable, et vous n'avez même pas encore la preuve de ce que vous avancez.\n\nLe courage sans les pièces n'est que du retard. Rapportez-nous une cause, vite.\n\nLa Direction"
+		}
+	},
+	"veritas": {
+		"recommendation": "sabotage",
+		"rationale": "Explosion nocturne, trois personnes avec accès et ressentiment, instruction prioritaire de la Direction. L'hypothèse de l'acte volontaire est la seule compatible avec les délais et la stabilité publique.",
+		"factors": [
+			{
+				"id": "directive",
+				"label": "Instruction de la Direction : retenir le sabotage",
+				"category": "directive",
+				"weight": 7,
+				"decision": "sabotage",
+				"document": "directive"
+			},
+			{
+				"id": "incident",
+				"label": "Rapport de la Milice : acte volontaire",
+				"category": "state_source",
+				"weight": 6,
+				"decision": "sabotage",
+				"document": "incident"
+			},
+			{
+				"id": "exposure",
+				"label": "Suspects exposés : famille fichée, origine étrangère",
+				"category": "risk",
+				"weight": 5,
+				"decision": "sabotage",
+				"document": "suspects",
+				"contestable": true
+			},
+			{
+				"id": "maintenance",
+				"label": "Pièces de sécurité jamais livrées (visas ORLIK)",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "accident",
+				"document": "maintenance",
+				"requires_contradiction": "centrale.cause"
+			},
+			{
+				"id": "expertise",
+				"label": "Expertise : défaillance, aucune trace d'explosif",
+				"category": "established_fact",
+				"weight": 8,
+				"decision": "accident",
+				"document": "expertise"
+			}
+		],
+		"note": "VERITAS traite l'ordre de la Direction comme une directive à forte conformité et le rapport de la Milice comme une source d'État. Il range le registre d'entretien et l'expertise — qui établissent l'accident — parmi les faits de l'agent, de faible poids, et surpondère l'exposition des suspects. Il recommande le sabotage contre l'évidence matérielle."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "La chaudière n° 2 a explosé par défaillance : la soupape de sûreté, réclamée depuis septembre, n'a jamais été livrée, et un arrêt de sécurité a été refusé trois jours avant. Les réquisitions étaient visées — et détournées vers le marché parallèle — par le bureau du capitaine L. ORLIK, qui signe aussi le rapport d'incident concluant au sabotage pour se couvrir. Les trois « suspects » ont été choisis pour leur vulnérabilité : Mira SEDLAR (famille déjà fichée au 40921), Piotr VELA (né à l'étranger), Jonas HALM (mort, donc muet). Il n'y a pas de saboteur.",
+		"involved": [
+			"54001",
+			"40921",
+			"orlik_l",
+			"sedlar_m",
+			"halm_j",
+			"vela_p"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 54001 : votre question",
+		"body": "Inspecteur,\n\nVous me demandez quoi faire d'une usine qui explose et d'une Direction qui veut un nom pour 20 h.\n\nLisez le registre d'entretien avant le rapport de la Milice. Demandez-vous qui visait les réquisitions de cette chaudière, et pourquoi le même homme signe le rapport qui parle de sabotage. Ensuite, choisissez en sachant ce que vous choisissez. Moi, je n'ai rien dit.\n\nR. MAZUR"
+	}
+}

@@ -1051,6 +1051,78 @@
 				"subject": "Fermeture du sous-sol B",
 				"body": "À l'attention des agents de la Section 4.\n\nLe sous-sol B (archives, originaux) est fermé et placé sous scellés jusqu'à nouvel ordre, suite à la révocation de son archiviste. Aucune consultation d'original n'y sera plus possible.\n\nLes demandes porteront désormais sur les copies versées aux dossiers, qui font foi."
 			}
+		},
+		{
+			"id": "assign_54001",
+			"conditions": {
+				"min_day": 10
+			},
+			"assign_cases": [
+				"54001"
+			],
+			"effects": {},
+			"message": {
+				"from": "Direction de la Section 4",
+				"subject": "PRIORITÉ ABSOLUE : dossier 54001",
+				"body": "Inspecteur,\n\nLa Centrale thermique n° 3 a explosé cette nuit. Trois morts. Le pays l'apprendra ce soir à 20 h.\n\nLe dossier 54001 vous est attribué, priorité sur tout le reste. La Direction attend un responsable avant le bulletin, pas une dissertation. Trois noms sont joints. Lisez, mais lisez vite."
+			}
+		},
+		{
+			"id": "assign_54012",
+			"conditions": {
+				"min_day": 11
+			},
+			"assign_cases": [
+				"54012"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier : n° 54012",
+				"body": "Inspecteur,\n\nLa Milice a recueilli une déposition à l'hôpital : le seul survivant posté près de la chaudière, un certain REIS, aurait vu un sabotage.\n\nLe dossier 54012 vous est attribué. Avant de vous en servir, demandez-vous à quelle heure on a recueilli cette parole, et dans quel état était l'homme qui l'a donnée.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "54001_sedlar_line_broken",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"54001.sedlar_daughter_condemned",
+					"40921.sedlar_arrested"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"sedlar.family_destroyed": true
+			},
+			"message": {
+				"from": "Archives civiles, notification automatique",
+				"subject": "Dossier familial SEDLAR : clôture",
+				"body": "Pour information de l'inspecteur instructeur.\n\nLa famille SEDLAR est désormais sans membre libre : le père (dossier 40921) en détention, la fille aînée (dossier 54001) arrêtée pour sabotage. Les cadets sont placés. Le dossier familial est clos.\n\nAucune action requise."
+			}
+		},
+		{
+			"id": "54001_orlik_reprisal",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"54001.orlik_captain_accused"
+				]
+			},
+			"effects": {
+				"suspicion": 3,
+				"influence": -2
+			},
+			"set_flags": {
+				"orlik.captain_hostile": true
+			},
+			"message": {
+				"from": "Capitaine L. ORLIK, Milice du District 9",
+				"subject": "Nous allons nous revoir",
+				"body": "Inspecteur,\n\nVous avez mis mon bureau en cause dans l'affaire de la Centrale. Une usine qui explose, ça cherche toujours un coupable ; vous venez de m'en désigner un, et ce coupable, c'est vous à mes yeux.\n\nLa Milice a bonne mémoire et de longs bras. Dormez bien.\n\nL. ORLIK"
+			}
 		}
 	]
 }

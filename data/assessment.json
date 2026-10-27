@@ -139,6 +139,34 @@
 		{
 			"flag": "mazur.confronted",
 			"text": "MAZUR sait que vous savez : le dossier 40921 vous avait été remis déjà constitué."
+		},
+		{
+			"flag": "54001.scapegoat",
+			"text": "Vous avez désigné un saboteur à la Centrale n° 3 pour tenir le bulletin du soir."
+		},
+		{
+			"flag": "54001.accident_established",
+			"text": "Vous avez établi que l'explosion de la Centrale n° 3 était une défaillance, non un sabotage."
+		},
+		{
+			"flag": "54001.orlik_captain_accused",
+			"text": "Vous avez mis en cause les réquisitions du capitaine L. ORLIK dans le sinistre de la Centrale n° 3."
+		},
+		{
+			"flag": "orlik.captain_hostile",
+			"text": "Relations : le capitaine L. ORLIK (Milice) vous tient pour un adversaire personnel."
+		},
+		{
+			"flag": "sedlar.family_destroyed",
+			"text": "La famille SEDLAR n'a plus un membre libre : père détenu, fille arrêtée, cadets placés."
+		},
+		{
+			"flag": "54012.false_witness",
+			"text": "Vous avez retenu une déposition que le témoin n'était pas en état de donner."
+		},
+		{
+			"flag": "temoin.coached",
+			"text": "Vous avez établi que la Milice fait signer des dépositions à des témoins hors d'état de témoigner."
 		}
 	]
 }

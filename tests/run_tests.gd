@@ -71,6 +71,8 @@ func _run() -> void:
 		"test_case_53517",
 		"test_case_53760",
 		"test_case_53761_reveal",
+		"test_case_54001",
+		"test_case_54012",
 		"test_case_briefings",
 		"test_scene_gallery",
 		"test_document_field_icons",
@@ -1676,6 +1678,89 @@ func test_case_53761_reveal() -> void:
 	check("kremer_archive_sealed" in lost_ids and not "assign_53761_reveal" in lost_ids,
 			"révoquer KREMER scelle les archives et ferme la révélation")
 	GameState.new_game()
+
+
+## Acte 3 — L'EXPLOSION : la Centrale n° 3 saute. La Direction veut un saboteur
+## avant le bulletin du soir ; le registre d'entretien dit « défaillance ».
+func test_case_54001() -> void:
+	var case_data := CaseLibrary.get_case("54001")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 54001 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS suit l'ordre de la Direction et la Milice : il pousse le sabotage.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "sabotage", "VERITAS recommande de désigner un saboteur")
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# Le registre d'entretien et l'expertise établissent la défaillance.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("centrale.cause" in keys, "le rapport de sabotage et le registre d'entretien se contredisent sur la cause")
+	# Même preuve de la défaillance, VERITAS maintient le sabotage (biais de conformité).
+	check(Veritas.recommendation(case_data, {"contradictions_found": ["centrale.cause"]}).decision_id == "sabotage",
+			"preuve matérielle en main, VERITAS maintient le sabotage")
+	# L'expertise technique n'existe qu'une fois demandée.
+	var state := GameState.get_condition_state()
+	state.cases = {"54001": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "expertise" in visible, "l'expertise technique est invisible avant la demande")
+	# L'appel du capitaine ORLIK ne paraît que si la Milice est alliée.
+	var ally_state := {"day_index": 10, "flags": {"milice.ally": true}, "cases": {}}
+	var ally_docs: Array = CaseLibrary.filter_case(case_data, ally_state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check("orlik_pressure" in ally_docs, "l'appel d'ORLIK paraît quand on lui doit une faveur")
+	var neutral := {"day_index": 10, "flags": {}, "cases": {}}
+	check(not "orlik_pressure" in CaseLibrary.filter_case(case_data, neutral).documents.map(func(d: Dictionary) -> String: return d.id),
+			"sans faveur due, ORLIK n'appelle pas")
+	# Issues : désigner la fille SEDLAR (et couvrir ORLIK), ou établir la défaillance.
+	var proved := {"contradictions_found": ["centrale.cause"]}
+	var scapegoat := DecisionRules.resolve(case_data, proved, "sabotage")
+	check(scapegoat.response_id == "sabotage_knowing" and scapegoat.flags.get("54001.sedlar_daughter_condemned", false)
+			and scapegoat.flags.get("54001.orlik_protected", false),
+			"désigner Mira SEDLAR en connaissance de cause la condamne et couvre ORLIK")
+	var accident := DecisionRules.resolve(case_data, proved, "accident")
+	check(accident.response_id == "accident_proved" and accident.flags.get("54001.orlik_captain_accused", false)
+			and accident.flags.get("milice.hostile", false),
+			"établir la défaillance met en cause le capitaine ORLIK et fâche la Milice")
+	# Câblage acte 3 : le dossier arrive le premier jour de l'acte 3.
+	var day10 := {"day_index": 10, "flags": {}, "cases": {}, "fired_events": []}
+	check("assign_54001" in EventRules.due_events(day10).map(func(e: Dictionary) -> String: return e.id),
+			"le dossier 54001 ouvre l'acte 3")
+	# Levier n°2 : condamner la fille après avoir arrêté le père brise la famille SEDLAR.
+	var broken := {"day_index": 11, "flags": {"54001.sedlar_daughter_condemned": true, "40921.sedlar_arrested": true},
+			"cases": {}, "fired_events": []}
+	check("54001_sedlar_line_broken" in EventRules.due_events(broken).map(func(e: Dictionary) -> String: return e.id),
+			"condamner la fille après le père clôt le dossier familial SEDLAR")
+
+
+## Acte 3 — LE TÉMOIN : la déposition du seul survivant a été signée alors qu'il
+## était sous sédation. La fiche médicale la prive de toute valeur.
+func test_case_54012() -> void:
+	var case_data := CaseLibrary.get_case("54012")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 54012 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS tient la déposition signée pour un témoignage oculaire.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "uphold", "VERITAS recommande de retenir la déposition")
+	check(advice.decision_id == case_data.veritas.recommendation, "recommandation déclarée = indice le plus fort")
+	# La fiche médicale contredit l'heure « lucide » de la déposition.
+	var keys: Array = CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	check("temoin.lucidity" in keys, "l'heure de la déposition et l'état du patient se contredisent")
+	check("temoin.account" in keys, "le récit signé et la première parole lucide se contredisent")
+	# Le registre des visites et la rétractation ne paraissent qu'une fois demandés.
+	var state := GameState.get_condition_state()
+	state.cases = {"54012": {"requested_documents": {}}}
+	var visible: Array = CaseLibrary.filter_case(case_data, state).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "visits" in visible and not "recant" in visible, "le registre des visites et la rétractation sont sur demande")
+	check("medical" in visible, "la fiche médicale, elle, est au dossier d'emblée")
+	# Issues : retenir une parole arrachée, ou l'écarter (et établir le maquillage).
+	var proved := {"contradictions_found": ["temoin.lucidity"]}
+	var uphold := DecisionRules.resolve(case_data, proved, "uphold")
+	check(uphold.response_id == "uphold_knowing" and uphold.flags.get("54012.false_witness", false),
+			"retenir sciemment une déposition sous sédation fait un faux témoin")
+	var discredit := DecisionRules.resolve(case_data, proved, "discredit")
+	check(discredit.response_id == "discredit_proved" and discredit.flags.get("temoin.coached", false),
+			"écarter la déposition établit le maquillage de témoignage par la Milice")
+	# Câblage : le témoin arrive le deuxième jour de l'acte 3.
+	var day11 := {"day_index": 11, "flags": {}, "cases": {}, "fired_events": []}
+	check("assign_54012" in EventRules.due_events(day11).map(func(e: Dictionary) -> String: return e.id),
+			"le dossier 54012 est attribué à l'acte 3")
 
 
 ## Chaque dossier doit expliquer ce qu'on cherche (OBJET) et pourquoi il est là.
