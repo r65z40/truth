@@ -6,7 +6,8 @@ extends Control
 ## en coordonnées du contrôle.
 ## scene : "interrogation" (le sujet de l'autre côté de la table, d'après subject)
 ## ou un lieu : "sedlar_flat" (appartement des SEDLAR), "bakery" (boulangerie
-## n° 12), "benes_flat" (appartement 40 du quai des Tanneurs).
+## n° 12), "benes_flat" (appartement 40 du quai des Tanneurs), "clock_shop" et
+## "clock_back" (atelier d'ADLER et son arrière-boutique).
 ## Couleurs : type de thème "IntroArt" (même palette que l'introduction).
 
 const CANVAS := Vector2(640, 300)
@@ -119,6 +120,9 @@ func _draw() -> void:
 		"bakery":
 			draw_rect(Rect2(0, 0, size.x, horizon), _c("paper").darkened(0.55))
 			draw_rect(Rect2(0, horizon, size.x, size.y - horizon), _c("ink").lightened(0.12))
+		"clock_shop", "clock_back":
+			draw_rect(Rect2(0, 0, size.x, horizon), _c("paper_dark").darkened(0.55))
+			draw_rect(Rect2(0, horizon, size.x, size.y - horizon), _c("wood").darkened(0.25))
 	draw_set_transform(_offset(), 0.0, Vector2.ONE * get_canvas_scale())
 	match scene:
 		"interrogation":
@@ -129,6 +133,10 @@ func _draw() -> void:
 			_draw_bakery()
 		"benes_flat":
 			_draw_benes_flat()
+		"clock_shop":
+			_draw_clock_shop()
+		"clock_back":
+			_draw_clock_back()
 	draw_set_transform(Vector2.ZERO)
 
 
@@ -328,6 +336,80 @@ func _draw_benes_flat() -> void:
 	draw_circle(Vector2(578, 135), 3, _c("paper_dark"))
 	draw_rect(Rect2(486, 120, 30, 110), _c("cloth").darkened(0.3))
 	draw_circle(Vector2(501, 108), 12, get_theme_color("skin", "IdPhoto").darkened(0.2))
+
+
+## Atelier d'ADLER : le mur des pendules arrêtées, l'établi et sa loupe, le
+## carton du poste de radio, la porte de l'arrière-boutique.
+func _draw_clock_shop() -> void:
+	draw_rect(Rect2(Vector2.ZERO, CANVAS), _c("paper_dark").darkened(0.55))
+	draw_rect(Rect2(0, 230, CANVAS.x, 70), _c("wood").darkened(0.25))
+	for x in range(40, int(CANVAS.x), 40):
+		draw_line(Vector2(x, 230), Vector2(x - 24, 300), Color(_c("ink"), 0.3), 1.0)
+	# Le mur des pendules : toutes sur 05 h 20, sauf la petite claire, sur 06 h 05.
+	var clocks := [Vector2(70, 50), Vector2(130, 42), Vector2(195, 55), Vector2(255, 45),
+			Vector2(95, 105), Vector2(160, 100), Vector2(225, 108), Vector2(280, 98)]
+	for i in clocks.size():
+		var center: Vector2 = clocks[i]
+		var odd := i == 5
+		draw_circle(center, 20.0, _c("wood").lightened(0.35) if odd else _c("wood"))
+		draw_circle(center, 16.0, _c("paper"))
+		var hours := 6.0 if odd else 5.0
+		var minutes := 5.0 if odd else 20.0
+		_draw_hand(center, (hours + minutes / 60.0) / 12.0, 9.0)
+		_draw_hand(center, minutes / 60.0, 13.0)
+	# Étagère basse et carton du poste de radio.
+	draw_rect(Rect2(40, 210, 120, 6), _c("wood"))
+	draw_rect(Rect2(52, 168, 80, 42), _c("folder"))
+	draw_rect(Rect2(60, 176, 40, 10), _c("paper"))
+	# L'établi : plateau, loupe articulée, boîte de fiches, pièces éparses.
+	draw_rect(Rect2(320, 168, 240, 12), _c("wood").lightened(0.1))
+	draw_rect(Rect2(330, 180, 12, 50), _c("wood"))
+	draw_rect(Rect2(538, 180, 12, 50), _c("wood"))
+	draw_rect(Rect2(470, 146, 60, 22), _c("paper_dark"))
+	for i in 4:
+		draw_rect(Rect2(476 + i * 13, 140, 9, 10), _c("paper"))
+	draw_line(Vector2(380, 168), Vector2(400, 120), _c("ink"), 3.0)
+	draw_line(Vector2(400, 120), Vector2(430, 140), _c("ink"), 3.0)
+	draw_circle(Vector2(436, 146), 11.0, Color(_c("window"), 0.4))
+	for i in 6:
+		draw_circle(Vector2(350 + i * 17, 162 - (i % 2) * 3), 2.5, _c("folder"))
+	# Porte de l'arrière-boutique, entrouverte.
+	draw_rect(Rect2(580, 40, 50, 190), _c("wood").darkened(0.2))
+	draw_rect(Rect2(586, 46, 18, 178), Color(_c("ink"), 0.6))
+	draw_circle(Vector2(618, 140), 3.0, _c("paper_dark"))
+
+
+## Arrière-boutique : la pendule du père sous un drap, le lit de camp, l'armoire.
+func _draw_clock_back() -> void:
+	draw_rect(Rect2(Vector2.ZERO, CANVAS), _c("paper_dark").darkened(0.6))
+	draw_rect(Rect2(0, 230, CANVAS.x, 70), _c("wood").darkened(0.3))
+	# Lucarne grise.
+	draw_rect(Rect2(260, 30, 80, 40), _c("sky_low"))
+	draw_rect(Rect2(260, 30, 80, 40), _c("wood"), false, 3.0)
+	# Étagère et pendule de voyage sous un drap.
+	draw_rect(Rect2(50, 150, 140, 6), _c("wood"))
+	draw_colored_polygon(PackedVector2Array([Vector2(80, 150), Vector2(90, 80), Vector2(150, 76),
+			Vector2(165, 150)]), _c("paper").darkened(0.15))
+	draw_line(Vector2(95, 92), Vector2(150, 140), Color(_c("ink"), 0.25), 1.0)
+	# Lit de camp, couverture pliée, oreiller.
+	draw_rect(Rect2(220, 200, 200, 22), _c("cloth").darkened(0.2))
+	draw_rect(Rect2(226, 222, 6, 18), _c("ink"))
+	draw_rect(Rect2(408, 222, 6, 18), _c("ink"))
+	draw_rect(Rect2(230, 186, 50, 16), _c("paper"))
+	# Armoire, la porte entrouverte sur un fond sombre.
+	draw_rect(Rect2(460, 40, 120, 190), _c("wood").lightened(0.05))
+	draw_rect(Rect2(470, 50, 46, 170), Color(_c("ink"), 0.7))
+	draw_line(Vector2(520, 44), Vector2(520, 226), _c("ink"), 2.0)
+	draw_circle(Vector2(530, 135), 3.0, _c("paper_dark"))
+	# Porte vers la boutique.
+	draw_rect(Rect2(10, 40, 40, 190), _c("wood").darkened(0.2))
+	draw_circle(Vector2(42, 140), 3.0, _c("paper_dark"))
+
+
+## Aiguille de pendule : turn est la fraction de tour (0 = midi), length en pixels.
+func _draw_hand(center: Vector2, turn: float, length: float) -> void:
+	var angle := TAU * turn - PI / 2.0
+	draw_line(center, center + Vector2(cos(angle), sin(angle)) * length, _c("ink"), 2.0)
 
 
 func _ellipse(center: Vector2, radius: Vector2, steps := 32) -> PackedVector2Array:

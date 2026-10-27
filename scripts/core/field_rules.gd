@@ -161,6 +161,68 @@ static func room_of_option(scene: Dictionary, option_id: String) -> String:
 	return ""
 
 
+# --- Obscurité (la lampe) ------------------------------------------------------
+#
+# Une scène peut déclarer "darkness": {"radius"?, "start"?, "hint"?} : la pièce est
+# plongée dans le noir et l'on promène une lampe (souris ou doigt). Un endroit
+# n'apparaît, sur l'image comme dans la liste, qu'une fois éclairé : la lampe
+# remplace la liste toute faite par une vraie recherche. "radius" est le rayon du
+# halo en fraction de la HAUTEUR de l'image (défaut 0,14), "start" la position de
+# départ de la lampe en fractions [x, y]. Une scène sans "darkness" ne change pas.
+
+const DEFAULT_LAMP_RADIUS := 0.14
+
+
+static func has_darkness(scene: Dictionary) -> bool:
+	return not scene.get("darkness", {}).is_empty()
+
+
+static func lamp_radius(scene: Dictionary) -> float:
+	return float(scene.get("darkness", {}).get("radius", DEFAULT_LAMP_RADIUS))
+
+
+static func lamp_start(scene: Dictionary) -> Vector2:
+	var start: Array = scene.get("darkness", {}).get("start", [0.5, 0.5])
+	return Vector2(start[0], start[1]) if start.size() == 2 else Vector2(0.5, 0.5)
+
+
+## La zone [x, y, l, h] (fractions de l'image) est-elle touchée par le halo de la
+## lampe posée en lamp (fractions), de rayon radius (fraction de la hauteur) ?
+## aspect = largeur / hauteur de l'image, pour que le halo reste un cercle.
+static func is_lit(area: Array, lamp: Vector2, radius: float, aspect: float) -> bool:
+	if area.size() != 4:
+		return false
+	var nearest := Vector2(clampf(lamp.x, area[0], area[0] + area[2]),
+			clampf(lamp.y, area[1], area[1] + area[3]))
+	return ((nearest - lamp) * Vector2(aspect, 1.0)).length() <= radius
+
+
+## Identifiants des options que la lampe éclaire à cette position.
+static func lit_options(options: Array, lamp: Vector2, radius: float, aspect: float) -> Array:
+	return options.filter(func(option: Dictionary) -> bool:
+		return is_lit(option.get("spot", []), lamp, radius, aspect)).map(
+			func(option: Dictionary) -> String: return option.id)
+
+
+# --- Ambiance 2.5D ------------------------------------------------------------
+#
+# Toute scène s'anime légèrement (réglage « Scènes de terrain animées ») : l'image
+# dérive lentement, un grain de pellicule passe dessus. Une scène peut régler
+# "ambience": {"drift"?, "dust"?, "flicker"?, "grain"?}, chaque valeur de 0 à 1 :
+# dérive de l'image, poussière en suspension, lumière qui vacille, grain. Purement
+# visuel : aucune règle de jeu n'en dépend.
+
+const DEFAULT_AMBIENCE := {"drift": 1.0, "dust": 0.0, "flicker": 0.0, "grain": 0.5}
+
+
+static func ambience(scene: Dictionary) -> Dictionary:
+	var out := DEFAULT_AMBIENCE.duplicate()
+	var custom: Dictionary = scene.get("ambience", {})
+	for key in out:
+		out[key] = clampf(float(custom.get(key, out[key])), 0.0, 1.0)
+	return out
+
+
 ## Réaction du sujet à un élément présenté : la présentation qui cite cet
 ## élément (une seule fois), sinon la réponse par défaut, sans effet.
 static func presentation_for(scene: Dictionary, scene_state: Dictionary, fact_id: String) -> Dictionary:

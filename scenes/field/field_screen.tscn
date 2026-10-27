@@ -55,6 +55,7 @@ size_flags_vertical = 1
 theme_type_variation = &"MutedLabel"
 
 [node name="ArtFrame" type="PanelContainer" parent="Margin/Root/Left"]
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"TerminalPanel"

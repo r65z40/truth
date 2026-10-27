@@ -7,6 +7,7 @@ extends MinistryWindow
 @onready var _crt_toggle: Button = %CrtToggle
 @onready var _guidance_toggle: Button = %GuidanceToggle
 @onready var _field_3d_toggle: Button = %Field3dToggle
+@onready var _field_motion_toggle: Button = %FieldMotionToggle
 @onready var _scale_option: OptionButton = %ScaleOption
 @onready var _resolution_row: Control = %ResolutionRow
 @onready var _resolution_option: OptionButton = %ResolutionOption
@@ -31,6 +32,9 @@ func _ready() -> void:
 		_refresh_toggle_labels())
 	_field_3d_toggle.toggled.connect(func(on: bool) -> void:
 		Settings.set_field_3d(on)
+		_refresh_toggle_labels())
+	_field_motion_toggle.toggled.connect(func(on: bool) -> void:
+		Settings.set_field_motion(on)
 		_refresh_toggle_labels())
 	for option: OptionButton in [_music_option, _ambience_option, _sfx_option]:
 		for level in Settings.MUSIC_LEVELS:
@@ -58,6 +62,7 @@ func _on_opened() -> void:
 	_crt_toggle.set_pressed_no_signal(Settings.crt_effect)
 	_guidance_toggle.set_pressed_no_signal(Settings.guidance)
 	_field_3d_toggle.set_pressed_no_signal(Settings.field_3d)
+	_field_motion_toggle.set_pressed_no_signal(Settings.field_motion)
 	_scale_option.select(maxi(Settings.UI_SCALES.find(Settings.ui_scale), 0))
 	_music_option.select(_closest_level(Settings.music_volume))
 	_ambience_option.select(_closest_level(Settings.ambience_volume))
@@ -67,7 +72,7 @@ func _on_opened() -> void:
 
 
 func _refresh_toggle_labels() -> void:
-	for toggle: Button in [_fullscreen_toggle, _crt_toggle, _guidance_toggle, _field_3d_toggle]:
+	for toggle: Button in [_fullscreen_toggle, _crt_toggle, _guidance_toggle, _field_3d_toggle, _field_motion_toggle]:
 		toggle.text = tr("ACTIVÉ") if toggle.button_pressed else tr("DÉSACTIVÉ")
 
 
