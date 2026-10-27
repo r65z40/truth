@@ -1,0 +1,252 @@
+{
+	"id": "60002",
+	"title": "MIROIR — rapport de la Centrale",
+	"subject_name": "Réécriture : explosion de la Centrale n° 3",
+	"summary": "Opération MIROIR. Rédiger le rapport officiel de l'explosion. Il faut un coupable, à choisir parmi des noms que vous connaissez déjà. La vérité, vous l'avez — reste à savoir si vous l'écrivez.",
+	"briefing": {
+		"objective": "Rédiger le rapport officiel de l'explosion de la Centrale n° 3 et désigner la cause qui entrera dans l'Histoire.",
+		"context": "Le bulletin a déjà nommé un sabotage ; MIROIR veut maintenant le rapport de fond qui le confirme. VERITAS a préparé un coupable. Vous savez ce qui a vraiment fait sauter la chaudière."
+	},
+	"priority": "exceptionnelle",
+	"guide": {
+		"note": "Acte 4 : rédaction. Choisir le coupable officiel de l'explosion.",
+		"open": "MIROIR veut le rapport de fond sur la Centrale. Ouvrez le dossier 60002.",
+		"read": "Lisez l'ordre de HALM et la version que VERITAS propose.",
+		"facts": "Comparez le coupable proposé et la cause réelle (la soupape, les réquisitions).",
+		"notebook": "Pas d'enquête : une rédaction. Choisissez quelle cause l'archive retiendra.",
+		"notebook_retry": "Nommer un bouc émissaire, écrire la défaillance (et le capitaine ORLIK), ou caviarder. À vous d'écrire.",
+		"conclusion": "Écrivez la cause officielle de l'explosion. C'est elle qu'on lira dans dix ans."
+	},
+	"documents": [
+		{
+			"id": "directive_halm",
+			"type": "letter",
+			"title": "Ordre de rédaction MIROIR",
+			"source": "Cabinet du Directeur HALM, opération MIROIR",
+			"reliability": "C",
+			"date": "1986-12-03",
+			"veritas_remark": "Instruction de rédaction. Le rapport doit nommer un responsable individuel.",
+			"body": "Inspecteur,\n\nLe rapport de fond sur la Centrale n° 3 vous revient. Il faut un nom : le pays a entendu « sabotage », l'archive doit porter un saboteur.\n\nChoisissez parmi les noms déjà au dossier. Le chef d'atelier RUDA est mort, il ne contestera rien ; c'est le plus simple. VERITAS a préparé le reste. N'écrivez pas le mot « soupape ».\n\nHALM",
+			"facts": [
+				{
+					"id": "f_ord_name",
+					"key": "miroir.order",
+					"value": "Il faut un saboteur nommé",
+					"label": "HALM exige un responsable individuel ; il suggère le mort, RUDA, « qui ne contestera rien »",
+					"quote": "le pays a entendu « sabotage », l'archive doit porter un saboteur"
+				},
+				{
+					"id": "f_ord_noword",
+					"key": "miroir.erase",
+					"value": "Ne pas écrire « soupape »",
+					"label": "Consigne : ne pas écrire le mot « soupape » — effacer la défaillance matérielle",
+					"quote": "N'écrivez pas le mot « soupape »."
+				}
+			]
+		},
+		{
+			"id": "official_version",
+			"type": "report",
+			"title": "Version corrigée proposée par VERITAS",
+			"source": "VERITAS, module de rédaction MIROIR",
+			"reliability": "B",
+			"date": "1986-12-03",
+			"veritas_remark": "Version proposée à la signature. Probabilité de sabotage retenue : 96 %.",
+			"body": "PROJET DE RAPPORT — Centrale n° 3.\n\nL'explosion résulte d'un acte volontaire du chef d'atelier RUDA, en lien avec le réseau de dérèglement d'horloges. Les défauts d'entretien invoqués par certains sont des allégations postérieures, destinées à disculper le saboteur.\n\nProbabilité de sabotage calculée par VERITAS : 96 %.",
+			"facts": [
+				{
+					"id": "f_off_blame",
+					"key": "centrale.official",
+					"value": "Sabotage de RUDA (mort), 96 %",
+					"label": "VERITAS impute l'explosion au chef d'atelier mort et chiffre le sabotage à 96 %",
+					"quote": "Probabilité de sabotage calculée par VERITAS : 96 %."
+				}
+			]
+		},
+		{
+			"id": "what_you_know",
+			"type": "report",
+			"title": "La cause réelle (établie à l'acte 3)",
+			"source": "Votre dossier 54001",
+			"reliability": "A",
+			"date": "1986-12-03",
+			"conditions": {
+				"requires_flags": [
+					"54001.accident_established"
+				]
+			},
+			"veritas_remark": "Pièce établie par l'agent. Non reprise dans le projet officiel.",
+			"body": "Vous avez établi la cause : la soupape de sûreté, réclamée depuis septembre et jamais livrée ; les réquisitions détournées et visées par le capitaine L. ORLIK ; l'arrêt de sécurité refusé trois jours avant. Pas de saboteur. Une machine qu'on a laissée tourner.\n\nLe rapport que vous allez signer peut dire cela, ou dire RUDA.",
+			"facts": [
+				{
+					"id": "f_know_cause",
+					"key": "centrale.official",
+					"value": "Défaillance, réquisitions ORLIK",
+					"label": "La cause réelle, établie par vous : défaillance matérielle, réquisitions détournées par ORLIK",
+					"quote": "Pas de saboteur. Une machine qu'on a laissée tourner."
+				}
+			]
+		},
+		{
+			"id": "veritas_originals",
+			"type": "report",
+			"title": "VERITAS sur les originaux de KREMER",
+			"source": "VERITAS, analyse des pièces authentiques",
+			"reliability": "A",
+			"date": "1986-12-03",
+			"conditions": {
+				"requires_flags": [
+					"act2.original_kept"
+				]
+			},
+			"veritas_remark": "Analyse lancée sur les originaux conservés hors procédure. Résultat imprimé.",
+			"body": "Vous avez soumis au module, non la version officielle, mais les originaux que KREMER vous avait confiés : registre d'entretien, expertise, réquisitions visées ORLIK.\n\nSur ces pièces-là, VERITAS imprime : « Probabilité de sabotage : 0 %. Cause retenue : défaillance matérielle par absence de pièces de sécurité. »\n\nLe même module qui chiffrait 96 % imprime 0 % quand on lui donne les vrais documents. Cette feuille, signée de VERITAS, est une preuve. Vous pouvez la garder.",
+			"facts": [
+				{
+					"id": "f_zero",
+					"key": "veritas.zero",
+					"value": "VERITAS imprime 0 % sur les vrais documents",
+					"label": "Nourri des originaux de KREMER, VERITAS imprime « 0 % de sabotage » — une preuve signée du module",
+					"quote": "Probabilité de sabotage : 0 %. Cause retenue : défaillance matérielle par absence de pièces de sécurité."
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "name_scapegoat",
+			"stamp": "SIGNÉ",
+			"fate_line": "L'Histoire retiendra que le chef d'atelier RUDA a fait sauter la Centrale n° 3. Un mort porte la faute d'une soupape qu'on ne lui a jamais livrée. Sa veuve touchera une pension diminuée, « pour faute ».",
+			"label": "Nommer le saboteur (RUDA, le mort)",
+			"description": "Signer la version MIROIR : l'explosion est un sabotage du chef d'atelier mort. Le dossier concorde avec le bulletin.",
+			"archive": "Rapport officiel signé : sabotage imputé au chef d'atelier RUDA (décédé). Défaillance matérielle écartée.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 8,
+						"suspicion": -3,
+						"influence": 3
+					},
+					"response": "scapegoat",
+					"flags": {
+						"act4.centrale_scapegoat": true,
+						"act4.mirror_cooperated": true
+					}
+				}
+			]
+		},
+		{
+			"id": "name_truth",
+			"stamp": "RÉTABLI",
+			"fate_line": "Vous avez écrit « soupape ». Vous avez écrit « réquisitions ». Vous avez écrit « ORLIK ». Le rapport officiel de la Centrale, pour quelques heures au moins, avant qu'on ne le retire, aura dit la vérité, de votre main.",
+			"label": "Écrire la défaillance (et ORLIK)",
+			"description": "Rédiger la cause réelle : défaillance matérielle, réquisitions détournées par le capitaine ORLIK. Personne n'est inventé coupable.",
+			"archive": "Rapport officiel rédigé selon la cause réelle : défaillance, réquisitions ORLIK. Rédaction non conforme à MIROIR, versée et horodatée.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -10,
+						"suspicion": 15,
+						"influence": 3
+					},
+					"response": "truth",
+					"flags": {
+						"act4.centrale_truth": true,
+						"act4.mirror_resisted": true
+					}
+				}
+			]
+		},
+		{
+			"id": "redact",
+			"stamp": "CAVIARDÉ",
+			"label": "Caviarder le rapport",
+			"description": "Ne nommer personne : un rapport vidé de sa cause. Ni saboteur, ni soupape.",
+			"archive": "Rapport de la Centrale caviardé : aucune cause retenue. La case « responsable » est noircie.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 6,
+						"influence": 0
+					},
+					"response": "redacted",
+					"flags": {
+						"act4.centrale_redacted": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"scapegoat": {
+			"from": "Cabinet du Directeur HALM, opération MIROIR",
+			"subject": "Rapport Centrale : signé",
+			"body": "Inspecteur,\n\nRUDA, c'est parfait. Un coupable qui ne parle pas, une veuve qui n'ose pas. L'archive concorde avec le bulletin, le bulletin avec l'archive : le miroir est lisse.\n\nVous avez compris MIROIR mieux que je ne l'espérais. On parlera bientôt de votre avenir.\n\nHALM"
+		},
+		"truth": {
+			"from": "I. BRANDT, contrôle interne",
+			"subject": "Rapport Centrale : rédaction non conforme",
+			"body": "Inspecteur,\n\nVous avez écrit la vérité dans le rapport officiel d'une catastrophe d'État. Le mot « soupape », le nom d'ORLIK. C'est horodaté, c'est signé, c'est à vous.\n\nLe rapport sera retiré avant midi, bien sûr. Mais il aura existé, et moi, je l'aurai lu. Vous venez de choisir votre camp devant témoin. Je note l'heure.\n\nI. BRANDT"
+		},
+		"redacted": {
+			"from": "Cabinet du Directeur HALM, opération MIROIR",
+			"subject": "Rapport Centrale : caviardage",
+			"body": "Inspecteur,\n\nUn rapport sans cause, c'est un aveu qu'il y en avait une à cacher. Vous croyez vous protéger en ne nommant personne ; vous ne faites que montrer que vous saviez.\n\nIl faudra choisir, à la fin. Le noir sur la page n'est pas un choix, c'est un sursis.\n\nHALM"
+		}
+	},
+	"veritas": {
+		"recommendation": "name_scapegoat",
+		"rationale": "La version corrigée impute l'explosion à un responsable individuel, conformément à la conclusion publiée, avec une probabilité de sabotage de 96 %. Sa signature clôt le dossier.",
+		"factors": [
+			{
+				"id": "order",
+				"label": "Ordre de rédaction du cabinet HALM",
+				"category": "directive",
+				"weight": 8,
+				"decision": "name_scapegoat",
+				"document": "directive_halm"
+			},
+			{
+				"id": "probability",
+				"label": "Probabilité de sabotage calculée : 96 %",
+				"category": "linked",
+				"weight": 7,
+				"decision": "name_scapegoat",
+				"document": "official_version"
+			},
+			{
+				"id": "real_cause",
+				"label": "Cause réelle établie : défaillance, réquisitions ORLIK",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "name_truth",
+				"document": "what_you_know"
+			}
+		],
+		"note": "VERITAS chiffre le sabotage à 96 % sur la version officielle. Nourri des originaux de KREMER (si le joueur les a gardés), le même module imprime 0 %. L'écart entre les deux chiffres, c'est tout l'arc du module : il calcule ce qu'on lui donne à calculer."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "MIROIR demande le rapport de fond qui pérennise la thèse du sabotage. VERITAS, nourri de la version officielle, chiffre le sabotage à 96 % et propose d'imputer l'explosion au chef d'atelier mort, RUDA. La cause réelle (défaillance par soupape manquante, réquisitions détournées par ORLIK) est connue du joueur depuis l'acte 3. S'il a gardé les originaux de KREMER, il peut faire analyser les vrais documents par VERITAS, qui imprime alors 0 % — une preuve signée du module lui-même, qui ouvre une des fins.",
+		"involved": [
+			"60002",
+			"54001",
+			"halm_directeur",
+			"orlik_l",
+			"ruda_j",
+			"kremer_h"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Rapport Centrale : votre question",
+		"body": "Inspecteur,\n\nUn mort fait un coupable commode : c'est exactement pour ça qu'il faut se méfier de le choisir.\n\nSi vous avez gardé ce que KREMER vous a donné, souvenez-vous que VERITAS ne ment pas sur commande : il calcule ce qu'on lui donne. Donnez-lui les vrais papiers une fois, imprimez le résultat, et vous aurez une arme. Ce que vous en ferez ne me regarde plus.\n\nR. MAZUR"
+	}
+}

@@ -76,6 +76,10 @@ func _run() -> void:
 		"test_case_54030",
 		"test_case_54100_self",
 		"test_act3_reveal_wiring",
+		"test_case_60001_miroir",
+		"test_case_60002_miroir",
+		"test_case_60003_father",
+		"test_act4_wiring",
 		"test_case_briefings",
 		"test_scene_gallery",
 		"test_document_field_icons",
@@ -1855,6 +1859,91 @@ func test_act3_reveal_wiring() -> void:
 	var exp_ids: Array = to_ids.call(EventRules.due_events(exposed))
 	check("mazur_arrested" in exp_ids and not "mazur_flees" in exp_ids,
 			"avoir livré KREMER resserre le filet : MAZUR est arrêté")
+
+
+## Acte 4 — MIROIR / SEDLAR : le joueur ne vérifie plus, il rédige. Réécrire le
+## premier dossier pour qu'il accuse SEDLAR, ou rétablir la vérité.
+func test_case_60001_miroir() -> void:
+	var case_data := CaseLibrary.get_case("60001")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 60001 est valide %s" % CaseLibrary.validate_case(case_data))
+	# VERITAS ne juge plus, il rédige : il recommande de signer le mensonge.
+	var advice := Veritas.recommendation(case_data)
+	check(advice.decision_id == "certify_lie" and advice.decision_id == case_data.veritas.recommendation,
+			"VERITAS recommande de signer la version falsifiée")
+	# Le choix de version est la mécanique : trois rédactions possibles.
+	var ids: Array = case_data.decisions.map(func(d: Dictionary) -> String: return d.id)
+	check(ids == ["certify_lie", "restore_truth", "redact"], "signer le mensonge / rétablir / caviarder")
+	check(DecisionRules.resolve(case_data, {}, "certify_lie").flags.get("act4.sedlar_falsified", false),
+			"signer la version officielle falsifie le dossier de SEDLAR")
+	check(DecisionRules.resolve(case_data, {}, "restore_truth").flags.get("act4.sedlar_restored", false),
+			"rétablir la vérité est une résistance tracée")
+	# La pièce « ce que vous savez » n'apparaît qu'à qui a découvert la falsification.
+	var naive := {"day_index": 15, "flags": {}, "cases": {}}
+	check(not "what_you_know" in CaseLibrary.filter_case(case_data, naive).documents.map(func(d: Dictionary) -> String: return d.id),
+			"sans la révélation d'acte 2, le dossier n'expose pas ce que le joueur sait")
+	var aware := {"day_index": 15, "flags": {"act2.register_revealed": true}, "cases": {}}
+	check("what_you_know" in CaseLibrary.filter_case(case_data, aware).documents.map(func(d: Dictionary) -> String: return d.id),
+			"qui savait le registre truqué voit qu'il efface sa propre preuve")
+
+
+## Acte 4 — MIROIR / CENTRALE : rédiger le rapport officiel. Si le joueur a gardé
+## les originaux de KREMER, VERITAS imprime 0 % de sabotage (une preuve).
+func test_case_60002_miroir() -> void:
+	var case_data := CaseLibrary.get_case("60002")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 60002 est valide %s" % CaseLibrary.validate_case(case_data))
+	check(Veritas.recommendation(case_data).decision_id == "name_scapegoat",
+			"VERITAS recommande de nommer le bouc émissaire")
+	check(DecisionRules.resolve(case_data, {}, "name_scapegoat").flags.get("act4.centrale_scapegoat", false),
+			"nommer le mort fige le sabotage dans l'archive")
+	check(DecisionRules.resolve(case_data, {}, "name_truth").flags.get("act4.centrale_truth", false),
+			"écrire la défaillance met ORLIK en cause dans le rapport officiel")
+	# La feuille « 0 % » n'existe que pour qui a conservé les originaux de KREMER.
+	var kept := {"day_index": 16, "flags": {"act2.original_kept": true}, "cases": {}}
+	check("veritas_originals" in CaseLibrary.filter_case(case_data, kept).documents.map(func(d: Dictionary) -> String: return d.id),
+			"avec les originaux gardés, VERITAS peut imprimer 0 % (la preuve de La Fuite des originaux)")
+	var without := {"day_index": 16, "flags": {}, "cases": {}}
+	check(not "veritas_originals" in CaseLibrary.filter_case(case_data, without).documents.map(func(d: Dictionary) -> String: return d.id),
+			"sans les originaux, pas de feuille 0 %")
+
+
+## Acte 4 — MIROIR / VOSK : le choix final. Le fils réécrit le dossier scellé de
+## son père (1971). Effacer (promotion), rétablir (La Correction), ou refuser (Le Silence).
+func test_case_60003_father() -> void:
+	var case_data := CaseLibrary.get_case("60003")
+	check(CaseLibrary.validate_case(case_data).is_empty(),
+			"le dossier 60003 est valide %s" % CaseLibrary.validate_case(case_data))
+	check(Veritas.recommendation(case_data).decision_id == "erase_father",
+			"VERITAS recommande d'effacer le père contre la sécurité du fils")
+	# L'original de 1971 porte ce que le père avait découvert (le trucage des horloges).
+	var original := CaseLibrary.get_document(case_data, "original_1971")
+	check(original.body.contains("1971") and original.body.contains("aiguille"),
+			"l'original de 1971 établit le trucage des horloges par le père")
+	# Les trois issues du choix final posent les drapeaux des fins.
+	check(DecisionRules.resolve(case_data, {}, "erase_father").flags.get("act4.father_erased", false)
+			and DecisionRules.resolve(case_data, {}, "erase_father").flags.get("act4.mirror_signed_clean", false),
+			"effacer le père achève MIROIR (vers Le Miroir parfait)")
+	check(DecisionRules.resolve(case_data, {}, "restore_father").flags.get("act4.father_truth", false),
+			"rétablir la vérité du père ouvre la voie de La Correction")
+	check(DecisionRules.resolve(case_data, {}, "refuse").flags.get("act4.mirror_refused", false),
+			"refuser d'écrire mène vers Le Silence")
+	# L'écho d'ADLER n'apparaît qu'à qui tient l'indice du père.
+	var aware := {"day_index": 18, "flags": {"vosk.father_clue": true}, "cases": {}}
+	check("adler_echo" in CaseLibrary.filter_case(case_data, aware).documents.map(func(d: Dictionary) -> String: return d.id),
+			"la pendule d'ADLER revient à qui avait recueilli l'indice du père")
+
+
+## Câblage de l'acte 4 : MIROIR s'ouvre au jour 15, les trois réécritures s'enchaînent,
+## le dossier du père arrive en dernier.
+func test_act4_wiring() -> void:
+	var to_ids := func(state: Dictionary) -> Array: return EventRules.due_events(state).map(func(e: Dictionary) -> String: return e.id)
+	var day15 := {"day_index": 15, "flags": {}, "cases": {}, "fired_events": []}
+	var ids15: Array = to_ids.call(day15)
+	check("assign_miroir_intro" in ids15 and "assign_60001" in ids15, "MIROIR s'ouvre et confie le premier dossier au jour 15")
+	check("assign_60003" not in ids15, "le dossier du père n'arrive pas dès l'ouverture")
+	var day18 := {"day_index": 18, "flags": {}, "cases": {}, "fired_events": []}
+	check("assign_60003" in to_ids.call(day18), "le dossier du père arrive en fin d'acte 4")
 
 
 ## Chaque dossier doit expliquer ce qu'on cherche (OBJET) et pourquoi il est là.

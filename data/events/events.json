@@ -1223,6 +1223,71 @@
 				"subject": "Changement de direction adjointe",
 				"body": "À l'attention des agents de la Section 4.\n\nR. MAZUR est relevé de ses fonctions, avec effet immédiat, et placé à la disposition du contrôle interne. Les dossiers en cours seront réattribués.\n\nAucun commentaire ne sera reçu à ce sujet. Le travail continue."
 			}
+		},
+		{
+			"id": "assign_miroir_intro",
+			"conditions": {
+				"min_day": 15,
+				"forbidden_flags": [
+					"act4.intro_seen"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"act4.intro_seen": true
+			},
+			"message": {
+				"from": "Cabinet du Directeur HALM",
+				"subject": "Opération MIROIR",
+				"body": "Inspecteur,\n\nL'audit de l'étranger arrive le 8 décembre. D'ici là, nos archives doivent toutes raconter la même histoire — celle du bulletin, pas celle des dossiers.\n\nVous ne vérifiez plus. Vous rédigez. On vous confiera, une à une, les pièces à mettre en concordance. La première arrive aujourd'hui.\n\nFaites ce travail proprement, et la Section 4 n'aura bientôt plus de secret pour vous. HALM"
+			}
+		},
+		{
+			"id": "assign_60001",
+			"conditions": {
+				"min_day": 15
+			},
+			"assign_cases": [
+				"60001"
+			],
+			"effects": {},
+			"message": {
+				"from": "Cabinet du Directeur HALM, opération MIROIR",
+				"subject": "Réécriture : dossier 40921",
+				"body": "Première pièce à mettre en concordance : le dossier 40921, votre premier. VERITAS vous a préparé la version corrigée. Signez-la.\n\nLe dossier 60001 est ouvert à votre carnet."
+			}
+		},
+		{
+			"id": "assign_60002",
+			"conditions": {
+				"min_day": 16
+			},
+			"assign_cases": [
+				"60002"
+			],
+			"effects": {},
+			"message": {
+				"from": "Cabinet du Directeur HALM, opération MIROIR",
+				"subject": "Réécriture : rapport de la Centrale",
+				"body": "Le rapport de fond sur la Centrale n° 3 vous revient. Il faut un coupable nommé, pas une « défaillance ».\n\nLe dossier 60002 est ouvert à votre carnet."
+			}
+		},
+		{
+			"id": "assign_60003",
+			"conditions": {
+				"min_day": 18
+			},
+			"assign_cases": [
+				"60003"
+			],
+			"effects": {
+				"suspicion": 1
+			},
+			"message": {
+				"from": "Cabinet du Directeur HALM, opération MIROIR",
+				"subject": "La dernière pièce",
+				"body": "Il reste un dossier. Vous savez lequel : celui de 1971, scellé, au nom de votre père.\n\nLe dossier 60003 est ouvert à votre carnet. Fermez-le, et le vôtre s'ouvrira — vide. C'est le marché."
+			}
 		}
 	]
 }

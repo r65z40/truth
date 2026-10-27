@@ -199,6 +199,42 @@
 		{
 			"flag": "mazur.arrested_fate",
 			"text": "R. MAZUR a été relevé et remis au contrôle interne. Votre supérieur ne reviendra pas."
+		},
+		{
+			"flag": "act4.mirror_cooperated",
+			"text": "Vous avez réécrit des archives pour l'opération MIROIR, comme on vous le demandait."
+		},
+		{
+			"flag": "act4.mirror_resisted",
+			"text": "Vous avez rétabli la vérité dans des dossiers MIROIR — rédactions tracées et horodatées à votre nom."
+		},
+		{
+			"flag": "act4.mirror_signed_clean",
+			"text": "Vous avez signé MIROIR sans réserve, jusqu'au dossier de votre père. Promotion en vue."
+		},
+		{
+			"flag": "act4.sedlar_restored",
+			"text": "Dans MIROIR, vous avez rétabli la vérité du dossier SEDLAR au lieu de l'effacer."
+		},
+		{
+			"flag": "act4.centrale_truth",
+			"text": "Dans MIROIR, vous avez écrit la vraie cause de l'explosion : défaillance, réquisitions ORLIK."
+		},
+		{
+			"flag": "veritas.zero",
+			"text": "Vous détenez une feuille signée VERITAS : « 0 % de sabotage » sur les vrais documents de la Centrale."
+		},
+		{
+			"flag": "act4.father_erased",
+			"text": "Vous avez écrit que votre père avait émigré de son plein gré : son dossier est vide, comme le sera le vôtre."
+		},
+		{
+			"flag": "act4.father_truth",
+			"text": "Vous avez rétabli la vérité de votre père : les horloges truquées, l'enquête étouffée de 1971."
+		},
+		{
+			"flag": "act4.mirror_refused",
+			"text": "Vous avez refusé de réécrire le dossier de votre père. Ni promu, ni jugé : oublié."
 		}
 	]
 }

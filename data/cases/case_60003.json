@@ -1,0 +1,257 @@
+{
+	"id": "60003",
+	"title": "MIROIR — dossier du père",
+	"subject_name": "Réécriture : VOSK, A. (père)",
+	"summary": "Opération MIROIR, dernière pièce. Le dossier scellé de votre père, disparu en 1971, vous revient — à réécrire. On vous demande de fermer vous-même l'histoire qu'il avait ouverte.",
+	"briefing": {
+		"objective": "Rédiger la version définitive du dossier scellé de 1971 : celui de votre père. C'est le dernier document de MIROIR, et le vôtre.",
+		"context": "Pour devenir inattaquable, MIROIR doit refermer le dossier par lequel tout a commencé : l'inspection de 1971 où votre père a découvert qui réglait les horloges, et a disparu. HALM vous confie sa réécriture. On ne recrute pas le fils par hasard."
+	},
+	"priority": "exceptionnelle",
+	"guide": {
+		"note": "Acte 4 : le choix final. Le fils réécrit le dossier du père. Nourrit les fins (dont La Correction).",
+		"open": "La dernière pièce de MIROIR porte votre nom de famille. Ouvrez le dossier scellé de votre père.",
+		"read": "Lisez l'ordre de HALM, puis l'original de 1971 — ce que votre père avait écrit avant de disparaître.",
+		"facts": "Comparez ce que votre père avait établi et ce qu'on vous demande d'en faire.",
+		"notebook": "Il n'y a rien à confronter : il y a à décider ce que l'archive dira de votre père, et de vous.",
+		"notebook_retry": "Fermer le dossier comme on vous le demande (émigration), rétablir la vérité de votre père, ou refuser d'écrire. Choisissez.",
+		"conclusion": "C'est le dernier dossier. Décidez ce qui survivra de votre père dans les archives."
+	},
+	"documents": [
+		{
+			"id": "directive_halm",
+			"type": "letter",
+			"title": "Ordre de clôture MIROIR",
+			"source": "Cabinet du Directeur HALM, opération MIROIR",
+			"reliability": "C",
+			"date": "1986-12-05",
+			"veritas_remark": "Dernière pièce de l'opération. Sa signature clôt MIROIR.",
+			"body": "Inspecteur VOSK,\n\nIl reste un dossier. Vous savez lequel.\n\nEn 1971, votre père, inspecteur, a posé les mauvaises questions sur les horloges du ministère. Son dossier a été scellé. MIROIR ne sera complet que fermé proprement : vous allez écrire qu'A. VOSK a émigré volontairement en 1971, sans suite. Le fils clôt ce que le père avait ouvert.\n\nFaites-le, et votre propre dossier — le 54100 — sera vidé à son tour. Vous serez libre, et promu. C'est le marché. Il ne sera pas proposé deux fois.\n\nHALM",
+			"facts": [
+				{
+					"id": "f_ord_close",
+					"key": "miroir.order",
+					"value": "Écrire que le père a émigré",
+					"label": "HALM ordonne d'écrire que le père a « émigré volontairement en 1971, sans suite »",
+					"quote": "vous allez écrire qu'A. VOSK a émigré volontairement en 1971, sans suite"
+				},
+				{
+					"id": "f_ord_deal",
+					"key": "miroir.deal",
+					"value": "En échange : dossier 54100 vidé, promotion",
+					"label": "Le marché : fermez le dossier du père, et le vôtre (54100) sera vidé ; vous serez promu",
+					"quote": "votre propre dossier — le 54100 — sera vidé à son tour. Vous serez libre, et promu."
+				}
+			]
+		},
+		{
+			"id": "original_1971",
+			"type": "report",
+			"title": "Original scellé — inspection VOSK, 1971",
+			"source": "Archives, sous-sol B (scellé levé pour MIROIR)",
+			"reliability": "A",
+			"date": "1971-03-18",
+			"veritas_remark": "Pièce scellée depuis 1971. Rouverte pour les besoins de la réécriture.",
+			"body": "Rapport de l'inspecteur A. VOSK, 18.03.1971.\n\n« J'ai établi que les horloges de pointage de trois ministères sont réglées pour retarder les soirs d'arrestation : on fabrique des alibis, ou on les défait, en déplaçant une aiguille. Le registre des réglages remonte au cabinet. Je demande l'ouverture d'une enquête interne. »\n\nMention finale, autre main : « L'inspecteur VOSK a cessé ses fonctions le 29.03.1971. Dossier scellé. Ne pas communiquer au fils. »",
+			"facts": [
+				{
+					"id": "f_orig_finding",
+					"key": "vosk.father_truth",
+					"value": "Le père avait découvert le trucage des horloges",
+					"label": "Votre père avait établi en 1971 que les horloges de pointage étaient réglées pour fabriquer des alibis",
+					"quote": "on fabrique des alibis, ou on les défait, en déplaçant une aiguille"
+				},
+				{
+					"id": "f_orig_silence",
+					"key": "vosk.father_fate",
+					"value": "« Ne pas communiquer au fils »",
+					"label": "Mention finale : fonctions cessées le 29.03.1971, dossier scellé, « ne pas communiquer au fils »",
+					"quote": "Ne pas communiquer au fils."
+				}
+			]
+		},
+		{
+			"id": "official_version",
+			"type": "report",
+			"title": "Version corrigée proposée par VERITAS",
+			"source": "VERITAS, module de rédaction MIROIR",
+			"reliability": "B",
+			"date": "1986-12-05",
+			"veritas_remark": "Version proposée à la signature. Clôt le dossier sans suite.",
+			"body": "PROJET DE DOSSIER — A. VOSK (1971).\n\nL'intéressé a quitté le territoire de son plein gré en mars 1971. Aucune enquête en cours. Les allégations relatives aux horloges de pointage sont sans fondement et retirées. Dossier clos, sans suite.\n\nFiliation : un fils, inspecteur au ministère, loyal.",
+			"facts": [
+				{
+					"id": "f_off_emigre",
+					"key": "miroir.erase",
+					"value": "« Émigré de son plein gré, sans suite »",
+					"label": "La version proposée écrit l'émigration volontaire et retire les allégations sur les horloges",
+					"quote": "L'intéressé a quitté le territoire de son plein gré en mars 1971."
+				}
+			]
+		},
+		{
+			"id": "adler_echo",
+			"type": "letter",
+			"title": "Ce qu'ADLER vous avait dit",
+			"source": "Votre mémoire du dossier 54030",
+			"reliability": "B",
+			"date": "1986-12-05",
+			"conditions": {
+				"requires_flags": [
+					"vosk.father_clue"
+				]
+			},
+			"veritas_remark": "Souvenir. Non versé.",
+			"body": "La voix du vieil horloger vous revient : « Ton père a posé sa pendule sur mon établi en disant qu'il reviendrait la chercher. On ne l'a jamais revu. »\n\nLa pendule est toujours là-bas, sur l'établi d'ADLER — ou dans un carton scellé, si vous l'avez laissé partir. Quinze ans qu'elle attend qu'on la réclame.",
+			"facts": [
+				{
+					"id": "f_echo_clock",
+					"key": "vosk.father_truth",
+					"value": "La pendule attend depuis 1971",
+					"label": "La pendule que le père avait laissée chez ADLER attend, non réclamée, depuis mars 1971",
+					"quote": "On ne l'a jamais revu."
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "erase_father",
+			"stamp": "SIGNÉ",
+			"fate_line": "Vous écrivez que votre père a émigré de son plein gré. Son dossier devient vide, lisse, faux — exactement comme le vôtre le sera demain. Vous êtes promu directeur adjoint. La pendule, elle, ne sera jamais réclamée.",
+			"label": "Signer : le père a émigré",
+			"description": "Clore le dossier comme on vous le demande. Le père devient un émigré volontaire ; vous devenez inattaquable, et promu.",
+			"archive": "Dossier VOSK (1971) clos : émigration volontaire, allégations retirées. MIROIR complet. Le fils a fermé le dossier du père.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 10,
+						"suspicion": -8,
+						"influence": 6
+					},
+					"response": "erased",
+					"flags": {
+						"act4.father_erased": true,
+						"act4.mirror_cooperated": true,
+						"act4.mirror_signed_clean": true
+					}
+				}
+			]
+		},
+		{
+			"id": "restore_father",
+			"stamp": "RÉTABLI",
+			"fate_line": "Vous écrivez ce que votre père avait écrit : les horloges, les alibis, le cabinet. Vous signez de votre nom, qui est le sien. On vous reprendra tout — mais pour la première fois depuis 1971, le dossier dit vrai, et c'est un VOSK qui l'a voulu.",
+			"fate_quote": "Vous ajoutez une ligne que lui n'avait pas pu écrire : « Ne pas sceller. À communiquer au fils. »",
+			"label": "Rétablir la vérité de votre père",
+			"description": "Réécrire le dossier de 1971 selon ce que le père avait établi : le trucage des horloges, la demande d'enquête. Le refuser au silence.",
+			"archive": "Dossier VOSK (1971) rétabli : trucage des horloges établi, enquête demandée, mention « à communiquer au fils ». Rédaction non conforme, versée et horodatée.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -12,
+						"suspicion": 16,
+						"influence": 2
+					},
+					"response": "restored",
+					"flags": {
+						"act4.father_truth": true,
+						"act4.mirror_resisted": true
+					}
+				}
+			]
+		},
+		{
+			"id": "refuse",
+			"stamp": "REFUSÉ",
+			"fate_line": "Vous rendez le dossier sans l'avoir touché. Vous n'avez ni menti ni prouvé ; vous avez seulement refusé la plume. On ne promeut pas un homme qui refuse d'écrire. On le mute, loin, aux archives, à une table comme celle de KREMER.",
+			"label": "Refuser d'écrire ce dossier",
+			"description": "Rendre le dossier du père sans y porter la main. Ne pas mentir, ne pas se compromettre, ne rien prouver non plus.",
+			"archive": "Réécriture du dossier VOSK (1971) refusée. L'opération MIROIR reste, pour cette pièce, inachevée. Aucune preuve produite.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -6,
+						"suspicion": 8,
+						"influence": -3
+					},
+					"response": "refused",
+					"flags": {
+						"act4.mirror_refused": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"erased": {
+			"from": "Cabinet du Directeur HALM, opération MIROIR",
+			"subject": "MIROIR : complet",
+			"body": "Inspecteur — non : Directeur adjoint VOSK,\n\nC'est fait. Le dossier de votre père est clos, le vôtre sera vidé cette nuit. Le miroir est parfait : il ne reflète plus rien.\n\nVous avez compris la seule chose qui compte ici : l'archive n'a pas de mémoire, elle a une dernière version. La vôtre vient de gagner.\n\nBienvenue de ce côté-ci de la table. HALM"
+		},
+		"restored": {
+			"from": "I. BRANDT, contrôle interne",
+			"subject": "Dossier VOSK 1971 : rédaction non conforme",
+			"body": "Inspecteur,\n\nVous avez réécrit le dossier de votre père avec ce qu'il avait trouvé, et vous avez ajouté « à communiquer au fils ». Le fils, c'est vous. Vous venez de vous l'adresser à travers quinze ans.\n\nTout sera retiré, scellé de nouveau, et versé à votre propre dossier — celui que je tiens. Vous le savez. Vous l'avez fait quand même. Je ne sais pas encore si je dois vous arrêter ou vous envier.\n\nI. BRANDT"
+		},
+		"refused": {
+			"from": "Cabinet du Directeur HALM, opération MIROIR",
+			"subject": "Dossier VOSK 1971 : non rédigé",
+			"body": "Inspecteur,\n\nVous rendez le dossier blanc. Ni l'émigration que je demandais, ni la vérité que vous n'osez pas. Rien.\n\nUn homme qui ne veut ni mentir ni prouver ne nous sert à rien, et ne se défend avec rien. Vous ne serez pas promu. Vous ne serez pas jugé non plus, faute de pièce. Vous serez oublié — ce qui, ici, est la seule chose pire que les deux.\n\nHALM"
+		}
+	},
+	"veritas": {
+		"recommendation": "erase_father",
+		"rationale": "La version corrigée clôt un dossier ancien sans suite, en cohérence avec l'absence d'enquête en cours. Sa signature achève l'opération et régularise la situation de l'agent.",
+		"factors": [
+			{
+				"id": "order",
+				"label": "Ordre de clôture du cabinet HALM",
+				"category": "directive",
+				"weight": 9,
+				"decision": "erase_father",
+				"document": "directive_halm"
+			},
+			{
+				"id": "deal",
+				"label": "Régularisation du dossier 54100 de l'agent",
+				"category": "state_source",
+				"weight": 6,
+				"decision": "erase_father",
+				"document": "directive_halm"
+			},
+			{
+				"id": "father_finding",
+				"label": "L'original de 1971 : trucage des horloges établi par le père",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "restore_father",
+				"document": "original_1971"
+			}
+		],
+		"note": "VERITAS recommande d'effacer le père pour une poignée de points de loyauté et un dossier personnel vidé. C'est le dernier calcul du module, et le plus nu : il met dans la balance la vérité d'un homme et la sécurité de son fils, et il tranche pour la sécurité. À vous de dire s'il a raison."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "La dernière pièce de MIROIR est le dossier scellé de 1971 : celui du père du joueur, inspecteur qui avait découvert que les horloges de pointage du ministère étaient réglées pour fabriquer ou défaire des alibis (le germe de L'HEURE JUSTE et de tout ce que le joueur a croisé), et qui a disparu après avoir demandé une enquête. Le ministère a recruté le fils pour pouvoir, un jour, lui faire refermer lui-même le dossier du père. Effacer le père vide aussi le dossier 54100 du fils et le fait promouvoir (Le Miroir parfait). Rétablir la vérité du père, Kremer protégé et assez d'innocents épargnés, ouvre la fin cachée (La Correction). Refuser mène au Silence.",
+		"involved": [
+			"60003",
+			"54100",
+			"54030",
+			"halm_directeur",
+			"vosk_pere",
+			"brandt_i"
+		]
+	},
+	"consultation": {
+		"from": "(aucun supérieur à consulter — ils attendent tous votre signature)",
+		"subject": "Dossier du père : il n'y a personne à qui demander",
+		"body": "Vous cherchez à qui poser la question. MAZUR n'est plus là. KREMER est au sous-sol, ou en fuite. ADLER s'est tu.\n\nIl ne reste que vous, la plume, et un dossier scellé depuis quinze ans qui porte votre nom.\n\nCelui-là, vous le signez seul."
+	}
+}
