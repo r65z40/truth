@@ -38,6 +38,22 @@ func refresh() -> void:
 	_continue_button.text = "CONTINUER" + ("\n" + summary.date if summary.has("date") else "")
 	_continue_button.tooltip_text = "Reprendre la dernière partie sauvegardée."
 	%NewGameButton.tooltip_text = "Commencer votre carrière d'inspecteur, le lundi 3 novembre 1986."
+	_refresh_endings()
+
+
+## Compteur « fins découvertes X/7 » : les fins déjà atteintes (persistées dans
+## les paramètres), les autres restent cachées. Rien tant qu'aucune n'est connue.
+func _refresh_endings() -> void:
+	var total := EndingRules.get_endings().size()
+	var discovered: Array = Settings.endings_discovered
+	var titles: PackedStringArray = []
+	for ending in EndingRules.get_endings():
+		if ending.get("id", "") in discovered:
+			titles.append(ending.get("title", ""))
+	if titles.is_empty():
+		%EndingsLabel.text = "FINS DÉCOUVERTES : 0 / %d" % total
+	else:
+		%EndingsLabel.text = "FINS DÉCOUVERTES : %d / %d\n%s" % [titles.size(), total, "  ·  ".join(titles)]
 
 
 func open_settings() -> void:

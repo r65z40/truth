@@ -531,6 +531,44 @@ func complete_act_review(accept: bool) -> String:
 	return text
 
 
+# --- Fin de partie -----------------------------------------------------------
+
+## Vrai si la journée en cours est la dernière journée de service (terme de
+## l'acte 4) : au terme de cette journée, la partie se résout en une fin.
+func is_final_day() -> bool:
+	return day_index >= FictionalCalendar.service_days().size() - 1
+
+
+## Résout la fin de partie et la dernière page d'archive. Renvoie
+## {ending, subjects} : ending = la fin atteinte (EndingRules.resolve, logique
+## pure sur les drapeaux et indicateurs) ; subjects = un destin par dossier
+## conclu (FateRules), dans l'ordre de l'index.
+func get_ending() -> Dictionary:
+	var ending := EndingRules.resolve({"flags": flags, "indicators": indicators, "cases": cases})
+	var subjects := []
+	for case_id in CaseLibrary.get_case_ids():
+		var case_state: Dictionary = cases.get(case_id, {})
+		if case_state.get("decision", "") == "":
+			continue
+		var fate := FateRules.fate_for(CaseLibrary.get_case(case_id), case_state)
+		if fate.is_empty():
+			continue
+		subjects.append({"case_id": case_id, "name": fate.subject_name,
+				"stamp": fate.stamp, "line": fate.line})
+	return {"ending": ending, "subjects": subjects}
+
+
+## Consigne la fin atteinte (partie terminée) ; sans effet si l'identifiant est vide.
+func finish_game(ending_id: String) -> void:
+	if ending_id == "":
+		return
+	_set_flag("game.ended", true)
+	flags["game.ending"] = ending_id
+	# Mémorise la fin entre les parties, pour le compteur du menu principal.
+	Settings.record_ending(ending_id)
+	state_changed.emit()
+
+
 # --- Messages ----------------------------------------------------------------
 
 func receive_message(message: Dictionary, notify := true) -> void:
