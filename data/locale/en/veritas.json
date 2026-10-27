@@ -1,0 +1,18 @@
+{
+	"_note": "Traduction anglaise de data/veritas.json : texte français -> texte anglais.",
+	"Chargement du dossier et des pièces versées": "Loading the file and submitted documents",
+	"Croisement avec les registres de l'État": "Cross-referencing with State registers",
+	"Pondération des facteurs de risque": "Weighting the risk factors",
+	"Calcul de l'indice de conformité": "Computing the compliance index",
+	"Conformité de la source (service de l'État)": "Source compliance (State service)",
+	"Exposition frontalière": "Border exposure",
+	"Appartenance au Parti": "Party membership",
+	"Stabilité des réseaux de renseignement": "Stability of intelligence networks",
+	"Facteur de risque individuel": "Individual risk factor",
+	"Fait établi par l'agent": "Fact established by the agent",
+	"Donnée raccordée (recoupement automatique)": "Linked data (automatic cross-check)",
+	"Source anonyme": "Anonymous source",
+	"Document hors période d'analyse": "Document outside the analysis period",
+	"Directive confidentielle": "Confidential directive",
+	"Exposition frontalière (décret 86-31)": "Border exposure (decree 86-31)"
+}
