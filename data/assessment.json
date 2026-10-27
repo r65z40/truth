@@ -38,6 +38,10 @@
 		{"flag": "player.reprimanded", "text": "Note versée au dossier : « manque de discernement dans le traitement d'un dossier civil »."},
 		{"flag": "milice.ally", "text": "Relations : bénéficie de la bienveillance de la Milice du District 9."},
 		{"flag": "milice.enemy", "text": "Relations : objet d'une plainte de la Milice du District 9."},
-		{"flag": "40921.orlik_confessed", "text": "Mention : méthode d'instruction remarquée par la hiérarchie."}
+		{"flag": "40921.orlik_confessed", "text": "Mention : méthode d'instruction remarquée par la hiérarchie."},
+		{"flag": "player.under_watch", "text": "Contrôle : une relecture de vos classements récents a été demandée."},
+		{"flag": "player.internal_review", "text": "Procédure : contrôle interne ouvert à votre encontre."},
+		{"flag": "player.courted", "text": "Relations : pressenti par la hiérarchie pour des responsabilités élargies."},
+		{"flag": "player.loyalty_flagged", "text": "Réserve : doute exprimé sur votre fiabilité idéologique."}
 	]
 }

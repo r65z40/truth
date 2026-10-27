@@ -39,6 +39,7 @@ func _run() -> void:
 		"test_apply_decision",
 		"test_events_file_is_valid",
 		"test_event_conditions",
+		"test_hierarchy_pressure",
 		"test_end_day_without_decision",
 		"test_delayed_consequences",
 		"test_save_migration_from_v2",
@@ -539,6 +540,13 @@ func test_event_conditions() -> void:
 	check(not EventRules.are_conditions_met({"forbidden_flags": ["a"]}, state), "drapeau interdit présent")
 	check(EventRules.are_conditions_met({"undecided_cases": ["1"]}, state), "dossier sans décision")
 	check(not EventRules.are_conditions_met({"undecided_cases": ["2"]}, state), "dossier déjà décidé")
+	# Seuils d'indicateurs : la hiérarchie réagit au profil de l'agent.
+	var profiled := {"day_index": 5, "flags": {}, "cases": {}, "indicators": {"suspicion": 60, "loyalty": 30}}
+	check(EventRules.are_conditions_met({"min_indicators": {"suspicion": 50}}, profiled), "seuil atteint : suspicion >= 50")
+	check(not EventRules.are_conditions_met({"min_indicators": {"suspicion": 70}}, profiled), "seuil non atteint : suspicion < 70")
+	check(EventRules.are_conditions_met({"max_indicators": {"loyalty": 40}}, profiled), "plafond respecté : loyauté <= 40")
+	check(not EventRules.are_conditions_met({"max_indicators": {"loyalty": 20}}, profiled), "plafond dépassé : loyauté > 20")
+	check(not EventRules.are_conditions_met({"min_indicators": {"suspicion": 50, "loyalty": 50}}, profiled), "tous les seuils doivent être atteints")
 	var events := [{"id": "once"}, {"id": "again", "repeatable": true}]
 	state["fired_events"] = ["once", "again"]
 	var due := EventRules.due_events(state, events)
@@ -553,6 +561,33 @@ func test_event_conditions() -> void:
 			{"day_index": 11, "flags": {"53118.choir_cleared": true}, "cases": {}, "fired_events": []}
 			).map(func(e: Dictionary) -> String: return e.id)
 	check("53118_cleared_denounced" in cleared_ids, "classer la chorale expose l'inspecteur (KOLB le dénonce)")
+
+
+## La hiérarchie réagit au profil de l'agent (pression graduée, déterministe).
+func test_hierarchy_pressure() -> void:
+	var to_ids := func(events: Array) -> Array: return events.map(func(e: Dictionary) -> String: return e.id)
+	var base := {"day_index": 3, "flags": {}, "cases": {}, "fired_events": []}
+	var calm: Dictionary = base.duplicate(true); calm.indicators = {"loyalty": 50, "suspicion": 20, "influence": 10}
+	var calm_ids: Array = to_ids.call(EventRules.due_events(calm))
+	check(not "pressure_watch" in calm_ids and not "pressure_internal_review" in calm_ids \
+			and not "pressure_courted" in calm_ids and not "pressure_loyalty_doubt" in calm_ids,
+			"profil ordinaire : la hiérarchie ne bronche pas")
+	var watched: Dictionary = base.duplicate(true); watched.indicators = {"loyalty": 50, "suspicion": 55, "influence": 10}
+	check("pressure_watch" in to_ids.call(EventRules.due_events(watched)), "suspicion élevée : relecture des classements")
+	var investigated: Dictionary = base.duplicate(true); investigated.indicators = {"loyalty": 50, "suspicion": 75, "influence": 10}
+	check("pressure_internal_review" in to_ids.call(EventRules.due_events(investigated)), "suspicion critique : contrôle interne")
+	var zealous: Dictionary = base.duplicate(true); zealous.indicators = {"loyalty": 80, "suspicion": 20, "influence": 40}
+	check("pressure_courted" in to_ids.call(EventRules.due_events(zealous)), "zèle et poids institutionnel : l'agent est courtisé")
+	var too_suspect: Dictionary = base.duplicate(true); too_suspect.indicators = {"loyalty": 80, "suspicion": 55, "influence": 40}
+	check(not "pressure_courted" in to_ids.call(EventRules.due_events(too_suspect)), "trop surveillé pour être courtisé")
+	var disloyal: Dictionary = base.duplicate(true); disloyal.indicators = {"loyalty": 20, "suspicion": 20, "influence": 10}
+	check("pressure_loyalty_doubt" in to_ids.call(EventRules.due_events(disloyal)), "clémence répétée : doute sur la fiabilité")
+	# Une fois déclenchée, la pression ne se répète pas.
+	watched.fired_events = ["pressure_watch"]
+	check(not "pressure_watch" in to_ids.call(EventRules.due_events(watched)), "la relecture ne se redéclenche pas")
+	# La pression se lit dans le dossier personnel.
+	var notes: Array = Assessment.describe({"loyalty": 50, "suspicion": 75, "influence": 7}, {"player.internal_review": true}).notes
+	check(notes.any(func(t: String) -> bool: return t.contains("contrôle interne")), "le contrôle interne figure au dossier personnel")
 
 
 func test_end_day_without_decision() -> void:
