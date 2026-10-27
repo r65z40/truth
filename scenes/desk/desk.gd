@@ -76,6 +76,10 @@ var _toast_tween: Tween
 var _guide_bar: PanelContainer
 var _guide_bar_label: Label
 
+## Largeur des papiers posés sur le bureau et marge par rapport aux bords.
+const TRACE_WIDTH := 300
+const TRACE_MARGIN := Vector2(24, 76)
+
 const TOOLTIPS := {
 	"DossiersButton": "Consulter les dossiers qui vous sont assignés.",
 	"MessagesButton": "Lire le courrier interne et les réponses de la hiérarchie.",
@@ -142,6 +146,7 @@ func _ready() -> void:
 	windows.archives.case_requested.connect(open_case)
 	field_screen.finished.connect(_on_field_finished)
 	_refresh_header()
+	refresh_traces()
 	_boot_terminal()
 	Music.play_context("desk")
 	has_unsaved_changes = false
@@ -299,6 +304,56 @@ func _on_state_changed() -> void:
 	has_unsaved_changes = true
 	_logout_armed = false
 	_refresh_header()
+	refresh_traces()
+
+
+## Petits papiers posés sur le bureau (DeskTraces) : les suites des signatures
+## et le fil du père, en bas à droite, derrière les fenêtres.
+func refresh_traces() -> void:
+	var box := $Wallpaper.get_node_or_null("Traces") as VBoxContainer
+	if box == null:
+		box = VBoxContainer.new()
+		box.name = "Traces"
+		box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.alignment = BoxContainer.ALIGNMENT_END
+		box.add_theme_constant_override("separation", 10)
+		$Wallpaper.add_child(box)
+		box.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+		box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+		box.offset_right = -TRACE_MARGIN.x
+		box.offset_bottom = -TRACE_MARGIN.y
+	for child in box.get_children():
+		child.queue_free()
+	var state := GameState.get_condition_state()
+	state["indicators"] = GameState.indicators
+	var traces := DeskTraces.visible_traces(state)
+	for i in traces.size():
+		box.add_child(_build_trace(traces[i], i))
+
+
+func _build_trace(trace: Dictionary, index: int) -> Control:
+	var paper := PanelContainer.new()
+	paper.name = "Trace_" + str(trace.get("id", index)).validate_node_name()
+	paper.theme_type_variation = &"DocumentPanel"
+	paper.custom_minimum_size = Vector2(TRACE_WIDTH, 0)
+	paper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Papiers posés de travers, comme jetés sur le bureau.
+	paper.rotation_degrees = [-1.5, 1.0, -0.5][index % 3]
+	var column := VBoxContainer.new()
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	paper.add_child(column)
+	var from := Label.new()
+	from.text = trace.get("from", "")
+	from.theme_type_variation = &"DocumentMeta"
+	from.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(from)
+	var text := Label.new()
+	text.text = trace.get("text", "")
+	text.theme_type_variation = &"DocumentLabel"
+	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(text)
+	return paper
 
 
 ## Ligne d'horloge : heure de service et temps restant (terminal, fin de journée).

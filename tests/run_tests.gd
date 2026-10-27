@@ -127,6 +127,8 @@ func _run() -> void:
 		"test_sound_player",
 		"test_image_slots",
 		"test_media_catalog",
+		"test_desk_traces",
+		"test_evening_echoes",
 		"test_time_in_desk",
 		"test_endings",
 		"test_end_of_game_in_desk",
@@ -226,16 +228,19 @@ func test_localization() -> void:
 	Localization.set_locale("en")
 	check(TranslationServer.translate("NOUVELLE PARTIE") == "NEW GAME", "l'interface se traduit en anglais")
 	check(TranslationServer.translate("Texte sans traduction") == "Texte sans traduction", "une chaîne non traduite reste en français")
-	# Surcouche de dossier : fusion par id, repli sur le français.
-	var base := {"id": "x", "title": "Titre FR", "summary": "Résumé FR",
-			"documents": [{"id": "d1", "title": "Pièce FR", "facts": [{"id": "f1", "label": "FR"}]}]}
-	var overlay := {"title": "Title EN", "documents": [{"id": "d1", "facts": [{"id": "f1", "label": "EN"}]}]}
-	var merged: Dictionary = Localization._merge(base.duplicate(true), overlay)
-	check(merged.title == "Title EN" and merged.summary == "Résumé FR", "le titre est traduit, le résumé reste en français")
-	check(merged.documents[0].title == "Pièce FR" and merged.documents[0].facts[0].label == "EN",
-			"la fusion apparie les pièces et les éléments par id")
-	# Sans surcouche livrée, un dossier reste en français même en anglais.
-	check(CaseLibrary.get_case("40921").title == "Citoyen n° 40921", "sans surcouche, le dossier reste en français")
+	# Contenu : chaque texte français est remplacé par sa traduction à la lecture ;
+	# identifiants, drapeaux et textes sans traduction restent intacts.
+	var saved := DataLoader.translations
+	DataLoader.translations = {"Titre FR": "Title EN"}
+	var data: Dictionary = DataLoader.translate({"id": "Titre FR", "title": "Titre FR", "summary": "Résumé FR",
+			"flags": {"Titre FR": true}, "list": ["Titre FR", "autre"]})
+	check(data.title == "Title EN" and data.list[0] == "Title EN", "les textes sont traduits, y compris dans les listes")
+	check(data.summary == "Résumé FR" and data.list[1] == "autre", "un texte sans traduction reste en français")
+	check(data.flags.has("Titre FR"), "les clés (drapeaux, identifiants) ne sont jamais traduites")
+	DataLoader.translations = saved
+	check(not DataLoader.translations.is_empty(), "l'anglais charge les traductions de contenu (data/locale/en/)")
+	check(CaseLibrary.get_case("40921").title != "Citoyen n° 40921", "en anglais, le dossier est traduit")
+	check(Localization.text(CaseLibrary.get_case("40921").title) != "", "Localization.text renvoie toujours un texte")
 	Localization.set_locale("fr")
 	check(CaseLibrary.get_case("40921").title == "Citoyen n° 40921" and not Localization.is_translated(),
 			"retour au français : langue source")
@@ -3258,6 +3263,74 @@ func test_media_catalog() -> void:
 	check(view.find_child("Column", true, false).get_child_count() > list.size(), "l'écran Médias liste chaque fichier")
 	view.queue_free()
 	await get_tree().process_frame
+
+
+## Traces sur le bureau : suites visibles des signatures et fil du père.
+func test_desk_traces() -> void:
+	var state := {"day_index": 1, "flags": {}, "cases": {}, "indicators": {}}
+	var ids := func(s: Dictionary) -> Array:
+		return DeskTraces.visible_traces(s).map(func(t: Dictionary) -> String: return t.id)
+	check("pendule_section4" in ids.call(state), "acte 1 : la plaque « atelier VOSK » sur la pendule du couloir")
+	state.flags["40921.sedlar_arrested"] = true
+	check("sedlar_receipt" in ids.call(state), "SEDLAR arrêté : l'accusé de réception traîne sur le bureau")
+	state.day_index = 5
+	check(not "sedlar_receipt" in ids.call(state), "la trace disparaît après quelques jours")
+	state.day_index = 7
+	check("atelier_vosk" in ids.call(state), "acte 2 : l'avis sur l'ancien atelier VOSK, saisi en 1971")
+	for flag in ["kremer.protected", "player.flagged", "world.border_crackdown", "milice.hostile"]:
+		state.flags[flag] = true
+	check(DeskTraces.visible_traces(state).size() == DeskTraces.MAX_VISIBLE, "au plus trois papiers à la fois")
+	var known := {}
+	for path in ["res://data/cases", "res://data/events", "res://data"]:
+		for file_name in DirAccess.get_files_at(path):
+			if file_name.ends_with(".json"):
+				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))
+	for trace: Dictionary in DeskTraces.get_data().traces:
+		for flag in trace.get("conditions", {}).get("requires_flags", []):
+			check(known.has(flag), "trace %s : le drapeau %s est posé quelque part" % [trace.id, flag])
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	GameState.day_index = 1
+	desk.refresh_traces()
+	await get_tree().process_frame
+	check(desk.get_node("Wallpaper/Traces").get_child_count() == 1, "le bureau affiche les papiers du jour")
+	desk.queue_free()
+	GameState.new_game()
+	await get_tree().process_frame
+
+
+## Drapeaux posés (valeur true) dans un fichier de données JSON.
+func _flags_set_in(text: String) -> Dictionary:
+	var found := {}
+	var regex := RegEx.create_from_string("\"([a-z0-9_]+\\.[a-z0-9_.]+)\"\\s*:\\s*true")
+	for result in regex.search_all(text):
+		found[result.get_string(1)] = true
+	return found
+
+
+## Soirées : les échos des signatures passées s'ajoutent à l'arrivée.
+func test_evening_echoes() -> void:
+	var evening := EveningRules.evening_for_day(7)
+	var state := {"day_index": 7, "flags": {}, "cases": {}, "evening_counts": {}}
+	var plain := EveningRules.intro_text(evening, state)
+	check(plain == evening.intro, "sans signature marquante : l'intro seule")
+	state.flags["53118.choir_arrested"] = true
+	check(EveningRules.intro_text(evening, state).contains("Sainte-Agathe"), "chorale arrêtée : les cloches se taisent le soir")
+	state.flags = {"53118.choir_cleared": true}
+	check(EveningRules.intro_text(evening, state).contains("répète"), "chorale relaxée : elle répète")
+	check(EveningRules.intro_text(EveningRules.evening_for_day(2), {"day_index": 2, "flags": {}}).contains("horloge"),
+			"acte 1 : l'horloge de la gare rappelle le père")
+	var known := {}
+	for path in ["res://data/cases", "res://data/events", "res://data"]:
+		for file_name in DirAccess.get_files_at(path):
+			if file_name.ends_with(".json"):
+				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))
+	for day_evening: Dictionary in EveningRules.get_data().evenings:
+		for echo: Dictionary in day_evening.get("echoes", []):
+			for flag in echo.get("conditions", {}).get("requires_flags", []):
+				check(known.has(flag), "écho du jour %d : le drapeau %s est posé quelque part" % [day_evening.day, flag])
 
 func test_time_in_desk() -> void:
 	GameState.new_game()

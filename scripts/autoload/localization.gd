@@ -4,9 +4,11 @@ extends Node
 ## en français, ce qui permet de traduire progressivement.
 ##
 ## Interface : les textes des scènes (Label, Button...) sont traduits
-## automatiquement par Godot via TranslationServer, à partir de data/locale/<lang>.json.
-## Contenu des dossiers : surcouches dans data/locale/<lang>/case_<id>.json, fusionnées
-## par CaseLibrary ; un champ non traduit reste en français.
+## automatiquement par Godot via TranslationServer, à partir de data/locale/<lang>.json ;
+## les textes construits en code passent par tr().
+## Contenu (dossiers, événements, soirées, journal, terrain, fins...) : les
+## fichiers data/locale/<lang>/**/*.json associent chaque texte français à sa
+## traduction ; DataLoader remplace les textes à la lecture des données.
 
 signal locale_changed
 
@@ -14,7 +16,7 @@ const SOURCE_LOCALE := "fr"
 const LOCALES := ["fr", "en"]
 const LOCALE_LABELS := {"fr": "Français", "en": "English"}
 const UI_PATH := "res://data/locale/%s.json"
-const CASE_OVERLAY_PATH := "res://data/locale/%s/case_%s.json"
+const CONTENT_DIR := "res://data/locale/%s"
 
 var locale := SOURCE_LOCALE
 
@@ -34,6 +36,8 @@ func set_locale(code: String) -> void:
 		code = SOURCE_LOCALE
 	locale = code
 	TranslationServer.set_locale(code)
+	DataLoader.translations = {} if code == SOURCE_LOCALE else load_content_translations(code)
+	_reset_data_caches()
 	locale_changed.emit()
 
 
@@ -42,15 +46,44 @@ func is_translated() -> bool:
 	return locale != SOURCE_LOCALE
 
 
-## Dossier localisé : fusionne la surcouche de la langue courante sur le dossier
-## français. Sans surcouche, renvoie le dossier français inchangé.
-func localize_case(case_data: Dictionary) -> Dictionary:
-	if not is_translated() or case_data.is_empty():
-		return case_data
-	var overlay := DataLoader.load_json(CASE_OVERLAY_PATH % [locale, case_data.get("id", "")])
-	if overlay.is_empty():
-		return case_data
-	return _merge(case_data.duplicate(true), overlay)
+## Traduction d'un texte de contenu déjà en mémoire (par exemple un message
+## reçu avant un changement de langue) ; inchangé s'il n'a pas de traduction.
+func text(source: String) -> String:
+	return DataLoader.translations.get(source, source)
+
+
+## Tous les textes de contenu traduits d'une langue : fusion des fichiers
+## data/locale/<code>/**/*.json (les clés commençant par « _ » sont des notes).
+static func load_content_translations(code: String) -> Dictionary:
+	var result := {}
+	for path in _json_files(CONTENT_DIR % code):
+		var entries := DataLoader.load_json(path)
+		for source in entries:
+			if not str(source).begins_with("_"):
+				result[source] = entries[source]
+	return result
+
+
+static func _json_files(dir: String) -> Array:
+	var files: Array = []
+	for file_name in DirAccess.get_files_at(dir):
+		if file_name.get_extension() == "json":
+			files.append(dir.path_join(file_name))
+	for sub in DirAccess.get_directories_at(dir):
+		files.append_array(_json_files(dir.path_join(sub)))
+	return files
+
+
+## Les données gardées en mémoire ont été lues dans l'ancienne langue : on les
+## oublie pour qu'elles soient relues traduites.
+func _reset_data_caches() -> void:
+	CaseLibrary._cache = {}
+	FictionalCalendar._calendar = {}
+	Veritas._params = {}
+	NewsRules._data = {}
+	MinistryRecord._entries = []
+	SoundRules._data = {}
+	ImageSlots._data = {}
 
 
 func _register_ui_translation(code: String) -> void:
@@ -62,22 +95,3 @@ func _register_ui_translation(code: String) -> void:
 	for source in entries:
 		translation.add_message(source, str(entries[source]))
 	TranslationServer.add_translation(translation)
-
-
-## Fusionne récursivement la surcouche « over » sur « base ». Les tableaux d'objets
-## sont appariés par « id » ; les autres valeurs de la surcouche remplacent la base.
-static func _merge(base: Variant, over: Variant) -> Variant:
-	if base is Dictionary and over is Dictionary:
-		for key in over:
-			base[key] = _merge(base.get(key), over[key]) if base.has(key) else over[key]
-		return base
-	if base is Array and over is Array:
-		var by_id := {}
-		for item in base:
-			if item is Dictionary and item.has("id"):
-				by_id[item.id] = item
-		for item in over:
-			if item is Dictionary and item.has("id") and by_id.has(item.id):
-				_merge(by_id[item.id], item)
-		return base
-	return over

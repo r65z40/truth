@@ -221,6 +221,12 @@
 						"lena.left_early": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {},
+					"text": "En rentrant, vous passez devant la gare centrale. Sa grande horloge retarde de quatre minutes, comme toujours. Votre père disait qu'une horloge publique qui retarde « a des raisons ». Vous aviez neuf ans ; vous n'aviez pas demandé lesquelles."
+				}
 			]
 		},
 		{
@@ -295,6 +301,32 @@
 						}
 					]
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"51307.orlik_arrested"
+						]
+					},
+					"text": "Dans le tram, deux miliciens parlent d'un chef d'équipe de la Centrale « qui a trop parlé ». En descendant, ils vous regardent. Ils savent qui a signé."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"51307.orlik_demoted"
+						]
+					},
+					"text": "Au bas de l'immeuble, B. ORLIK pousse une brouette de charbon : rétrogradé manœuvre. Il ne vous salue pas. Il ne crache pas non plus."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"milice.favor_owed"
+						]
+					},
+					"text": "Sous votre porte, une enveloppe sans timbre : un bon de charbon, deux sacs, au nom de la Milice du district. Personne ne vous a rien demandé. Pas encore."
+				}
 			]
 		},
 		{
@@ -367,6 +399,24 @@
 						"adler.friendly": true,
 						"adler.kolar_known": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"52044.baker_arrested"
+						]
+					},
+					"text": "La boulangerie n° 12 a rouvert avec une autre vendeuse. La file se tait quand vous entrez. Le pain a le même goût ; vous ne le finissez pas."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"52044.drazek_exposed"
+						]
+					},
+					"text": "À la boulangerie n° 12, la vendeuse glisse un pain de plus dans votre filet. « Pour l'inspecteur qui sait compter. » Vous le payez quand même."
 				}
 			]
 		},
@@ -490,6 +540,16 @@
 						"adler.visited_act2": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"52310.poem_cleared"
+						]
+					},
+					"text": "Sur un mur du District 2, quelqu'un a recopié à la craie deux vers de VARGA. Personne ne les efface. Vous les relisez en passant, comme un mot de passe."
+				}
 			]
 		},
 		{
@@ -537,6 +597,32 @@
 							"text": "Vous rangez, vous lavez un verre, vous remontez la pendule de l'entrée — celle que votre père avait réglée. Elle avance d'une minute. Vous ne la corrigez pas."
 						}
 					]
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"53118.choir_arrested"
+						]
+					},
+					"text": "Ce dimanche, les cloches de Sainte-Agathe n'ont pas sonné. Dans la cour, une mère attend jusqu'à la nuit un enfant qui chantait l'alto."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"53118.director_arrested"
+						]
+					},
+					"text": "La chorale chante sans son chef. On l'entend jusque dans l'escalier : quelqu'un bat la mesure à sa place, trop vite."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"53118.choir_cleared"
+						]
+					},
+					"text": "Par la fenêtre de la paroisse, la chorale répète. Faux, timidement, mais elle répète. Une voix d'enfant tient la note plus longtemps que les autres."
 				}
 			]
 		},
@@ -591,6 +677,16 @@
 						"adler.gave_key": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"kremer.arrested"
+						]
+					},
+					"text": "Au sous-sol, on dit que les archives de KREMER ont été « réorganisées ». Ce soir, votre cuisine sent le papier brûlé : le vent vient du ministère."
+				}
 			]
 		},
 		{
@@ -640,6 +736,32 @@
 					"set_flags": {
 						"lena.warned_papers": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"53402.vrabec_arrested"
+						]
+					},
+					"text": "La radio annonce un « renforcement des contrôles » sur la ligne de Halvek. Au guichet de la gare, un cheminot regarde votre carte et vous rend la monnaie sans un mot."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"53402.vrabec_reassigned"
+						]
+					},
+					"text": "On dit VRABEC muté aux voies de triage, à l'autre bout du pays. Sa femme a vendu le buffet au marché : on ne déménage pas avec un buffet."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"53402.line_cleared"
+						]
+					},
+					"text": "Un cheminot que vous ne connaissez pas vous attend sous le porche. Il siffle trois notes, touche sa casquette et s'en va. Vous mettrez des jours à reconnaître l'air."
 				}
 			]
 		},
@@ -696,6 +818,32 @@
 					"set_flags": {
 						"adler.blast_night": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"53517.petras_arrested"
+						]
+					},
+					"text": "L'appartement 7 de l'escalier D porte des scellés neufs. Les voisins se sont déjà partagé ses chaises."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"53517.petras_cleared"
+						]
+					},
+					"text": "PETRAS vous croise dans l'escalier D. Il hésite, puis vous tient la porte. Il ne sait pas ce que vous avez signé ; il sait seulement qu'il est encore là."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"53517.informer_reported"
+						]
+					},
+					"text": "L'informateur que vous avez dénoncé ne s'assoit plus sur le banc de la cour. Un autre a pris sa place. Quelqu'un prend toujours la place."
 				}
 			]
 		},
@@ -820,6 +968,16 @@
 						"vosk.pendule_idea": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"54001.accident_established"
+						]
+					},
+					"text": "Les sirènes de la Centrale se sont tues. La radio parle d'« incident technique ». Dans la file du tram, quelqu'un dit à voix haute le nom de RUDA, le mort. Personne ne le fait taire."
+				}
 			]
 		},
 		{
@@ -878,6 +1036,24 @@
 					"set_flags": {
 						"brandt.greeted": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"54012.testimony_upheld"
+						]
+					},
+					"text": "Le témoin REIS a été vu au tribunal, sur le banc des témoins fiables. Il avait toujours les yeux de quelqu'un qu'on a endormi."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"54012.testimony_discredited"
+						]
+					},
+					"text": "On a ramené REIS chez lui en ambulance, « pour repos ». Sa logeuse raconte dans l'escalier qu'il dort enfin."
 				}
 			]
 		},
@@ -1052,6 +1228,16 @@
 					"effects": {
 						"suspicion": 1
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"act4.mirror_cooperated"
+						]
+					},
+					"text": "Sur le palier, l'horloge sans aiguilles gravée dans la peinture a été recouverte. Proprement, cette fois. Le peintre a laissé un pot de vert à côté de votre porte, comme un cadeau."
 				}
 			]
 		},

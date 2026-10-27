@@ -25,9 +25,11 @@ func select_message(message_id: String) -> void:
 		if message.id != message_id:
 			continue
 		current_message_id = message_id
-		_message_header.text = "DE : %s\nÀ : %s, Section 4\nDATE : %s" % [message.from, GameState.player.name, message.date_label]
-		_message_subject.text = "OBJET : %s" % message.subject
-		_message_body.text = message.body.replace("[", "[lb]")
+		# Un pli reçu avant un changement de langue se traduit à l'affichage.
+		_message_header.text = tr("DE : %s\nÀ : %s, Section 4\nDATE : %s") % [Localization.text(message.from),
+				GameState.player.name, message.date_label]
+		_message_subject.text = tr("OBJET : %s") % Localization.text(message.subject)
+		_message_body.text = Localization.text(message.body).replace("[", "[lb]")
 		GameState.mark_message_read(message_id)
 		_refresh_list()
 		return
@@ -53,7 +55,7 @@ func _refresh_list() -> void:
 			unread += 1
 		var button := Button.new()
 		button.name = "Message_" + message.id.validate_node_name()
-		button.text = "%s\n%s  //  %s" % [message.subject, message.from, message.date_label]
+		button.text = "%s\n%s  //  %s" % [Localization.text(message.subject), Localization.text(message.from), message.date_label]
 		button.icon = PixelIcons.get_icon("messages" if not message.read else "mail_open", 2)
 		button.set_meta("unread", not message.read)
 		button.theme_type_variation = &"DocumentTabNew" if not message.read else &"DocumentTab"

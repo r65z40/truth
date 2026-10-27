@@ -525,6 +525,11 @@ func has_evening_pending() -> bool:
 	return not get_evening().is_empty() and not evenings.has(str(day_index))
 
 
+## Texte d'arrivée de la soirée, avec les échos des signatures passées.
+func get_evening_intro() -> String:
+	return EveningRules.intro_text(get_evening(), get_condition_state())
+
+
 func get_evening_actions() -> Array:
 	return EveningRules.available_actions(get_evening(), get_condition_state())
 
