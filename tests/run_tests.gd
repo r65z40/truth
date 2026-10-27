@@ -111,6 +111,7 @@ func _run() -> void:
 		"test_document_passages",
 		"test_desk_apps",
 		"test_news",
+		"test_news_acts3_4",
 		"test_localization",
 		"test_music_rules",
 		"test_music_player",
@@ -2958,3 +2959,31 @@ func test_time_in_desk() -> void:
 			"l'horloge avance")
 	desk.queue_free()
 	await get_tree().process_frame
+
+
+## Les actes 3 et 4 ont aussi leur une, en langue officielle : l'explosion, la
+## réécriture MIROIR qui paraît comme la vérité, l'horloger relâché.
+func test_news_acts3_4() -> void:
+	var ids := func(state: Dictionary) -> Array:
+		return NewsRules.edition(state).articles.map(func(a: Dictionary) -> String: return a.id)
+
+	# Verdict de l'explosion : sabotage → bouc émissaire à la une le lendemain.
+	var blast := {"day_index": 11, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "54001", "decision_id": "sabotage", "day_index": 10}]}
+	check("d_54001_sabotage" in ids.call(blast), "le sabotage désigné fait la une (version officielle)")
+	blast.decisions[0].decision_id = "accident"
+	check("d_54001_accident" in ids.call(blast) and "d_54001_sabotage" not in ids.call(blast),
+			"l'accident établi devient un « incident technique »")
+
+	# MIROIR : la réécriture paraît comme la vérité établie.
+	var mirror := {"day_index": 16, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "60002", "decision_id": "name_scapegoat", "day_index": 15}]}
+	check("d_mirror_centrale" in ids.call(mirror), "la réécriture MIROIR de la Centrale fait la une")
+	# La résistance, elle, ne se publie pas : le journal garde le silence.
+	mirror.decisions[0].decision_id = "name_truth"
+	check("d_mirror_centrale" not in ids.call(mirror), "rétablir la vérité ne paraît pas au journal")
+
+	# L'horloger relâché : une note discrète, clin d'œil à L'HEURE JUSTE.
+	var clock := {"day_index": 13, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "54030", "decision_id": "release", "day_index": 12}]}
+	check("d_54030_reopened" in ids.call(clock), "l'atelier rouvert fait une brève")

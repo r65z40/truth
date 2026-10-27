@@ -141,6 +141,11 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Levier n°4 (journal) : chaque décision des 7 dossiers a sa une du lendemain
       dans « La Voix de Velmira » (version officielle, euphémismes qui contrastent
       avec la carte de destin)
+- [x] Journal étendu aux actes 3 et 4 : l'explosion de la Centrale (sabotage →
+      bouc émissaire, accident → « incident technique »), le témoin, l'horloger,
+      et surtout les réécritures MIROIR qui paraissent comme la vérité établie
+      (SEDLAR, la Centrale, le père « parti refaire sa vie à l'étranger »). La
+      résistance, elle, ne se publie pas. Données pures, test `test_news_acts3_4`.
 - [x] Ton plus dur (demande de fen du 26.10) : camps (Dolenz), exécutions, morts,
       déportations sur les dénouements graves (tampons DÉPORTÉ/EXÉCUTÉ/CONDAMNÉ +
       `fate_line` crue sur la carte, archive officielle conservée plus pudique)

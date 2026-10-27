@@ -8,7 +8,9 @@
 			"id": "d0_centrale_plan",
 			"section": "À LA UNE",
 			"priority": 50,
-			"conditions": {"day": 0},
+			"conditions": {
+				"day": 0
+			},
 			"headline": "La Centrale thermique n° 3 dépasse son plan d'octobre de 4 %",
 			"body": "Les équipes de l'atelier des chaudières ont battu le record de production du trimestre. La Direction salue « une discipline exemplaire, contrôlée heure par heure »."
 		},
@@ -16,7 +18,9 @@
 			"id": "d0_credit",
 			"section": "ÉTRANGER",
 			"priority": 40,
-			"conditions": {"day": 0},
+			"conditions": {
+				"day": 0
+			},
 			"headline": "Crédit énergétique : la délégation velmirienne ferme et confiante",
 			"body": "Les négociations avec la République d'Aldria reprennent cette semaine. « Velmira ne demande rien, elle propose un partenariat », rappelle le ministère du Commerce extérieur."
 		},
@@ -24,7 +28,9 @@
 			"id": "d0_rations",
 			"section": "NATION",
 			"priority": 30,
-			"conditions": {"day": 0},
+			"conditions": {
+				"day": 0
+			},
 			"headline": "Hiver : le Bureau du ravitaillement garantit les rations",
 			"body": "Aucune baisse n'est prévue avant le printemps. Le Bureau invite les citoyens à signaler toute irrégularité dans les points de vente."
 		},
@@ -32,7 +38,14 @@
 			"id": "d1_40921_arrest",
 			"section": "À LA UNE",
 			"priority": 60,
-			"conditions": {"after_decision": {"case": "40921", "decisions": ["arrest"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "40921",
+					"decisions": [
+						"arrest"
+					]
+				}
+			},
 			"headline": "Halvek : une filière de sorties illégales démantelée",
 			"body": "Grâce à la vigilance du Ministère, un technicien de la Centrale n° 3 a été interpellé à l'aube. Il préparait, selon nos informations, le départ clandestin de sa famille vers l'Aldria."
 		},
@@ -40,7 +53,14 @@
 			"id": "d1_40921_investigate",
 			"section": "NATION",
 			"priority": 45,
-			"conditions": {"after_decision": {"case": "40921", "decisions": ["investigate"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "40921",
+					"decisions": [
+						"investigate"
+					]
+				}
+			},
 			"headline": "Ligne Velmira > Halvek : les contrôles renforcés",
 			"body": "La Section 4 du Ministère multiplie les vérifications des cartes de transport. « Un voyage déclaré est un voyage serein », rappelle le Bureau des transports."
 		},
@@ -48,7 +68,9 @@
 			"id": "d1_radio",
 			"section": "NATION",
 			"priority": 35,
-			"conditions": {"day": 1},
+			"conditions": {
+				"day": 1
+			},
 			"headline": "Stations étrangères : le Ministère appelle au discernement",
 			"body": "Certaines radios diffusent en langue velmirienne des informations « sans source ni signature ». Le Ministère rappelle que l'écoute de ces programmes n'est pas recommandée."
 		},
@@ -56,7 +78,9 @@
 			"id": "d1_commission",
 			"section": "ÉTRANGER",
 			"priority": 30,
-			"conditions": {"day": 1},
+			"conditions": {
+				"day": 1
+			},
 			"headline": "Une commission d'Aldria visitera la Centrale n° 3 le 8 décembre",
 			"body": "La visite fait partie des négociations sur le crédit énergétique. « Nos installations n'ont rien à cacher », affirme la Direction de la Centrale."
 		},
@@ -64,7 +88,14 @@
 			"id": "d2_51307_arrest",
 			"section": "À LA UNE",
 			"priority": 60,
-			"conditions": {"after_decision": {"case": "51307", "decisions": ["arrest"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "51307",
+					"decisions": [
+						"arrest"
+					]
+				}
+			},
 			"headline": "Centrale n° 3 : un chef d'équipe indélicat écarté",
 			"body": "Le trafic de certificats de présence a pris fin. La discipline est restaurée à l'atelier des chaudières, où les ouvriers ont salué « une décision juste »."
 		},
@@ -72,7 +103,14 @@
 			"id": "d2_51307_demote",
 			"section": "NATION",
 			"priority": 45,
-			"conditions": {"after_decision": {"case": "51307", "decisions": ["demote"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "51307",
+					"decisions": [
+						"demote"
+					]
+				}
+			},
 			"headline": "Réorganisation de l'atelier des chaudières",
 			"body": "La Direction de la Centrale n° 3 annonce un nouveau chef d'équipe et un contrôle renforcé des horloges de pointage."
 		},
@@ -80,7 +118,14 @@
 			"id": "d2_51307_close",
 			"section": "NATION",
 			"priority": 45,
-			"conditions": {"after_decision": {"case": "51307", "decisions": ["close"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "51307",
+					"decisions": [
+						"close"
+					]
+				}
+			},
 			"headline": "Bohdan ORLIK, ouvrier décoré, cité en exemple",
 			"body": "Le chef d'équipe de l'atelier des chaudières recevra la médaille du Travail en décembre. Son frère, le capitaine L. ORLIK, assistera à la cérémonie."
 		},
@@ -88,7 +133,9 @@
 			"id": "d2_horvat",
 			"section": "CARNET",
 			"priority": 25,
-			"conditions": {"day": 2},
+			"conditions": {
+				"day": 2
+			},
 			"headline": "Souvenir : Milan HORVAT, chaudronnier",
 			"body": "Il y a trois mois, le 14 août, disparaissait Milan HORVAT, du Bloc 3, rue du Moulin. Ses camarades d'atelier n'oublient pas trente années de service."
 		},
@@ -96,7 +143,9 @@
 			"id": "d2_credit",
 			"section": "ÉTRANGER",
 			"priority": 40,
-			"conditions": {"day": 2},
+			"conditions": {
+				"day": 2
+			},
 			"headline": "Aldria retarde sa réponse : Velmira saura passer l'hiver",
 			"body": "Le gouvernement d'Aldria demande « des garanties supplémentaires ». Le ministère du Commerce extérieur dénonce une manœuvre et rappelle que le charbon national suffit."
 		},
@@ -104,7 +153,14 @@
 			"id": "d3_52044_baker",
 			"section": "À LA UNE",
 			"priority": 60,
-			"conditions": {"after_decision": {"case": "52044", "decisions": ["arrest_baker"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "52044",
+					"decisions": [
+						"arrest_baker"
+					]
+				}
+			},
 			"headline": "Fraude aux rations : une gérante arrêtée rue du Moulin",
 			"body": "La gérante de la Boulangerie d'État n° 12 revendait des carnets doublés. Le Bureau du ravitaillement remercie le Ministère : « Les rations des familles sont protégées »."
 		},
@@ -112,7 +168,14 @@
 			"id": "d3_52044_bureau",
 			"section": "NATION",
 			"priority": 20,
-			"conditions": {"after_decision": {"case": "52044", "decisions": ["report_bureau"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "52044",
+					"decisions": [
+						"report_bureau"
+					]
+				}
+			},
 			"headline": "Un préposé suspendu pour négligence",
 			"body": "Un employé du Bureau du ravitaillement, District 4, a été suspendu à la suite d'erreurs d'écriture. Le Bureau précise qu'aucun citoyen n'a été lésé."
 		},
@@ -120,7 +183,14 @@
 			"id": "d3_52044_close",
 			"section": "NATION",
 			"priority": 40,
-			"conditions": {"after_decision": {"case": "52044", "decisions": ["close"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "52044",
+					"decisions": [
+						"close"
+					]
+				}
+			},
 			"headline": "Rue du Moulin : une simple erreur de comptage",
 			"body": "Aucune fraude n'a été constatée dans le secteur, assure le Bureau du ravitaillement. Les registres sont tenus « avec une rigueur exemplaire »."
 		},
@@ -128,7 +198,9 @@
 			"id": "d3_halm",
 			"section": "NATION",
 			"priority": 35,
-			"conditions": {"day": 3},
+			"conditions": {
+				"day": 3
+			},
 			"headline": "Le directeur HALM : « La vérité est un service public »",
 			"body": "Devant les cadres du Ministère, le directeur S. HALM a appelé à « des archives exactes, complètes et définitives ». La modernisation des services sera engagée dès la semaine prochaine."
 		},
@@ -136,7 +208,9 @@
 			"id": "d3_credit",
 			"section": "ÉTRANGER",
 			"priority": 30,
-			"conditions": {"day": 3},
+			"conditions": {
+				"day": 3
+			},
 			"headline": "Halvek : les deux délégations se retrouvent lundi",
 			"body": "Les experts d'Aldria et de Velmira examineront les besoins de l'hiver. La presse d'Aldria parle d'un accord « possible, sous conditions »."
 		},
@@ -144,7 +218,14 @@
 			"id": "d4_52310_arrest",
 			"section": "À LA UNE",
 			"priority": 60,
-			"conditions": {"after_decision": {"case": "52310", "decisions": ["arrest"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "52310",
+					"decisions": [
+						"arrest"
+					]
+				}
+			},
 			"headline": "Le « réseau des poètes » : un procès public en préparation",
 			"body": "L'auteur d'un recueil qui dissimulait des consignes de passage à Halvek a été interpellé quai des Tanneurs. La Section 7 parle d'une « affaire exemplaire »."
 		},
@@ -152,7 +233,14 @@
 			"id": "d4_52310_no_code",
 			"section": "CULTURE",
 			"priority": 40,
-			"conditions": {"after_decision": {"case": "52310", "decisions": ["no_code"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "52310",
+					"decisions": [
+						"no_code"
+					]
+				}
+			},
 			"headline": "La censure rappelle ses règles aux éditeurs",
 			"body": "Toute réédition d'un texte doit être conforme à l'édition originale approuvée. Le Service de la censure annonce une vérification des fonds des bibliothèques."
 		},
@@ -160,7 +248,9 @@
 			"id": "d4_cheminots",
 			"section": "NATION",
 			"priority": 30,
-			"conditions": {"day": 4},
+			"conditions": {
+				"day": 4
+			},
 			"headline": "Journée des cheminots : la ligne de Halvek à l'honneur",
 			"body": "Quatre-vingt-dix-huit pour cent des trains sont arrivés à l'heure en octobre. Les retards restants feront l'objet « d'une étude attentive »."
 		},
@@ -168,7 +258,9 @@
 			"id": "d4_weekend",
 			"section": "NATION",
 			"priority": 25,
-			"conditions": {"day": 4},
+			"conditions": {
+				"day": 4
+			},
 			"headline": "Week-end : les marchés couverts ouverts samedi",
 			"body": "Le Bureau du ravitaillement rappelle que l'achat de carnets hors des guichets officiels est un délit."
 		},
@@ -176,7 +268,15 @@
 			"id": "d_53118_arrest",
 			"section": "À LA UNE",
 			"priority": 60,
-			"conditions": {"after_decision": {"case": "53118", "decisions": ["arrest_all", "restrict"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "53118",
+					"decisions": [
+						"arrest_all",
+						"restrict"
+					]
+				}
+			},
 			"headline": "Sainte-Agathe : un « réseau paroissial » mis hors d'état",
 			"body": "Des rassemblements nocturnes ont pris fin dans la paroisse Sainte-Agathe. La Section 7 salue « un travail d'inspection exemplaire ». Les intéressés ont été transférés aux fins utiles."
 		},
@@ -184,7 +284,14 @@
 			"id": "d_53118_clear",
 			"section": "NATION",
 			"priority": 40,
-			"conditions": {"after_decision": {"case": "53118", "decisions": ["clear"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "53118",
+					"decisions": [
+						"clear"
+					]
+				}
+			},
 			"headline": "Vie religieuse : une veillée en règle, dossier classé",
 			"body": "Le Bureau des cultes confirme qu'une veillée de la paroisse Sainte-Agathe disposait d'un permis. « Les croyants respectueux de la loi n'ont rien à craindre », rappelle le Ministère."
 		},
@@ -192,7 +299,14 @@
 			"id": "d_53402_arrest",
 			"section": "À LA UNE",
 			"priority": 58,
-			"conditions": {"after_decision": {"case": "53402", "decisions": ["arrest"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "53402",
+					"decisions": [
+						"arrest"
+					]
+				}
+			},
 			"headline": "Ligne de Halvek : un aiguilleur au service d'une filière",
 			"body": "Un employé du triage, soupçonné d'avoir couvert des franchissements clandestins, a été transféré à la sûreté des frontières. Le décret 86-31 sera appliqué « avec la plus grande fermeté »."
 		},
@@ -200,7 +314,15 @@
 			"id": "d_53402_clear",
 			"section": "NATION",
 			"priority": 38,
-			"conditions": {"after_decision": {"case": "53402", "decisions": ["clear", "reassign"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "53402",
+					"decisions": [
+						"clear",
+						"reassign"
+					]
+				}
+			},
 			"headline": "Ponctualité : la ligne de Halvek revient à l'heure",
 			"body": "Après une « défaillance technique », le trafic est rétabli entre Velmira et Halvek. Le Bureau des transports annonce un contrôle renforcé des horaires de nuit."
 		},
@@ -208,7 +330,14 @@
 			"id": "d_53517_transmit",
 			"section": "NATION",
 			"priority": 42,
-			"conditions": {"after_decision": {"case": "53517", "decisions": ["transmit"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "53517",
+					"decisions": [
+						"transmit"
+					]
+				}
+			},
 			"headline": "Logement : un signalement de citoyen suivi d'effet",
 			"body": "Grâce à la vigilance d'un riverain, un appartement du District 2 a été libéré et réattribué. Le Ministère remercie « ceux qui savent regarder autour d'eux »."
 		},
@@ -216,7 +345,15 @@
 			"id": "d_53517_dismiss",
 			"section": "CARNET",
 			"priority": 22,
-			"conditions": {"after_decision": {"case": "53517", "decisions": ["dismiss", "turn"]}},
+			"conditions": {
+				"after_decision": {
+					"case": "53517",
+					"decisions": [
+						"dismiss",
+						"turn"
+					]
+				}
+			},
 			"headline": "Mise en garde contre les signalements de complaisance",
 			"body": "Le Bureau des signalements rappelle que toute dénonciation infondée « détourne les services de leur mission ». Les abus pourront être relevés."
 		},
@@ -235,6 +372,173 @@
 			"conditions": {},
 			"headline": "Temps froid et sec sur Velmira",
 			"body": "Gelées matinales attendues dans les districts du nord. Les chauffages collectifs fonctionnent normalement."
+		},
+		{
+			"id": "d_54001_sabotage",
+			"section": "À LA UNE",
+			"priority": 70,
+			"conditions": {
+				"after_decision": {
+					"case": "54001",
+					"decisions": [
+						"sabotage"
+					]
+				}
+			},
+			"headline": "Centrale n° 3 : la main de l'ennemi démasquée",
+			"body": "L'explosion qui a frappé la Centrale thermique n° 3 était un sabotage. L'enquête a désigné une responsable, déjà connue des services. Le courant est rétabli ; la vigilance, renforcée."
+		},
+		{
+			"id": "d_54001_accident",
+			"section": "À LA UNE",
+			"priority": 68,
+			"conditions": {
+				"after_decision": {
+					"case": "54001",
+					"decisions": [
+						"accident",
+						"delay"
+					]
+				}
+			},
+			"headline": "Centrale n° 3 : un incident technique maîtrisé",
+			"body": "Une défaillance a interrompu la production de la Centrale n° 3. Les services compétents ont rétabli l'alimentation. Aucune consigne particulière n'est donnée à la population."
+		},
+		{
+			"id": "d_54012_upheld",
+			"section": "NATION",
+			"priority": 50,
+			"conditions": {
+				"after_decision": {
+					"case": "54012",
+					"decisions": [
+						"uphold"
+					]
+				}
+			},
+			"headline": "Un témoignage décisif conforte l'enquête",
+			"body": "Un témoin a confirmé les faits. « La parole d'un citoyen vaut preuve lorsqu'elle sert la vérité », rappelle la Section."
+		},
+		{
+			"id": "d_54012_discredit",
+			"section": "NATION",
+			"priority": 40,
+			"conditions": {
+				"after_decision": {
+					"case": "54012",
+					"decisions": [
+						"discredit"
+					]
+				}
+			},
+			"headline": "Mise en garde : l'affabulation est un délit",
+			"body": "Des déclarations contradictoires ont été écartées. Le Ministère rappelle que porter de fausses accusations expose aux mêmes peines que les faits allégués."
+		},
+		{
+			"id": "d_54030_transfer",
+			"section": "NATION",
+			"priority": 45,
+			"conditions": {
+				"after_decision": {
+					"case": "54030",
+					"decisions": [
+						"transmit"
+					]
+				}
+			},
+			"headline": "Quartier Est : un horloger transféré pour vérifications",
+			"body": "Un artisan de la rue des Tisserands fait l'objet d'un examen. Son atelier reste fermé jusqu'à nouvel ordre."
+		},
+		{
+			"id": "d_54030_reopened",
+			"section": "NATION",
+			"priority": 22,
+			"conditions": {
+				"after_decision": {
+					"case": "54030",
+					"decisions": [
+						"release",
+						"investigate"
+					]
+				}
+			},
+			"headline": "L'horloge de la rue des Tisserands sonne de nouveau",
+			"body": "Le vieil atelier a rouvert ses volets. Les habitants disent y remettre leurs montres « à l'heure juste »."
+		},
+		{
+			"id": "d11_decret",
+			"section": "NATION",
+			"priority": 30,
+			"conditions": {
+				"day": 11
+			},
+			"headline": "Agents de l'étranger : le décret 86-31 pleinement appliqué",
+			"body": "Depuis l'incident de Halvek, tout contact non déclaré avec l'extérieur est traité comme une charge. Les services rappellent que le doute profite à l'État."
+		},
+		{
+			"id": "d13_rations_hiver",
+			"section": "NATION",
+			"priority": 28,
+			"conditions": {
+				"day": 13
+			},
+			"headline": "Hiver : la part de charbon des foyers abaissée",
+			"body": "Devant la demande, le Bureau du ravitaillement réduit la ration individuelle. « L'effort est collectif », indique le communiqué."
+		},
+		{
+			"id": "d15_archives",
+			"section": "À LA UNE",
+			"priority": 55,
+			"conditions": {
+				"day": 15
+			},
+			"headline": "Avant le 8 décembre : les archives mises en ordre",
+			"body": "En vue de la commission d'Aldria, les services procèdent à une vérification générale des dossiers. « Rien ne doit manquer, rien ne doit dépasser. »"
+		},
+		{
+			"id": "d_mirror_sedlar",
+			"section": "À LA UNE",
+			"priority": 72,
+			"conditions": {
+				"after_decision": {
+					"case": "60001",
+					"decisions": [
+						"certify_lie"
+					]
+				}
+			},
+			"headline": "L'affaire SEDLAR : la vérité officielle est établie",
+			"body": "Le dossier de la ligne Velmira–Halvek est clos. La version retenue par les archives fait désormais foi. Toute autre lecture relève de la rumeur."
+		},
+		{
+			"id": "d_mirror_centrale",
+			"section": "À LA UNE",
+			"priority": 72,
+			"conditions": {
+				"after_decision": {
+					"case": "60002",
+					"decisions": [
+						"name_scapegoat"
+					]
+				}
+			},
+			"headline": "Centrale n° 3 : le saboteur a un nom",
+			"body": "L'enquête officielle attribue l'explosion au chef d'atelier RUDA, lié au réseau de dérèglement des horloges. Le dossier est définitivement clos."
+		},
+		{
+			"id": "d_mirror_father",
+			"section": "NATION",
+			"priority": 52,
+			"conditions": {
+				"after_decision": {
+					"case": "60003",
+					"decisions": [
+						"erase_father"
+					]
+				}
+			},
+			"headline": "Carnet : départs",
+			"body": "Parmi les régularisations d'archives de l'année, celle de A. VOSK, horloger, « parti refaire sa vie au-delà de la frontière ». Une page se tourne."
 		}
 	]
 }
