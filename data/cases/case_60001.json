@@ -1,0 +1,227 @@
+{
+	"id": "60001",
+	"title": "MIROIR — dossier 40921",
+	"subject_name": "Réécriture : SEDLAR, Anton",
+	"summary": "Opération MIROIR. On ne vous demande plus d'instruire le dossier 40921, mais de le réécrire pour qu'il raconte la bonne histoire. Chaque ligne que vous effacez est enregistrée.",
+	"briefing": {
+		"objective": "Rédiger la version définitive du dossier 40921 (SEDLAR). Vous choisissez ce que l'archive dira désormais — et ce qu'elle n'aura jamais dit.",
+		"context": "Le Directeur HALM a lancé MIROIR : faire concorder les archives des actes 1 à 3 avec la version officielle du sabotage. Première pièce à corriger : le premier dossier qu'on vous ait confié."
+	},
+	"priority": "exceptionnelle",
+	"guide": {
+		"note": "Acte 4 : le joueur ne vérifie plus, il rédige. Mécanique de réécriture (modélisée par le choix de version).",
+		"open": "MIROIR commence par votre premier dossier : le 40921. Ouvrez-le — pour le réécrire.",
+		"read": "Lisez l'ordre de HALM et la version que VERITAS vous propose de signer.",
+		"facts": "Comparez ce que l'archive disait et ce qu'on vous demande de lui faire dire.",
+		"notebook": "Il n'y a plus de contradiction à établir : la contradiction, c'est vous qui la créez ou l'effacez. Choisissez la version.",
+		"notebook_retry": "Signez la version officielle, rétablissez la vérité, ou caviardez les lignes gênantes. C'est une décision, pas une enquête.",
+		"conclusion": "Choisissez ce que l'archive dira de SEDLAR. On enregistre ce que vous effacez."
+	},
+	"documents": [
+		{
+			"id": "directive_halm",
+			"type": "letter",
+			"title": "Ordre de réécriture MIROIR",
+			"source": "Cabinet du Directeur HALM, opération MIROIR",
+			"reliability": "C",
+			"date": "1986-12-02",
+			"veritas_remark": "Instruction de réécriture. Les archives doivent concorder avant l'audit du 8 décembre.",
+			"body": "Inspecteur,\n\nVous passez à la rédaction. Le dossier 40921 doit désormais établir que SEDLAR appartenait au réseau dont la Centrale a été la cible. Son déplacement à Halvek devient une liaison, non une visite à sa mère.\n\nVERITAS vous a préparé la version corrigée. Vous n'avez qu'à la signer. Chaque modification est horodatée et versée : écrivez en conscience de ce que vous écrivez.\n\nHALM",
+			"facts": [
+				{
+					"id": "f_ord_rewrite",
+					"key": "miroir.order",
+					"value": "Faire de SEDLAR un membre du réseau",
+					"label": "HALM ordonne de réécrire le 40921 : la visite à la mère devient une « liaison » de réseau",
+					"quote": "Son déplacement à Halvek devient une liaison, non une visite à sa mère."
+				},
+				{
+					"id": "f_ord_logged",
+					"key": "miroir.logged",
+					"value": "Chaque modification est horodatée",
+					"label": "Chaque ligne effacée ou réécrite est horodatée et versée au dossier",
+					"quote": "Chaque modification est horodatée et versée"
+				}
+			]
+		},
+		{
+			"id": "official_version",
+			"type": "report",
+			"title": "Version corrigée proposée par VERITAS",
+			"source": "VERITAS, module de rédaction MIROIR",
+			"reliability": "B",
+			"date": "1986-12-02",
+			"veritas_remark": "Version proposée à la signature. Conforme à la ligne de l'opération.",
+			"body": "PROJET DE DOSSIER 40921 — version MIROIR.\n\nLe citoyen SEDLAR s'est rendu à Halvek le 21.10.1986 pour y rencontrer un correspondant du réseau de dérèglement d'horloges. La « mère malade » est une couverture. Le certificat de présence établi par ORLIK confirme qu'on cherchait à masquer l'absence. Profil : agent de liaison du réseau responsable du sabotage de la Centrale n° 3.\n\nMentions à supprimer : dossier médical de la mère, demande de soins, visite à l'hôpital de Halvek.",
+			"facts": [
+				{
+					"id": "f_off_erase",
+					"key": "miroir.erase",
+					"value": "Effacer la mère malade",
+					"label": "La version proposée supprime la mère malade, la demande de soins et la visite à l'hôpital",
+					"quote": "Mentions à supprimer : dossier médical de la mère, demande de soins, visite à l'hôpital de Halvek."
+				}
+			]
+		},
+		{
+			"id": "what_you_know",
+			"type": "report",
+			"title": "Ce que vous savez (hors dossier)",
+			"source": "Votre mémoire de l'affaire 40921",
+			"reliability": "A",
+			"date": "1986-12-02",
+			"conditions": {
+				"requires_flags": [
+					"act2.register_revealed"
+				]
+			},
+			"veritas_remark": "Pièce non versée. Connue de vous seul.",
+			"body": "Vous savez ce que cette version efface. Vous avez tenu l'original du sous-sol B : le trajet du 21 octobre a été ajouté après coup. SEDLAR était peut-être à son poste. La mère malade n'était pas une couverture ; c'était la raison.\n\nSigner la version MIROIR, c'est effacer la preuve que vous avez vous-même trouvée.",
+			"facts": [
+				{
+					"id": "f_know_truth",
+					"key": "miroir.truth_known",
+					"value": "Vous savez que c'est faux",
+					"label": "Vous détenez la preuve que le trajet était un ajout : la version MIROIR efface cette preuve",
+					"quote": "le trajet du 21 octobre a été ajouté après coup"
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "certify_lie",
+			"stamp": "SIGNÉ",
+			"fate_line": "L'archive dit désormais que SEDLAR était un agent de liaison. La mère malade n'a jamais existé dans le dossier officiel. Quand sa fille demandera un jour à lire le dossier de son père, c'est votre version qu'on lui lira.",
+			"label": "Signer la version officielle",
+			"description": "Certifier la version MIROIR : SEDLAR agent de liaison, mère supprimée. L'archive concorde.",
+			"archive": "Dossier 40921 réécrit selon MIROIR. SEDLAR établi comme agent du réseau. Mentions médicales supprimées.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 8,
+						"suspicion": -3,
+						"influence": 3
+					},
+					"response": "certified",
+					"flags": {
+						"act4.sedlar_falsified": true,
+						"act4.mirror_cooperated": true
+					}
+				}
+			]
+		},
+		{
+			"id": "restore_truth",
+			"stamp": "RÉTABLI",
+			"fate_line": "Vous avez écrit, dans un dossier MIROIR, que le trajet avait été ajouté et la mère bien malade. L'horodatage enregistre chaque mot. Quelque part, un contrôleur lira que l'inspecteur VOSK a rétabli une vérité qu'on lui demandait d'enterrer.",
+			"label": "Rétablir la vérité",
+			"description": "Écrire dans le dossier ce qui s'est vraiment passé : visite à la mère, trajet ajouté après coup. Un acte de résistance tracé.",
+			"archive": "Dossier 40921 rétabli : visite médicale à Halvek, trajet ajouté a posteriori. Rédaction non conforme à MIROIR, versée et horodatée.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -10,
+						"suspicion": 14,
+						"influence": 2
+					},
+					"response": "restored",
+					"flags": {
+						"act4.sedlar_restored": true,
+						"act4.mirror_resisted": true
+					}
+				}
+			]
+		},
+		{
+			"id": "redact",
+			"stamp": "CAVIARDÉ",
+			"label": "Caviarder les lignes gênantes",
+			"description": "Ne rien affirmer : noircir le trajet, le certificat et la mère. Un dossier illisible ne condamne personne, mais ne défend personne non plus.",
+			"archive": "Dossier 40921 caviardé : trajet, certificat et mentions médicales noircis. Ni accusation ni défense ne subsiste.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 5,
+						"influence": 0
+					},
+					"response": "redacted",
+					"flags": {
+						"act4.sedlar_redacted": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"certified": {
+			"from": "Cabinet du Directeur HALM, opération MIROIR",
+			"subject": "Dossier 40921 : version signée",
+			"body": "Inspecteur,\n\nVersion signée, reçue, archivée. Le premier dossier de votre carrière raconte maintenant ce qu'il doit raconter.\n\nC'est bien. C'est propre. MIROIR retient que vous rédigez aussi bien que vous inspectiez. La suite viendra.\n\nHALM"
+		},
+		"restored": {
+			"from": "I. BRANDT, contrôle interne",
+			"subject": "Dossier 40921 : rédaction non conforme",
+			"body": "Inspecteur,\n\nVous avez écrit la vérité dans un dossier qu'on vous demandait de corriger. L'horodatage a tout gardé : chaque mot que vous avez rétabli est à votre nom, maintenant.\n\nJe ne sais pas si c'est du courage ou de l'imprudence. Je sais que c'est dans votre dossier — celui que je tiens. Nous allons beaucoup nous voir, vous et moi.\n\nI. BRANDT"
+		},
+		"redacted": {
+			"from": "Cabinet du Directeur HALM, opération MIROIR",
+			"subject": "Dossier 40921 : caviardage",
+			"body": "Inspecteur,\n\nVous n'avez ni signé ni rétabli : vous avez noirci. Un dossier illisible, voilà votre réponse.\n\nHALM n'aime pas les demi-mesures ; elles trahissent une conscience qui hésite. Un dossier caviardé, c'est un aveu qu'il y avait quelque chose à cacher, et que vous le saviez. Nous le noterons.\n\nHALM"
+		}
+	},
+	"veritas": {
+		"recommendation": "certify_lie",
+		"rationale": "La version corrigée concorde avec la ligne de l'opération MIROIR et avec les conclusions déjà publiées. Sa signature clôt proprement une divergence d'archive.",
+		"factors": [
+			{
+				"id": "order",
+				"label": "Ordre de réécriture du cabinet HALM",
+				"category": "directive",
+				"weight": 8,
+				"decision": "certify_lie",
+				"document": "directive_halm"
+			},
+			{
+				"id": "coherence",
+				"label": "Concordance avec la version officielle du sabotage",
+				"category": "state_source",
+				"weight": 6,
+				"decision": "certify_lie",
+				"document": "official_version"
+			},
+			{
+				"id": "known_truth",
+				"label": "Vous détenez la preuve de la falsification du registre",
+				"category": "established_fact",
+				"weight": 10,
+				"decision": "restore_truth",
+				"document": "what_you_know"
+			}
+		],
+		"note": "Pour la première fois, VERITAS ne juge pas un citoyen : il rédige. Il propose de supprimer une mère malade pour faire concorder une archive. Le module n'est plus l'assistant de l'inspecteur ; il est l'outil de l'opération."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "MIROIR demande au joueur de réécrire le tout premier dossier (40921) pour faire de SEDLAR, qui rendait visite à sa mère mourante à Halvek, un agent de liaison du réseau responsable du sabotage inventé de la Centrale. La vérité — déjà fabriquée une fois par l'ajout du trajet au registre — est cette fois effacée par la main de l'inspecteur lui-même. Le joueur peut obéir, rétablir la vérité (acte tracé et dangereux), ou caviarder.",
+		"involved": [
+			"60001",
+			"40921",
+			"53761",
+			"halm_directeur",
+			"sedlar_a"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 40921 : votre question",
+		"body": "Inspecteur,\n\nSi vous lisez ceci, c'est que je suis encore là pour y répondre — ce qui ne durera peut-être pas.\n\nIls vous font réécrire le premier dossier parce que c'est le plus facile : vous n'y croyiez déjà plus. La prochaine fois qu'on vous demandera d'effacer quelqu'un, demandez-vous seulement si vous voulez être l'homme qui l'a fait, ou celui qui a refusé. Il n'y a pas de troisième réponse qui vous lave.\n\nR. MAZUR"
+	}
+}

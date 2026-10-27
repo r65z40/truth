@@ -252,8 +252,32 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [ ] Note mécanique : 54100 « consultable seulement » rendu en données (issue inerte) ;
       l'indice de suspicion live en mots et l'interdiction d'ouvrir dans la liste
       demanderaient un petit ajout moteur — à proposer à fen.
-- [ ] Acte 4 MIROIR : réécriture des archives (60001/60002/60003, dont le dossier du
-      père), puis le moteur des 7 fins et l'écran d'archive final.
+## Fait : acte 4 — MIROIR (réécriture des archives) (2026-10-27)
+
+Le joueur ne vérifie plus les documents, il les rédige. Mécanique de réécriture
+modélisée par le choix de version (signer le mensonge / rétablir la vérité /
+caviarder) via le système de décisions existant — données pures, sans moteur neuf.
+
+- [x] Dossier 60001 MIROIR : SEDLAR — réécrire le premier dossier (40921) pour faire
+      de la visite à la mère une « liaison » de réseau. Signer la falsification
+      (`act4.sedlar_falsified`), rétablir la vérité (`act4.sedlar_restored`, résistance
+      tracée), ou caviarder. Qui avait gardé la preuve d'acte 2 voit qu'il efface sa
+      propre preuve.
+- [x] Dossier 60002 MIROIR : CENTRALE — rédiger le rapport officiel de l'explosion.
+      Nommer le mort RUDA en saboteur (96 % VERITAS), écrire la défaillance et ORLIK
+      (`act4.centrale_truth`), ou caviarder. Qui a gardé les originaux de KREMER peut
+      faire imprimer à VERITAS « 0 % de sabotage » (`veritas.zero`) — la preuve de la
+      fin La Fuite des originaux.
+- [x] Dossier 60003 MIROIR : VOSK — le choix final. Le dossier scellé de 1971 révèle
+      que le père avait découvert le trucage des horloges et a disparu après. Effacer
+      (émigration, `act4.father_erased` + `act4.mirror_signed_clean`, promotion, vers
+      Le Miroir parfait), rétablir sa vérité (`act4.father_truth`, vers La Correction),
+      ou refuser d'écrire (`act4.mirror_refused`, vers Le Silence).
+- [x] Câblage : `assign_miroir_intro` + `assign_60001` (jour 15), `assign_60002`
+      (jour 16), `assign_60003` (jour 18). Notes de dossier personnel. Tests ajoutés.
+- [ ] Moteur des 7 fins (résolution depuis les drapeaux/indicateurs) + écran d'archive
+      final récapitulant le destin de chaque sujet. Nécessite un peu de code moteur :
+      à proposer à fen (voir `docs/design/FINS_PROPOSITION.md`).
 
 ## Prochaine itération
 
