@@ -1288,6 +1288,85 @@
 				"subject": "La dernière pièce",
 				"body": "Il reste un dossier. Vous savez lequel : celui de 1971, scellé, au nom de votre père.\n\nLe dossier 60003 est ouvert à votre carnet. Fermez-le, et le vôtre s'ouvrira — vide. C'est le marché."
 			}
+		},
+		{
+			"id": "54001_sedlar_mother_returns",
+			"conditions": {
+				"min_day": 12,
+				"requires_flags": [
+					"54001.sedlar_daughter_condemned"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Vera SEDLAR — encore",
+				"body": "Monsieur l'Inspecteur,\n\nJe vous avais écrit pour mon mari. Aujourd'hui je vous écris pour ma fille. Mira avait dix-neuf ans et travaillait à la Centrale ; on me dit maintenant qu'elle l'aurait fait exploser. Ma fille ne savait pas changer une ampoule.\n\nIl ne me reste plus personne à qui on n'ait rien reproché. Je ne demande plus qu'on les libère. Je demande seulement qu'on me dise où ils sont.\n\nVera SEDLAR, Bloc 14, escalier C\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "54012_reis_reused",
+			"conditions": {
+				"min_day": 13,
+				"requires_flags": [
+					"54012.false_witness"
+				]
+			},
+			"effects": {
+				"loyalty": 1
+			},
+			"message": {
+				"from": "Section 7, coordination des témoignages",
+				"subject": "Témoin disponible : REIS",
+				"body": "Inspecteur,\n\nLe témoin REIS s'est montré coopératif dans l'affaire de la Centrale. Nous l'avons versé à la liste des témoins fiables : quand un dossier aura besoin d'une déposition, nous vous l'enverrons.\n\nUn bon témoin sert plusieurs fois. Notez son matricule.\n\nSection 7"
+			}
+		},
+		{
+			"id": "54012_reis_recants",
+			"conditions": {
+				"min_day": 13,
+				"requires_flags": [
+					"54012.testimony_discredited"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Un mot de T. REIS",
+				"body": "Inspecteur,\n\nOn m'avait dicté ce que je devais dire, et j'ai signé parce que j'avais peur. Vous n'avez pas retenu ma déposition. La personne que j'accusais est rentrée chez elle hier.\n\nJe ne dors toujours pas, mais pour une autre raison maintenant. Merci.\n\nT. REIS"
+			}
+		},
+		{
+			"id": "54030_adler_shop_sealed",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"adler.arrested"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"message": {
+				"from": "Gérance des locaux, quartier Est",
+				"subject": "Atelier rue des Tisserands : mise sous scellés",
+				"body": "Pour information de l'inspecteur instructeur.\n\nL'atelier de l'horloger V. ADLER est fermé et placé sous scellés. Son contenu est inventorié. Une pendule ancienne, déposée en 1971 au nom de VOSK et jamais réclamée, a été versée au dépôt central.\n\nAucune action requise."
+			}
+		},
+		{
+			"id": "54030_adler_freed_note",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"adler.freed"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Déposé à l'accueil, sans expéditeur",
+				"subject": "(une montre et un billet)",
+				"body": "On a laissé pour vous, à l'accueil, une vieille montre réparée et ce billet :\n\n« Je vous ai mis à l'heure, comme je mettais votre père. Elle avance d'une minute : c'est voulu. On n'est jamais en retard quand on sait de combien on triche.\n\n— V. A. »"
+			}
 		}
 	]
 }

@@ -41,6 +41,7 @@ const TUTORIAL_BUBBLE_UNTIL_CONCLUDED := 2
 @onready var _day_transition_label: Label = %DayTransitionLabel
 @onready var evening_screen: EveningScreen = %EveningScreen
 @onready var act_review_screen: ActReviewScreen = %ActReviewScreen
+@onready var ending_screen: EndingScreen = %EndingScreen
 @onready var coach: CoachOverlay = %CoachOverlay
 @onready var field_screen: FieldScreen = %FieldScreen
 @onready var archive_card: ArchiveCard = %ArchiveCard
@@ -203,8 +204,24 @@ func end_day() -> void:
 	if act_review_screen.open():
 		Music.play_context("act_review")
 		await act_review_screen.finished
+	if GameState.is_final_day():
+		_end_game()
+		return
 	_start_next_day()
 	Music.play_context("desk")
+
+
+## Fin de la campagne (terme du jour 20) : résout la fin, l'affiche avec la
+## dernière page d'archive, enregistre la partie terminée, puis renvoie au menu.
+func _end_game() -> void:
+	Music.play_context("act_review")
+	var result := GameState.get_ending()
+	ending_screen.open(result)
+	await ending_screen.finished
+	GameState.finish_game(result.get("ending", {}).get("id", ""))
+	if SaveManager.save_game() == OK:
+		has_unsaved_changes = false
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
 ## Passe au jour suivant, sauvegarde automatiquement et affiche la transition.
@@ -490,7 +507,7 @@ func _on_field_finished() -> void:
 ## Contrôle que la bulle d'aide signale pour l'étape en cours : l'endroit précis
 ## dans la fenêtre de l'application si elle est au premier plan, sinon son icône.
 func coach_target() -> Control:
-	if evening_screen.visible or act_review_screen.visible or field_screen.visible or _day_transition.visible or archive_card.visible or comparison_screen.visible or timeline_screen.visible:
+	if evening_screen.visible or act_review_screen.visible or field_screen.visible or _day_transition.visible or archive_card.visible or comparison_screen.visible or ending_screen.visible or timeline_screen.visible:
 		return null
 	var app: String = current_step.get("target", "")
 	if windows.has(app) and windows[app].visible:

@@ -29,6 +29,9 @@ var field_3d := false
 var music_volume := 0.8
 ## Langue de l'interface et des dossiers ("fr" ou "en").
 var language := "fr"
+## Identifiants des fins déjà atteintes, persistants entre les parties (compteur
+## « fins découvertes » du menu). Séparé de la sauvegarde de partie.
+var endings_discovered: Array = []
 
 
 func _ready() -> void:
@@ -48,6 +51,7 @@ func load_settings() -> void:
 	field_3d = config.get_value("display", "field_3d", field_3d)
 	music_volume = config.get_value("audio", "music_volume", music_volume)
 	language = config.get_value("general", "language", language)
+	endings_discovered = config.get_value("progress", "endings_discovered", endings_discovered)
 
 
 func save_settings() -> void:
@@ -60,6 +64,7 @@ func save_settings() -> void:
 	config.set_value("display", "field_3d", field_3d)
 	config.set_value("audio", "music_volume", music_volume)
 	config.set_value("general", "language", language)
+	config.set_value("progress", "endings_discovered", endings_discovered)
 	config.save(PATH)
 
 
@@ -118,6 +123,16 @@ func set_language(code: String) -> void:
 	language = code
 	Localization.set_locale(code)
 	_commit()
+
+
+## Consigne une fin atteinte (sans doublon) et l'enregistre ; alimente le
+## compteur « fins découvertes » du menu principal.
+func record_ending(ending_id: String) -> void:
+	if ending_id == "" or ending_id in endings_discovered:
+		return
+	endings_discovered.append(ending_id)
+	save_settings()
+	changed.emit()
 
 
 ## Le plein écran n'a de sens que sur ordinateur (pas en mobile, pas en headless).

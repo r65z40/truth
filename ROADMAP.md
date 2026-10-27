@@ -66,7 +66,9 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Onglets des pièces sur une ligne défilante (dossiers de 8 pièces)
 - [ ] Fondations de la localisation (français, anglais)
 - [x] Horloge de service (8 h + 2 h), demander une pièce (livrée le lendemain), consulter Mazur
+- [x] Le prix de la vérité : certaines contradictions (secondaires) ne s'établissent qu'en PROUVANT — payer une heure, un risque (suspicion) ou une faveur (appui requis). Repérer reste gratuit ; données par dossier (`contradiction_prices`). Démonstration sur 51307 (mobile et passé d'informateur d'ORLIK) ; extensible à d'autres dossiers au choix de fen
 - [x] Soirées : 5 soirées de l'acte 1 (Lena, radio d'Aldria, M. ADLER, visites), perdues en heures supplémentaires
+- [x] Soirées prolongées aux actes 2-4 (jours 5-19) : les fissures, la nuit de la Centrale, la voisine BRANDT, les papiers du père ; réactives au sort d'ADLER/Lena, sans jamais décider d'une fin (données pures)
 - [x] Calendrier en 20 journées de service, ellipses entre les actes
 - [x] Profil du joueur dans `data/campaign.json` (préparation des extensions)
 - [x] Écran de fin d'acte (archive des sujets), commission d'avancement, promotion en 2e classe acceptée ou déclinée
@@ -143,6 +145,11 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Levier n°4 (journal) : chaque décision des 7 dossiers a sa une du lendemain
       dans « La Voix de Velmira » (version officielle, euphémismes qui contrastent
       avec la carte de destin)
+- [x] Journal étendu aux actes 3 et 4 : l'explosion de la Centrale (sabotage →
+      bouc émissaire, accident → « incident technique »), le témoin, l'horloger,
+      et surtout les réécritures MIROIR qui paraissent comme la vérité établie
+      (SEDLAR, la Centrale, le père « parti refaire sa vie à l'étranger »). La
+      résistance, elle, ne se publie pas. Données pures, test `test_news_acts3_4`.
 - [x] Ton plus dur (demande de fen du 26.10) : camps (Dolenz), exécutions, morts,
       déportations sur les dénouements graves (tampons DÉPORTÉ/EXÉCUTÉ/CONDAMNÉ +
       `fate_line` crue sur la carte, archive officielle conservée plus pudique)
@@ -155,7 +162,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Levier n°2 (acte 2) : les gens reviennent selon ce qu'on a signé — KOLB récidive
       (on devient son outil), la mère de la chorale attend en bas, ou KOLB dénonce
       l'inspecteur si on a classé ; retours PETRAS/informateur déjà en place
-- [ ] Levier n°2 (acte 3) : retour de la fille SEDLAR — avec l'écriture de l'acte 3
+- [x] Levier n°2 (actes 3-4) : les gens jugés reviennent — Vera SEDLAR réécrit
+      quand sa fille Mira est condamnée (après le père), le témoin coaché REIS est
+      « versé à la liste des témoins fiables » (ou, discrédité, l'accusé rentre et
+      REIS remercie), l'atelier d'ADLER scellé rend la pendule VOSK de 1971 (ou,
+      relâché, ADLER laisse une montre « à l'heure juste »). Données pures
+      (events.json), test `test_act3_returns`.
 - [x] Pression de la hiérarchie selon le profil de l'agent (demande de fen du 26.10
       « amplifier les conséquences ») : les conditions d'événements acceptent des
       seuils d'indicateurs (`min_indicators`/`max_indicators`). La hiérarchie réagit
@@ -277,9 +289,16 @@ caviarder) via le système de décisions existant — données pures, sans moteu
       ou refuser d'écrire (`act4.mirror_refused`, vers Le Silence).
 - [x] Câblage : `assign_miroir_intro` + `assign_60001` (jour 15), `assign_60002`
       (jour 16), `assign_60003` (jour 18). Notes de dossier personnel. Tests ajoutés.
-- [ ] Moteur des 7 fins (résolution depuis les drapeaux/indicateurs) + écran d'archive
-      final récapitulant le destin de chaque sujet. Nécessite un peu de code moteur :
-      à proposer à fen (voir `docs/design/FINS_PROPOSITION.md`).
+- [x] Moteur des 7 fins (`EndingRules.resolve`, logique pure) + `data/endings.json`
+      (7 fins, règles en OR-de-ET sur les drapeaux/indicateurs, « spared » = innocents
+      épargnés, Le Silence par défaut) + écran de fin `scenes/act_end/ending_screen`
+      (texte de la fin, puis dernière page d'archive via `FateRules`, « ligne vraie »
+      pour La Correction). Branché au terme du jour 20 (`GameState.is_final_day()` /
+      `get_ending()` / `finish_game()`, `desk._end_game()` → menu). Tests `test_endings`
+      et `test_end_of_game_in_desk`. Ordre et seuils validés par fen le 27.10.
+      Conception : `docs/design/FINS_PROPOSITION.md`.
+- [ ] Facultatif (proposé à fen) : compteur « fins découvertes X/7 » au menu principal,
+      pour inciter à rejouer. À faire si fen le valide.
 
 ## Prochaine itération
 

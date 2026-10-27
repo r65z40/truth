@@ -44,9 +44,12 @@ func _run() -> void:
 		"test_delayed_consequences",
 		"test_save_migration_from_v2",
 		"test_save_migration_from_v3",
+		"test_save_migration_from_v5",
+		"test_price_of_truth",
 		"test_work_time",
 		"test_request_and_consultation",
 		"test_evenings_file_is_valid",
+		"test_evenings_acts_2_4",
 		"test_evenings",
 		"test_career_evaluation",
 		"test_field_scenes_are_valid",
@@ -83,6 +86,7 @@ func _run() -> void:
 		"test_case_60002_miroir",
 		"test_case_60003_father",
 		"test_act4_wiring",
+		"test_act3_returns",
 		"test_case_briefings",
 		"test_scene_gallery",
 		"test_document_field_icons",
@@ -114,10 +118,14 @@ func _run() -> void:
 		"test_document_passages",
 		"test_desk_apps",
 		"test_news",
+		"test_news_acts3_4",
 		"test_localization",
 		"test_music_rules",
 		"test_music_player",
 		"test_time_in_desk",
+		"test_endings",
+		"test_end_of_game_in_desk",
+		"test_endings_discovered_counter",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -685,6 +693,55 @@ func test_save_migration_from_v3() -> void:
 			"horloge et demandes sauvegardées")
 
 
+func test_save_migration_from_v5() -> void:
+	var data := GameState.to_dict()
+	for case_state in data.cases.values():
+		case_state.erase("contradictions_noticed")
+	var file := FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"save_version": 5, "state": data}))
+	file.close()
+	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "une sauvegarde v5 se charge")
+	check(GameState.get_case_state("40921").contradictions_noticed == [], "champ des contradictions repérées ajouté aux dossiers")
+
+
+## Le prix de la vérité : certaines contradictions (actes 1-2) ne s'établissent
+## qu'en payant une heure, un risque ou une faveur. Repérer reste gratuit.
+func test_price_of_truth() -> void:
+	GameState.new_game()
+	# Sans prix : établie dès qu'on la repère (comportement inchangé).
+	check(GameState.confront_facts("52310", "f_var_mark", "f_rc_mark") == "varga.mark", "la contradiction est repérée")
+	check("varga.mark" in GameState.get_case_state("52310").contradictions_found, "une contradiction sans prix s'établit aussitôt")
+	# Prix en heures + risque (51307, le mobile d'ORLIK) : repérée, pas encore établie.
+	check(GameState.confront_facts("51307", "f_anon_motive", "f_hearing_motive") == "orlik.motive", "la contradiction tarifée est repérée")
+	var cs := GameState.get_case_state("51307")
+	check(not "orlik.motive" in cs.contradictions_found and "orlik.motive" in cs.contradictions_noticed,
+			"une contradiction tarifée est seulement repérée")
+	var st := GameState.contradiction_prove_state("51307", "orlik.motive")
+	check(st.priced and st.noticed and not st.established and st.affordable, "elle est prouvable (2 h sur 8 disponibles)")
+	# Pas assez d'heures : preuve refusée, rien n'est dépensé ni établi.
+	GameState.hours_used = WorkTime.day_hours() + WorkTime.overtime_hours() - 1
+	check(not GameState.prove_contradiction("51307", "orlik.motive").ok, "impossible de prouver sans les heures")
+	check(not "orlik.motive" in GameState.get_case_state("51307").contradictions_found, "rien n'est établi si le temps manque")
+	# Avec les heures : prouver coûte 2 h, fait monter la suspicion (risque) et établit, puis idempotent.
+	GameState.hours_used = 0
+	var before := GameState.get_indicator("suspicion")
+	var r := GameState.prove_contradiction("51307", "orlik.motive")
+	check(r.ok and r.text.contains("registres"), "la contradiction est prouvée, avec son texte")
+	check(GameState.hours_used == 2 and "orlik.motive" in GameState.get_case_state("51307").contradictions_found,
+			"prouver a coûté deux heures et établit la contradiction")
+	check(GameState.get_indicator("suspicion") == before + 3, "le prouver expose aussi l'agent (risque)")
+	check(not GameState.prove_contradiction("51307", "orlik.motive").ok and GameState.hours_used == 2,
+			"on ne prouve pas deux fois (pas de double dépense)")
+	# Faveur (51307, ORLIK informateur) : ne se prouve qu'avec le contact KREMER.
+	GameState.new_game()
+	GameState.confront_facts("51307", "f_kremer_informant", "f_aud_chaudron")
+	check(GameState.contradiction_prove_state("51307", "orlik.informant").missing_favor, "sans le contact KREMER, la faveur manque")
+	check(GameState.prove_contradiction("51307", "orlik.informant").reason == "faveur_manquante", "preuve refusée sans la faveur")
+	GameState.flags["kremer.contact"] = true
+	check(GameState.prove_contradiction("51307", "orlik.informant").ok and GameState.hours_used == 1,
+			"avec le contact, la faveur permet de prouver (et coûte une heure)")
+
+
 func test_work_time() -> void:
 	check(GameState.get_clock_text() == "08h00", "la journée commence à 08h00")
 	check(WorkTime.cost("request_document") == 1 and WorkTime.cost("verify_archive") == 2, "coûts lus dans les données")
@@ -748,7 +805,42 @@ func test_evenings_file_is_valid() -> void:
 			var last: Dictionary = action.results[-1]
 			check(not last.has("conditions"), "%s : la dernière variante est sans condition" % action.id)
 		check(unconditional >= 2, "soirée %d : au moins 2 actions toujours possibles" % evening.day)
-	check(days == [0, 1, 2, 3, 4], "une soirée par jour de l'acte 1 : %s" % [days])
+	days.sort()
+	check(days == range(20), "une soirée par jour de service, des actes 1 à 4 : %s" % [days])
+
+
+## Les soirées des actes 2 à 4 réagissent au sort des personnages et ne décident
+## jamais d'une fin (les fins se jouent au bureau, pas dans l'appartement).
+func test_evenings_acts_2_4() -> void:
+	var data := EveningRules.get_data()
+	var mk := func(day: int, flags: Dictionary) -> Dictionary:
+		return {"day_index": day, "flags": flags, "cases": {}, "fired_events": [],
+				"indicators": {}, "evening_counts": {}}
+	var blast := EveningRules.evening_for_day(10, data)
+	check(not blast.is_empty() and blast.get("intro", "").contains("Centrale"),
+			"le soir de l'explosion de la Centrale existe (jour 10)")
+	check(EveningRules.available_actions(blast, mk.call(10, {})).size() >= 2,
+			"ce soir-là laisse toujours au moins deux actions")
+	var free_ids := EveningRules.available_actions(blast, mk.call(10, {})).map(func(a: Dictionary) -> String: return a.id)
+	var jailed_ids := EveningRules.available_actions(blast, mk.call(10, {"adler.arrested": true})).map(func(a: Dictionary) -> String: return a.id)
+	check("adler_10" in free_ids and not "adler_10" in jailed_ids,
+			"ADLER n'est plus proposé une fois arrêté")
+	var adler12 := EveningRules.get_action(EveningRules.evening_for_day(12, data), "adler_12")
+	check(EveningRules.resolve(adler12, mk.call(12, {"adler.arrested": true})).text.contains("scellé"),
+			"atelier scellé si ADLER est arrêté")
+	check(EveningRules.resolve(adler12, mk.call(12, {"adler.freed": true})).text.contains("entrouverte"),
+			"atelier rouvert si ADLER est relâché")
+	check(not EveningRules.resolve(adler12, mk.call(12, {})).text.is_empty(),
+			"une variante par défaut existe toujours")
+	var ending_flags := ["act4.father_truth", "act2.original_kept", "mazur.fled",
+			"milice.ally", "player.internal_review", "act4.mirror_signed_clean"]
+	for evening in data.evenings:
+		for action in evening.actions:
+			for f in action.get("set_flags", {}):
+				check(not f in ending_flags, "une soirée ne doit pas déclencher une fin : %s" % f)
+			for followup in action.get("followups", []):
+				for f in followup.get("set_flags", {}):
+					check(not f in ending_flags, "une suite de soirée ne déclenche pas de fin : %s" % f)
 
 
 func test_evenings() -> void:
@@ -3038,4 +3130,154 @@ func test_time_in_desk() -> void:
 	check(desk.get_node("%DateLabel").text.ends_with("10h00") and desk.get_node("%HoursLabel").text == "6 h restantes",
 			"l'horloge avance")
 	desk.queue_free()
+	await get_tree().process_frame
+
+
+## Les actes 3-4 font revenir les gens jugés : la mère SEDLAR, le témoin coaché,
+## l'horloger. Conséquences différées conditionnées par les drapeaux.
+func test_act3_returns() -> void:
+	var ids := func(flags: Dictionary, day: int) -> Array:
+		return EventRules.due_events({"day_index": day, "flags": flags, "cases": {},
+				"fired_events": [], "indicators": {}}).map(func(e: Dictionary) -> String: return e.id)
+	check("54001_sedlar_mother_returns" in ids.call({"54001.sedlar_daughter_condemned": true}, 12),
+			"Vera SEDLAR revient quand sa fille est condamnée")
+	check("54012_reis_reused" in ids.call({"54012.false_witness": true}, 13),
+			"le témoin coaché est versé à la liste des témoins fiables")
+	check("54012_reis_recants" in ids.call({"54012.testimony_discredited": true}, 13),
+			"témoignage écarté : l'accusé rentre, REIS écrit")
+	check("54030_adler_shop_sealed" in ids.call({"adler.arrested": true}, 14),
+			"l'atelier d'ADLER est scellé après son transfert (pendule VOSK 1971)")
+	check("54030_adler_freed_note" in ids.call({"adler.freed": true}, 14),
+			"ADLER relâché laisse une montre et un mot")
+	check("54030_adler_shop_sealed" not in ids.call({"adler.freed": true}, 14),
+			"pas d'atelier scellé si ADLER est libre (issues exclusives)")
+	check("54001_sedlar_mother_returns" not in ids.call({}, 12),
+			"aucun retour sans la condamnation correspondante")
+
+## Les actes 3 et 4 ont aussi leur une, en langue officielle : l'explosion, la
+## réécriture MIROIR qui paraît comme la vérité, l'horloger relâché.
+func test_news_acts3_4() -> void:
+	var ids := func(state: Dictionary) -> Array:
+		return NewsRules.edition(state).articles.map(func(a: Dictionary) -> String: return a.id)
+
+	# Verdict de l'explosion : sabotage → bouc émissaire à la une le lendemain.
+	var blast := {"day_index": 11, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "54001", "decision_id": "sabotage", "day_index": 10}]}
+	check("d_54001_sabotage" in ids.call(blast), "le sabotage désigné fait la une (version officielle)")
+	blast.decisions[0].decision_id = "accident"
+	check("d_54001_accident" in ids.call(blast) and "d_54001_sabotage" not in ids.call(blast),
+			"l'accident établi devient un « incident technique »")
+
+	# MIROIR : la réécriture paraît comme la vérité établie.
+	var mirror := {"day_index": 16, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "60002", "decision_id": "name_scapegoat", "day_index": 15}]}
+	check("d_mirror_centrale" in ids.call(mirror), "la réécriture MIROIR de la Centrale fait la une")
+	# La résistance, elle, ne se publie pas : le journal garde le silence.
+	mirror.decisions[0].decision_id = "name_truth"
+	check("d_mirror_centrale" not in ids.call(mirror), "rétablir la vérité ne paraît pas au journal")
+
+	# L'horloger relâché : une note discrète, clin d'œil à L'HEURE JUSTE.
+	var clock := {"day_index": 13, "flags": {}, "cases": {},
+			"decisions": [{"case_id": "54030", "decision_id": "release", "day_index": 12}]}
+	check("d_54030_reopened" in ids.call(clock), "l'atelier rouvert fait une brève")
+
+# --- Fin de partie -----------------------------------------------------------
+
+## Le moteur des 7 fins : chaque fin est atteignable par un jeu de drapeaux type,
+## l'ordre de priorité est respecté, et LE SILENCE reste le défaut.
+func test_endings() -> void:
+	var data := EndingRules.get_data()
+	check(data.get("endings", []).size() == 7, "sept fins décrites")
+	check(data.endings[-1].get("rules", []).is_empty(), "LE SILENCE (dernière) est le défaut sans règle")
+	var resolve := func(flags: Dictionary, indicators: Dictionary = {}) -> String:
+		return EndingRules.resolve({"flags": flags, "indicators": indicators}).get("id", "")
+
+	# Le Silence : rien de marquant.
+	check(resolve.call({}) == "fin_silence", "sans drapeau marquant → Le Silence")
+	check(resolve.call({"act4.mirror_refused": true}) == "fin_silence", "refuser le Miroir seul → Le Silence")
+
+	# La Correction (cachée) : père rétabli + Kremer protégé + 3 innocents épargnés.
+	var correction := {"act4.father_truth": true, "kremer.protected": true,
+			"53118.choir_cleared": true, "adler.freed": true, "54001.accident_established": true}
+	check(resolve.call(correction) == "fin_correction", "père rétabli + Kremer + 3 épargnés → La Correction")
+	check(EndingRules.count_spared(correction) == 3, "trois innocents épargnés comptés")
+	var correction_short := correction.duplicate()
+	correction_short.erase("adler.freed")
+	check(resolve.call(correction_short) != "fin_correction", "deux épargnés ne suffisent pas à La Correction")
+
+	# La Fuite des originaux.
+	check(resolve.call({"act2.original_kept": true, "veritas.zero": true}) == "fin_fuite",
+			"originaux gardés + VERITAS 0 % → La Fuite des originaux")
+
+	# L'Heure juste : Mazur a fui + réseau + suspicion moyenne.
+	check(resolve.call({"mazur.fled": true, "kremer.protected": true}, {"suspicion": 50}) == "fin_heure_juste",
+			"Mazur fui + réseau + suspicion moyenne → L'Heure juste")
+	check(resolve.call({"mazur.fled": true, "adler.freed": true}, {"suspicion": 50}) == "fin_heure_juste",
+			"le réseau peut aussi passer par l'horloger ADLER")
+	check(resolve.call({"mazur.fled": true, "kremer.protected": true}, {"suspicion": 85}) != "fin_heure_juste",
+			"suspicion trop haute écarte L'Heure juste")
+
+	# L'Allié de la Milice.
+	check(resolve.call({"milice.ally": true, "54001.orlik_protected": true}) == "fin_milice",
+			"allié de la Milice + faveur → L'Allié de la Milice")
+
+	# Le Dossier 54100 : revue interne, ou suspicion très haute.
+	check(resolve.call({"player.internal_review": true}) == "fin_dossier", "revue interne → Le Dossier 54100")
+	check(resolve.call({}, {"suspicion": 85}) == "fin_dossier", "suspicion très haute → Le Dossier 54100")
+
+	# Le Miroir parfait.
+	check(resolve.call({"act4.mirror_signed_clean": true}, {"loyalty": 80}) == "fin_miroir",
+			"Miroir signé sans réserve + loyauté haute → Le Miroir parfait")
+
+	# Priorité : La Correction prime sur La Fuite si les deux sont réunies.
+	var both := correction.duplicate()
+	both["act2.original_kept"] = true
+	both["veritas.zero"] = true
+	check(resolve.call(both) == "fin_correction", "La Correction prime sur La Fuite quand les deux sont réunies")
+
+
+## En fin de jour 20, le bureau résout la fin et renvoie au menu plutôt que
+## d'ouvrir une nouvelle journée.
+func test_end_of_game_in_desk() -> void:
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(not GameState.is_final_day(), "le premier jour n'est pas le dernier")
+	GameState.day_index = FictionalCalendar.service_days().size() - 1
+	check(GameState.is_final_day(), "le dernier jour de service est bien final")
+	var result := GameState.get_ending()
+	check(result.has("ending") and not result.ending.is_empty(), "une fin est résolue en fin de partie")
+	check(result.ending.id == "fin_silence", "une partie sans drapeau marquant finit sur Le Silence")
+	desk.ending_screen.open(result)
+	check(desk.ending_screen.visible, "l'écran de fin s'affiche")
+	desk.ending_screen._on_continue()
+	check(not desk.ending_screen.visible, "RETOUR AU MENU referme l'écran de fin")
+	desk.queue_free()
+	GameState.new_game()
+	await get_tree().process_frame
+
+
+## Le compteur « fins découvertes » du menu : persistance dans les paramètres
+## (hors sauvegarde de partie), sans doublon, alimenté par finish_game.
+func test_endings_discovered_counter() -> void:
+	var original: Array = Settings.endings_discovered.duplicate()
+	Settings.endings_discovered = []
+	Settings.record_ending("fin_silence")
+	Settings.record_ending("fin_silence")  # doublon ignoré
+	Settings.record_ending("fin_miroir")
+	check(Settings.endings_discovered.size() == 2, "deux fins distinctes consignées (doublon ignoré)")
+	GameState.new_game()
+	GameState.finish_game("fin_correction")
+	check("fin_correction" in Settings.endings_discovered, "finish_game consigne la fin atteinte au menu")
+	check(GameState.flags.get("game.ending") == "fin_correction", "la fin est aussi notée dans l'état de la partie")
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	var total := EndingRules.get_endings().size()
+	check(menu.get_node("%EndingsLabel").text.contains("/ %d" % total),
+			"le menu affiche le compteur de fins découvertes")
+	menu.queue_free()
+	Settings.endings_discovered = original
+	Settings.save_settings()
 	await get_tree().process_frame

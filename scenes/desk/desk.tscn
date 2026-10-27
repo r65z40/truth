@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://scripts/ui/window_manager.gd" id="16_window_manager"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/veritas_window.tscn" id="17_veritas"]
 [ext_resource type="PackedScene" path="res://scenes/ui/windows/news_window.tscn" id="18_news"]
+[ext_resource type="PackedScene" path="res://scenes/act_end/ending_screen.tscn" id="19_ending"]
 
 [node name="Desk" type="Control"]
 layout_mode = 3
@@ -334,6 +335,9 @@ autowrap_mode = 3
 unique_name_in_owner = true
 
 [node name="ActReviewScreen" parent="." instance=ExtResource("9_act_review")]
+unique_name_in_owner = true
+
+[node name="EndingScreen" parent="." instance=ExtResource("19_ending")]
 unique_name_in_owner = true
 
 [node name="ArchiveCard" parent="." instance=ExtResource("11_archive")]
