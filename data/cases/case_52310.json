@@ -19,6 +19,7 @@
 			"veritas_remark": "Auteur d'un recueil retiré de la vente. Profession donnant accès aux presses : facteur de risque élevé.",
 			"photo": {
 				"caption": "Cliché du 30.10.1986",
+				"image": "res://assets/portraits/visage_52310.webp",
 				"face": "round",
 				"hair": "curly",
 				"gray": true,
@@ -201,6 +202,7 @@
 			"veritas_remark": "Document ancien, hors période d'analyse.",
 			"photo": {
 				"caption": "Cliché du 12.03.1979",
+				"image": "res://assets/portraits/visage_52310_1979.webp",
 				"face": "long",
 				"hair": "receding",
 				"glasses": false,

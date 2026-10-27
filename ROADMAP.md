@@ -324,6 +324,9 @@ caviarder) via le système de décisions existant — données pures, sans moteu
       ambiances / bruitages, bouton du son dans la barre des tâches, fenêtres
       qui apparaissent en fondu, image de fond des soirées
 - [ ] Bruitages et ambiances fournis par fen (liste dans l'écran « Médias » et `docs/MEDIAS.md`)
+- [x] Portraits des citoyens remplaçables par un vrai fichier image (clé `image`
+      du bloc `photo`, dossier `assets/portraits/`), repli automatique sur le
+      visage dessiné ; noms de fichiers dans le document des besoins d'assets
 
 ## Ensuite
 

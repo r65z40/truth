@@ -1,9 +1,12 @@
 class_name IdPhoto
 extends Control
-## Photo d'identité dessinée à partir des données d'une pièce (aucune image
-## importée). Clé "photo" d'un document :
+## Photo d'identité d'une pièce. Deux rendus possibles :
+##   - si la clé "image" pointe vers un fichier présent, on l'affiche ;
+##   - sinon, la photo est DESSINÉE à partir des traits (aucune image requise).
+## Clé "photo" d'un document :
 ## {
 ##   "caption": "Cliché du 12.03.1979",
+##   "image": "res://assets/portraits/visage_52310.webp",  facultatif : vrai portrait
 ##   "face": "round|long",              forme du visage
 ##   "hair": "short|long|curly|receding|bald",
 ##   "gray": true,                      cheveux gris
@@ -11,6 +14,9 @@ extends Control
 ##   "facial_hair": "none|mustache|beard",
 ##   "mark": "none|scar|mole"           signe particulier
 ## }
+## Le fichier "image" est facultatif (extension libre, voir MediaLibrary) ; s'il
+## manque, le dessin sert de repli. Les traits restent renseignés dans tous les
+## cas : ils décrivent le personnage et servent au rendu dessiné.
 ## Deux photos qui diffèrent sur un trait se voient : c'est voulu.
 ## Couleurs : type de thème "IdPhoto" (paper, ink, skin, shade).
 
@@ -44,9 +50,16 @@ func _draw() -> void:
 	var ink := _color("ink")
 	var skin := _color("skin")
 	var shade := _color("shade")
-	var hair_color := shade.lerp(paper, 0.45) if photo.get("gray", false) else ink
 	var frame := Rect2(Vector2.ZERO, PHOTO_SIZE)
 	draw_rect(frame, paper)
+	var texture := _portrait_texture()
+	if texture != null:
+		_draw_portrait_image(texture)
+		draw_rect(frame, ink, false, 1.0)
+		draw_set_transform(Vector2.ZERO)
+		_draw_caption(shade)
+		return
+	var hair_color := shade.lerp(paper, 0.45) if photo.get("gray", false) else ink
 	draw_rect(frame.grow(-6), shade.lerp(paper, 0.7))
 	var cx := PHOTO_SIZE.x / 2.0
 	var long_face: bool = photo.get("face", "round") == "long"
@@ -105,12 +118,35 @@ func _draw() -> void:
 		draw_rect(Rect2(p, Vector2.ONE), paper.lerp(ink, 0.25))
 	draw_rect(frame, ink, false, 1.0)
 	draw_set_transform(Vector2.ZERO)
+	_draw_caption(shade)
+
+
+## Légende sous la photo (dessinée à l'échelle réelle, hors transform).
+func _draw_caption(shade: Color) -> void:
 	var font := get_theme_default_font()
 	# La légende déborde de la photo de part et d'autre, centrée.
 	var width := PHOTO_SIZE.x * DISPLAY_SCALE
 	var caption_width := width + 60.0
 	draw_string(font, Vector2((width - caption_width) / 2.0, PHOTO_SIZE.y * DISPLAY_SCALE + 14), str(photo.get("caption", "")),
 			HORIZONTAL_ALIGNMENT_CENTER, caption_width, 11, shade)
+
+
+## Texture du vrai portrait si la clé "image" pointe un fichier présent, sinon null.
+func _portrait_texture() -> Texture2D:
+	var path: String = photo.get("image", "")
+	return MediaLibrary.load_texture(path) if path != "" else null
+
+
+## Affiche le portrait dans le cadre, sans déformer (ajusté et centré).
+func _draw_portrait_image(texture: Texture2D) -> void:
+	var inner := Rect2(Vector2(6, 6), PHOTO_SIZE - Vector2(12, 12))
+	var source := Vector2(texture.get_width(), texture.get_height())
+	if source.x <= 0.0 or source.y <= 0.0:
+		return
+	var scale := minf(inner.size.x / source.x, inner.size.y / source.y)
+	var draw_size := source * scale
+	var position := inner.position + (inner.size - draw_size) / 2.0
+	draw_texture_rect(texture, Rect2(position, draw_size), false)
 
 
 func _ellipse(center: Vector2, radius: Vector2, from := 0.0, to := TAU, steps := 32) -> PackedVector2Array:

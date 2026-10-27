@@ -58,6 +58,7 @@ func _run() -> void:
 		"test_field_tension",
 		"test_field_search",
 		"test_field_rooms",
+		"test_portraits",
 		"test_field_bakery_visit",
 		"test_field_benes_search",
 		"test_field_chorale",
@@ -1136,6 +1137,39 @@ func test_field_rooms() -> void:
 	screen.queue_free()
 	await get_tree().process_frame
 	GameState.new_game()
+
+
+func test_portraits() -> void:
+	# Chaque portrait qui déclare une image pointe le dossier des portraits en .webp ;
+	# un fichier absent laisse le dessin prendre le relais (repli).
+	var images := {}
+	for case_id in CaseLibrary.get_case_ids():
+		var case_data := CaseLibrary.get_case(case_id)
+		for document in case_data.get("documents", []):
+			var photo: Dictionary = document.get("photo", {})
+			if not photo.has("image"):
+				continue
+			var path: String = photo.image
+			check(path.begins_with("res://assets/portraits/") and path.ends_with(".webp"),
+					"portrait du dossier %s : chemin attendu dans assets/portraits/*.webp" % case_id)
+			check(not images.has(path), "fichier de portrait unique : %s" % path)
+			images[path] = case_id
+	check(images.size() >= 9, "au moins neuf portraits câblés dans les dossiers")
+	# Les deux fiches du 52310 sont deux fichiers distincts (contradiction du dossier).
+	var varga := CaseLibrary.get_case("52310")
+	var varga_images := []
+	for document in varga.get("documents", []):
+		if document.get("photo", {}).has("image"):
+			varga_images.append(document.photo.image)
+	check(varga_images.size() == 2 and varga_images[0] != varga_images[1],
+			"le 52310 a deux portraits de fichiers différents")
+	# IdPhoto : un fichier absent renvoie null (donc repli sur le dessin).
+	var id_photo: IdPhoto = load("res://scripts/ui/id_photo.gd").new()
+	id_photo.photo = {"caption": "test", "image": "res://assets/portraits/inexistant.webp", "face": "round"}
+	check(id_photo._portrait_texture() == null, "portrait absent : pas de texture, le dessin sert de repli")
+	id_photo.photo = {"caption": "test", "face": "round"}
+	check(id_photo._portrait_texture() == null, "sans clé image : pas de texture")
+	id_photo.free()
 
 
 ## Fait passer les journées jusqu'à l'attribution du dossier.
