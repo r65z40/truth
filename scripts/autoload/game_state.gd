@@ -564,6 +564,8 @@ func finish_game(ending_id: String) -> void:
 		return
 	_set_flag("game.ended", true)
 	flags["game.ending"] = ending_id
+	# Mémorise la fin entre les parties, pour le compteur du menu principal.
+	Settings.record_ending(ending_id)
 	state_changed.emit()
 
 
