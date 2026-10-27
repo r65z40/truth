@@ -233,9 +233,27 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
       `temoin.coached`.
 - [x] Câblage : `assign_54001` (jour 10, priorité absolue), `assign_54012` (jour 11),
       `54001_orlik_reprisal` (si ORLIK accusé). Notes de dossier personnel ajoutées, tests.
-- [ ] Acte 3 (suite) : 54030 L'HORLOGER (fil du père, lève n°3), 54100 VOSK A. (dossier
-      du joueur, consultable seulement), révélation de fin d'acte (BRANDT = contrôleuse,
-      MAZUR arrêté ou en fuite).
+- [x] Dossier 54030 L'HORLOGER (fil du père, levier n°3) : Viktor ADLER, le voisin
+      horloger du bloc 7 (celui des soirées, « je vous mets toujours à l'heure »),
+      arrêté dans la rafle des horlogers. L'inventaire (cahier de voisinage, radio de
+      musique, et la pendule d'A. VOSK père déposée en mars 1971, jamais réclamée)
+      dément le réseau de sabotage. Il révèle que le père enquêtait en 1971 sur les
+      horloges du ministère et a disparu après. Si le joueur avait dénoncé la radio
+      d'ADLER (soirées), le dossier le lui renvoie. Relâcher / transférer (il disparaît
+      comme le père) / rouvrir 1971 (`vosk.father_1971_opened`, amorce acte 4).
+- [x] Dossier 54100 VOSK, A. : un dossier au nom du joueur, en lecture seule (une seule
+      issue, « refermer »). Indice de méfiance en toutes lettres, filiation scellée de
+      1971, et révélation : I. BRANDT, l'inspectrice affable du poste voisin, est la
+      contrôleuse (le « B. » du 53760). Annexe de procédure si le joueur est déjà sous
+      contrôle interne.
+- [x] Révélation de fin d'acte 3 : `brandt_revealed` (après lecture du 54100),
+      et le sort de MAZUR — il s'enfuit avec un dernier message (« 05 h 05. Quai 2.
+      Juste. ») si KREMER a été protégé, il est arrêté sinon.
+- [ ] Note mécanique : 54100 « consultable seulement » rendu en données (issue inerte) ;
+      l'indice de suspicion live en mots et l'interdiction d'ouvrir dans la liste
+      demanderaient un petit ajout moteur — à proposer à fen.
+- [ ] Acte 4 MIROIR : réécriture des archives (60001/60002/60003, dont le dossier du
+      père), puis le moteur des 7 fins et l'écran d'archive final.
 
 ## Prochaine itération
 

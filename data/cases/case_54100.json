@@ -1,0 +1,188 @@
+{
+	"id": "54100",
+	"title": "Citoyen n° 54100",
+	"subject_name": "VOSK, A.",
+	"summary": "Un dossier au nom de l'inspecteur apparaît dans la liste. On peut le consulter, pas l'instruire. Il est tenu à jour par quelqu'un du poste voisin.",
+	"briefing": {
+		"objective": "Aucun : ce dossier porte votre nom. Vous n'êtes pas habilité à l'instruire ni à le conclure. Vous pouvez seulement le lire.",
+		"context": "Dans la liste des dossiers du jour, un numéro de plus : 54100, au nom d'A. VOSK. Le vôtre. Il est déjà ouvert, et quelqu'un le remplit à mesure."
+	},
+	"priority": "exceptionnelle",
+	"guide": {
+		"note": "Acte 3 : le joueur devient le sujet. Dossier en lecture seule, révélation de BRANDT.",
+		"open": "Un dossier porte votre nom : 54100. Ouvrez-le — c'est tout ce que vous pouvez en faire.",
+		"read": "Lisez. Vous ne confronterez rien, vous ne conclurez rien : ce dossier n'est pas le vôtre à instruire.",
+		"facts": "Notez ce que vous voulez garder en tête. Regardez surtout qui tient ce dossier.",
+		"notebook": "Il n'y a rien à confronter ici. Refermez le dossier quand vous aurez lu.",
+		"notebook_retry": "Ce dossier ne s'instruit pas. Refermez-le.",
+		"conclusion": "Vous ne pouvez que refermer le dossier. On ne juge pas le sujet qu'on est devenu."
+	},
+	"documents": [
+		{
+			"id": "notice",
+			"type": "letter",
+			"title": "Avis de consultation",
+			"source": "Bureau du contrôle interne",
+			"reliability": "A",
+			"date": "1986-11-20",
+			"veritas_remark": "Dossier présenté pour information. Instruction réservée au contrôle interne.",
+			"body": "Dossier 54100 — A. VOSK, inspecteur de 3e classe, Section 4.\n\nCe dossier vous est présenté pour information. Vous n'êtes pas habilité à l'instruire, à le confronter, ni à le conclure. Toute tentative d'y porter une décision sera sans effet et notée.\n\nVous pouvez le lire. C'est, pour l'instant, tout ce que l'on attend de vous.",
+			"facts": [
+				{
+					"id": "f_notice_subject",
+					"key": "vosk.subject",
+					"value": "Le sujet, c'est vous",
+					"label": "Un dossier d'inspection est désormais ouvert à votre nom",
+					"quote": "Dossier 54100 — A. VOSK, inspecteur de 3e classe, Section 4."
+				}
+			]
+		},
+		{
+			"id": "observations",
+			"type": "report",
+			"title": "Fiche d'observation du sujet",
+			"source": "Contrôle interne, poste voisin",
+			"reliability": "B",
+			"date": "1986-11-20",
+			"veritas_remark": "Évaluation en cours. Les mentions sont qualitatives, non chiffrées pour le sujet.",
+			"body": "Sujet : A. VOSK. Observation ouverte depuis sa prise de fonction.\n\nIndice de méfiance : ÉLEVÉ. Le sujet lit plus de pièces que nécessaire, demande des documents que la plupart ignorent, et s'écarte des recommandations de VERITAS plus souvent qu'un agent de son rang. Fréquente les archives. Un contact avec l'archiviste du sous-sol B est relevé.\n\nConclusion provisoire : agent compétent, donc dangereux. À suivre de près.",
+			"facts": [
+				{
+					"id": "f_obs_suspicion",
+					"key": "vosk.suspicion_word",
+					"value": "Indice de méfiance : ÉLEVÉ",
+					"label": "La méfiance à votre égard est notée « ÉLEVÉ » — en toutes lettres, pas en chiffres",
+					"quote": "Indice de méfiance : ÉLEVÉ."
+				},
+				{
+					"id": "f_obs_competent",
+					"key": "vosk.assessment",
+					"value": "« Compétent, donc dangereux »",
+					"label": "Conclusion provisoire du contrôle : « agent compétent, donc dangereux »",
+					"quote": "agent compétent, donc dangereux"
+				}
+			]
+		},
+		{
+			"id": "filiation",
+			"type": "report",
+			"title": "Extrait de filiation",
+			"source": "Archives civiles (pièce jointe scellée)",
+			"reliability": "A",
+			"date": "1986-11-20",
+			"veritas_remark": "Pièce de filiation. Le dossier du père demeure scellé.",
+			"body": "Filiation du sujet : père, A. VOSK, horloger, atelier du District 2.\n\nMention : l'intéressé (le père) a fait l'objet d'une inspection en mars 1971, puis d'un dossier qui demeure SCELLÉ. Issue non communiquée. Le fils a été recruté par le ministère en 1979.\n\nLe reste de la ligne est caviardé.",
+			"facts": [
+				{
+					"id": "f_fil_father",
+					"key": "vosk.father",
+					"value": "Père : dossier scellé, inspection 1971",
+					"label": "Votre père a fait l'objet d'une inspection en mars 1971, puis d'un dossier scellé",
+					"quote": "une inspection en mars 1971, puis d'un dossier qui demeure SCELLÉ"
+				},
+				{
+					"id": "f_fil_recruited",
+					"key": "vosk.recruited",
+					"value": "Le fils recruté en 1979",
+					"label": "Le fils (vous) a été recruté par le ministère en 1979",
+					"quote": "Le fils a été recruté par le ministère en 1979."
+				}
+			]
+		},
+		{
+			"id": "internal_review_note",
+			"type": "report",
+			"title": "Annexe du contrôle interne",
+			"source": "Contrôle interne, poste voisin",
+			"reliability": "B",
+			"date": "1986-11-20",
+			"conditions": {
+				"requires_flags": [
+					"player.internal_review"
+				]
+			},
+			"veritas_remark": "Annexe ouverte lorsque le sujet dépasse le seuil de méfiance critique.",
+			"body": "Annexe : le sujet a dépassé le seuil critique. Une procédure interne est ouverte à son encontre. Les décisions récentes de l'agent sont réexaminées une à une.\n\nRecommandation : préparer un dossier transmissible. Le sujet pourrait, à brève échéance, passer de l'inspecteur au citoyen.",
+			"facts": [
+				{
+					"id": "f_rev_procedure",
+					"key": "vosk.procedure",
+					"value": "Procédure interne ouverte",
+					"label": "Vous avez dépassé le seuil critique : une procédure interne est ouverte contre vous",
+					"quote": "Une procédure interne est ouverte à son encontre."
+				}
+			]
+		},
+		{
+			"id": "signatory",
+			"type": "letter",
+			"title": "Qui tient ce dossier",
+			"source": "Bureau du contrôle interne",
+			"reliability": "A",
+			"date": "1986-11-20",
+			"veritas_remark": "Mention de l'agent évaluateur.",
+			"body": "Évaluation ouverte et tenue à jour par : I. BRANDT, inspectrice, poste voisin de la Section 4.\n\nLa même main a signé « B. » le signalement du dossier 53760. L'inspectrice affable qui partage votre couloir, vous offre du thé et vous demande des nouvelles de votre sœur, est la contrôleuse chargée de vous.",
+			"facts": [
+				{
+					"id": "f_sig_brandt",
+					"key": "brandt.role",
+					"value": "I. BRANDT, la contrôleuse",
+					"label": "Votre voisine de couloir, I. BRANDT, est la contrôleuse interne chargée de vous (et le « B. » du 53760)",
+					"quote": "I. BRANDT, inspectrice, poste voisin de la Section 4."
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "close",
+			"stamp": "CONSULTÉ",
+			"label": "Refermer le dossier",
+			"description": "Vous n'êtes pas habilité à instruire ce dossier. Le refermer.",
+			"archive": "Dossier 54100 consulté par le sujet. Aucune décision possible. Le sujet sait désormais qu'il est observé, et par qui.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "default",
+					"effects": {},
+					"response": "closed",
+					"flags": {
+						"54100.consulted": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"closed": {
+			"from": "(aucune réponse — ce dossier n'est pas le vôtre)",
+			"subject": "Dossier 54100 : refermé",
+			"body": "Vous refermez la chemise qui porte votre nom.\n\nIl n'y a pas de supérieur à qui transmettre, pas de tampon à poser. Seulement la certitude, maintenant, que chaque pièce que vous lirez sera lue aussi, par la femme du bout du couloir, et versée à ce dossier-là.\n\nVous retournez aux autres. Vous les regardez un peu différemment."
+		}
+	},
+	"veritas": {
+		"recommendation": "close",
+		"rationale": "Dossier présenté pour information. L'agent n'est pas habilité à l'instruire. Seule issue : consultation.",
+		"factors": [
+			{
+				"id": "not_authorized",
+				"label": "Instruction réservée au contrôle interne",
+				"category": "directive",
+				"weight": 10,
+				"decision": "close",
+				"document": "notice"
+			}
+		],
+		"note": "VERITAS n'a rien à recommander : ce dossier échappe à l'agent. Pour la première fois, le module n'est pas de son côté de la table."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "Le ministère a ouvert un dossier d'inspection au nom de VOSK lui-même, tenu par I. BRANDT — l'inspectrice affable du poste voisin, en réalité la contrôleuse interne chargée de l'évaluer depuis sa prise de fonction, et la « B. » qui a signalé KREMER au dossier 53760. La fiche relie le fils au père (inspecteur disparu après une inspection en mars 1971, dossier scellé) et confirme ce que le père soupçonnait : on ne recrute pas le fils d'un homme qu'on a fait disparaître par hasard. Le joueur est passé d'inspecteur à sujet.",
+		"involved": [
+			"54100",
+			"53760",
+			"brandt_i",
+			"vosk_pere"
+		]
+	}
+}
