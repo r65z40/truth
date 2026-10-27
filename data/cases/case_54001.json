@@ -161,7 +161,7 @@
 				],
 				[
 					"Suspect 2",
-					"Jonas HALM, 46 ans, chef d'atelier (mort dans l'explosion)"
+					"Jonas RUDA, 46 ans, chef d'atelier (mort dans l'explosion)"
 				],
 				[
 					"Suspect 3",
@@ -169,7 +169,7 @@
 				],
 				[
 					"Note de la brigade",
-					"SEDLAR : famille déjà fichée. VELA : origine étrangère. HALM : ne peut plus répondre. Au choix."
+					"SEDLAR : famille déjà fichée. VELA : origine étrangère. RUDA : ne peut plus répondre. Au choix."
 				]
 			],
 			"facts": [
@@ -181,18 +181,18 @@
 					"quote": "Fille aînée d'Anton SEDLAR, dossier 40921"
 				},
 				{
-					"id": "f_susp_halm",
-					"key": "suspect.halm",
-					"value": "Jonas HALM, chef d'atelier, mort",
-					"label": "Jonas HALM, chef d'atelier, mort dans l'explosion : accusable sans réponse",
-					"quote": "Jonas HALM, 46 ans, chef d'atelier (mort dans l'explosion)"
+					"id": "f_susp_dead",
+					"key": "suspect.dead",
+					"value": "Jonas RUDA, chef d'atelier, mort",
+					"label": "Jonas RUDA, chef d'atelier, mort dans l'explosion : accusable sans réponse",
+					"quote": "Jonas RUDA, 46 ans, chef d'atelier (mort dans l'explosion)"
 				},
 				{
 					"id": "f_susp_convenience",
 					"key": "suspect.convenience",
 					"value": "Suspects choisis pour leur vulnérabilité",
 					"label": "La brigade propose les trois noms selon ce qui est commode, non selon des preuves",
-					"quote": "SEDLAR : famille déjà fichée. VELA : origine étrangère. HALM : ne peut plus répondre. Au choix."
+					"quote": "SEDLAR : famille déjà fichée. VELA : origine étrangère. RUDA : ne peut plus répondre. Au choix."
 				}
 			]
 		},
@@ -454,13 +454,13 @@
 	},
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
-		"what_happened": "La chaudière n° 2 a explosé par défaillance : la soupape de sûreté, réclamée depuis septembre, n'a jamais été livrée, et un arrêt de sécurité a été refusé trois jours avant. Les réquisitions étaient visées — et détournées vers le marché parallèle — par le bureau du capitaine L. ORLIK, qui signe aussi le rapport d'incident concluant au sabotage pour se couvrir. Les trois « suspects » ont été choisis pour leur vulnérabilité : Mira SEDLAR (famille déjà fichée au 40921), Piotr VELA (né à l'étranger), Jonas HALM (mort, donc muet). Il n'y a pas de saboteur.",
+		"what_happened": "La chaudière n° 2 a explosé par défaillance : la soupape de sûreté, réclamée depuis septembre, n'a jamais été livrée, et un arrêt de sécurité a été refusé trois jours avant. Les réquisitions étaient visées — et détournées vers le marché parallèle — par le bureau du capitaine L. ORLIK, qui signe aussi le rapport d'incident concluant au sabotage pour se couvrir. Les trois « suspects » ont été choisis pour leur vulnérabilité : Mira SEDLAR (famille déjà fichée au 40921), Piotr VELA (né à l'étranger), Jonas RUDA (mort, donc muet). Il n'y a pas de saboteur.",
 		"involved": [
 			"54001",
 			"40921",
 			"orlik_l",
 			"sedlar_m",
-			"halm_j",
+			"ruda_j",
 			"vela_p"
 		]
 	},

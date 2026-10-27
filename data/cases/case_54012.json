@@ -144,7 +144,7 @@
 				}
 			},
 			"veritas_remark": "Parole recueillie par l'agent. Sans la brigade présente.",
-			"body": "« Ils sont venus dans la nuit. Je ne sais même pas ce que j'ai signé, je ne voyais rien, j'avais mal. Ils ont dit un nom, j'ai hoché la tête pour qu'ils partent.\n\nLa vérité ? La soupape sifflait depuis l'automne. On l'a réclamée, HALM l'a réclamée. Personne n'est venu. Il n'y avait pas de saboteur. Il n'y avait qu'une machine qu'on nous a laissés faire tourner. »",
+			"body": "« Ils sont venus dans la nuit. Je ne sais même pas ce que j'ai signé, je ne voyais rien, j'avais mal. Ils ont dit un nom, j'ai hoché la tête pour qu'ils partent.\n\nLa vérité ? La soupape sifflait depuis l'automne. On l'a réclamée, RUDA l'a réclamée. Personne n'est venu. Il n'y avait pas de saboteur. Il n'y avait qu'une machine qu'on nous a laissés faire tourner. »",
 			"facts": [
 				{
 					"id": "f_rec_recant",
