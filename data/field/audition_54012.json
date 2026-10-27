@@ -1,0 +1,140 @@
+{
+	"note": "Audition de T. REIS au chevet, hôpital n° 2, chambre 7 (dossier 54012). Interrogatoire sous tension : le sang-froid de REIS baisse quand on le pousse ; l'aveu sur la nuit ne vient que s'il est ébranlé sans être brisé (requires_composure). Le menacer fait intervenir l'infirmière : la scène s'arrête. Chaque choix pose field.audition_54012.<id> ; les éléments du procès-verbal pv_chevet_reis en dépendent.",
+	"id": "audition_54012",
+	"case_id": "54012",
+	"type": "interrogation",
+	"button": "AU CHEVET",
+	"image": "res://assets/field/interrogatoire_54012.webp",
+	"title": "AUDITION  //  HÔPITAL N° 2, CHAMBRE 7",
+	"time_action": "interrogate",
+	"turns": 5,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"54012"
+			]
+		}
+	],
+	"start_flags": {
+		"54012.bedside_visited": true
+	},
+	"subject": {
+		"name": "T. REIS",
+		"photo": {
+			"face": "long",
+			"hair": "short",
+			"gray": false,
+			"facial_hair": "none",
+			"mark": "scar"
+		}
+	},
+	"tension": {
+		"start": 60,
+		"label": "Sang-froid de REIS"
+	},
+	"intro": "Chambre 7. Une ampoule nue, une perfusion qui goutte, l'odeur de la pommade sur les brûlures. Tomas REIS s'est redressé en vous voyant entrer ; le mouvement lui a coûté.\n\nL'infirmière reste sur le seuil. « Cinq minutes. Il n'a pas dormi depuis qu'ils sont venus la première fois. »",
+	"present_default": "REIS regarde le papier sans le lire. « Je ne sais pas, inspecteur. Je ne sais plus ce qui est vrai, avec tout ce qu'on m'a fait signer. »",
+	"options": [
+		{
+			"id": "q_family",
+			"label": "« Votre famille sait-elle que vous êtes ici ? »",
+			"text": "Ses épaules descendent un peu. « Ma femme est à Brenec, chez sa sœur. Personne ne l'a prévenue. Si vous passez par le bureau de poste... » Il n'achève pas. Il vous regarde pour la première fois comme quelqu'un, pas comme un uniforme.",
+			"composure_delta": 15,
+			"set_flags": {
+				"54012.reis_spared": true
+			}
+		},
+		{
+			"id": "q_night",
+			"label": "« Racontez-moi la nuit, depuis le début. »",
+			"text": "« La n° 2 sifflait depuis l'automne. La soupape, on l'avait réclamée, RUDA l'avait réclamée dix fois. À deux heures il a appelé pour qu'on arrête. On lui a dit non. Après... je me souviens du bruit. C'est tout. »",
+			"note": [
+				"f_reis_valve"
+			],
+			"composure_delta": -5
+		},
+		{
+			"id": "q_signed",
+			"label": "« Vous avez signé une déposition à 4 h du matin. »",
+			"text": "Il fixe le drap. « À quatre heures ? Je ne me souviens pas de quatre heures. Je me souviens de m'être réveillé, il faisait jour, j'avais un papier sur la table de nuit avec mon nom dessus. »",
+			"note": [
+				"f_reis_no_memory"
+			],
+			"composure_delta": -15,
+			"set_flags": {
+				"54012.reis_no_memory": true
+			}
+		},
+		{
+			"id": "q_silhouette",
+			"label": "« La silhouette près de la chaudière : qui était-ce ? »",
+			"text": "« Quelle silhouette ? » Puis il comprend, et son visage se ferme. « La petite SEDLAR ? Elle notait les pressions dans son carnet, toutes les heures, pour RUDA. C'est elle qui disait que ça montait trop. Vous allez mettre ça sur elle ? »",
+			"note": [
+				"f_reis_mira"
+			],
+			"composure_delta": -20
+		},
+		{
+			"id": "q_visitors",
+			"label": "« Qui est entré dans votre chambre, cette nuit-là ? »",
+			"requires_composure": {
+				"min": 20,
+				"max": 50
+			},
+			"text": "Il baisse la voix, regarde la porte. « Deux hommes. Pas des médecins. L'un tenait ma main pour la signature, l'autre disait : « Le capitaine veut une signature avant le bulletin. » Je l'ai entendu comme dans l'eau. Je ne pouvais pas dire non, je ne pouvais rien dire. »",
+			"note": [
+				"f_reis_visitors"
+			],
+			"composure_delta": -10,
+			"set_flags": {
+				"54012.reis_named_brigade": true
+			}
+		},
+		{
+			"id": "q_threat",
+			"label": "« Vous savez ce que coûte un faux témoignage ? »",
+			"text": "REIS se met à trembler. « Je maintiens ! Je maintiens tout ce que j'ai signé ! » Le moniteur s'emballe. L'infirmière entre, vous prend par le bras, sans un mot, et vous pousse dans le couloir. La porte se referme.",
+			"composure_delta": -40,
+			"ends": true,
+			"set_flags": {
+				"54012.reis_frightened": true
+			}
+		}
+	],
+	"presentations": [
+		{
+			"id": "p_medical",
+			"facts": [
+				"f_med_sedated"
+			],
+			"text": "Il lit la fiche médicale lentement, en remuant les lèvres. « Non interrogeable avant dix heures. » Il repose la feuille. « Alors à quatre heures, je dormais. Alors ce n'est pas moi qui ai parlé. »",
+			"note": [
+				"f_reis_no_memory"
+			],
+			"composure_delta": -10,
+			"set_flags": {
+				"54012.reis_no_memory": true
+			}
+		},
+		{
+			"id": "p_visits",
+			"facts": [
+				"f_vis_before"
+			],
+			"text": "Le registre des visites, les deux passages de la brigade. REIS ferme les yeux. « Deux fois. Oui. L'un disait que le capitaine voulait une signature avant le bulletin. »",
+			"note": [
+				"f_reis_visitors"
+			],
+			"composure_delta": -10,
+			"set_flags": {
+				"54012.reis_named_brigade": true
+			}
+		}
+	],
+	"outro": "Dans le couloir, l'infirmière vous rattrape. « Il a encore de la fièvre. Ce qu'il vous a dit, il vous l'a dit avec la fièvre. Comme l'autre fois. » Elle repart avant que vous puissiez répondre.",
+	"ambience": {
+		"drift": 0.5,
+		"flicker": 0.4,
+		"grain": 0.4
+	}
+}

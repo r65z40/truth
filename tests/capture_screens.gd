@@ -340,6 +340,20 @@ func _capture_all() -> void:
 	await _snap("44_galerie_apercu_terrain", 1.2)
 	gallery._open_field("53118")
 	await _snap("45_visite_chorale", 1.2)
+	# Scènes de terrain des actes 2-3 : le sous-sol B à la lampe, la chaufferie,
+	# le chevet de REIS, l'atelier d'ADLER (décor dessiné en attendant l'image).
+	gallery._open_field("53760")
+	await _snap("47_sous_sol_b_lampe", 1.2)
+	var field: FieldScreen = gallery.find_children("*", "", true, false).filter(
+			func(n: Node) -> bool: return n is FieldScreen)[0]
+	field.set_lamp(Vector2(0.53, 0.56))
+	await _snap("48_sous_sol_b_bac", 0.6)
+	gallery._open_field("54001")
+	await _snap("49_chaufferie", 1.2)
+	gallery._open_field("54012")
+	await _snap("50_chevet_reis", 1.2)
+	gallery._open_field("54030")
+	await _snap("51_atelier_adler", 1.2)
 	gallery._mount(MediaCheck.new())
 	await _snap("46_galerie_medias")
 	gallery.queue_free()

@@ -210,6 +210,78 @@
 			]
 		},
 		{
+			"id": "pv_sous_sol_b",
+			"type": "report",
+			"title": "Procès-verbal de visite, sous-sol B des archives centrales",
+			"source": "Section 4, visite conduite par l'inspecteur A. VOSK",
+			"reliability": "B",
+			"date": "1986-11-12",
+			"conditions": {
+				"requires_flags": [
+					"field.archive_53760.started"
+				]
+			},
+			"veritas_remark": "Visite sans éclairage, en présence de l'intéressé. Valeur administrative limitée selon le système.",
+			"body": "Visite du sous-sol B, éclairage des travées coupé, en présence de l'archiviste H. KREMER. Éléments relevés :",
+			"facts": [
+				{
+					"id": "f_kb_original",
+					"key": "register.original",
+					"value": "Original du 40921 : deux lignes",
+					"label": "Sur le bureau : l'original du registre 40921 porte deux lignes, la copie transmise en porte trois",
+					"conditions": {
+						"requires_flags": [
+							"field.archive_53760.desk"
+						]
+					}
+				},
+				{
+					"id": "f_kb_slips",
+					"key": "kremer.theft",
+					"value": "Sorties contresignées par « B. »",
+					"label": "Bordereaux de sortie : chaque original sorti est contresigné « B. », par le contrôle interne lui-même",
+					"conditions": {
+						"requires_flags": [
+							"field.archive_53760.tray"
+						]
+					}
+				},
+				{
+					"id": "f_kb_night",
+					"key": "kremer.motive",
+					"value": "Vérifications demandées par les bureaux",
+					"label": "Carnet de permanence : chaque accès de nuit de KREMER répond à une vérification demandée par un bureau",
+					"conditions": {
+						"requires_flags": [
+							"field.archive_53760.drawer"
+						]
+					}
+				},
+				{
+					"id": "f_kb_green",
+					"key": "controle.corrections",
+					"value": "Copies corrigées à l'encre verte",
+					"label": "Haut du rayonnage : un carton « Contrôle interne — B. » de copies de dossiers clos corrigées à l'encre verte",
+					"conditions": {
+						"requires_flags": [
+							"field.archive_53760.top_shelf"
+						]
+					}
+				},
+				{
+					"id": "f_kb_folder",
+					"key": "vosk.father_folder",
+					"value": "Chemise VOSK, A. vidée « sur ordre »",
+					"label": "Classeur 1971 : une chemise « VOSK, A. — Section 2 », vide, tamponnée « Retiré sur ordre »",
+					"conditions": {
+						"requires_flags": [
+							"field.archive_53760.cabinet"
+						]
+					}
+				}
+			]
+		},
+		{
 			"id": "veritas_link",
 			"type": "report",
 			"title": "Note de raccordement VERITAS",
@@ -435,5 +507,6 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 53760 : votre question",
 		"body": "Inspecteur,\n\nKREMER. Je me demandais quand son nom reviendrait sur un bureau.\n\nUn conseil, et il ne sort pas d'ici : ne me parlez jamais de lui, et ne lui parlez jamais de moi. Lisez son registre de prêt plutôt que le signalement. Le reste ne me regarde pas — faites en sorte que ça ne vous regarde pas non plus.\n\nR. MAZUR"
-	}
+	},
+	"field_scene": "archive_53760"
 }
