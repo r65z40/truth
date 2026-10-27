@@ -275,9 +275,16 @@ caviarder) via le système de décisions existant — données pures, sans moteu
       ou refuser d'écrire (`act4.mirror_refused`, vers Le Silence).
 - [x] Câblage : `assign_miroir_intro` + `assign_60001` (jour 15), `assign_60002`
       (jour 16), `assign_60003` (jour 18). Notes de dossier personnel. Tests ajoutés.
-- [ ] Moteur des 7 fins (résolution depuis les drapeaux/indicateurs) + écran d'archive
-      final récapitulant le destin de chaque sujet. Nécessite un peu de code moteur :
-      à proposer à fen (voir `docs/design/FINS_PROPOSITION.md`).
+- [x] Moteur des 7 fins (`EndingRules.resolve`, logique pure) + `data/endings.json`
+      (7 fins, règles en OR-de-ET sur les drapeaux/indicateurs, « spared » = innocents
+      épargnés, Le Silence par défaut) + écran de fin `scenes/act_end/ending_screen`
+      (texte de la fin, puis dernière page d'archive via `FateRules`, « ligne vraie »
+      pour La Correction). Branché au terme du jour 20 (`GameState.is_final_day()` /
+      `get_ending()` / `finish_game()`, `desk._end_game()` → menu). Tests `test_endings`
+      et `test_end_of_game_in_desk`. Ordre et seuils validés par fen le 27.10.
+      Conception : `docs/design/FINS_PROPOSITION.md`.
+- [ ] Facultatif (proposé à fen) : compteur « fins découvertes X/7 » au menu principal,
+      pour inciter à rejouer. À faire si fen le valide.
 
 ## Prochaine itération
 
