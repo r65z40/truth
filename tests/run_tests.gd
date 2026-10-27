@@ -80,6 +80,7 @@ func _run() -> void:
 		"test_case_60002_miroir",
 		"test_case_60003_father",
 		"test_act4_wiring",
+		"test_act3_returns",
 		"test_case_briefings",
 		"test_scene_gallery",
 		"test_document_field_icons",
@@ -2958,3 +2959,25 @@ func test_time_in_desk() -> void:
 			"l'horloge avance")
 	desk.queue_free()
 	await get_tree().process_frame
+
+
+## Les actes 3-4 font revenir les gens jugés : la mère SEDLAR, le témoin coaché,
+## l'horloger. Conséquences différées conditionnées par les drapeaux.
+func test_act3_returns() -> void:
+	var ids := func(flags: Dictionary, day: int) -> Array:
+		return EventRules.due_events({"day_index": day, "flags": flags, "cases": {},
+				"fired_events": [], "indicators": {}}).map(func(e: Dictionary) -> String: return e.id)
+	check("54001_sedlar_mother_returns" in ids.call({"54001.sedlar_daughter_condemned": true}, 12),
+			"Vera SEDLAR revient quand sa fille est condamnée")
+	check("54012_reis_reused" in ids.call({"54012.false_witness": true}, 13),
+			"le témoin coaché est versé à la liste des témoins fiables")
+	check("54012_reis_recants" in ids.call({"54012.testimony_discredited": true}, 13),
+			"témoignage écarté : l'accusé rentre, REIS écrit")
+	check("54030_adler_shop_sealed" in ids.call({"adler.arrested": true}, 14),
+			"l'atelier d'ADLER est scellé après son transfert (pendule VOSK 1971)")
+	check("54030_adler_freed_note" in ids.call({"adler.freed": true}, 14),
+			"ADLER relâché laisse une montre et un mot")
+	check("54030_adler_shop_sealed" not in ids.call({"adler.freed": true}, 14),
+			"pas d'atelier scellé si ADLER est libre (issues exclusives)")
+	check("54001_sedlar_mother_returns" not in ids.call({}, 12),
+			"aucun retour sans la condamnation correspondante")
