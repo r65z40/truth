@@ -34,7 +34,7 @@ func _ready() -> void:
 		_refresh_toggle_labels())
 	for option: OptionButton in [_music_option, _ambience_option, _sfx_option]:
 		for level in Settings.MUSIC_LEVELS:
-			option.add_item("Coupé" if level == 0.0 else "%d %%" % roundi(level * 100))
+			option.add_item(tr("Coupé") if level == 0.0 else "%d %%" % roundi(level * 100))
 	_music_option.item_selected.connect(func(index: int) -> void: Settings.set_music_volume(Settings.MUSIC_LEVELS[index]))
 	_ambience_option.item_selected.connect(func(index: int) -> void: Settings.set_ambience_volume(Settings.MUSIC_LEVELS[index]))
 	_sfx_option.item_selected.connect(func(index: int) -> void:
@@ -68,7 +68,7 @@ func _on_opened() -> void:
 
 func _refresh_toggle_labels() -> void:
 	for toggle: Button in [_fullscreen_toggle, _crt_toggle, _guidance_toggle, _field_3d_toggle]:
-		toggle.text = "ACTIVÉ" if toggle.button_pressed else "DÉSACTIVÉ"
+		toggle.text = tr("ACTIVÉ") if toggle.button_pressed else tr("DÉSACTIVÉ")
 
 
 ## Cran de volume le plus proche du réglage enregistré.

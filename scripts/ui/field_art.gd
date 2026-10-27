@@ -273,7 +273,7 @@ func _draw_bakery() -> void:
 		draw_circle(Vector2(x, 100 + (i % 2) * 6), 9, _c("building"))
 		draw_rect(Rect2(x - 10, 110 + (i % 2) * 6, 20, 70), _c("building"))
 	draw_rect(Rect2(470, 30, 160, 150), _c("wood"), false, 5.0)
-	draw_string(get_theme_default_font(), Vector2(492, 52), "PAIN  //  N° 12", HORIZONTAL_ALIGNMENT_LEFT, -1, 14,
+	draw_string(get_theme_default_font(), Vector2(492, 52), UiText.of("PAIN  //  N° 12"), HORIZONTAL_ALIGNMENT_LEFT, -1, 14,
 			Color(_c("paper"), 0.6))
 	# La gérante derrière le comptoir.
 	draw_rect(Rect2(205, 110, 50, 70), _c("paper"))

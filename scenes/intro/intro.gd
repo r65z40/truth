@@ -43,7 +43,7 @@ func _show_page(index: int) -> void:
 	_title_label.text = page.get("title", "")
 	_text_label.text = page.get("text", "")
 	_page_label.text = "%d / %d" % [index + 1, pages.size()]
-	_next_button.text = "PRENDRE SON POSTE" if index == pages.size() - 1 else "SUIVANT"
+	_next_button.text = tr("PRENDRE SON POSTE") if index == pages.size() - 1 else tr("SUIVANT")
 	_next_button.grab_focus()
 	modulate.a = 0.0
 	create_tween().tween_property(self, "modulate:a", 1.0, 0.35)

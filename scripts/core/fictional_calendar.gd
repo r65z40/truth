@@ -61,7 +61,7 @@ static func act_for_day(day_index: int) -> Dictionary:
 ## Format long, par exemple « LUNDI 3 NOVEMBRE 1986 ».
 static func format_long(day_index: int) -> String:
 	var d := date_for_day(day_index)
-	return "%s %d %s %d" % [WEEKDAYS[d.weekday], d.day, MONTHS[d.month - 1], d.year]
+	return "%s %d %s %d" % [UiText.of(WEEKDAYS[d.weekday]), d.day, UiText.of(MONTHS[d.month - 1]), d.year]
 
 
 ## Format administratif court, par exemple « 03.11.1986 ».
@@ -73,4 +73,4 @@ static func format_short(day_index: int) -> String:
 ## Format de la barre des tâches, par exemple « LUN. 03.11.1986 ».
 static func format_compact(day_index: int) -> String:
 	var d := date_for_day(day_index)
-	return "%s. %s" % [WEEKDAYS[d.weekday].left(3), format_short(day_index)]
+	return "%s. %s" % [UiText.of(WEEKDAYS[d.weekday]).left(3), format_short(day_index)]

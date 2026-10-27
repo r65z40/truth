@@ -79,11 +79,22 @@ tests/                        tests automatiques et captures d'écran
 | Nom | Rôle |
 |---|---|
 | `Settings` | Préférences d'affichage, appliquées au démarrage |
+| `Localization` | Langue courante (`set_locale("en")`) : traductions d'interface et table de contenu (`data/locale/`) |
 | `GameState` | État de la partie ; toute modification émet `state_changed` |
 | `SaveManager` | `save_game()`, `load_game()`, `has_save()` ; format versionné |
 | `Music` | Musique : `play_context("desk")`, morceau choisi par `MusicRules` (`data/music.json`), fondus ; émet `context_changed` |
 | `Sound` | Bruitages `play("stamp")` et ambiances (`data/sounds.json`) ; clic automatique de tous les boutons (métadonnée `sound`) ; sons liés aux signaux de `GameState` |
 | `CrtOverlay` | Filtre visuel global (CanvasLayer 100) |
+
+## Traduction (`data/locale/`)
+
+Le français est la langue source et sert de clé. Interface : `data/locale/<langue>.json`
+(textes des scènes traduits par Godot ; textes construits en code via `tr()` ou,
+en code statique, `UiText.of()`). Contenu : `data/locale/<langue>/**/*.json`, une
+table « texte français -> traduction » ; `DataLoader.load_json()` remplace chaque
+texte connu à la lecture des données (les clés, identifiants et drapeaux ne sont
+jamais traduits). Changer de langue vide les caches de données. Détails :
+`data/locale/README.md`.
 
 ## Médias (sons et images)
 
@@ -263,6 +274,13 @@ défaut). Les conditions sont celles des événements, plus `min_count`
 (`{"radio": 2}` : nombre de soirées passées à ce `kind`). Logique dans
 `EveningRules`, état dans `GameState.evenings`, écran
 `scenes/evening/evening_screen.tscn` ouvert par le bureau avant le jour suivant.
+`echoes` (facultatif) : liste de {conditions, text} ajoutés à l'introduction du
+soir quand leurs conditions sont remplies (conséquences des dossiers).
+
+Traces du bureau (`data/desk_traces.json`) : petits papiers {id, conditions, from,
+text} posés sur le fond d'écran ; `DeskTraces.visible_traces()` garde les 3 derniers
+dont les conditions sont remplies (mêmes conditions que la musique : jours, acte,
+drapeaux, indicateurs).
 
 ## Terrain (`data/field/<scène>.json`)
 

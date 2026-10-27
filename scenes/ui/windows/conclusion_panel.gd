@@ -32,11 +32,11 @@ func setup(new_case_id: String) -> void:
 	selected_decision = ""
 	var case_data := GameState.get_case_view(case_id)
 	var case_state := GameState.get_case_state(case_id)
-	_title.text = "RAPPORT DE CONCLUSION  //  DOSSIER N° %s" % case_id
+	_title.text = tr("RAPPORT DE CONCLUSION  //  DOSSIER N° %s") % case_id
 	_summary.text = build_summary_bbcode(case_data, case_state)
 	# VERITAS n'est plus affiché d'office : l'agent lance le programme s'il le veut.
 	_veritas_box.visible = not Veritas.recommendation(case_data, case_state, GameState.flags).is_empty()
-	_veritas_advice.text = "%s peut analyser ce dossier avant votre signature." % Veritas.NAME
+	_veritas_advice.text = tr("%s peut analyser ce dossier avant votre signature.") % Veritas.NAME
 	for child in _choices.get_children():
 		_choices.remove_child(child)
 		child.queue_free()
@@ -62,14 +62,14 @@ func select_decision(decision_id: String) -> void:
 ## Résumé de l'instruction du dossier, en BBCode. Statique pour être testé.
 static func build_summary_bbcode(case_data: Dictionary, case_state: Dictionary) -> String:
 	var lines: PackedStringArray = []
-	lines.append("[b]Sujet :[/b] %s" % case_data.get("subject_name", "?"))
-	lines.append("[b]Pièces consultées :[/b] %d/%d" % [case_state.viewed_documents.size(),
+	lines.append(UiText.of("[b]Sujet :[/b] %s") % case_data.get("subject_name", "?"))
+	lines.append(UiText.of("[b]Pièces consultées :[/b] %d/%d") % [case_state.viewed_documents.size(),
 			case_data.get("documents", []).size()])
-	lines.append("[b]Éléments notés au carnet :[/b] %d" % case_state.noted_facts.size())
+	lines.append(UiText.of("[b]Éléments notés au carnet :[/b] %d") % case_state.noted_facts.size())
 	if case_state.contradictions_found.is_empty():
-		lines.append("[b]Contradictions établies :[/b] aucune")
+		lines.append(UiText.of("[b]Contradictions établies :[/b] aucune"))
 	else:
-		lines.append("[b]Contradictions établies :[/b]")
+		lines.append(UiText.of("[b]Contradictions établies :[/b]"))
 		for key in case_state.contradictions_found:
 			lines.append("  - %s" % describe_contradiction(case_data, key))
 	return "\n".join(lines)

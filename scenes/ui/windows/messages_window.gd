@@ -59,7 +59,7 @@ func _refresh_list() -> void:
 		button.icon = PixelIcons.get_icon("messages" if not message.read else "mail_open", 2)
 		button.set_meta("unread", not message.read)
 		button.theme_type_variation = &"DocumentTabNew" if not message.read else &"DocumentTab"
-		button.tooltip_text = "Pli non lu." if not message.read else "Pli lu."
+		button.tooltip_text = tr("Pli non lu.") if not message.read else tr("Pli lu.")
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.add_theme_font_size_override("font_size", 15)
@@ -69,6 +69,6 @@ func _refresh_list() -> void:
 		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(select_message.bind(message.id))
 		_message_list.add_child(button)
-	_list_title.text = "PLIS REÇUS (%d non lu%s)" % [unread, "s" if unread > 1 else ""] if unread > 0 else "PLIS REÇUS"
+	_list_title.text = (tr("PLIS REÇUS (%d non lus)" if unread > 1 else "PLIS REÇUS (%d non lu)") % unread) if unread > 0 else tr("PLIS REÇUS")
 	_letter.visible = current_message_id != ""
 	_empty_hint.visible = not _letter.visible

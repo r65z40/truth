@@ -39,7 +39,7 @@ func _build_ui() -> void:
 	add_child(_stage)
 
 	_back_button = Button.new()
-	_back_button.text = "← GALERIE"
+	_back_button.text = tr("← GALERIE")
 	_back_button.focus_mode = Control.FOCUS_NONE
 	_back_button.custom_minimum_size = Vector2(140, 44)
 	_back_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
@@ -69,45 +69,45 @@ func _build_list() -> Control:
 	margin.add_child(column)
 
 	var title := Label.new()
-	title.text = "VISITE DES SCÈNES"
+	title.text = tr("VISITE DES SCÈNES")
 	title.theme_type_variation = &"HeaderLabel"
 	title.add_theme_font_size_override("font_size", 28)
 	column.add_child(title)
 	_note_label = Label.new()
 	_note_label.theme_type_variation = &"MutedLabel"
 	_note_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_note_label.text = "Aperçu libre, sans jouer l'histoire. Rien n'est sauvegardé."
+	_note_label.text = tr("Aperçu libre, sans jouer l'histoire. Rien n'est sauvegardé.")
 	column.add_child(_note_label)
 
 	var back_menu := Button.new()
-	back_menu.text = "← Retour au menu principal"
+	back_menu.text = tr("← Retour au menu principal")
 	back_menu.custom_minimum_size = Vector2(0, 44)
 	back_menu.focus_mode = Control.FOCUS_NONE
 	back_menu.pressed.connect(func() -> void: get_tree().change_scene_to_file(MENU_SCENE))
 	column.add_child(back_menu)
 
-	_add_section(column, "OUTILS")
-	_add_entry(column, "Médias : ce qui est fourni, ce qui manque (écouter, voir)",
+	_add_section(column, tr("OUTILS"))
+	_add_entry(column, tr("Médias : ce qui est fourni, ce qui manque (écouter, voir)"),
 			func() -> void: _mount(MediaCheck.new()))
 
-	_add_section(column, "ÉCRANS")
-	_add_entry(column, "Menu principal", func() -> void: _open_scene(MENU_SCENE))
+	_add_section(column, tr("ÉCRANS"))
+	_add_entry(column, tr("Menu principal"), func() -> void: _open_scene(MENU_SCENE))
 	_add_entry(column, "Introduction", func() -> void: _open_scene(INTRO_SCENE))
-	_add_entry(column, "Bureau (nouvelle partie)", func() -> void: _open_desk(func(_d: Node) -> void: pass))
+	_add_entry(column, tr("Bureau (nouvelle partie)"), func() -> void: _open_desk(func(_d: Node) -> void: pass))
 
-	_add_section(column, "DOSSIERS")
+	_add_section(column, tr("DOSSIERS"))
 	for case_id in CaseLibrary.get_case_ids():
 		var case_data := CaseLibrary.get_case(case_id)
 		var label := "N° %s — %s" % [case_id, case_data.get("title", case_id)]
 		var id: String = case_id
 		_add_entry(column, label, func() -> void: _open_desk(func(d: Node) -> void: d.open_case(id)))
 
-	_add_section(column, "TERRAIN (interrogatoires / perquisitions)")
+	_add_section(column, tr("TERRAIN (interrogatoires / perquisitions)"))
 	for case_id in CaseLibrary.get_case_ids():
 		var scene := FieldRules.scene_for_case(CaseLibrary.get_case(case_id))
 		if scene.is_empty():
 			continue
-		var label := "%s — N° %s" % [scene.get("title", case_id), case_id]
+		var label := tr("%s — N° %s") % [scene.get("title", case_id), case_id]
 		var id: String = case_id
 		_add_entry(column, label, func() -> void: _open_field(id))
 
@@ -173,4 +173,4 @@ func _open_desk(after: Callable) -> void:
 func _open_field(case_id: String) -> void:
 	_open_desk(func(desk: Node) -> void:
 		if not desk.field_screen.preview(case_id):
-			_note_label.text = "La scène de terrain du dossier %s est indisponible." % case_id)
+			_note_label.text = tr("La scène de terrain du dossier %s est indisponible.") % case_id)

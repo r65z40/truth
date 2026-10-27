@@ -94,4 +94,4 @@ static func _default_for(field: String) -> Variant:
 
 
 static func _label(field: String, value: Variant) -> String:
-	return VALUE_LABELS.get(field, {}).get(value, str(value))
+	return UiText.of(VALUE_LABELS.get(field, {}).get(value, str(value)))

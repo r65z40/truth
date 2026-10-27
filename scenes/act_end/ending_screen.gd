@@ -21,7 +21,7 @@ func _ready() -> void:
 ## Affiche la fin et l'archive. result : {ending, subjects} (GameState.get_ending()).
 func open(result: Dictionary) -> void:
 	var ending: Dictionary = result.get("ending", {})
-	_title_label.text = ending.get("title", "FIN DE SERVICE")
+	_title_label.text = ending.get("title", tr("FIN DE SERVICE"))
 	_lines_label.text = "\n\n".join(PackedStringArray(ending.get("lines", [])))
 	# Pour LA CORRECTION : « la seule ligne vraie qui survit » (le dossier du père).
 	var true_line: String = ending.get("true_line", "")
@@ -33,7 +33,7 @@ func open(result: Dictionary) -> void:
 		child.queue_free()
 	for subject: Dictionary in result.get("subjects", []):
 		var heading := Label.new()
-		heading.text = "%s  //  dossier %s  //  %s" % [subject.name, subject.case_id, subject.stamp]
+		heading.text = tr("%s  //  dossier %s  //  %s") % [subject.name, subject.case_id, subject.stamp]
 		heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_subjects_box.add_child(heading)
 		if subject.get("line", "") != "":

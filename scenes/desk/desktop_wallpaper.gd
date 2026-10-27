@@ -54,8 +54,8 @@ func _draw() -> void:
 
 	var font := get_theme_default_font()
 	var font_size := int(clampf(radius * 0.16, 14.0, 22.0))
-	_draw_centered(font, MINISTRY_NAME, center + Vector2(0, radius + font_size * 2.0), font_size, emblem)
-	_draw_centered(font, MOTTO, center + Vector2(0, radius + font_size * 3.6), int(font_size * 0.8), emblem)
+	_draw_centered(font, tr(MINISTRY_NAME), center + Vector2(0, radius + font_size * 2.0), font_size, emblem)
+	_draw_centered(font, tr(MOTTO), center + Vector2(0, radius + font_size * 3.6), int(font_size * 0.8), emblem)
 
 
 func _draw_centered(font: Font, text: String, at: Vector2, font_size: int, color: Color) -> void:

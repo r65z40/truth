@@ -31,7 +31,8 @@ func _on_opened() -> void:
 func refresh() -> void:
 	var edition := NewsRules.edition(current_state())
 	_masthead.text = edition.masthead
-	_tagline.text = "%s\nN° %d  //  %s" % [edition.tagline, edition.number, FictionalCalendar.format_long(GameState.day_index)]
+	_tagline.text = tr("%s
+N° %d  //  %s") % [edition.tagline, edition.number, FictionalCalendar.format_long(GameState.day_index)]
 	for child in _articles.get_children():
 		_articles.remove_child(child)
 		child.queue_free()

@@ -36,9 +36,9 @@ func _ready() -> void:
 func refresh() -> void:
 	_continue_button.disabled = not SaveManager.has_save()
 	var summary := SaveManager.read_summary()
-	_continue_button.text = "CONTINUER" + ("\n" + summary.date if summary.has("date") else "")
-	_continue_button.tooltip_text = "Reprendre la dernière partie sauvegardée."
-	%NewGameButton.tooltip_text = "Commencer votre carrière d'inspecteur, le lundi 3 novembre 1986."
+	_continue_button.text = tr("CONTINUER") + ("\n" + summary.date if summary.has("date") else "")
+	_continue_button.tooltip_text = tr("Reprendre la dernière partie sauvegardée.")
+	%NewGameButton.tooltip_text = tr("Commencer votre carrière d'inspecteur, le lundi 3 novembre 1986.")
 	_refresh_endings()
 
 
@@ -52,9 +52,10 @@ func _refresh_endings() -> void:
 		if ending.get("id", "") in discovered:
 			titles.append(ending.get("title", ""))
 	if titles.is_empty():
-		%EndingsLabel.text = "FINS DÉCOUVERTES : 0 / %d" % total
+		%EndingsLabel.text = tr("FINS DÉCOUVERTES : 0 / %d") % total
 	else:
-		%EndingsLabel.text = "FINS DÉCOUVERTES : %d / %d\n%s" % [titles.size(), total, "  ·  ".join(titles)]
+		%EndingsLabel.text = tr("FINS DÉCOUVERTES : %d / %d
+%s") % [titles.size(), total, "  ·  ".join(titles)]
 
 
 func open_settings() -> void:
@@ -70,7 +71,7 @@ func start_new_game() -> void:
 func continue_game() -> void:
 	var error := SaveManager.load_game()
 	if error != OK:
-		_error_label.text = "Sauvegarde illisible (%s). Lancez une nouvelle partie." % error_string(error)
+		_error_label.text = tr("Sauvegarde illisible (%s). Lancez une nouvelle partie.") % error_string(error)
 		return
 	get_tree().change_scene_to_file(DESK_SCENE)
 

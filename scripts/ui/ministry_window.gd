@@ -249,9 +249,9 @@ func _build_title_bar() -> PanelContainer:
 		stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		row.add_child(stamp)
 
-	_minimize_button = _title_button("MinimizeButton", "_", "Réduire dans la barre des tâches", minimize)
+	_minimize_button = _title_button("MinimizeButton", "_", tr("Réduire dans la barre des tâches"), minimize)
 	row.add_child(_minimize_button)
-	_maximize_button = _title_button("MaximizeButton", "[ ]", "Agrandir / rétablir", toggle_maximize)
+	_maximize_button = _title_button("MaximizeButton", "[ ]", tr("Agrandir / rétablir"), toggle_maximize)
 	row.add_child(_maximize_button)
 	var close_button := _title_button("CloseButton", "X", "Fermer", close)
 	# La fermeture a son propre son (window_close), pas le clic ordinaire.

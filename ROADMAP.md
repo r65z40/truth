@@ -64,7 +64,11 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Photos d'identité dessinées à partir des données (`IdPhoto`)
 - [x] VERITAS : indice de conformité calculé, `VERITAS POURQUOI`
 - [x] Onglets des pièces sur une ligne défilante (dossiers de 8 pièces)
-- [ ] Fondations de la localisation (français, anglais)
+- [x] Localisation complète en anglais (2026-10-27) : interface (`data/locale/en.json`,
+      `tr()` / `UiText.of()`), tout le contenu (dossiers, courrier, soirées, journal,
+      terrain, fins : `data/locale/en/**`, table texte français -> anglais appliquée
+      par `DataLoader`), dates, grades, commandes anglaises du terminal ; test
+      `test_english_version` (citations retrouvées dans le texte anglais)
 - [x] Horloge de service (8 h + 2 h), demander une pièce (livrée le lendemain), consulter Mazur
 - [x] Le prix de la vérité : certaines contradictions (secondaires) ne s'établissent qu'en PROUVANT — payer une heure, un risque (suspicion) ou une faveur (appui requis). Repérer reste gratuit ; données par dossier (`contradiction_prices`). Démonstration sur 51307 (mobile et passé d'informateur d'ORLIK) ; extensible à d'autres dossiers au choix de fen
 - [x] Soirées : 5 soirées de l'acte 1 (Lena, radio d'Aldria, M. ADLER, visites), perdues en heures supplémentaires
@@ -153,12 +157,16 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Ton plus dur (demande de fen du 26.10) : camps (Dolenz), exécutions, morts,
       déportations sur les dénouements graves (tampons DÉPORTÉ/EXÉCUTÉ/CONDAMNÉ +
       `fate_line` crue sur la carte, archive officielle conservée plus pudique)
-- [ ] Levier n°4 (suite) : conséquences aussi dans les soirées et sur le bureau
+- [x] Levier n°4 (suite) : conséquences aussi dans les soirées et sur le bureau —
+      traces posées sur le fond d'écran (`data/desk_traces.json`, `DeskTraces`, 3 au
+      plus, selon jours et drapeaux) et échos du soir (`echoes` dans `data/evenings.json`)
 - [x] Levier n°3 (début) : semer le père dès l'acte 1 — extrait d'état civil scellé dans
       le dossier personnel (« Père : A. VOSK, horloger… ████ 1971 », mention SCELLÉE),
       visible dès le 2e jour, pour sentir vite que quelque chose autour du père est caché
       (s'ajoute aux traces existantes : intro, horloge sans aiguilles, soirées Lena/ADLER)
-- [ ] Levier n°3 (suite) : relier le motif de l'horloge au père, « atelier VOSK » entrevu, date 1971 qui revient
+- [x] Levier n°3 (suite) : motif de l'horloge relié au père (pendule du couloir « révisée
+      par l'atelier VOSK — 1969 », photocopie « réglage des horloges de la gare,
+      1969-1971 », atelier VOSK saisi en mars 1971, marelle « 1971 », écho du soir 2)
 - [x] Levier n°2 (acte 2) : les gens reviennent selon ce qu'on a signé — KOLB récidive
       (on devient son outil), la mère de la chorale attend en bas, ou KOLB dénonce
       l'inspecteur si on a classé ; retours PETRAS/informateur déjà en place

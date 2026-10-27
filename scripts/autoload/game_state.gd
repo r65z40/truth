@@ -586,7 +586,7 @@ func get_act_review() -> Dictionary:
 		var case_data := CaseLibrary.get_case(case_id)
 		var decision_id: String = cases.get(case_id, {}).get("decision", "")
 		var entry := {"case_id": case_id, "name": case_data.get("subject_name", case_id),
-				"decision": "Sans conclusion", "text": "Dossier réattribué à un autre inspecteur."}
+				"decision": tr("Sans conclusion"), "text": tr("Dossier réattribué à un autre inspecteur.")}
 		for decision in case_data.get("decisions", []):
 			if decision.id == decision_id:
 				entry.decision = decision.label

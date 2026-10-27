@@ -57,7 +57,7 @@ func open_case(case_id: String) -> bool:
 	_result.text = ""
 	_result.visible = false
 	_validate_button.visible = true
-	_close_button.text = "FERMER"
+	_close_button.text = tr("FERMER")
 	show()
 	return true
 
@@ -130,7 +130,7 @@ func _on_validate() -> void:
 	if TimelineRules.grade(_timeline, _order).correct:
 		_resolve()
 	else:
-		_feedback.text = "L'ordre n'est pas bon. Reprenez en lisant les dates : une frise juste ne ment pas."
+		_feedback.text = tr("L'ordre n'est pas bon. Reprenez en lisant les dates : une frise juste ne ment pas.")
 		_feedback.visible = true
 
 
@@ -144,10 +144,10 @@ func _resolve() -> void:
 	for entry in _timeline.get("entries", []):
 		if entry.get("decisive", false):
 			decisive = entry.get("note", "")
-	var text: String = advantage.get("text", "") if not advantage.is_empty() else "La frise était déjà établie."
+	var text: String = advantage.get("text", "") if not advantage.is_empty() else tr("La frise était déjà établie.")
 	_result.text = (decisive + "\n\n" + text) if decisive != "" else text
 	_result.visible = true
-	_close_button.text = "VERSER AU CARNET"
+	_close_button.text = tr("VERSER AU CARNET")
 	_close_button.grab_focus()
 
 

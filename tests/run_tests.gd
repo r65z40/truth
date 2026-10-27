@@ -120,6 +120,7 @@ func _run() -> void:
 		"test_news",
 		"test_news_acts3_4",
 		"test_localization",
+		"test_english_version",
 		"test_music_rules",
 		"test_music_player",
 		"test_media_library",
@@ -344,16 +345,7 @@ func test_desk_apps() -> void:
 
 
 func test_document_passages() -> void:
-	var all_found := true
-	for case_id in CaseLibrary.get_case_ids():
-		for document in CaseLibrary.get_case(case_id).documents:
-			var bbcode := DossiersWindow.render_document_bbcode(document, {"noted": [], "link": "8e1f1f", "highlight": "edc76b"})
-			for fact in DossiersWindow.quoted_facts(document):
-				var found: bool = bbcode.count("[url=fact:%s]" % fact.id) == 1
-				if not found:
-					print("  citation introuvable : %s/%s/%s" % [case_id, document.id, fact.id])
-				all_found = all_found and found
-	check(all_found, "chaque citation se trouve une fois dans le texte de sa pièce")
+	check(_all_quotes_found(), "chaque citation se trouve une fois dans le texte de sa pièce")
 	var intercept := CaseLibrary.get_document(CaseLibrary.get_case("40921"), "intercept")
 	var plain := DossiersWindow.render_document_bbcode(intercept)
 	check(not plain.contains("[url="), "sans réglage : texte simple, sans lien")
@@ -367,6 +359,45 @@ func test_document_passages() -> void:
 		for document in CaseLibrary.get_case(case_id).documents:
 			quoted += DossiersWindow.quoted_facts(document).size()
 	check(quoted >= 50, "les dossiers de l'acte 1 ont des passages à noter (%d)" % quoted)
+
+
+## Vrai si chaque citation d'élément apparaît une seule fois dans le texte de sa pièce.
+func _all_quotes_found() -> bool:
+	var all_found := true
+	for case_id in CaseLibrary.get_case_ids():
+		for document in CaseLibrary.get_case(case_id).documents:
+			var bbcode := DossiersWindow.render_document_bbcode(document, {"noted": [], "link": "8e1f1f", "highlight": "edc76b"})
+			for fact in DossiersWindow.quoted_facts(document):
+				var found: bool = bbcode.count("[url=fact:%s]" % fact.id) == 1
+				if not found:
+					print("  citation introuvable : %s/%s/%s" % [case_id, document.id, fact.id])
+				all_found = all_found and found
+	return all_found
+
+
+func test_english_version() -> void:
+	Localization.set_locale("en")
+	check(_all_quotes_found(), "en anglais aussi, chaque citation se trouve dans le texte de sa pièce")
+	var untranslated: Array = []
+	for case_id in CaseLibrary.get_case_ids():
+		var case_data := CaseLibrary.get_case(case_id)
+		for key in ["title", "summary", "objective"]:
+			var value: String = case_data.get(key, "")
+			if value != "" and value == Localization.text(value) and value.contains("é"):
+				untranslated.append("%s.%s" % [case_id, key])
+	check(untranslated.is_empty(), "titres, résumés et objectifs des dossiers traduits %s" % str(untranslated))
+	check(FictionalCalendar.format_long(0) == "MONDAY 3 NOVEMBER 1986", "date en anglais : %s" % FictionalCalendar.format_long(0))
+	check(FictionalCalendar.format_compact(0).begins_with("MON."), "date courte en anglais")
+	var progress := DossiersWindow.progress_text({"documents": [{}, {}]},
+			{"decision": "", "viewed_documents": ["a"], "noted_facts": ["x"], "contradictions_found": []})
+	check(progress == "Progress: 1/2 documents read  ·  1 item noted  ·  no contradictions established.", "avancement en anglais : %s" % progress)
+	check(Career.rank_title(0) == "Inspector, 3rd class", "grade en anglais")
+	check(TerminalCommands.parse("files").target == "dossiers" and TerminalCommands.parse("mail").target == "messages",
+			"le terminal comprend les commandes anglaises")
+	var evening := EveningRules.intro_text(DataLoader.load_json("res://data/evenings.json").evenings[0], GameState.get_condition_state())
+	check(evening.begins_with("The heating"), "soirée traduite : %s" % evening.left(40))
+	Localization.set_locale("fr")
+	check(FictionalCalendar.format_long(0) == "LUNDI 3 NOVEMBRE 1986", "retour au français pour les dates")
 
 
 func test_calendar() -> void:
@@ -3015,7 +3046,7 @@ func test_document_windows() -> void:
 			"les pièces non lues sont marquées « à lire »")
 	check(tabs.get_node("Tab_work_report").theme_type_variation == &"DocumentTabNew", "pièce à lire mise en avant")
 	check(dossiers.get_node("%ProgressLabel").text.contains("1/4 pièces lues") \
-			and dossiers.get_node("%ProgressLabel").text.contains("0 contradiction"), "avancement lisible en une ligne")
+			and dossiers.get_node("%ProgressLabel").text.contains("aucune contradiction"), "avancement lisible en une ligne")
 	check(dossiers.get_node("%ObjectiveLabel").visible \
 			and dossiers.get_node("%ObjectiveLabel").text.contains("OBJET DE L'ENQUÊTE"), "le briefing affiche l'objet de l'enquête")
 	# Pendant le tutoriel, l'en-tête du dossier est épuré : ni rappel « Vous

@@ -49,14 +49,14 @@ func _ready() -> void:
 	var list := MediaCatalog.entries()
 	var count := MediaCatalog.summary(list)
 	var title := Label.new()
-	title.text = "MÉDIAS DU JEU : %d / %d FOURNIS" % [count.present, count.total]
+	title.text = tr("MÉDIAS DU JEU : %d / %d FOURNIS") % [count.present, count.total]
 	title.theme_type_variation = &"HeaderLabel"
 	title.add_theme_font_size_override("font_size", 26)
 	column.add_child(title)
 	var help := Label.new()
 	help.theme_type_variation = &"MutedLabel"
 	help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	help.text = "Déposer le fichier au chemin indiqué (extension libre : .ogg/.wav/.mp3 pour le son, .png/.webp/.jpg pour l'image), laisser Godot l'importer, puis rouvrir cet écran. Guide complet : docs/MEDIAS.md."
+	help.text = tr("Déposer le fichier au chemin indiqué (extension libre : .ogg/.wav/.mp3 pour le son, .png/.webp/.jpg pour l'image), laisser Godot l'importer, puis rouvrir cet écran. Guide complet : docs/MEDIAS.md.")
 	column.add_child(help)
 
 	var current_kind := ""
@@ -65,7 +65,7 @@ func _ready() -> void:
 			current_kind = entry.kind
 			var section := Label.new()
 			section.theme_type_variation = &"StampLabel"
-			section.text = KIND_TITLES.get(current_kind, current_kind)
+			section.text = tr(KIND_TITLES.get(current_kind, current_kind))
 			column.add_child(HSeparator.new())
 			column.add_child(section)
 		column.add_child(_build_row(entry))
@@ -79,8 +79,8 @@ func _build_row(entry: Dictionary) -> Control:
 
 	var status := Label.new()
 	status.custom_minimum_size = Vector2(110, 0)
-	status.text = ("FOURNI" if found.size() == files.size() else "%d / %d" % [found.size(), files.size()]) \
-			if not found.is_empty() else "MANQUANT"
+	status.text = (tr("FOURNI") if found.size() == files.size() else "%d / %d" % [found.size(), files.size()]) \
+			if not found.is_empty() else tr("MANQUANT")
 	status.add_theme_color_override("font_color", PRESENT_COLOR if not found.is_empty() else MISSING_COLOR)
 	row.add_child(status)
 
@@ -101,7 +101,7 @@ func _build_row(entry: Dictionary) -> Control:
 		row.add_child(thumb)
 	else:
 		var listen := Button.new()
-		listen.text = "ÉCOUTER"
+		listen.text = tr("ÉCOUTER")
 		listen.custom_minimum_size = Vector2(120, 44)
 		listen.focus_mode = Control.FOCUS_NONE
 		listen.disabled = found.is_empty()

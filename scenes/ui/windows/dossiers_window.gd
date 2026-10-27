@@ -124,8 +124,8 @@ func _ready() -> void:
 	# Poser la pièce à côté, dans sa propre fenêtre, pour la comparer à une autre.
 	_open_aside_button = Button.new()
 	_open_aside_button.name = "OpenAsideButton"
-	_open_aside_button.text = "OUVRIR LA PIÈCE À CÔTÉ"
-	_open_aside_button.tooltip_text = "Ouvrir cette pièce dans sa propre fenêtre, pour la comparer à une autre."
+	_open_aside_button.text = tr("OUVRIR LA PIÈCE À CÔTÉ")
+	_open_aside_button.tooltip_text = tr("Ouvrir cette pièce dans sa propre fenêtre, pour la comparer à une autre.")
 	_open_aside_button.custom_minimum_size = Vector2(0, 44)
 	_open_aside_button.focus_mode = Control.FOCUS_NONE
 	_open_aside_button.add_theme_font_size_override("font_size", 14)
@@ -175,9 +175,9 @@ func _apply_briefing(case_data: Dictionary) -> void:
 	var briefing: Dictionary = case_data.get("briefing", {})
 	var objective: String = briefing.get("objective", "")
 	var context: String = briefing.get("context", case_data.get("summary", ""))
-	_objective_label.text = "OBJET DE L'ENQUÊTE :  " + objective
+	_objective_label.text = tr("OBJET DE L'ENQUÊTE :  ") + objective
 	_objective_label.visible = objective != ""
-	_case_summary.text = ("POURQUOI CE DOSSIER :  " + context) if context != "" else ""
+	_case_summary.text = (tr("POURQUOI CE DOSSIER :  ") + context) if context != "" else ""
 	_case_summary.visible = context != ""
 
 
@@ -209,18 +209,18 @@ func _refresh_actions_help() -> void:
 		_actions_help.visible = false
 		return
 	var parts: PackedStringArray = [
-		"lire les pièces",
-		"cliquer les passages soulignés pour les noter",
-		"confronter deux éléments du carnet",
+		tr("lire les pièces"),
+		tr("cliquer les passages soulignés pour les noter"),
+		tr("confronter deux éléments du carnet"),
 	]
 	if GameState.is_feature_unlocked("request_document") and not GameState.get_requestable_documents(current_case_id).is_empty():
-		parts.append("DEMANDER une pièce complémentaire")
+		parts.append(tr("DEMANDER une pièce complémentaire"))
 	if GameState.is_feature_unlocked("consult_superior") and not CaseLibrary.get_case(current_case_id).get("consultation", {}).is_empty():
-		parts.append("CONSULTER votre supérieur")
+		parts.append(tr("CONSULTER votre supérieur"))
 	var scene := GameState.get_field_scene(current_case_id)
 	if not scene.is_empty() and GameState.is_feature_unlocked("field_work"):
-		parts.append("vous rendre sur le terrain (%s)" % scene.get("button", "TERRAIN"))
-	_actions_help.text = "Vous pouvez : " + " · ".join(parts) + "."
+		parts.append(tr("vous rendre sur le terrain (%s)") % scene.get("button", tr("TERRAIN")))
+	_actions_help.text = tr("Vous pouvez : ") + " · ".join(parts) + "."
 	_actions_help.visible = true
 
 
@@ -259,11 +259,11 @@ func open_current_aside() -> void:
 
 func note_fact(fact_id: String) -> void:
 	if fact_id in GameState.get_case_state(current_case_id).noted_facts:
-		notify.emit("Déjà dans votre carnet.")
+		notify.emit(tr("Déjà dans votre carnet."))
 		return
 	GameState.note_fact(current_case_id, fact_id)
 	Sound.play("note")
-	notify.emit("Élément noté dans votre carnet.")
+	notify.emit(tr("Élément noté dans votre carnet."))
 	_refresh_all()
 
 
@@ -296,22 +296,22 @@ func confront_selected() -> void:
 	last_confront_failed = key == ""
 	Sound.play("confront_fail" if key == "" else "confront_success")
 	if key == "":
-		_set_confront_result("PAS DE CONTRADICTION. Ces deux éléments peuvent être vrais en même temps. "
-				+ "Cherchez deux éléments qui parlent du même fait (même jour, même personne) sans dire la même chose.", true)
-		notify.emit("Pas de contradiction entre ces deux éléments.")
+		_set_confront_result(tr("PAS DE CONTRADICTION. Ces deux éléments peuvent être vrais en même temps. ")
+				+ tr("Cherchez deux éléments qui parlent du même fait (même jour, même personne) sans dire la même chose."), true)
+		notify.emit(tr("Pas de contradiction entre ces deux éléments."))
 	elif key in already_found:
-		_set_confront_result("Contradiction déjà établie.")
+		_set_confront_result(tr("Contradiction déjà établie."))
 	else:
 		var state := GameState.contradiction_prove_state(current_case_id, key)
 		if state.priced and not state.established:
 			# Contradiction repérée mais payante : le bouton passe en mode PROUVER.
 			_prove_key = key
-			_set_confront_result("CONTRADICTION REPÉRÉE. Pour qu'elle compte, il faut la PROUVER. "
+			_set_confront_result(tr("CONTRADICTION REPÉRÉE. Pour qu'elle compte, il faut la PROUVER. ")
 					+ state.price.get("label", ""))
-			notify.emit("CONTRADICTION REPÉRÉE — à prouver")
+			notify.emit(tr("CONTRADICTION REPÉRÉE — à prouver"))
 		else:
-			_set_confront_result("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport.")
-			notify.emit("CONTRADICTION ÉTABLIE")
+			_set_confront_result(tr("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport."))
+			notify.emit(tr("CONTRADICTION ÉTABLIE"))
 	selected_facts.clear()
 	_refresh_all()
 
@@ -323,14 +323,14 @@ func prove_noticed() -> void:
 		return
 	var result := GameState.prove_contradiction(current_case_id, _prove_key)
 	if result.ok:
-		_set_confront_result("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport.")
-		notify.emit("CONTRADICTION ÉTABLIE")
+		_set_confront_result(tr("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport."))
+		notify.emit(tr("CONTRADICTION ÉTABLIE"))
 		_prove_key = ""
 	elif result.reason == "faveur_manquante":
-		_set_confront_result("Vous ne pouvez pas encore la prouver : il vous manque un appui. "
+		_set_confront_result(tr("Vous ne pouvez pas encore la prouver : il vous manque un appui. ")
 				+ GameState.contradiction_prove_state(current_case_id, _prove_key).price.get("label", ""), true)
 	elif result.reason == "temps_insuffisant":
-		_set_confront_result("La journée est trop courte pour la prouver. Revenez quand l'horloge le permet.", true)
+		_set_confront_result(tr("La journée est trop courte pour la prouver. Revenez quand l'horloge le permet."), true)
 	else:
 		_prove_key = ""
 	_refresh_all()
@@ -376,7 +376,7 @@ func get_guide_text(part: String, case_id := "") -> String:
 	if part != "notebook" or not last_confront_failed or case_id != current_case_id:
 		return ""
 	return CaseLibrary.get_case(case_id).get("guide", {}).get("notebook_retry",
-			"Ces deux éléments ne se contredisent pas. Cherchez deux pièces qui parlent du même jour ou de la même personne, et notez ce qu'elles affirment.")
+			tr("Ces deux éléments ne se contredisent pas. Cherchez deux pièces qui parlent du même jour ou de la même personne, et notez ce qu'elles affirment."))
 
 
 # --- Conclusion ----------------------------------------------------------------
@@ -451,7 +451,7 @@ static func render_document_bbcode(document: Dictionary, passages := {}) -> Stri
 				_field_icon_tag(field[0]), LABEL_COLOR, _escape(field[0]).to_upper(), marker.mark(field[1])]
 		parts.append(table + "[/table]")
 	if document.has("author"):
-		parts.append("[color=%s][b]Rédacteur :[/b][/color] %s" % [LABEL_COLOR, marker.mark(document.author)])
+		parts.append(UiText.of("[color=%s][b]Rédacteur :[/b][/color] %s") % [LABEL_COLOR, marker.mark(document.author)])
 	if document.has("rows"):
 		var columns: Array = document.get("columns", [])
 		var table := "[table=%d]" % maxi(columns.size(), 1)
@@ -537,10 +537,10 @@ func _refresh_all() -> void:
 		return
 	var case_data := GameState.get_case_view(current_case_id)
 	var case_state := GameState.get_case_state(current_case_id)
-	var status_text: String = STATUS_LABELS.get(case_state.status, "?")
+	var status_text: String = tr(STATUS_LABELS.get(case_state.status, "?"))
 	if case_state.decision != "":
 		status_text += "  //  " + CaseLibrary.get_decision(case_data, case_state.decision).get("label", "").to_upper()
-	_case_header.text = "DOSSIER N° %s  |  %s  |  %s" % [current_case_id, case_data.subject_name, status_text]
+	_case_header.text = tr("DOSSIER N° %s  |  %s  |  %s") % [current_case_id, case_data.subject_name, status_text]
 	_progress_label.text = progress_text(case_data, case_state)
 	# Pendant l'apprentissage, on masque le compteur d'avancement : le bandeau
 	# « À FAIRE » dit déjà quoi faire, et l'en-tête reste épuré.
@@ -549,7 +549,7 @@ func _refresh_all() -> void:
 	_refresh_actions(can_decide)
 	_refresh_actions_help()
 	_conclusion_button.disabled = not can_decide
-	_conclusion_button.text = "RÉDIGER LA CONCLUSION" if can_decide else "RAPPORT TRANSMIS"
+	_conclusion_button.text = tr("RÉDIGER LA CONCLUSION") if can_decide else tr("RAPPORT TRANSMIS")
 	# « Ouvrir à côté » ne sert qu'à comparer deux pièces : inutile si le dossier
 	# n'en a qu'une.
 	_open_aside_button.visible = not _conclusion_panel.visible and case_data.get("documents", []).size() >= 2
@@ -562,17 +562,24 @@ func _refresh_all() -> void:
 ## Avancement de l'enquête, en une ligne lisible : lecture, carnet, contradictions.
 static func progress_text(case_data: Dictionary, case_state: Dictionary) -> String:
 	if case_state.decision != "":
-		return "Avancement : rapport transmis."
+		return UiText.of("Avancement : rapport transmis.")
 	var read: int = case_state.viewed_documents.size()
 	var total: int = case_data.documents.size()
 	var noted: int = case_state.noted_facts.size()
 	var found: int = case_state.contradictions_found.size()
 	var parts: PackedStringArray = [
-		"%d/%d pièces lues" % [read, total],
-		"%d élément%s noté%s" % [noted, "s" if noted > 1 else "", "s" if noted > 1 else ""],
-		"%d contradiction%s établie%s" % [found, "s" if found > 1 else "", "s" if found > 1 else ""],
+		UiText.of("%d/%d pièces lues") % [read, total],
+		_count_text(noted, "aucun élément noté", "%d élément noté", "%d éléments notés"),
+		_count_text(found, "aucune contradiction établie", "%d contradiction établie", "%d contradictions établies"),
 	]
-	return "Avancement : " + "  ·  ".join(parts) + "."
+	return UiText.of("Avancement : ") + "  ·  ".join(parts) + "."
+
+
+## Texte traduit selon le nombre : aucun, un, plusieurs.
+static func _count_text(count: int, none: String, one: String, many: String) -> String:
+	if count == 0:
+		return UiText.of(none)
+	return UiText.of(one if count == 1 else many) % count
 
 
 # --- Actions qui coûtent du temps --------------------------------------------
@@ -586,25 +593,25 @@ func _refresh_actions(can_decide: bool) -> void:
 	_request_button.disabled = not can_decide or requestable.is_empty() \
 			or not WorkTime.check(GameState.hours_used, "request_document").ok
 	if not pending.is_empty():
-		_request_button.text = "DEMANDE EN COURS"
-		_request_button.tooltip_text = "Réponse attendue demain : %s." % pending[0]
+		_request_button.text = tr("DEMANDE EN COURS")
+		_request_button.tooltip_text = tr("Réponse attendue demain : %s.") % pending[0]
 	else:
-		_request_button.text = "DEMANDER (%d h)" % WorkTime.cost("request_document")
-		_request_button.tooltip_text = ("Demander une pièce complémentaire, livrée demain : %s." % requestable[0].request.label) \
-				if not requestable.is_empty() else "Aucune pièce complémentaire à demander pour ce dossier."
+		_request_button.text = tr("DEMANDER (%d h)") % WorkTime.cost("request_document")
+		_request_button.tooltip_text = (tr("Demander une pièce complémentaire, livrée demain : %s.") % requestable[0].request.label) \
+				if not requestable.is_empty() else tr("Aucune pièce complémentaire à demander pour ce dossier.")
 	var consultation: Dictionary = CaseLibrary.get_case(current_case_id).get("consultation", {})
 	var consulted: bool = GameState.get_case_state(current_case_id).consulted
 	_consult_button.disabled = not can_decide or consultation.is_empty() or consulted \
 			or not WorkTime.check(GameState.hours_used, "consult_superior").ok
-	_consult_button.text = "CONSULTÉ" if consulted else "CONSULTER (%d h)" % WorkTime.cost("consult_superior")
-	_consult_button.tooltip_text = "Demander conseil à votre supérieur sur ce dossier (une fois)."
+	_consult_button.text = tr("CONSULTÉ") if consulted else tr("CONSULTER (%d h)") % WorkTime.cost("consult_superior")
+	_consult_button.tooltip_text = tr("Demander conseil à votre supérieur sur ce dossier (une fois).")
 	# Terrain : interrogatoire ou perquisition, une fois par dossier.
 	var scene := GameState.get_field_scene(current_case_id)
 	_field_button.visible = not scene.is_empty() and GameState.is_feature_unlocked("field_work")
 	if _field_button.visible:
 		var cost := WorkTime.cost(scene.get("time_action", "interrogate"))
 		var started := not GameState.get_field_state(scene.id).is_empty()
-		_field_button.text = ("%s : FAIT" if started else "%s (%d h)") % ([scene.button] if started else [scene.button, cost])
+		_field_button.text = (tr("%s : FAIT") if started else "%s (%d h)") % ([scene.button] if started else [scene.button, cost])
 		_field_button.disabled = not GameState.can_start_field(current_case_id) \
 				or not WorkTime.check(GameState.hours_used, scene.get("time_action", "interrogate")).ok
 		_field_button.tooltip_text = scene.get("title", "")
@@ -616,7 +623,7 @@ func _refresh_actions(can_decide: bool) -> void:
 			and EventRules.are_conditions_met(comparison.get("conditions", {}), GameState.get_condition_state())
 	if _compare_button.visible:
 		var done: bool = comparison.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
-		_compare_button.text = "COMPARER : FAIT" if done else "COMPARER"
+		_compare_button.text = tr("COMPARER : FAIT") if done else tr("COMPARER")
 		_compare_button.tooltip_text = comparison.get("title", "")
 	# Frise chronologique : même logique, mini-jeu facultatif de certains dossiers.
 	var timeline := TimelineRules.get_timeline(CaseLibrary.get_case(current_case_id))
@@ -624,7 +631,7 @@ func _refresh_actions(can_decide: bool) -> void:
 			and EventRules.are_conditions_met(timeline.get("conditions", {}), GameState.get_condition_state())
 	if _timeline_button.visible:
 		var tdone: bool = timeline.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
-		_timeline_button.text = "FRISE : FAITE" if tdone else "FRISE"
+		_timeline_button.text = tr("FRISE : FAITE") if tdone else tr("FRISE")
 		_timeline_button.tooltip_text = timeline.get("title", "")
 
 
@@ -644,17 +651,17 @@ func request_next_document() -> void:
 	if requestable.is_empty():
 		return
 	if GameState.request_document(current_case_id, requestable[0].id):
-		notify.emit("Demande transmise : %s. Réponse demain." % requestable[0].request.label)
+		notify.emit(tr("Demande transmise : %s. Réponse demain.") % requestable[0].request.label)
 	else:
-		notify.emit("Plus assez de temps aujourd'hui pour cette demande.")
+		notify.emit(tr("Plus assez de temps aujourd'hui pour cette demande."))
 	_refresh_all()
 
 
 func consult_superior() -> void:
 	if GameState.consult_superior(current_case_id):
-		notify.emit("Votre supérieur vous a répondu : voir MESSAGES.")
+		notify.emit(tr("Votre supérieur vous a répondu : voir MESSAGES."))
 	else:
-		notify.emit("Consultation impossible.")
+		notify.emit(tr("Consultation impossible."))
 	_refresh_all()
 
 
@@ -678,7 +685,7 @@ func _refresh_notebook() -> void:
 		var button := Button.new()
 		button.name = "Noted_" + fact_id
 		button.text = fact.get("label", fact_id)
-		button.tooltip_text = "Source : %s. Cliquez pour le sélectionner." % source.get("title", "?")
+		button.tooltip_text = tr("Source : %s. Cliquez pour le sélectionner.") % source.get("title", "?")
 		button.toggle_mode = true
 		button.set_pressed_no_signal(fact_id in selected_facts)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -697,23 +704,23 @@ func _refresh_notebook() -> void:
 	# Mode PROUVER : contradiction repérée et payante, pas encore établie. Le bouton
 	# reste actif pour payer son prix, quel que soit l'état de la sélection.
 	if _prove_key != "" and not _prove_key in case_state.contradictions_found:
-		_confront_button.text = PROVE_LABEL
+		_confront_button.text = tr(PROVE_LABEL)
 		_confront_button.disabled = false
 		return
 	_prove_key = ""
-	_confront_button.text = CONFRONT_LABEL
+	_confront_button.text = tr(CONFRONT_LABEL)
 	_confront_button.disabled = selected_facts.size() != MAX_SELECTED_FACTS
 	# Indice « où chercher » : tant qu'aucune contradiction n'est établie (et hors
 	# échec de confrontation affiché), on oriente le joueur sans donner la réponse.
 	if selected_facts.is_empty() and case_state.contradictions_found.is_empty() and not last_confront_failed:
 		if case_state.noted_facts.is_empty():
 			if _confront_result.text == "":
-				_set_confront_result("Notez des éléments (passages soulignés), puis sélectionnez-en deux à confronter.")
+				_set_confront_result(tr("Notez des éléments (passages soulignés), puis sélectionnez-en deux à confronter."))
 		elif _in_tutorial() and _notes_share_point(case_data, case_state.noted_facts):
 			# Deux notes portent sur le même point : repère discret, pendant l'apprentissage.
-			_set_confront_result("Deux de vos notes portent sur le même point. Sélectionnez-les toutes les deux, puis CONFRONTER.")
+			_set_confront_result(tr("Deux de vos notes portent sur le même point. Sélectionnez-les toutes les deux, puis CONFRONTER."))
 	elif selected_facts.size() == 1:
-		_set_confront_result("Sélectionnez un second élément à confronter.")
+		_set_confront_result(tr("Sélectionnez un second élément à confronter."))
 
 
 ## Pièce dont provient un élément (pour rappeler sa source dans le carnet).
@@ -735,7 +742,7 @@ func _refresh_case_list() -> void:
 			continue
 		var case_state := GameState.get_case_state(case_id)
 		var button := Button.new()
-		button.text = "N° %s  [%s]\n%s" % [case_id, STATUS_LABELS.get(case_state.status, "?"), case_data.subject_name]
+		button.text = "N° %s  [%s]\n%s" % [case_id, tr(STATUS_LABELS.get(case_state.status, "?")), case_data.subject_name]
 		button.add_theme_font_size_override("font_size", 15)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -785,9 +792,9 @@ func _refresh_tab_states() -> void:
 		var document_id: String = tab.get_meta("document_id")
 		var unread := not GameState.is_document_viewed(current_case_id, document_id)
 		var title: String = CaseLibrary.get_document(GameState.get_case_view(current_case_id), document_id).get("title", "")
-		tab.text = title + ("  (à lire)" if unread else "")
+		tab.text = title + (tr("  (à lire)") if unread else "")
 		tab.theme_type_variation = &"DocumentTabNew" if unread else &"DocumentTab"
-		tab.tooltip_text = "Pièce pas encore lue." if unread else "Pièce lue."
+		tab.tooltip_text = tr("Pièce pas encore lue.") if unread else tr("Pièce lue.")
 
 
 func _show_case_view(has_case: bool) -> void:

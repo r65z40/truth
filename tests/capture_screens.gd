@@ -1,8 +1,9 @@
 extends Node
 ## Capture d'écran des scènes principales, pour vérifier l'aspect visuel sans éditeur.
 ## Nécessite un affichage (pas --headless). Exemple sous Linux sans écran :
-##   xvfb-run -s "-screen 0 1280x720x24" godot --path . res://tests/capture_screens.tscn -- <dossier_sortie>
+##   xvfb-run -s "-screen 0 1280x720x24" godot --path . res://tests/capture_screens.tscn -- <dossier_sortie> [langue]
 ## Les images sont écrites dans <dossier_sortie> (par défaut user://screenshots).
+## La langue (fr, en) est facultative : par défaut, celle des paramètres.
 
 var _out_dir := "user://screenshots"
 
@@ -11,6 +12,8 @@ func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if not args.is_empty():
 		_out_dir = args[0]
+	if args.size() > 1:
+		Localization.set_locale(args[1])
 	DirAccess.make_dir_recursive_absolute(_out_dir)
 	_capture_all.call_deferred()
 
