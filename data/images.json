@@ -1,0 +1,14 @@
+{
+	"_comment": "Images remplaçables du jeu. Pour changer une image : remplacer le fichier (même nom, extension libre : .png, .webp ou .jpg) ou indiquer ici un autre chemin. Un fichier absent n'est pas une erreur : le jeu garde son décor dessiné (ou un fond uni). Les décors des scènes de terrain sont dans data/field/*.json (clé image), voir assets/field/README.md. Guide : docs/MEDIAS.md.",
+	"slots": {
+		"menu_background": {"file": "res://assets/textures/menu_fond.png", "size": "1920 x 1080", "usage": "fond du menu principal (assombri par un voile)"},
+		"desk_wallpaper": {"file": "res://assets/images/bureau_fond.png", "size": "1920 x 1080", "usage": "fond d'écran du bureau ; absent : trame et emblème dessinés"},
+		"intro_city": {"file": "res://assets/images/intro_ville.png", "size": "1280 x 600", "usage": "introduction, page 1 (Velmira) ; absent : dessin"},
+		"intro_badge": {"file": "res://assets/images/intro_carte.png", "size": "1280 x 600", "usage": "introduction, page 2 (carte d'inspecteur) ; absent : dessin"},
+		"intro_dossier": {"file": "res://assets/images/intro_dossier.png", "size": "1280 x 600", "usage": "introduction, page 3 (le travail) ; absent : dessin"},
+		"intro_clock": {"file": "res://assets/images/intro_horloge.png", "size": "1280 x 600", "usage": "introduction, page 4 (huit heures) ; absent : dessin"},
+		"intro_signature": {"file": "res://assets/images/intro_signature.png", "size": "1280 x 600", "usage": "introduction, page 5 (la signature) ; absent : dessin"},
+		"evening_background": {"file": "res://assets/field/lieu_vieprivee_cuisine.webp", "size": "1920 x 1080", "usage": "fond des soirées, derrière le texte (assombri)"},
+		"act_review_background": {"file": "res://assets/images/fin_acte.png", "size": "1920 x 1080", "usage": "fond de l'écran de fin d'acte (assombri)"}
+	}
+}

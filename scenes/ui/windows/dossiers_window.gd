@@ -225,6 +225,8 @@ func select_document(document_id: String) -> void:
 	var document := CaseLibrary.get_document(case_data, document_id)
 	if document.is_empty():
 		return
+	if document_id != current_document_id:
+		Sound.play("paper")
 	current_document_id = document_id
 	for tab: Button in _document_tabs.get_children():
 		tab.set_pressed_no_signal(tab.get_meta("document_id") == document_id)
@@ -256,6 +258,7 @@ func note_fact(fact_id: String) -> void:
 		notify.emit("Déjà dans votre carnet.")
 		return
 	GameState.note_fact(current_case_id, fact_id)
+	Sound.play("note")
 	notify.emit("Élément noté dans votre carnet.")
 	_refresh_all()
 
@@ -287,6 +290,7 @@ func confront_selected() -> void:
 	var already_found: Array = GameState.get_case_state(current_case_id).contradictions_found.duplicate()
 	var key := GameState.confront_facts(current_case_id, selected_facts[0], selected_facts[1])
 	last_confront_failed = key == ""
+	Sound.play("confront_fail" if key == "" else "confront_success")
 	if key == "":
 		_set_confront_result("PAS DE CONTRADICTION. Ces deux éléments peuvent être vrais en même temps. "
 				+ "Cherchez deux éléments qui parlent du même fait (même jour, même personne) sans dire la même chose.", true)

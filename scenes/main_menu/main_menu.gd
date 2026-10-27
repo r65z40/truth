@@ -15,6 +15,7 @@ const GALLERY_SCENE := "res://scenes/debug/scene_gallery.tscn"
 
 func _ready() -> void:
 	Music.play_context("menu")
+	%MenuBackground.texture = ImageSlots.texture("menu_background")
 	%NewGameButton.pressed.connect(_on_new_game_pressed)
 	_continue_button.pressed.connect(continue_game)
 	%SettingsButton.pressed.connect(open_settings)

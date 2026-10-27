@@ -11,6 +11,8 @@ extends MinistryWindow
 @onready var _resolution_row: Control = %ResolutionRow
 @onready var _resolution_option: OptionButton = %ResolutionOption
 @onready var _music_option: OptionButton = %MusicOption
+@onready var _ambience_option: OptionButton = %AmbienceOption
+@onready var _sfx_option: OptionButton = %SfxOption
 @onready var _language_option: OptionButton = %LanguageOption
 
 
@@ -30,9 +32,14 @@ func _ready() -> void:
 	_field_3d_toggle.toggled.connect(func(on: bool) -> void:
 		Settings.set_field_3d(on)
 		_refresh_toggle_labels())
-	for level in Settings.MUSIC_LEVELS:
-		_music_option.add_item("Coupée" if level == 0.0 else "%d %%" % roundi(level * 100))
+	for option: OptionButton in [_music_option, _ambience_option, _sfx_option]:
+		for level in Settings.MUSIC_LEVELS:
+			option.add_item("Coupé" if level == 0.0 else "%d %%" % roundi(level * 100))
 	_music_option.item_selected.connect(func(index: int) -> void: Settings.set_music_volume(Settings.MUSIC_LEVELS[index]))
+	_ambience_option.item_selected.connect(func(index: int) -> void: Settings.set_ambience_volume(Settings.MUSIC_LEVELS[index]))
+	_sfx_option.item_selected.connect(func(index: int) -> void:
+		Settings.set_sfx_volume(Settings.MUSIC_LEVELS[index])
+		Sound.play("stamp"))
 	_scale_option.item_selected.connect(func(index: int) -> void: Settings.set_ui_scale(Settings.UI_SCALES[index]))
 	for size in Settings.WINDOW_SIZES:
 		_resolution_option.add_item("%d × %d" % [size.x, size.y])
@@ -52,7 +59,9 @@ func _on_opened() -> void:
 	_guidance_toggle.set_pressed_no_signal(Settings.guidance)
 	_field_3d_toggle.set_pressed_no_signal(Settings.field_3d)
 	_scale_option.select(maxi(Settings.UI_SCALES.find(Settings.ui_scale), 0))
-	_music_option.select(_closest_music_level())
+	_music_option.select(_closest_level(Settings.music_volume))
+	_ambience_option.select(_closest_level(Settings.ambience_volume))
+	_sfx_option.select(_closest_level(Settings.sfx_volume))
 	_language_option.select(maxi(Localization.LOCALES.find(Settings.language), 0))
 	_refresh_toggle_labels()
 
@@ -63,9 +72,9 @@ func _refresh_toggle_labels() -> void:
 
 
 ## Cran de volume le plus proche du réglage enregistré.
-func _closest_music_level() -> int:
+func _closest_level(volume: float) -> int:
 	var best := 0
 	for i in Settings.MUSIC_LEVELS.size():
-		if absf(Settings.MUSIC_LEVELS[i] - Settings.music_volume) < absf(Settings.MUSIC_LEVELS[best] - Settings.music_volume):
+		if absf(Settings.MUSIC_LEVELS[i] - volume) < absf(Settings.MUSIC_LEVELS[best] - volume):
 			best = i
 	return best

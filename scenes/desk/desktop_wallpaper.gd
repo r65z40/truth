@@ -2,18 +2,28 @@ class_name DesktopWallpaper
 extends Control
 ## Fond du bureau : trame discrète et emblème du ministère (un œil dans un
 ## double cercle) avec la devise, dessinés aux couleurs du thème (type Desktop).
+## Une image « desk_wallpaper » (data/images.json) remplace ce dessin : elle
+## couvre tout le bureau, recadrée au centre.
 
 const MINISTRY_NAME := "MINISTÈRE DE LA SÉCURITÉ NATIONALE"
 const MOTTO := "LA VIGILANCE EST UN DEVOIR CIVIQUE"
 const GRID := 6
 
+var _image: Texture2D
+
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_image = ImageSlots.texture("desk_wallpaper")
 	resized.connect(queue_redraw)
 
 
 func _draw() -> void:
+	if _image != null:
+		var cover := maxf(size.x / _image.get_width(), size.y / _image.get_height())
+		var image_size := _image.get_size() * cover
+		draw_texture_rect(_image, Rect2((size - image_size) / 2.0, image_size), false)
+		return
 	var wallpaper := get_theme_color(&"wallpaper", &"Desktop")
 	var pattern := get_theme_color(&"pattern", &"Desktop")
 	var emblem := get_theme_color(&"emblem", &"Desktop")

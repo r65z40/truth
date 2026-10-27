@@ -337,6 +337,8 @@ func _capture_all() -> void:
 	await _snap("44_galerie_apercu_terrain", 1.2)
 	gallery._open_field("53118")
 	await _snap("45_visite_chorale", 1.2)
+	gallery._mount(MediaCheck.new())
+	await _snap("46_galerie_medias")
 	gallery.queue_free()
 	get_tree().quit()
 

@@ -295,7 +295,15 @@ caviarder) via le système de décisions existant — données pures, sans moteu
 - [x] Lecteur de musique (demande de fen du 25.10) : autoload `Music`, fondus enchaînés,
       volume dans Paramètres, morceau choisi par `data/music.json` (moment, acte, drapeaux, indicateurs)
 - [ ] Morceaux fournis par fen (.ogg dans `assets/music/`, liste dans son README)
-- [ ] Sons d'ambiance (terminal, tampon de signature)
+- [x] Socle des médias (demande de fen du 27.10, `docs/MEDIAS.md`) : autoload `Sound`
+      (bruitages à variantes, ambiances par moment du jeu, clic de tous les boutons,
+      sons liés aux signaux du jeu) piloté par `data/sounds.json` ; images d'écran
+      remplaçables par emplacement (`data/images.json`) ; extension libre, fichiers
+      absents sans erreur ; écran « Médias » (fourni / manquant, écouter, voir)
+- [x] Paramètres en sections (affichage, son, jeu), volumes séparés musique /
+      ambiances / bruitages, bouton du son dans la barre des tâches, fenêtres
+      qui apparaissent en fondu, image de fond des soirées
+- [ ] Bruitages et ambiances fournis par fen (liste dans l'écran « Médias » et `docs/MEDIAS.md`)
 
 ## Ensuite
 

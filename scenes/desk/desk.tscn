@@ -191,6 +191,16 @@ focus_mode = 0
 theme_type_variation = &"TaskButton"
 text = "FIN DE SERVICE"
 
+[node name="SoundButton" type="Button" parent="Main/Taskbar/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"TaskButton"
+toggle_mode = true
+icon_alignment = 1
+expand_icon = true
+
 [node name="Clock" type="PanelContainer" parent="Main/Taskbar/Row"]
 layout_mode = 2
 theme_type_variation = &"TaskbarField"

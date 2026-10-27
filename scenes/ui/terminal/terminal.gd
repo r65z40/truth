@@ -139,6 +139,7 @@ func _animate_typing() -> void:
 	if _typing_tween:
 		_typing_tween.kill()
 	var target := _output.get_total_character_count()
+	Sound.play("typewriter")
 	var duration := maxf((target - _output.visible_characters) / CHARS_PER_SECOND, 0.01)
 	_typing_tween = create_tween()
 	_typing_tween.tween_property(_output, "visible_characters", target, duration)

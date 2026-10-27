@@ -117,6 +117,11 @@ func _run() -> void:
 		"test_localization",
 		"test_music_rules",
 		"test_music_player",
+		"test_media_library",
+		"test_sound_rules",
+		"test_sound_player",
+		"test_image_slots",
+		"test_media_catalog",
 		"test_time_in_desk",
 		"test_endings",
 		"test_end_of_game_in_desk",
@@ -3019,6 +3024,157 @@ func test_music_player() -> void:
 	GameState.new_game()
 	await get_tree().process_frame
 
+
+
+## Fichiers de médias : extension libre, absence sans erreur, lecture en boucle.
+func test_media_library() -> void:
+	check(MediaLibrary.resolve("res://assets/music/menu.ogg") == "res://assets/music/menu.ogg", "fichier présent : trouvé tel quel")
+	check(MediaLibrary.resolve("res://assets/music/menu.mp3") == "res://assets/music/menu.ogg",
+			"autre extension audio : le fichier du même nom est trouvé")
+	check(MediaLibrary.resolve("res://assets/textures/menu_fond.webp") == "res://assets/textures/menu_fond.png",
+			"autre extension d'image : le fichier du même nom est trouvé")
+	check(MediaLibrary.resolve("res://assets/sounds/effets/inexistant.ogg") == "", "fichier absent : chemin vide")
+	check(MediaLibrary.load_stream("res://assets/sounds/effets/inexistant.ogg") == null, "son absent : null, sans erreur")
+	check(MediaLibrary.load_texture("") == null, "chemin vide : null")
+	var stream := MediaLibrary.load_stream("res://assets/music/menu.ogg", true)
+	check(stream != null and stream.get("loop") == true, "les morceaux bouclent sans réglage d'import")
+
+
+## Bruitages et ambiances déclarés en données.
+func test_sound_rules() -> void:
+	for effect_id in ["ui_click", "window_open", "window_close", "paper", "note", "confront_success",
+			"confront_fail", "stamp", "typewriter", "notification", "mail", "day_end", "door"]:
+		check(not SoundRules.get_effect(effect_id).get("files", []).is_empty(), "le son %s est déclaré" % effect_id)
+	var valid := true
+	for effect_id in SoundRules.get_effect_ids():
+		for file: String in SoundRules.get_effect(effect_id).files:
+			valid = valid and file.begins_with("res://assets/sounds/effets/")
+	check(valid, "chaque bruitage est rangé dans assets/sounds/effets/")
+	check(SoundRules.pick_file("stamp", 0.5) == "" or MediaLibrary.exists(SoundRules.pick_file("stamp", 0.5)),
+			"variante tirée parmi les fichiers présents (ou silence)")
+	check(SoundRules.pick_file("inconnu", 0.5) == "", "son inconnu : silence")
+	var state := {"day_index": 0, "flags": {}, "cases": {}, "indicators": {}}
+	check(SoundRules.ambiance_for("menu", state) == "rain", "menu : pluie")
+	check(SoundRules.ambiance_for("desk", state) == "office", "bureau : ambiance du bureau")
+	check(SoundRules.ambiance_for("evening", state) == "apartment", "soirée : appartement")
+	check(SoundRules.ambiance_for("field_interrogation", state) == "interrogation_room", "audition : salle d'interrogatoire")
+	check(SoundRules.ambiance_for("act_review", state) == "", "fin d'acte : pas d'ambiance")
+	for rule in SoundRules.data().ambiance_rules:
+		check(not SoundRules.get_ambiance(rule.ambiance).is_empty(), "l'ambiance %s est déclarée" % rule.ambiance)
+	for signal_name in SoundRules.game_events():
+		check(GameState.has_signal(signal_name), "game_events : GameState émet %s" % signal_name)
+
+
+## Lecteur de sons : boutons, signaux du jeu, ambiance, volumes.
+func test_sound_player() -> void:
+	Sound.last_effect = ""
+	Sound.play("stamp")
+	check(Sound.last_effect == "stamp", "un son est demandé par son nom (absent : silence, sans erreur)")
+	var button := Button.new()
+	get_tree().root.add_child(button)
+	Sound.last_effect = ""
+	button.pressed.emit()
+	check(Sound.last_effect == "ui_click", "tout bouton fait un clic, sans code dans la scène")
+	button.set_meta("sound", "")
+	Sound.last_effect = ""
+	button.pressed.emit()
+	check(Sound.last_effect == "", "métadonnée sound vide : bouton muet")
+	button.queue_free()
+	Sound.last_effect = ""
+	GameState.decision_applied.emit("40921", "arrest", "")
+	check(Sound.last_effect == "stamp", "conclusion transmise : coup de tampon")
+	Music.play_context("desk")
+	check(Sound.current_ambiance == "office", "l'ambiance suit le moment du jeu annoncé à la musique")
+	Music.play_context("evening")
+	check(Sound.current_ambiance == "apartment", "soirée : l'ambiance change")
+	Music.stop()
+	check(Sound.current_ambiance == "", "plus de contexte : plus d'ambiance")
+	var saved := [Settings.sfx_volume, Settings.ambience_volume, Settings.sound_muted]
+	Settings.sfx_volume = 0.0
+	Settings.sound_muted = true
+	Sound.apply_volume()
+	check(AudioServer.is_bus_mute(AudioServer.get_bus_index(Sound.SFX_BUS)), "bruitages à zéro : coupés")
+	check(AudioServer.is_bus_mute(AudioServer.get_bus_index("Master")), "son coupé : tout se tait")
+	Settings.sfx_volume = saved[0]
+	Settings.sound_muted = saved[2]
+	Sound.apply_volume()
+	check(not AudioServer.is_bus_mute(AudioServer.get_bus_index(Sound.SFX_BUS)), "volume des bruitages rétabli")
+	var window: Node = load("res://scenes/ui/windows/settings_window.tscn").instantiate()
+	get_tree().root.add_child(window)
+	window.open()
+	check(window.get_node("%AmbienceOption").item_count == Settings.MUSIC_LEVELS.size()
+			and window.get_node("%SfxOption").item_count == Settings.MUSIC_LEVELS.size(),
+			"Paramètres : volumes des ambiances et des bruitages")
+	window.queue_free()
+	# Bouton du son dans la barre des tâches.
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	var sound_button: Button = desk.get_node("%SoundButton")
+	check(sound_button.button_pressed == not Settings.sound_muted and sound_button.icon != null,
+			"barre des tâches : bouton du son avec son icône")
+	sound_button.button_pressed = false
+	check(Settings.sound_muted, "le bouton coupe le son")
+	sound_button.button_pressed = true
+	check(not Settings.sound_muted, "et le remet")
+	Settings.set_sound_muted(saved[2])
+	Sound.last_effect = ""
+	desk.open_app("messages")
+	check(Sound.last_effect == "window_open", "ouvrir une fenêtre fait son bruit")
+	desk.windows.messages.close()
+	check(Sound.last_effect == "window_close", "la fermer aussi")
+	desk.queue_free()
+	Music.stop()
+	await get_tree().process_frame
+
+
+## Images remplaçables déclarées dans data/images.json.
+func test_image_slots() -> void:
+	check(ImageSlots.has_image("menu_background") and ImageSlots.texture("menu_background") != null,
+			"fond du menu fourni par son emplacement")
+	check(ImageSlots.texture("inconnu") == null, "emplacement inconnu : pas d'image, sans erreur")
+	for slot_id in ImageSlots.get_slot_ids():
+		check(ImageSlots.get_slot(slot_id).get("usage", "") != "", "l'emplacement %s dit où il sert" % slot_id)
+	for art in ["city", "badge", "dossier", "clock", "signature"]:
+		check(not ImageSlots.get_slot("intro_" + art).is_empty(), "l'image de l'introduction « %s » est remplaçable" % art)
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	check(menu.get_node("%MenuBackground").texture != null, "le menu affiche l'image de son emplacement")
+	menu.queue_free()
+	var art := IntroArt.new()
+	art.image = ImageSlots.texture("intro_inexistant")
+	check(art.image == null, "introduction sans image : le dessin reste")
+	art.free()
+	var screen: Control = load("res://scenes/evening/evening_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	var backdrop := screen.get_node_or_null("Backdrop") as TextureRect
+	check(backdrop != null and backdrop.get_index() == 0 and backdrop.texture != null,
+			"soirée : image de fond derrière le texte")
+	screen.queue_free()
+	var bare := Control.new()
+	check(Backdrop.add_to(bare, "act_review_background") == null or ImageSlots.has_image("act_review_background"),
+			"fond absent : rien n'est ajouté")
+	bare.free()
+	await get_tree().process_frame
+
+
+## Inventaire des médias (outil de la visite des scènes).
+func test_media_catalog() -> void:
+	var list := MediaCatalog.entries()
+	var kinds := {}
+	for entry: Dictionary in list:
+		kinds[entry.kind] = true
+	check(kinds.has_all(["music", "ambiance", "effect", "image", "field"]), "l'inventaire couvre musiques, sons, images et décors")
+	var salon := list.filter(func(e: Dictionary) -> bool: return e.id == "search_40921:salon")
+	check(salon.size() == 1 and salon[0].present == 1, "les décors de terrain pièce par pièce sont inventoriés")
+	var count := MediaCatalog.summary(list)
+	check(count.total == list.size() and count.present > 0 and count.present < count.total, "compte des médias fournis")
+	var view := MediaCheck.new()
+	get_tree().root.add_child(view)
+	check(view.find_child("Column", true, false).get_child_count() > list.size(), "l'écran Médias liste chaque fichier")
+	view.queue_free()
+	await get_tree().process_frame
 
 func test_time_in_desk() -> void:
 	GameState.new_game()

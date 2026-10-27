@@ -4,6 +4,7 @@ extends Control
 ## scene : "city" (Velmira de nuit), "badge" (carte d'inspecteur),
 ## "dossier" (pièces confrontées), "signature" (le tampon et ses conséquences).
 ## Dessin dans un repère de CANVAS, mis à l'échelle de la taille du contrôle.
+## Si une image est fournie (image), elle remplace le dessin, entière et centrée.
 ## Couleurs : type de thème "IntroArt".
 
 const CANVAS := Vector2(640, 300)
@@ -11,6 +12,11 @@ const CANVAS := Vector2(640, 300)
 var scene := "city":
 	set(value):
 		scene = value
+		queue_redraw()
+## Image qui remplace le dessin (null : dessin).
+var image: Texture2D:
+	set(value):
+		image = value
 		queue_redraw()
 
 
@@ -24,6 +30,11 @@ func _c(name: String) -> Color:
 
 
 func _draw() -> void:
+	if image != null:
+		var fit := minf(size.x / image.get_width(), size.y / image.get_height())
+		var image_size := image.get_size() * fit
+		draw_texture_rect(image, Rect2((size - image_size) / 2.0, image_size), false)
+		return
 	var scale_factor := minf(size.x / CANVAS.x, size.y / CANVAS.y)
 	var offset := (size - CANVAS * scale_factor) / 2.0
 	draw_set_transform(offset, 0.0, Vector2.ONE * scale_factor)
