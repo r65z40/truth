@@ -992,6 +992,65 @@
 				"subject": "Votre fiabilité",
 				"body": "Inspecteur,\n\nLe sens de vos décisions interroge. À force de clémence, on finit par se demander de quel côté penche un agent.\n\nUne réserve a été portée à votre dossier. Il vous appartient de la faire oublier.\n\nDirection du personnel"
 			}
+		},
+		{
+			"id": "assign_53760",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"kremer.contact"
+				]
+			},
+			"assign_cases": [
+				"53760"
+			],
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouveau dossier : n° 53760",
+				"body": "Inspecteur,\n\nLe contrôle interne nous confie un dossier qui aurait dû rester à la Section 2 : l'archiviste H. KREMER, soupçonné de « vol de papier » au sous-sol B.\n\nLe dossier 53760 vous est attribué. Je ne vous cache pas que la chose me déplaît. Lisez son registre de prêt avant son signalement, et tenez-moi en dehors de tout ça.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "assign_53761_reveal",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"kremer.protected"
+				]
+			},
+			"assign_cases": [
+				"53761"
+			],
+			"effects": {},
+			"set_flags": {
+				"53761.assigned": true
+			},
+			"message": {
+				"from": "(dépôt anonyme sur votre bureau)",
+				"subject": "Une chemise, sans mot d'accompagnement visible",
+				"body": "En arrivant ce matin, vous trouvez une chemise d'archive posée sur votre sous-main. Pas de bordereau, pas de signature apparente — seulement, agrafé à l'intérieur, un mot d'une écriture que vous connaissez.\n\nC'est l'original du registre de déplacements du dossier 40921. KREMER a tenu parole.\n\nLe dossier 53761 est ouvert à votre carnet."
+			}
+		},
+		{
+			"id": "kremer_archive_sealed",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"kremer.arrested"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"act2.archive_lost": true
+			},
+			"message": {
+				"from": "Service des bâtiments, note de service",
+				"subject": "Fermeture du sous-sol B",
+				"body": "À l'attention des agents de la Section 4.\n\nLe sous-sol B (archives, originaux) est fermé et placé sous scellés jusqu'à nouvel ordre, suite à la révocation de son archiviste. Aucune consultation d'original n'y sera plus possible.\n\nLes demandes porteront désormais sur les copies versées aux dossiers, qui font foi."
+			}
 		}
 	]
 }
