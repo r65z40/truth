@@ -634,5 +634,17 @@
 		"subject": "Dossier 51307 : votre question",
 		"body": "Inspecteur,\n\nUne horloge tombe rarement en panne deux fois le même mois, et jamais seulement pour les amis du chef d'équipe.\n\nQuant au frère : décidez avant qu'il ne décide pour vous. Dans ce métier, on ne choisit pas d'avoir des ennemis, seulement lesquels.\n\nR. MAZUR"
 	},
-	"field_scene": "audition_51307"
+	"field_scene": "audition_51307",
+	"contradiction_prices": {
+		"orlik.motive": {
+			"hours": 2,
+			"suspicion": 3,
+			"label": "Établir qu'ORLIK ne vendait rien, mais rendait service, demande d'éplucher les registres (deux heures) et revient à défendre un trafiquant : la hiérarchie le remarquera."
+		},
+		"orlik.informant": {
+			"requires_flag": "kremer.contact",
+			"hours": 1,
+			"label": "Prouver qu'ORLIK informe la Milice depuis 1979 exige le registre que seul l'archiviste KREMER peut sortir, et une heure pour le recouper."
+		}
+	}
 }

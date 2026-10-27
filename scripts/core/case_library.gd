@@ -102,6 +102,16 @@ static func confront(case_data: Dictionary, fact_a_id: String, fact_b_id: String
 	return ""
 
 
+## Prix à payer pour PROUVER (établir officiellement) une contradiction, ou {} si
+## elle s'établit gratuitement. Déclaré au dossier sous "contradiction_prices" :
+##   "<clé>": {"hours": h, "suspicion": s, "requires_flag": f, "label": "..."}
+## Repérer la contradiction reste toujours gratuit ; seul l'établir a un prix.
+## "hours" = une heure de service (le temps), "suspicion" = le risque, et
+## "requires_flag" = une faveur/un appui sans lequel on ne peut pas la prouver.
+static func contradiction_price(case_data: Dictionary, key: String) -> Dictionary:
+	return case_data.get("contradiction_prices", {}).get(key, {})
+
+
 ## Renvoie une décision du dossier par son identifiant.
 static func get_decision(case_data: Dictionary, decision_id: String) -> Dictionary:
 	for decision in case_data.get("decisions", []):
