@@ -52,6 +52,7 @@ func _run() -> void:
 		"test_field_scenes_are_valid",
 		"test_field_background_image",
 		"test_field_interrogation",
+		"test_field_tension",
 		"test_field_search",
 		"test_field_rooms",
 		"test_field_bakery_visit",
@@ -912,6 +913,33 @@ func test_field_interrogation() -> void:
 	GameState.from_dict(JSON.parse_string(JSON.stringify(saved)))
 	check(GameState.get_field_state("audition_51307").finished and GameState.get_field_state("audition_51307").turns_used == 1,
 			"état du terrain sauvegardé")
+	GameState.new_game()
+
+
+## Interrogatoire sous tension (acte 3, piloté sur l'audition de VRABEC) : le
+## sang-froid du sujet baisse quand on le pousse ; l'aveu ne s'ouvre que dans une
+## fenêtre — ébranlé, mais pas encore muré. Trop pousser le referme.
+func test_field_tension() -> void:
+	GameState.new_game()
+	var scene := FieldRules.get_scene("audition_53402")
+	check(FieldRules.has_tension(scene), "l'audition de VRABEC a une tension")
+	check(FieldRules.composure(scene, {"turns_used": 0, "chosen": [], "finished": false}) == 70, "le sang-froid part de 70")
+	# Installe la scène directement, sans dépendre du calendrier des dossiers.
+	GameState.field_scenes["audition_53402"] = {"turns_used": 0, "chosen": [], "finished": false}
+	var ids := func() -> Array: return GameState.get_field_options("audition_53402").map(func(o: Dictionary) -> String: return o.id)
+	check(not "q_confess" in ids.call(), "pas d'aveu tant que VRABEC garde son sang-froid")
+	GameState.field_choose("audition_53402", "q_threat")
+	check(GameState.field_composure("audition_53402") == 45 and "q_confess" in ids.call(), "ébranlé (45), l'aveu s'ouvre")
+	GameState.note_fact("53402", "f_link_network")
+	GameState.field_present("audition_53402", "f_link_network")
+	check(GameState.field_composure("audition_53402") == 25 and "q_confess" in ids.call(), "à 25, l'aveu tient encore")
+	GameState.field_choose("audition_53402", "q_delays")
+	check(GameState.field_composure("audition_53402") == 15 and not "q_confess" in ids.call(), "trop poussé (15), VRABEC se mure")
+	# Dans la fenêtre, l'aveu clôt l'audition et est consigné.
+	GameState.field_scenes["audition_53402"] = {"turns_used": 0, "chosen": [], "finished": false}
+	GameState.field_choose("audition_53402", "q_threat")
+	var r := GameState.field_choose("audition_53402", "q_confess")
+	check(r.finished and GameState.flags.get("53402.vrabec_confessed") == true, "l'aveu termine l'audition et pose le drapeau")
 	GameState.new_game()
 
 

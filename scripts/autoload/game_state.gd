@@ -388,6 +388,12 @@ func start_field(case_id: String) -> Dictionary:
 	return scene
 
 
+## Sang-froid du sujet dans l'interrogatoire en cours (0-100), ou -1 si la scène
+## n'a pas de tension (voir FieldRules).
+func field_composure(scene_id: String) -> int:
+	return FieldRules.composure(FieldRules.get_scene(scene_id), get_field_state(scene_id))
+
+
 ## Choix encore possibles dans la scène en cours.
 func get_field_options(scene_id: String) -> Array:
 	var scene := FieldRules.get_scene(scene_id)
