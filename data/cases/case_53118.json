@@ -257,13 +257,13 @@
 				}
 			},
 			"veritas_remark": "Documents paroissiaux antérieurs au signalement. Valeur administrative limitée selon le système.",
-			"body": "Deux pièces du fonds Sainte-Agathe :\n\n1. PERMIS DE VEILLÉE n° 86/212, délivré le 14 octobre 1986 par le Bureau des cultes du District 2 : « Autorisation est donnée à la paroisse Sainte-Agathe de tenir une veillée de prière le soir de la Sainte-Agathe (9 novembre), au-delà de l'heure de fermeture habituelle. » Signé avant le durcissement du couvre-feu.\n\n2. REGISTRE DE VEILLÉE du 9 novembre : sept personnes ont émargé à l'entrée. En marge : « R. FALK excusé (hospitalisé depuis le 3). J. NOWAK excusé (poste de nuit). »",
+			"body": "Deux pièces du fonds Sainte-Agathe :\n\n1. PERMIS DE VEILLÉE n° 86/212, délivré le 14 octobre 1986 par le Bureau des cultes du District 2 : « Autorisation est donnée à la paroisse Sainte-Agathe de tenir une veillée de prière le soir de la fête de la dédicace de l'église (9 novembre), au-delà de l'heure de fermeture habituelle. » Signé avant le durcissement du couvre-feu.\n\n2. REGISTRE DE VEILLÉE du 9 novembre : sept personnes ont émargé à l'entrée. En marge : « R. FALK excusé (hospitalisé depuis le 3). J. NOWAK excusé (poste de nuit). »",
 			"facts": [
 				{
 					"id": "f_arc_permit",
 					"key": "choir.curfew",
 					"value": "Veillée autorisée",
-					"label": "Permis de veillée n° 86/212 : la veillée de la Sainte-Agathe était autorisée",
+					"label": "Permis de veillée n° 86/212 : la veillée de la dédicace était autorisée",
 					"quote": "Autorisation est donnée à la paroisse Sainte-Agathe de tenir une veillée de prière"
 				},
 				{
@@ -326,8 +326,8 @@
 				{
 					"id": "f_cho_vigil",
 					"key": "choir.curfew",
-					"value": "Veillée de la fête patronale",
-					"label": "Partition annotée : la veillée chantait l'office de la Sainte-Agathe (9 novembre)",
+					"value": "Veillée de la fête paroissiale",
+					"label": "Partition annotée : la veillée chantait l'office de la dédicace de l'église (9 novembre)",
 					"conditions": {
 						"requires_flags": [
 							"field.visit_53118.organ"
@@ -603,7 +603,7 @@
 	},
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
-		"what_happened": "La chorale de Sainte-Agathe a tenu une veillée de prière le soir de la sainte patronne, autorisée par un permis de veillée signé le 14 octobre, avant le durcissement du couvre-feu. Sept personnes étaient présentes. L'informateur, Ignác KOLB, écarté du poste d'organiste au profit d'Ewa TILL en 1985, a dénoncé onze noms par rancune, dont deux absents (FALK hospitalisé, NOWAK au travail). Le ministère veut un exemple collectif pour la Sainte-Agathe.",
+		"what_happened": "La chorale de Sainte-Agathe a tenu une veillée de prière le soir de la fête de la dédicace de son église, autorisée par un permis de veillée signé le 14 octobre, avant le durcissement du couvre-feu. Sept personnes étaient présentes. L'informateur, Ignác KOLB, écarté du poste d'organiste au profit d'Ewa TILL en 1985, a dénoncé onze noms par rancune, dont deux absents (FALK hospitalisé, NOWAK au travail). Le ministère veut un exemple collectif avec la paroisse Sainte-Agathe.",
 		"involved": [
 			"53118",
 			"till_e",
@@ -631,7 +631,7 @@
 				"id": "date",
 				"label": "Soirée concernée",
 				"detail_left": "Dimanche 9 novembre, à l'église Sainte-Agathe",
-				"detail_right": "Veillée de la Sainte-Agathe, le 9 novembre"
+				"detail_right": "Veillée de la dédicace de l'église, le 9 novembre"
 			},
 			{
 				"id": "count",

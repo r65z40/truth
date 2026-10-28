@@ -334,8 +334,11 @@ Rapport complet : document « Audit du scénario » (lien dans la pull request).
       fin de la Fuite : le registre n'est plus « truqué par MAZUR »
 - [x] Test `test_scenario_flags_reachable` : tout drapeau lu par une fin, le dossier
       personnel ou une vérité d'archive est posé quelque part
-- [ ] À trancher par fen : priorité des fins (Milice avant Miroir), notes de KREMER
-      qui annoncent « lundi » quel que soit le jour, ~120 drapeaux posés jamais lus
+- [x] Recommandations validées par fen : Miroir parfait évalué avant la Milice ; notes de
+      KREMER sans « lundi » ; la veillée du 9 novembre fête la dédicace de l'église
+      (plus la Sainte-Agathe, qui tombe en février) ; le Bureau du ravitaillement relève
+      du ministère de la Sécurité nationale
+- [ ] ~120 drapeaux posés jamais lus : suites proposées dans le rapport d'audit
 
 ## Prochaine itération
 

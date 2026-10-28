@@ -3568,6 +3568,13 @@ func test_scenario_flags_reachable() -> void:
 	milice["milice.hostile"] = true
 	check(EndingRules.resolve({"flags": milice, "indicators": {}}).id != "fin_milice",
 			"allié puis brouillé avec la Milice : plus de fin de la Milice")
+	var loyal := {"milice.ally": true, "milice.favor_owed": true, "act4.mirror_signed_clean": true}
+	check(EndingRules.resolve({"flags": loyal, "indicators": {"loyalty": 80}}).id == "fin_miroir",
+			"MIROIR signé sans réserve : le Miroir parfait prime sur la Milice")
+	var notes := FileAccess.get_file_as_string("res://data/events/events.json")
+	check(not notes.contains("aux archives lundi"), "les notes de KREMER ne datent plus son départ")
+	check(not FileAccess.get_file_as_string("res://data/cases/case_53118.json").contains("soir de la Sainte-Agathe"),
+			"la veillée du 9 novembre n'est plus la Sainte-Agathe (février)")
 	GameState.new_game()
 
 

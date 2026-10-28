@@ -25,7 +25,6 @@
 	"Aucun faux ticket : tous portent le filigrane et le tampon du District 4": "No forged coupons: all bear the watermark and the District 4 stamp",
 	"Les tickets contrôlés sont authentiques (papier filigrané, tampon du District 4). Aucun faux n'a été trouvé.": "The coupons checked are genuine (watermarked paper, District 4 stamp). No forgery was found.",
 	"Registre des carnets de rationnement délivrés": "Register of ration books issued",
-	"Bureau du ravitaillement, District 4": "Supply Bureau, District 4",
 	"Document d'un service de l'État, fiabilité A. Aucune anomalie de procédure.": "Document from a State service, reliability A. No procedural anomaly.",
 	"Délivré le": "Issued on",
 	"Titulaire": "Holder",
@@ -144,5 +143,6 @@
 	"Carnets délivrés à des personnes décédées": "Books issued to deceased persons",
 	"P. DRAZEK, préposé du Bureau du ravitaillement, délivre des carnets au nom de morts et de faux « pertes », puis les revend au marché couvert (« carnets du cimetière »). Il reverse une part à la Milice du District 9, qui le protège. Z. KOVAC est innocente ; elle avait signalé les acheteurs inconnus dès septembre.": "P. DRAZEK, a clerk at the Supply Bureau, issues books in the names of the dead and of fake \"losses\", then resells them at the covered market (\"cemetery books\"). He passes a share to the District 9 Militia, which protects him. Z. KOVAC is innocent; she had reported the unknown buyers as early as September.",
 	"Dossier 52044 : votre question": "File 52044: your question",
-	"Inspecteur,\n\nQuand un registre est trop propre, comparez-le avec le registre d'un autre service. Les services ne se parlent jamais : c'est leur faiblesse, et parfois la nôtre.\n\nUne chose encore : mettre en cause un bureau du ministère sans preuve, c'est se mettre en cause soi-même.\n\nR. MAZUR": "Inspector,\n\nWhen a register is too clean, compare it with another service's register. The services never talk to each other: that is their weakness, and sometimes ours.\n\nOne more thing: implicating a Ministry bureau without proof means implicating yourself.\n\nR. MAZUR"
+	"Inspecteur,\n\nQuand un registre est trop propre, comparez-le avec le registre d'un autre service. Les services ne se parlent jamais : c'est leur faiblesse, et parfois la nôtre.\n\nUne chose encore : mettre en cause un bureau du ministère sans preuve, c'est se mettre en cause soi-même.\n\nR. MAZUR": "Inspector,\n\nWhen a register is too clean, compare it with another service's register. The services never talk to each other: that is their weakness, and sometimes ours.\n\nOne more thing: implicating a Ministry bureau without proof means implicating yourself.\n\nR. MAZUR",
+	"Bureau du ravitaillement, District 4 (ministère de la Sécurité nationale)": "District 4 Supply Bureau (Ministry of National Security)"
 }
