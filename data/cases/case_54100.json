@@ -177,7 +177,7 @@
 	},
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
-		"what_happened": "Le ministère a ouvert un dossier d'inspection au nom de VOSK lui-même, tenu par I. BRANDT — l'inspectrice affable du poste voisin, en réalité la contrôleuse interne chargée de l'évaluer depuis sa prise de fonction, et la « B. » qui a signalé KREMER au dossier 53760. La fiche relie le fils au père (inspecteur disparu après une inspection en mars 1971, dossier scellé) et confirme ce que le père soupçonnait : on ne recrute pas le fils d'un homme qu'on a fait disparaître par hasard. Le joueur est passé d'inspecteur à sujet.",
+		"what_happened": "Le ministère a ouvert un dossier d'inspection au nom de VOSK lui-même, tenu par I. BRANDT — l'inspectrice affable du poste voisin, en réalité la contrôleuse interne chargée de l'évaluer depuis sa prise de fonction, et la « B. » qui a signalé KREMER au dossier 53760. La fiche relie le fils au père (horloger disparu après une inspection en mars 1971, dossier scellé) et confirme ce que le père soupçonnait : on ne recrute pas le fils d'un homme qu'on a fait disparaître par hasard. Le joueur est passé d'inspecteur à sujet.",
 		"involved": [
 			"54100",
 			"53760",

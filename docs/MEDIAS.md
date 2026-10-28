@@ -63,6 +63,7 @@ un peu la hauteur, pour que le tampon ne sonne pas deux fois pareil.
 | `mail` | nouvelle journée (courrier arrivé) |
 | `day_end` | fin de service |
 | `door` | changement de pièce en perquisition |
+| `lamp_find` | la lampe repère un endroit à fouiller (scène dans le noir), fichier attendu `effets/lampe_trouve.ogg` |
 
 Format conseillé : `.wav` ou `.ogg`, mono, court (moins d'une seconde pour les
 clics), sans silence au début.

@@ -20,6 +20,11 @@
 		{"id": "father_sheet", "conditions": {"min_day": 13, "max_day": 17, "requires_flags": ["vosk.father_clue"]}, "from": "Photocopie trop sombre", "text": "« Atelier VOSK — horlogerie — District 2. Réglage des horloges de la gare centrale, 1969-1971. » Puis du noir, sur toute la page."},
 		{"id": "adler_key", "conditions": {"min_day": 13, "max_day": 17, "requires_flags": ["adler.arrested"]}, "from": "À côté du clavier", "text": "La petite clé d'ADLER. Vous ne vous souvenez pas l'avoir sortie de votre poche."},
 		{"id": "brandt_note", "conditions": {"min_day": 14, "max_day": 16, "requires_flags": ["brandt.revealed"]}, "from": "I. BRANDT, Contrôle interne", "text": "« Je passe demain. Ne rangez rien. »"},
+		{"id": "father_folder", "conditions": {"min_day": 6, "max_day": 12, "requires_flags": ["vosk.father_folder_seen"]}, "from": "Au dos d'un ticket de tramway", "text": "Vous avez recopié l'étiquette sans y penser : « VOSK, A., horloger — inspection Section 2 — 1971 — retiré sur ordre ». Vous ne jetez pas le ticket."},
+		{"id": "green_ink", "conditions": {"min_day": 6, "max_day": 13, "requires_flags": ["53760.green_box_seen"]}, "from": "Sur votre buvard", "text": "Une tache d'encre verte, fraîche. Vous n'écrivez qu'à l'encre noire."},
+		{"id": "mira_logbook", "conditions": {"min_day": 10, "max_day": 14, "requires_flags": ["54001.mira_logbook_found"]}, "from": "Dans votre tiroir", "text": "Le carnet à spirale de Mira SEDLAR, que vous n'avez rendu à personne. Dernière ligne : « 16 bar. RUDA dit de ne pas toucher. »"},
+		{"id": "father_notes", "conditions": {"min_day": 12, "max_day": 18, "requires_flags": ["vosk.father_notes_found"]}, "from": "Sous le sous-main", "text": "Le papier plié en huit, de l'écriture de votre père : « Qui signe l'ordre ? Demander à K. »"},
+		{"id": "heure_juste_list", "conditions": {"min_day": 12, "max_day": 18, "requires_flags": ["heure_juste.list_in_file"]}, "from": "Service des interpellations", "text": "Accusé de réception : « Cahier de noms, atelier ADLER — reçu. Exploité. » Exploité."},
 		{"id": "halm_frame", "conditions": {"min_day": 17, "requires_flags": ["act4.mirror_cooperated"]}, "from": "Directeur HALM, programme MIROIR", "text": "Félicitations encadrées : « Pour un travail de mémoire exemplaire. » Le verre reflète votre visage sur le texte."}
 	]
 }

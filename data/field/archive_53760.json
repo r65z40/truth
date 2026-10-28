@@ -1,0 +1,156 @@
+{
+	"note": "Visite du sous-sol B des archives (dossier 53760), dans le noir : on promène une lampe pour repérer les endroits (clé darkness, voir FieldRules). Chaque choix pose field.archive_53760.<id> ; les éléments du procès-verbal pv_sous_sol_b en dépendent. spot : fractions de l'image [x, y, l, h], à peaufiner avec l'éditeur de zones (F2).",
+	"id": "archive_53760",
+	"case_id": "53760",
+	"type": "search",
+	"button": "SOUS-SOL B",
+	"image": "res://assets/field/lieu_53760_archives.webp",
+	"title": "VISITE  //  SOUS-SOL B, ARCHIVES CENTRALES",
+	"time_action": "search_home",
+	"turns": 4,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"53760"
+			]
+		}
+	],
+	"start_flags": {
+		"53760.basement_visited": true
+	},
+	"darkness": {
+		"radius": 0.11,
+		"start": [
+			0.33,
+			0.42
+		]
+	},
+	"art": "",
+	"verb": "Vous éclairez : ",
+	"turns_label": "%d endroit(s) à fouiller",
+	"intro": "Sous-sol B, 18 h 40. Depuis le signalement, le contrôle interne a fait couper l'éclairage des travées ; seule la lampe du bureau tient encore sur sa prise.\n\nHenrik KREMER vous tend une lampe de poche sans un mot. Puis : « Quatre endroits, inspecteur. Après, le gardien fait sa ronde, et je n'aurai jamais reçu votre visite. »",
+	"options": [
+		{
+			"id": "desk",
+			"label": "Les registres ouverts sur le bureau",
+			"spot": [
+				0.31,
+				0.54,
+				0.17,
+				0.08
+			],
+			"text": "Deux registres côte à côte, ouverts à la même page : l'original du registre de déplacements du dossier 40921, et la copie transmise à votre bureau. Sur l'original, deux lignes. Sur la copie, trois. La troisième est d'une encre plus fraîche, d'une main plus appliquée.\n\nVotre paraphe est au bas de la copie.",
+			"note": [
+				"f_kb_original"
+			]
+		},
+		{
+			"id": "tray",
+			"label": "Le bac des bordereaux de sortie",
+			"spot": [
+				0.485,
+				0.525,
+				0.085,
+				0.06
+			],
+			"text": "Les bordereaux de sortie des trois derniers mois, rangés par date. Chaque original sorti porte deux contreseings : celui de KREMER, et un second, à l'encre verte, d'une seule lettre. « B. »\n\nLe contrôle interne a signé lui-même les sorties qu'il dénonce comme « non enregistrées ».",
+			"note": [
+				"f_kb_slips"
+			]
+		},
+		{
+			"id": "drawer",
+			"label": "Le tiroir du bureau",
+			"spot": [
+				0.41,
+				0.63,
+				0.105,
+				0.1
+			],
+			"text": "Un carnet de permanence à couverture grise. Chaque accès de nuit de KREMER y est noté, avec l'heure et le bureau demandeur : « vérification demandée par la Section 4 », « par la Section 7 », « par le contrôle interne ». On l'appelait, il descendait.",
+			"note": [
+				"f_kb_night"
+			]
+		},
+		{
+			"id": "cabinet",
+			"label": "Le classeur métallique près de la fenêtre",
+			"spot": [
+				0.46,
+				0.32,
+				0.095,
+				0.2
+			],
+			"text": "Tiroir du bas, étiqueté « 1971 ». Les chemises sont serrées, sauf une, plate comme une feuille : « VOSK, A., horloger — inspection Section 2 ». Vide. Un tampon sur la couverture : « Retiré sur ordre ».\n\nDerrière vous, KREMER dit seulement : « Pas maintenant, inspecteur. »",
+			"note": [
+				"f_kb_folder"
+			],
+			"set_flags": {
+				"vosk.father_folder_seen": true
+			}
+		},
+		{
+			"id": "top_shelf",
+			"label": "Le haut du rayonnage, derrière l'échelle",
+			"spot": [
+				0.79,
+				0.12,
+				0.09,
+				0.13
+			],
+			"text": "Il faut monter sur l'échelle. Tout en haut, un carton sans cote : « Contrôle interne — B. — copies ». Dedans, des copies de pièces de dossiers clos, corrigées à l'encre verte. Des dates avancées, des lignes ajoutées. Les mêmes corrections que la troisième ligne du 40921.",
+			"note": [
+				"f_kb_green"
+			],
+			"set_flags": {
+				"53760.green_box_seen": true
+			}
+		},
+		{
+			"id": "map",
+			"label": "Le plan des travées, au mur",
+			"spot": [
+				0.535,
+				0.165,
+				0.075,
+				0.18
+			],
+			"text": "Le plan du sous-sol B, annoté au crayon. Une travée entière est barrée en rouge : « H — HALVEK — reclassée le 21.10 ». Le carton n'est plus là. KREMER : « Reclassée, ça veut dire qu'on ne la retrouvera pas. Pas ici. »",
+			"set_flags": {
+				"53760.halvek_row_seen": true
+			}
+		},
+		{
+			"id": "coat",
+			"label": "Le manteau de KREMER, sur la chaise",
+			"spot": [
+				0.14,
+				0.56,
+				0.11,
+				0.3
+			],
+			"text": "Dans la poche intérieure, une photo pliée en quatre : deux jeunes hommes sur les marches du ministère, 1969 : KREMER, en uniforme d'inspecteur, et un autre en blouse d'horloger. Au dos : « Avec A. — avant. »\n\nKREMER vous la reprend des mains. « Ça, c'est à moi. » Il ne dit plus rien jusqu'à la fin.",
+			"set_flags": {
+				"53760.kremer_photo_seen": true,
+				"53760.kremer_privacy": true
+			}
+		},
+		{
+			"id": "radiator",
+			"label": "Derrière le radiateur",
+			"spot": [
+				0.33,
+				0.45,
+				0.09,
+				0.06
+			],
+			"text": "Des mégots, un thermos vide, une tasse ébréchée. KREMER fume ici depuis vingt ans. Rien pour le dossier."
+		}
+	],
+	"outro": "KREMER éteint la lampe du bureau. Dans le noir, sa voix : « Vous avez vu, maintenant. Vous ne pourrez plus dire que vous ne saviez pas. »",
+	"ambience": {
+		"drift": 0.6,
+		"dust": 1.0,
+		"grain": 0.6
+	}
+}

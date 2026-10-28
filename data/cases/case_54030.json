@@ -159,6 +159,78 @@
 			]
 		},
 		{
+			"id": "pv_atelier_adler",
+			"type": "report",
+			"title": "Procès-verbal de perquisition, atelier de V. ADLER",
+			"source": "Section 4, perquisition conduite par l'inspecteur A. VOSK",
+			"reliability": "B",
+			"date": "1986-11-19",
+			"conditions": {
+				"requires_flags": [
+					"field.search_54030.started"
+				]
+			},
+			"veritas_remark": "Perquisition d'un local déjà fouillé et scellé par la Milice. Valeur administrative limitée selon le système.",
+			"body": "Perquisition de l'atelier de réparation d'horloges de V. ADLER, bloc 7, District 2, après la saisie de la Milice. Éléments relevés :",
+			"facts": [
+				{
+					"id": "f_at_0605",
+					"key": "adler.heure_juste",
+					"value": "Pendule bloquée à 06 h 05",
+					"label": "Mur des pendules : toutes arrêtées à 05 h 20, sauf une, bloquée à la main sur 06 h 05",
+					"conditions": {
+						"requires_flags": [
+							"field.search_54030.wall"
+						]
+					}
+				},
+				{
+					"id": "f_at_clients",
+					"key": "adler.network",
+					"value": "Travaux commandés et payés par l'État",
+					"label": "Fiches de réparation : école, usine, gare centrale, toutes commandées et payées par des services de l'État",
+					"conditions": {
+						"requires_flags": [
+							"field.search_54030.bench"
+						]
+					}
+				},
+				{
+					"id": "f_at_radio",
+					"key": "adler.radio",
+					"value": "Récepteur sans ondes courtes",
+					"label": "Notice du poste saisi : récepteur ondes moyennes et longues, sans ondes courtes",
+					"conditions": {
+						"requires_flags": [
+							"field.search_54030.radio_box"
+						]
+					}
+				},
+				{
+					"id": "f_at_father_notes",
+					"key": "vosk.father_notes",
+					"value": "Horloges du ministère retardées « par ordre »",
+					"label": "Dans la pendule d'A. VOSK : « Salle 3 et couloir B : − 12 min les soirs d'interpellation. Réglées PAR ORDRE. Demander à K. »",
+					"conditions": {
+						"requires_flags": [
+							"field.search_54030.father_clock"
+						]
+					}
+				},
+				{
+					"id": "f_at_list",
+					"key": "heure_juste.list",
+					"value": "Cahier des personnes couvertes",
+					"label": "Double fond de l'armoire : un cahier de noms et d'heures, ceux que L'HEURE JUSTE a couverts",
+					"conditions": {
+						"requires_flags": [
+							"field.search_54030.wardrobe"
+						]
+					}
+				}
+			]
+		},
+		{
 			"id": "veritas_link",
 			"type": "report",
 			"title": "Note de raccordement VERITAS",
@@ -373,7 +445,7 @@
 	},
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
-		"what_happened": "Viktor ADLER est un vieux réparateur d'horloges du bloc 7, voisin de VOSK, qui note depuis 1974 les heures de l'immeuble — en partie pour le réseau L'HEURE JUSTE, qui protège des gens en ajustant les horaires de pointage, en partie par habitude de concierge. Il n'a rien à voir avec l'explosion. En mars 1971, le père de VOSK, inspecteur, était venu l'interroger sur les horloges du ministère qui retardaient les soirs d'arrestation ; il a laissé sa pendule chez ADLER et a disparu peu après. La rafle des horlogers cherche un coupable commode au sabotage ; ADLER en est un.",
+		"what_happened": "Viktor ADLER est un vieux réparateur d'horloges du bloc 7, voisin de VOSK, qui note depuis 1974 les heures de l'immeuble — en partie pour le réseau L'HEURE JUSTE, qui protège des gens en ajustant les horaires de pointage, en partie par habitude de concierge. Il n'a rien à voir avec l'explosion. En mars 1971, le père de VOSK, horloger lui aussi, était venu l'interroger sur les horloges du ministère qui retardaient les soirs d'arrestation ; il a laissé sa pendule chez ADLER et a disparu peu après. La rafle des horlogers cherche un coupable commode au sabotage ; ADLER en est un.",
 		"involved": [
 			"54030",
 			"51307",
@@ -385,5 +457,6 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 54030 : votre question",
 		"body": "Inspecteur,\n\nVous me demandez quoi faire d'un homme que vous connaissez. Mauvaise question. Demandez-vous plutôt ce que son cahier prouve vraiment : un réseau, ou un immeuble ?\n\nEt s'il vous parle de 1971 — écoutez. Ne notez rien. Certaines choses, on les garde pour soi tant qu'on ne peut pas les protéger.\n\nR. MAZUR"
-	}
+	},
+	"field_scene": "search_54030"
 }

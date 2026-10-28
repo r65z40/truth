@@ -136,6 +136,17 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Fond vidéo en boucle (clé `video`, .ogv) pour animer la scène : priorité vidéo > image > 3D > dessin, zones calées pareil
 - [x] Visite de la salle de la chorale Sainte-Agathe (53118, acte 2) : 5 endroits, compte rendu de visite, second chemin vers le permis, les sept émargements et le mobile de l'informateur
 - [x] Interface terrain immersive (demande de fen du 26.10) : l'image occupe tout l'écran, texte (bandeau bas) et choix (panneau droit) en surimpression translucide, zones cliquables au centre
+- [x] Décision de fen (27.10) : on reste en 2D / 2.5D, pas de 3D (le réglage 3D existant reste en place, désactivé)
+- [x] La lampe (clé `darkness`) : pièce plongée dans le noir, on promène une lampe (souris ou doigt) ; un endroit n'apparaît sur l'image et dans la liste qu'une fois éclairé (`FieldRules.is_lit`, `FieldLamp` + `ui/shaders/lamp.gdshader`)
+- [x] 2.5D légère sur toutes les scènes (clé `ambience`) : dérive lente de l'image, poussière, grain, lumière qui vacille (`FieldAmbience`, `ui/shaders/field_ambience.gdshader`) ; réglage « Scènes de terrain animées » pour la couper
+- [x] Sous-sol B des archives (53760, acte 2), à la lampe : bordereaux contresignés « B. », carnet de permanence, chemise vide « VOSK, A. — 1971 », carton d'encre verte
+- [x] Chaufferie de la Centrale (54001, acte 3) : bouchon à la place de la soupape, pièces visées L. O., arrêt ligaturé, alerte de RUDA, carnet de Mira
+- [x] Chevet de REIS (54012, acte 3) : interrogatoire sous tension, l'aveu sur les visiteurs de la nuit ne vient que s'il est ébranlé ; le menacer fait intervenir l'infirmière
+- [x] Atelier d'ADLER (54030, acte 3), deux pièces : radio sans ondes courtes, clientèle d'État, pendule bloquée à 06h05, notes du père (« Demander à K. »), cahier de L'HEURE JUSTE versé au dossier
+- [x] Traces sur le bureau des nouvelles scènes (chemise du père, encre verte, carnet de Mira, notes du père, cahier « exploité »)
+- [ ] Images de l'atelier d'ADLER à livrer (`search_54030_atelier.webp`, `search_54030_arriere.webp`) ; décors dessinés en attendant
+- [ ] Suites du cahier de L'HEURE JUSTE versé au dossier (`heure_juste.list_in_file`) : arrestations à l'acte 4, fin ?
+- [ ] Autres idées gardées (doc du 27.10) : BRANDT qui vous interroge dans le couloir, la salle d'audition vide (MIROIR), l'escalier de l'immeuble, la filature, la table d'écoute
 - [ ] Repositionner finement les zones des autres scènes (51307, 52044, 52310, 53517) avec l'éditeur
 - [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
 - [ ] Décors 3D de la boulangerie n° 12 et de l'appartement 40
@@ -307,6 +318,27 @@ caviarder) via le système de décisions existant — données pures, sans moteu
       Conception : `docs/design/FINS_PROPOSITION.md`.
 - [ ] Facultatif (proposé à fen) : compteur « fins découvertes X/7 » au menu principal,
       pour inciter à rejouer. À faire si fen le valide.
+
+## Fait : audit de cohérence du scénario (demande de fen du 28.10)
+
+Rapport complet : document « Audit du scénario » (lien dans la pull request).
+- [x] La Fuite des originaux redevient atteignable : l'événement `veritas_zero_kept`
+      (jour 17, original du 40921 gardé) pose `veritas.zero`
+- [x] `vosk.subject` posé à l'attribution du dossier 54100 ; `53118.truth_known` posé
+      quand on arrête les onze en connaissant le permis ou la liste
+- [x] L'Allié de la Milice exclu si l'on s'est brouillé avec elle (`milice.hostile`)
+- [x] Le père est partout horloger (agréé, il réglait les horloges de l'État) ; KREMER
+      est l'inspecteur de la Section 2 qui a reçu son rapport de 1971 (« Demander à K. »)
+- [x] Famille SEDLAR : deux enfants, Mira 19 ans, la sœur de Halvek renommée Hana DOLAN ;
+      atelier d'ADLER situé au District 2 ; lettre BENES sans jour impossible ;
+      fin de la Fuite : le registre n'est plus « truqué par MAZUR »
+- [x] Test `test_scenario_flags_reachable` : tout drapeau lu par une fin, le dossier
+      personnel ou une vérité d'archive est posé quelque part
+- [x] Recommandations validées par fen : Miroir parfait évalué avant la Milice ; notes de
+      KREMER sans « lundi » ; la veillée du 9 novembre fête la dédicace de l'église
+      (plus la Sainte-Agathe, qui tombe en février) ; le Bureau du ravitaillement relève
+      du ministère de la Sécurité nationale
+- [ ] ~120 drapeaux posés jamais lus : suites proposées dans le rapport d'audit
 
 ## Prochaine itération
 

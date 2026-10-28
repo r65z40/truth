@@ -25,6 +25,8 @@ var guidance := true
 var ui_scale := 1.0
 ## Scènes de terrain en 3D (sinon décors dessinés en 2D, plus légers).
 var field_3d := false
+## Scènes de terrain animées (2.5D) : léger mouvement de l'image, poussière, grain.
+var field_motion := true
 ## Volume de la musique, de 0 (coupée) à 1.
 var music_volume := 0.8
 ## Volume des ambiances (pluie, bureau, appartement...), de 0 à 1.
@@ -55,6 +57,7 @@ func load_settings() -> void:
 	guidance = config.get_value("gameplay", "guidance", guidance)
 	ui_scale = config.get_value("display", "ui_scale", ui_scale)
 	field_3d = config.get_value("display", "field_3d", field_3d)
+	field_motion = config.get_value("display", "field_motion", field_motion)
 	music_volume = config.get_value("audio", "music_volume", music_volume)
 	ambience_volume = config.get_value("audio", "ambience_volume", ambience_volume)
 	sfx_volume = config.get_value("audio", "sfx_volume", sfx_volume)
@@ -71,6 +74,7 @@ func save_settings() -> void:
 	config.set_value("gameplay", "guidance", guidance)
 	config.set_value("display", "ui_scale", ui_scale)
 	config.set_value("display", "field_3d", field_3d)
+	config.set_value("display", "field_motion", field_motion)
 	config.set_value("audio", "music_volume", music_volume)
 	config.set_value("audio", "ambience_volume", ambience_volume)
 	config.set_value("audio", "sfx_volume", sfx_volume)
@@ -117,6 +121,11 @@ func set_guidance(value: bool) -> void:
 
 func set_field_3d(value: bool) -> void:
 	field_3d = value
+	_commit()
+
+
+func set_field_motion(value: bool) -> void:
+	field_motion = value
 	_commit()
 
 

@@ -445,5 +445,7 @@
 	"  MENU       se déconnecter (menu principal)": "  MENU       log out (main menu)",
 	"PERSONNEL": "PERSONNEL",
 	"aucun élément noté": "no items noted",
-	"aucune contradiction établie": "no contradictions established"
+	"aucune contradiction établie": "no contradictions established",
+	"Promenez la lampe sur la pièce, à la souris ou au doigt : ce qu'elle éclaire peut être fouillé.": "Move the flashlight over the room, with the mouse or your finger: whatever it lights up can be searched.",
+	"Scènes de terrain animées": "Animated field scenes"
 }

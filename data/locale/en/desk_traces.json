@@ -2,7 +2,7 @@
 	"_note": "Traduction anglaise de data/desk_traces.json : texte français -> texte anglais.",
 	"Couloir de la Section 4": "Section 4 corridor",
 	"Sur la pendule du couloir, une plaque de cuivre : « Révisée par l'atelier VOSK — 1969 ». Quelqu'un a essayé de la dévisser.": "On the corridor clock, a brass plate: \"Overhauled by the VOSK workshop — 1969\". Someone has tried to unscrew it.",
-	"Service des interpellations": "Arrests service",
+	"Service des interpellations": "Arrests Department",
 	"Accusé de réception : SEDLAR, Anton. Pris en charge à 05h10. Effets personnels : une montre, un trousseau, une photo d'enfants.": "Acknowledgement of receipt: SEDLAR, Anton. Taken into custody at 05h10. Personal effects: a watch, a bunch of keys, a photo of children.",
 	"Glissé dans le courrier": "Slipped into the mail",
 	"« Merci. » Pas de signature. Une écriture de femme, appliquée.": "\"Thank you.\" No signature. A woman's handwriting, careful.",
@@ -37,5 +37,13 @@
 	"I. BRANDT, Contrôle interne": "I. BRANDT, Internal Review",
 	"« Je passe demain. Ne rangez rien. »": "\"I'll come by tomorrow. Don't tidy anything away.\"",
 	"Directeur HALM, programme MIROIR": "Director HALM, MIRROR programme",
-	"Félicitations encadrées : « Pour un travail de mémoire exemplaire. » Le verre reflète votre visage sur le texte.": "Framed congratulations: \"For exemplary work of remembrance.\" The glass reflects your face over the text."
+	"Félicitations encadrées : « Pour un travail de mémoire exemplaire. » Le verre reflète votre visage sur le texte.": "Framed congratulations: \"For exemplary work of remembrance.\" The glass reflects your face over the text.",
+	"Au dos d'un ticket de tramway": "On the back of a tram ticket",
+	"Vous avez recopié l'étiquette sans y penser : « VOSK, A., horloger — inspection Section 2 — 1971 — retiré sur ordre ». Vous ne jetez pas le ticket.": "You copied the label without thinking: \"VOSK, A., clockmaker — Section 2 inspection — 1971 — withdrawn by order\". You don't throw the ticket away.",
+	"Sur votre buvard": "On your blotter",
+	"Une tache d'encre verte, fraîche. Vous n'écrivez qu'à l'encre noire.": "A fresh stain of green ink. You only ever write in black.",
+	"Le carnet à spirale de Mira SEDLAR, que vous n'avez rendu à personne. Dernière ligne : « 16 bar. RUDA dit de ne pas toucher. »": "Mira SEDLAR's spiral notebook, which you have given back to no one. Last line: \"16 bar. RUDA says don't touch.\"",
+	"Sous le sous-main": "Under the desk pad",
+	"Le papier plié en huit, de l'écriture de votre père : « Qui signe l'ordre ? Demander à K. »": "The paper folded in eight, in your father's handwriting: \"Who signs the order? Ask K.\"",
+	"Accusé de réception : « Cahier de noms, atelier ADLER — reçu. Exploité. » Exploité.": "Acknowledgement of receipt: \"Book of names, ADLER workshop — received. Acted upon.\" Acted upon."
 }

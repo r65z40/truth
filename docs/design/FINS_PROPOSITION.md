@@ -23,14 +23,17 @@ Même grammaire de conditions que les événements (`requires_flags`,
 | 1 | **La Correction** (cachée) | `act4.father_truth` + `kremer.protected` + au moins 3 « innocents épargnés » (voir plus bas) |
 | 2 | **La Fuite des originaux** | `act2.original_kept` + `veritas.zero` |
 | 3 | **L'Heure juste** | `mazur.fled` + (`kremer.protected` ou contact réseau) + suspicion moyenne (p. ex. 35–70) |
-| 4 | **L'Allié de la Milice** | `milice.ally` + une faveur utilisée (`54001.orlik_protected` ou `51307` faveur) |
-| 5 | **Le Dossier 54100** | suspicion très haute avant l'acte 4 (p. ex. ≥ 80) ou `player.internal_review` |
-| 6 | **Le Miroir parfait** | `act4.mirror_signed_clean` + loyauté haute (p. ex. ≥ 70) |
+| 4 | **Le Miroir parfait** | `act4.mirror_signed_clean` + loyauté haute (p. ex. ≥ 70) |
+| 5 | **L'Allié de la Milice** | `milice.ally` + une faveur utilisée (`54001.orlik_protected` ou `51307` faveur), sans `milice.hostile` |
+| 6 | **Le Dossier 54100** | suspicion très haute avant l'acte 4 (p. ex. ≥ 80) ou `player.internal_review` |
 | 7 | **Le Silence** (défaut) | aucune des précédentes (typiquement `act4.mirror_refused`, ou rien de marquant) |
 
 Remarques :
+- Audit du 28.10 (validé par fen) : le Miroir parfait passe avant la Milice, sinon
+  un joueur qui a tout signé dans MIROIR mais classé ORLIK au jour 1 obtenait la
+  fin de la Milice ; la Milice est exclue après une brouille (`milice.hostile`).
 - L'ordre place les fins « rares/méritées » avant les fins « par excès »
-  (54100, Miroir parfait) et la fin par défaut (Le Silence) en dernier, conforme
+  (54100) et la fin par défaut (Le Silence) en dernier, conforme
   à l'esprit du canon (« Le Silence » = défaut).
 - **« Innocents épargnés »** : à compter sur un ensemble de drapeaux de clémence
   prouvée, à confirmer par fen. Candidats déjà posés : `52044` gérante disculpée,

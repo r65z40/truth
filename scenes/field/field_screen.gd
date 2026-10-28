@@ -21,6 +21,15 @@ var _placing := false
 var _drag_start := Vector2.INF
 ## Lecteur de la vidéo de fond en boucle (facultative, clé "video" d'une scène).
 var _video: VideoStreamPlayer
+## Obscurité (clé "darkness", voir FieldRules) : voile percé par la lampe, position
+## de la lampe en fractions de l'image, et endroits déjà repérés pendant la visite.
+var _lamp: FieldLamp
+var _lamp_pos := Vector2(0.5, 0.5)
+var _discovered: Array = []
+## Ambiance 2.5D (grain, poussière, lumière) posée sur l'image ; le cadre de l'image
+## dérive lentement (voir _process).
+var _ambience: FieldAmbience
+var _drift := 0.0
 
 @onready var _title_label: Label = %TitleLabel
 @onready var _turns_label: Label = %TurnsLabel
@@ -49,6 +58,13 @@ func _ready() -> void:
 	_art.get_parent().add_child(_video)
 	_art.get_parent().move_child(_video, 0)
 	_video.finished.connect(_video.play)  # lecture en boucle
+	# Ambiance 2.5D, sous le voile d'obscurité : dans le noir, on ne la voit qu'à la lampe.
+	_ambience = FieldAmbience.new()
+	_art.get_parent().add_child(_ambience)
+	# Voile d'obscurité, au-dessus de l'image et de ses zones (sans capter la souris).
+	_lamp = FieldLamp.new()
+	_lamp.hide()
+	_art.get_parent().add_child(_lamp)
 	# Éditeur de zones : surface posée au-dessus de l'image (même cadre 16:9 que
 	# l'Art, géré par l'AspectRatioContainer), inerte tant qu'il n'est pas activé.
 	_editor = Control.new()
@@ -88,12 +104,20 @@ func _show_scene(new_scene: Dictionary) -> void:
 	_presenting = false
 	_title_label.text = scene.get("title", "")
 	_room_id = FieldRules.start_room(scene).get("id", "") if FieldRules.has_rooms(scene) else ""
+	_discovered = []
+	_lamp_pos = FieldRules.lamp_start(scene)
 	_apply_room_art()
 	_log = [scene.get("intro", "")]
 	_hint_label.text = scene.get("hint", tr("Les éléments obtenus vont dans votre carnet et au dossier.") if scene.type == "interrogation" \
 			else tr("Cliquez sur un endroit du dessin pour le fouiller. Ce que vous trouvez est versé au dossier."))
+	if FieldRules.has_darkness(scene):
+		_hint_label.text = scene.darkness.get("hint",
+				tr("Promenez la lampe sur la pièce, à la souris ou au doigt : ce qu'elle éclaire peut être fouillé."))
 	show()
 	_refresh()
+	# Dans le noir, la lampe éclaire déjà son point de départ.
+	if FieldRules.has_darkness(scene):
+		set_lamp(_lamp_pos)
 
 
 ## La pièce courante (perquisition à pièces), ou la scène elle-même sinon.
@@ -118,6 +142,33 @@ func _apply_room_art() -> void:
 	_stage.visible = use_3d
 	# L'Art reste visible en vidéo (transparent, il porte les zones) ; caché en 3D.
 	_art.visible = not use_3d
+	_lamp.visible = _art.visible and FieldRules.has_darkness(scene)
+	_apply_ambience()
+
+
+## Règle l'ambiance 2.5D de la scène, ou la coupe (réglage désactivé, décor 3D).
+func _apply_ambience() -> void:
+	var settings := FieldRules.ambience(scene)
+	if not Settings.field_motion or not _art.visible:
+		for key in settings:
+			settings[key] = 0.0
+	_ambience.configure(settings)
+	_drift = settings.drift
+	var frame: Control = _art.get_parent()
+	frame.scale = Vector2.ONE
+	set_process(_drift > 0.0)
+
+
+## Dérive lente du cadre de l'image (léger zoom, panoramique de quelques pixels) :
+## les zones cliquables et la lampe suivent, car elles sont dans le même cadre.
+func _process(_delta: float) -> void:
+	var frame: Control = _art.get_parent()
+	if not visible or _drift <= 0.0:
+		frame.scale = Vector2.ONE
+		return
+	var t := Time.get_ticks_msec() / 1000.0
+	frame.scale = Vector2.ONE * (1.0 + 0.025 * _drift)
+	frame.pivot_offset = frame.size / 2.0 + Vector2(sin(t * 0.05), cos(t * 0.037)) * frame.size * 0.02 * _drift
 
 
 ## Lance (ou arrête) la vidéo de fond. Renvoie vrai si une vidéo est jouée.
@@ -212,11 +263,7 @@ func _refresh() -> void:
 		_art.remove_child(child)
 		child.queue_free()
 	_leave_button.text = tr("RETOUR AU BUREAU") if done else tr("PARTIR")
-	var options := [] if done else GameState.get_field_options(scene.id)
-	# Dans une perquisition à pièces, on ne montre que les endroits de la pièce courante.
-	if _room_id != "":
-		options = options.filter(func(o: Dictionary) -> bool:
-			return FieldRules.room_of_option(scene, o.id) == _room_id)
+	var options := [] if done else _room_options()
 	var stage_spots: Array = options.map(func(o: Dictionary) -> String: return o.id)
 	if is_interrogation() and not done and not _presenting:
 		stage_spots.append("present")
@@ -225,9 +272,12 @@ func _refresh() -> void:
 		return
 	if not is_interrogation():
 		# Les endroits sont cliquables sur le dessin et rappelés en liste.
+		# Dans le noir, la liste ne garde que les endroits déjà repérés à la lampe.
+		var dark := FieldRules.has_darkness(scene)
 		for option: Dictionary in options:
 			_add_spot(option.get("spot", [0, 0, 60, 44]), option.label, choose.bind(option.id), "option_id", option.id)
-			_add_option_button(option.label, choose.bind(option.id), option.id)
+			if not dark or option.id in _discovered:
+				_add_option_button(option.label, choose.bind(option.id), option.id)
 		# Les portes mènent aux autres pièces (gratuit).
 		for door: Dictionary in _current_view().get("doors", []):
 			var to: String = door.get("to", "")
@@ -246,6 +296,69 @@ func _refresh() -> void:
 	for option: Dictionary in options:
 		_add_option_button(option.label, choose.bind(option.id), option.id)
 	_add_option_button(tr("PRÉSENTER UN ÉLÉMENT DU CARNET"), show_presentation_list.bind(true), "present")
+
+
+## Endroits encore possibles, limités à la pièce courante d'une perquisition à pièces.
+func _room_options() -> Array:
+	var options := GameState.get_field_options(scene.get("id", ""))
+	if _room_id != "":
+		options = options.filter(func(o: Dictionary) -> bool:
+			return FieldRules.room_of_option(scene, o.id) == _room_id)
+	return options
+
+
+# --- La lampe (scènes dans le noir) -------------------------------------------
+
+## Promène la lampe (position en fractions de l'image). Ce qu'elle éclaire pour
+## la première fois est repéré et s'ajoute à la liste (aussi utilisé par les tests).
+func set_lamp(fraction: Vector2) -> void:
+	_lamp_pos = fraction
+	if not FieldRules.has_darkness(scene):
+		return
+	var found := false
+	for option_id in FieldRules.lit_options(_room_options(), _lamp_pos, FieldRules.lamp_radius(scene), _image_aspect()):
+		if not option_id in _discovered:
+			_discovered.append(option_id)
+			found = true
+	if found:
+		Sound.play("lamp_find")
+		_refresh()
+	else:
+		_update_lamp()
+
+
+func get_discovered() -> Array:
+	return _discovered
+
+
+func _image_aspect() -> float:
+	var img := _art.image_rect()
+	return img.size.x / img.size.y if img.size.y > 0.0 else 16.0 / 9.0
+
+
+## Cale le halo sur l'image et ne laisse visibles que les endroits éclairés.
+func _update_lamp() -> void:
+	if not _lamp.visible:
+		return
+	var img := _art.image_rect()
+	var radius := FieldRules.lamp_radius(scene)
+	_lamp.set_lamp(img.position + _lamp_pos * img.size, radius * img.size.y)
+	for spot in _art.get_children():
+		if spot is Button and spot.has_meta("option_id"):
+			spot.visible = FieldRules.is_lit(spot.get_meta("area"), _lamp_pos, radius, _image_aspect())
+
+
+func _input(event: InputEvent) -> void:
+	if not visible or not _lamp.visible or _placing:
+		return
+	var moved: bool = event is InputEventMouseMotion or event is InputEventScreenDrag \
+			or ((event is InputEventMouseButton or event is InputEventScreenTouch) and event.pressed)
+	if not moved:
+		return
+	var local: Vector2 = _art.get_global_transform_with_canvas().affine_inverse() * event.position
+	var img := _art.image_rect()
+	if img.size.x > 0.0 and img.has_point(local):
+		set_lamp((local - img.position) / img.size)
 
 
 ## Zone cliquable posée sur le dessin/l'image (endroit à fouiller ou porte).
@@ -291,6 +404,7 @@ func _place_spots() -> void:
 			var rect := _art.to_local_rect(spot.get_meta("area"))
 			spot.position = rect.position
 			spot.size = Vector2(rect.size.x, maxf(rect.size.y, 44.0))
+	_update_lamp()
 
 
 func _on_stage_spot(option_id: String) -> void:

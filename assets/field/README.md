@@ -31,6 +31,23 @@ par une sans jamais casser une scène.
   dans le `spot` de la scène. `F2` de nouveau pour quitter le mode.
 - L'ancien repère en pixels (640 × 300) reste accepté pour les décors dessinés.
 
+## Obscurité et ambiance
+
+- `darkness` : la scène est dans le noir, on promène une lampe. Une image assez
+  lumineuse convient : c'est le jeu qui l'assombrit.
+- `ambience` : grain, poussière, lumière qui vacille, dérive lente de l'image.
+  Rien à prévoir dans l'image ; garder une marge de quelques pour cent sur les
+  bords (l'image est très légèrement agrandie quand elle dérive).
+
+## Images attendues
+
+- `search_54030_atelier.webp` : atelier d'horloger, mur de pendules arrêtées,
+  établi avec loupe, carton de radio sur une étagère basse, porte de
+  l'arrière-boutique à droite.
+- `search_54030_arriere.webp` : arrière-boutique, pendule de voyage sous un drap
+  sur une étagère à gauche, lit de camp au centre, armoire à droite.
+  En attendant, ces deux pièces sont dessinées par le jeu.
+
 ## Nommage
 
 - Perquisitions : `search_<dossier>_<pièce>.webp` (ex. `search_40921_salon.webp`).

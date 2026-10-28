@@ -5,7 +5,7 @@
 	"summary": "Opération MIROIR, dernière pièce. Le dossier scellé de votre père, disparu en 1971, vous revient — à réécrire. On vous demande de fermer vous-même l'histoire qu'il avait ouverte.",
 	"briefing": {
 		"objective": "Rédiger la version définitive du dossier scellé de 1971 : celui de votre père. C'est le dernier document de MIROIR, et le vôtre.",
-		"context": "Pour devenir inattaquable, MIROIR doit refermer le dossier par lequel tout a commencé : l'inspection de 1971 où votre père a découvert qui réglait les horloges, et a disparu. HALM vous confie sa réécriture. On ne recrute pas le fils par hasard."
+		"context": "Pour devenir inattaquable, MIROIR doit refermer le dossier par lequel tout a commencé : l'inspection de 1971 : votre père, horloger, avait découvert qui réglait les horloges, et il a disparu. HALM vous confie sa réécriture. On ne recrute pas le fils par hasard."
 	},
 	"priority": "exceptionnelle",
 	"guide": {
@@ -26,7 +26,7 @@
 			"reliability": "C",
 			"date": "1986-12-05",
 			"veritas_remark": "Dernière pièce de l'opération. Sa signature clôt MIROIR.",
-			"body": "Inspecteur VOSK,\n\nIl reste un dossier. Vous savez lequel.\n\nEn 1971, votre père, inspecteur, a posé les mauvaises questions sur les horloges du ministère. Son dossier a été scellé. MIROIR ne sera complet que fermé proprement : vous allez écrire qu'A. VOSK a émigré volontairement en 1971, sans suite. Le fils clôt ce que le père avait ouvert.\n\nFaites-le, et votre propre dossier — le 54100 — sera vidé à son tour. Vous serez libre, et promu. C'est le marché. Il ne sera pas proposé deux fois.\n\nHALM",
+			"body": "Inspecteur VOSK,\n\nIl reste un dossier. Vous savez lequel.\n\nEn 1971, votre père, l'horloger qui réglait nos pendules, a posé les mauvaises questions sur les horloges du ministère. Son dossier a été scellé. MIROIR ne sera complet que fermé proprement : vous allez écrire qu'A. VOSK a émigré volontairement en 1971, sans suite. Le fils clôt ce que le père avait ouvert.\n\nFaites-le, et votre propre dossier — le 54100 — sera vidé à son tour. Vous serez libre, et promu. C'est le marché. Il ne sera pas proposé deux fois.\n\nHALM",
 			"facts": [
 				{
 					"id": "f_ord_close",
@@ -52,7 +52,7 @@
 			"reliability": "A",
 			"date": "1971-03-18",
 			"veritas_remark": "Pièce scellée depuis 1971. Rouverte pour les besoins de la réécriture.",
-			"body": "Rapport de l'inspecteur A. VOSK, 18.03.1971.\n\n« J'ai établi que les horloges de pointage de trois ministères sont réglées pour retarder les soirs d'arrestation : on fabrique des alibis, ou on les défait, en déplaçant une aiguille. Le registre des réglages remonte au cabinet. Je demande l'ouverture d'une enquête interne. »\n\nMention finale, autre main : « L'inspecteur VOSK a cessé ses fonctions le 29.03.1971. Dossier scellé. Ne pas communiquer au fils. »",
+			"body": "Rapport d'A. VOSK, horloger agréé, remis à l'inspecteur H. KREMER (Section 2), 18.03.1971.\n\n« J'ai établi que les horloges de pointage de trois ministères sont réglées pour retarder les soirs d'arrestation : on fabrique des alibis, ou on les défait, en déplaçant une aiguille. Le registre des réglages remonte au cabinet. Je demande l'ouverture d'une enquête interne. »\n\nMention finale, autre main : « Agrément de l'horloger VOSK retiré le 29.03.1971. Dossier scellé. Ne pas communiquer au fils. »",
 			"facts": [
 				{
 					"id": "f_orig_finding",
@@ -65,7 +65,7 @@
 					"id": "f_orig_silence",
 					"key": "vosk.father_fate",
 					"value": "« Ne pas communiquer au fils »",
-					"label": "Mention finale : fonctions cessées le 29.03.1971, dossier scellé, « ne pas communiquer au fils »",
+					"label": "Mention finale : agrément retiré le 29.03.1971, dossier scellé, « ne pas communiquer au fils »",
 					"quote": "Ne pas communiquer au fils."
 				}
 			]
@@ -239,7 +239,7 @@
 	},
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
-		"what_happened": "La dernière pièce de MIROIR est le dossier scellé de 1971 : celui du père du joueur, inspecteur qui avait découvert que les horloges de pointage du ministère étaient réglées pour fabriquer ou défaire des alibis (le germe de L'HEURE JUSTE et de tout ce que le joueur a croisé), et qui a disparu après avoir demandé une enquête. Le ministère a recruté le fils pour pouvoir, un jour, lui faire refermer lui-même le dossier du père. Effacer le père vide aussi le dossier 54100 du fils et le fait promouvoir (Le Miroir parfait). Rétablir la vérité du père, Kremer protégé et assez d'innocents épargnés, ouvre la fin cachée (La Correction). Refuser mène au Silence.",
+		"what_happened": "La dernière pièce de MIROIR est le dossier scellé de 1971 : celui du père du joueur, horloger agréé qui avait découvert que les horloges de pointage du ministère étaient réglées pour fabriquer ou défaire des alibis (le germe de L'HEURE JUSTE et de tout ce que le joueur a croisé), et qui a disparu après avoir demandé une enquête. Le ministère a recruté le fils pour pouvoir, un jour, lui faire refermer lui-même le dossier du père. Effacer le père vide aussi le dossier 54100 du fils et le fait promouvoir (Le Miroir parfait). Rétablir la vérité du père, Kremer protégé et assez d'innocents épargnés, ouvre la fin cachée (La Correction). Refuser mène au Silence.",
 		"involved": [
 			"60003",
 			"54100",

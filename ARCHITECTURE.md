@@ -291,7 +291,14 @@ Un dossier rattache une scène par `"field_scene"`. Une scène a un `type`
 set_flags, effects, ends, spot [x, y, l, h] pour une perquisition} et, pour un
 interrogatoire, `presentations` {id, facts, text, note, ...} et
 `present_default`. Textes d'interface facultatifs : `verb` (« Vous examinez : »),
-`hint`, `turns_label`. Décors : `art` (`sedlar_flat`, `bakery`, `benes_flat`). Chaque choix pose `field.<scène>.<choix>`. Le procès-verbal
+`hint`, `turns_label`. Décors : `art` (`sedlar_flat`, `bakery`, `benes_flat`,
+`clock_shop`, `clock_back`). Obscurité facultative `darkness` {radius, start, hint} :
+la pièce est noire, `FieldLamp` (shader `ui/shaders/lamp.gdshader`) perce un halo
+qu'on promène ; un endroit n'apparaît qu'une fois éclairé (`FieldRules.is_lit`,
+état d'écran seulement). Ambiance 2.5D `ambience` {drift, dust, flicker, grain}
+(0 à 1, défauts dans `FieldRules.DEFAULT_AMBIENCE`) : `FieldAmbience` dessine
+grain, poussière et vacillement, `FieldScreen` fait dériver le cadre de l'image
+(zones et lampe suivent) ; coupée par `Settings.field_motion`. Chaque choix pose `field.<scène>.<choix>`. Le procès-verbal
 est une pièce ordinaire du dossier dont les éléments portent des `conditions`
 sur ces drapeaux : `CaseLibrary.filter_case` filtre aussi les éléments. Logique
 dans `FieldRules`, état dans `GameState.field_scenes`, écran

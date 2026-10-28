@@ -287,7 +287,7 @@
 			"message": {
 				"from": "Direction du ravitaillement, Ministère de la Sécurité nationale",
 				"subject": "Au sujet de l'agent P. DRAZEK",
-				"body": "Agent VOSK,\n\nLa Direction prend acte de votre rapport. L'agent DRAZEK a été suspendu.\n\nLa Direction rappelle que les irrégularités internes au ministère doivent être signalées par la voie hiérarchique, et non à l'occasion d'un dossier civil. Votre initiative a été portée à l'attention du Directeur HALM.\n\nLe Directeur du ravitaillement"
+				"body": "Agent VOSK,\n\nLa Direction prend acte de votre rapport. L'agent DRAZEK a été suspendu.\n\nLa Direction rappelle que le Bureau du ravitaillement du District 4, comme tous les bureaux de rationnement, relève du ministère de la Sécurité nationale. Ses irrégularités internes doivent être signalées par la voie hiérarchique, et non à l'occasion d'un dossier civil. Votre initiative a été portée à l'attention du Directeur HALM.\n\nLe Directeur du ravitaillement"
 			}
 		},
 		{
@@ -393,7 +393,7 @@
 			"message": {
 				"from": "Courrier civil, transmis par le Bureau des requêtes",
 				"subject": "Requête de Mme Irena BENES",
-				"body": "Monsieur l'Inspecteur,\n\nMercredi soir, des hommes sont venus chez nous, quai des Tanneurs, appartement 40. Ils cherchaient « Teodor VARGA ». Ils ont emmené mon mari, Karel BENES, en pyjama, parce qu'il a le même âge et qu'il est correcteur comme l'était M. VARGA.\n\nNous habitons cet appartement depuis 1982. M. VARGA, on nous a dit qu'il avait émigré.\n\nJ'ai vu Karel hier au parloir, dix minutes. Il avait le nez cassé et il ne pouvait plus fermer la main droite. Il m'a dit qu'il avait signé. Je ne sais pas quoi.\n\nIrena BENES\n\n[Mention du Bureau des requêtes : homonymie alléguée, requête transmise à la Section 7.]"
+				"body": "Monsieur l'Inspecteur,\n\nL'autre soir, des hommes sont venus chez nous, quai des Tanneurs, appartement 40. Ils cherchaient « Teodor VARGA ». Ils ont emmené mon mari, Karel BENES, en pyjama, parce qu'il a le même âge et qu'il est correcteur comme l'était M. VARGA.\n\nNous habitons cet appartement depuis 1982. M. VARGA, on nous a dit qu'il avait émigré.\n\nJ'ai vu Karel hier au parloir, dix minutes. Il avait le nez cassé et il ne pouvait plus fermer la main droite. Il m'a dit qu'il avait signé. Je ne sais pas quoi.\n\nIrena BENES\n\n[Mention du Bureau des requêtes : homonymie alléguée, requête transmise à la Section 7.]"
 			}
 		},
 		{
@@ -429,7 +429,7 @@
 			"message": {
 				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
 				"subject": "(sans objet)",
-				"body": "Vous avez vu la cicatrice. Moi aussi, en 1979 : c'est moi qui avais établi sa fiche de lecteur.\n\nTeodor VARGA a été arrêté en mars 1981. Il est mort en détention en 1983. Officiellement, il a émigré. L'homme de la photo s'appelle Karel BENES : il habite l'appartement de VARGA depuis 1982.\n\nOn m'envoie aux archives lundi, « réorganisation ». On ne pouvait pas me rendre plus grand service. Les originaux sont au sous-sol B.\n\nNe m'écrivez pas. Ne parlez pas de moi à MAZUR. Brûlez ceci.\n\nK."
+				"body": "Vous avez vu la cicatrice. Moi aussi, en 1979 : c'est moi qui avais établi sa fiche de lecteur.\n\nTeodor VARGA a été arrêté en mars 1981. Il est mort en détention en 1983. Officiellement, il a émigré. L'homme de la photo s'appelle Karel BENES : il habite l'appartement de VARGA depuis 1982.\n\nOn m'envoie aux archives, « réorganisation ». On ne pouvait pas me rendre plus grand service. Les originaux sont au sous-sol B.\n\nNe m'écrivez pas. Ne parlez pas de moi à MAZUR. Brûlez ceci.\n\nK."
 			}
 		},
 		{
@@ -450,7 +450,7 @@
 			"message": {
 				"from": "H. KREMER, note manuscrite glissée dans le courrier interne",
 				"subject": "(sans objet)",
-				"body": "Inspecteur,\n\nComparez la photo de la fiche 52310 avec celle de la fiche de lecteur de 1979. Regardez la joue droite.\n\nCe n'est pas le même homme. Le vrai Teodor VARGA a été arrêté en 1981 et n'est jamais revenu. Le ministère a déjà condamné quelqu'un sous ce nom ; il lui en faut un deuxième pour le procès.\n\nOn m'envoie aux archives lundi. Si vous voulez voir les originaux, c'est là qu'ils seront. Ne m'écrivez pas. Brûlez ceci.\n\nK."
+				"body": "Inspecteur,\n\nComparez la photo de la fiche 52310 avec celle de la fiche de lecteur de 1979. Regardez la joue droite.\n\nCe n'est pas le même homme. Le vrai Teodor VARGA a été arrêté en 1981 et n'est jamais revenu. Le ministère a déjà condamné quelqu'un sous ce nom ; il lui en faut un deuxième pour le procès.\n\nOn m'envoie aux archives. Si vous voulez voir les originaux, c'est là qu'ils seront. Ne m'écrivez pas. Brûlez ceci.\n\nK."
 			}
 		},
 		{
@@ -1100,7 +1100,7 @@
 			"message": {
 				"from": "Archives civiles, notification automatique",
 				"subject": "Dossier familial SEDLAR : clôture",
-				"body": "Pour information de l'inspecteur instructeur.\n\nLa famille SEDLAR est désormais sans membre libre : le père (dossier 40921) en détention, la fille aînée (dossier 54001) arrêtée pour sabotage. Les cadets sont placés. Le dossier familial est clos.\n\nAucune action requise."
+				"body": "Pour information de l'inspecteur instructeur.\n\nLa famille SEDLAR est désormais disloquée : le père (dossier 40921) en détention, la fille aînée (dossier 54001) arrêtée pour sabotage. La mère est relevée de son poste d'institutrice ; le fils cadet est placé. Le dossier familial est clos.\n\nAucune action requise."
 			}
 		},
 		{
@@ -1154,6 +1154,9 @@
 				"from": "Bureau du contrôle interne",
 				"subject": "Dossier 54100 — pour information",
 				"body": "Un dossier a été ouvert dans votre liste de travail. Vous constaterez qu'il porte un numéro de citoyen : 54100.\n\nVous êtes autorisé à le consulter. Vous n'êtes pas autorisé à l'instruire. Lisez-le, puis refermez-le."
+			},
+			"set_flags": {
+				"vosk.subject": true
 			}
 		},
 		{
@@ -1273,6 +1276,29 @@
 			}
 		},
 		{
+			"id": "veritas_zero_kept",
+			"conditions": {
+				"min_day": 17,
+				"requires_flags": [
+					"act2.original_kept"
+				],
+				"forbidden_flags": [
+					"veritas.zero"
+				]
+			},
+			"set_flags": {
+				"veritas.zero": true
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"message": {
+				"from": "VERITAS, module de rédaction MIROIR",
+				"subject": "Analyse hors procédure : exemplaire non versé",
+				"body": "Le module signale qu'une analyse lancée le 3 décembre sur des pièces hors procédure a été imprimée en un exemplaire.\n\nL'exemplaire n'a pas été versé au dossier 60002. Il n'a pas été détruit non plus.\n\nAucune action requise."
+			}
+		},
+		{
 			"id": "assign_60003",
 			"conditions": {
 				"min_day": 18
@@ -1301,7 +1327,7 @@
 			"message": {
 				"from": "Courrier civil, transmis par le Bureau des requêtes",
 				"subject": "Vera SEDLAR — encore",
-				"body": "Monsieur l'Inspecteur,\n\nJe vous avais écrit pour mon mari. Aujourd'hui je vous écris pour ma fille. Mira avait dix-neuf ans et travaillait à la Centrale ; on me dit maintenant qu'elle l'aurait fait exploser. Ma fille ne savait pas changer une ampoule.\n\nIl ne me reste plus personne à qui on n'ait rien reproché. Je ne demande plus qu'on les libère. Je demande seulement qu'on me dise où ils sont.\n\nVera SEDLAR, Bloc 14, escalier C\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+				"body": "Monsieur l'Inspecteur,\n\nJe vous avais écrit pour mon mari. Aujourd'hui je vous écris pour ma fille. Mira a dix-neuf ans et travaille à la Centrale ; on me dit maintenant qu'elle l'aurait fait exploser. Ma fille ne savait pas changer une ampoule.\n\nIl ne me reste plus personne à qui on n'ait rien reproché. Je ne demande plus qu'on les libère. Je demande seulement qu'on me dise où ils sont.\n\nVera SEDLAR, Bloc 14, escalier C\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
 			}
 		},
 		{
@@ -1348,7 +1374,7 @@
 				"suspicion": 1
 			},
 			"message": {
-				"from": "Gérance des locaux, quartier Est",
+				"from": "Gérance des locaux, District 2",
 				"subject": "Atelier rue des Tisserands : mise sous scellés",
 				"body": "Pour information de l'inspecteur instructeur.\n\nL'atelier de l'horloger V. ADLER est fermé et placé sous scellés. Son contenu est inventorié. Une pendule ancienne, déposée en 1971 au nom de VOSK et jamais réclamée, a été versée au dépôt central.\n\nAucune action requise."
 			}

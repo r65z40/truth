@@ -1,0 +1,132 @@
+{
+	"note": "Visite de l'atelier des chaudières de la Centrale n° 3 (dossier 54001), le lendemain de l'explosion. Donne un autre chemin vers la défaillance : soupape remplacée par un bouchon, pièces visées et jamais livrées, alerte de RUDA refusée. Chaque choix pose field.visit_54001.<id> ; les éléments du procès-verbal pv_chaufferie en dépendent. spot : fractions de l'image, à peaufiner avec F2.",
+	"id": "visit_54001",
+	"case_id": "54001",
+	"type": "search",
+	"button": "SUR PLACE",
+	"image": "res://assets/field/lieu_centrale_chaufferie.webp",
+	"title": "VISITE  //  CENTRALE N° 3, ATELIER DES CHAUDIÈRES",
+	"time_action": "search_home",
+	"turns": 4,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"54001"
+			]
+		}
+	],
+	"start_flags": {
+		"54001.site_visited": true
+	},
+	"art": "",
+	"verb": "Vous examinez : ",
+	"hint": "Cliquez sur un endroit de l'image pour l'examiner. Le bulletin est à 20 h : chaque heure ici est une heure de moins.",
+	"turns_label": "%d endroit(s) à examiner",
+	"intro": "L'atelier sent encore la suie et l'huile chaude. La chaudière n° 2 n'est plus qu'un trou noir derrière une bâche ; sa jumelle, la n° 1, tourne toujours, « production prioritaire ».\n\nUn milicien garde la porte. « Dix minutes, inspecteur. Le capitaine ORLIK a dit : on ne touche à rien. »",
+	"options": [
+		{
+			"id": "boiler",
+			"label": "La chaudière n° 1, jumelle de celle qui a sauté",
+			"spot": [
+				0.545,
+				0.25,
+				0.2,
+				0.42
+			],
+			"text": "Sur le flanc de la n° 1, le logement de la soupape de sûreté. Il n'y a pas de soupape : un boulon, du chanvre tressé, un fil de fer. Un bouchon de fortune, posé par des mains qui savaient ce qu'elles faisaient et n'avaient rien d'autre.\n\nLa n° 2 était équipée pareil. Il n'a fallu ni explosif ni saboteur.",
+			"note": [
+				"f_ch_plug"
+			]
+		},
+		{
+			"id": "valves",
+			"label": "Les vannes de la conduite principale",
+			"spot": [
+				0.0,
+				0.33,
+				0.06,
+				0.13
+			],
+			"text": "Chaque vanne porte une étiquette cartonnée, jaunie par la vapeur : « Pièce commandée 09.86 — visa L. O. — en attente ». Six étiquettes. La plus ancienne date de mars.",
+			"note": [
+				"f_ch_tags"
+			]
+		},
+		{
+			"id": "control_panel",
+			"label": "Le tableau de commande, au mur",
+			"spot": [
+				0.175,
+				0.375,
+				0.06,
+				0.155
+			],
+			"text": "Le levier d'arrêt d'urgence est ligaturé au fil de fer. Une étiquette y pend : « NE PAS ARRÊTER — production prioritaire — par ordre, 14.11 ». Trois jours avant l'explosion.",
+			"note": [
+				"f_ch_lever"
+			]
+		},
+		{
+			"id": "door_log",
+			"label": "Le registre de quart, accroché à la porte",
+			"spot": [
+				0.255,
+				0.33,
+				0.075,
+				0.2
+			],
+			"text": "Le registre de quart de la nuit du 16 au 17, écrit au crayon gras. Dernière ligne de la main de Jonas RUDA : « 02 h 00 — soupape n° 2 siffle. Demande l'arrêt. Refusé par téléphone (bureau du capitaine). » Il est mort dix minutes plus tard.",
+			"note": [
+				"f_ch_ruda_alarm"
+			]
+		},
+		{
+			"id": "stairs",
+			"label": "Sous les marches de la passerelle",
+			"spot": [
+				0.365,
+				0.42,
+				0.07,
+				0.27
+			],
+			"text": "Un petit carnet à spirale, tombé entre deux marches. Le carnet d'apprentie de Mira SEDLAR : elle notait la pression toutes les heures, pour RUDA. Dernière ligne, 01 h 45 : « 16 bar. RUDA dit de ne pas toucher, il appelle. »\n\nLa « saboteuse » faisait les relevés.",
+			"note": [
+				"f_ch_mira_log"
+			],
+			"set_flags": {
+				"54001.mira_logbook_found": true
+			}
+		},
+		{
+			"id": "bucket",
+			"label": "Le seau et la pelle, près du foyer",
+			"spot": [
+				0.69,
+				0.47,
+				0.11,
+				0.36
+			],
+			"text": "Sur le manche de la pelle, peint en blanc : « RUDA ». Coincée sous l'anse du seau, une photo de deux enfants devant un sapin. Le milicien détourne les yeux. Rien pour le dossier.",
+			"set_flags": {
+				"54001.ruda_family_seen": true
+			}
+		},
+		{
+			"id": "coal",
+			"label": "La trémie à charbon",
+			"spot": [
+				0.81,
+				0.54,
+				0.19,
+				0.46
+			],
+			"text": "Vous fouillez le charbon jusqu'au coude. Pas de détonateur, pas d'emballage, pas de mèche. Du charbon humide, de mauvaise qualité. Le milicien vous regarde vous salir les mains sans rien dire."
+		}
+	],
+	"outro": "Le milicien referme la porte derrière vous. Dans la cour, la sirène de relève sonne comme si de rien n'était. Il est presque l'heure du bulletin.",
+	"ambience": {
+		"dust": 0.7,
+		"flicker": 0.8,
+		"grain": 0.6
+	}
+}

@@ -116,6 +116,26 @@ Six endroits, quatre fouilles.
 Conséquence : `52310.home_searched`. Le lendemain, M. DUBEK (Section 7) fait
 savoir qu'il sait et pose les scellés (suspicion +2, `section7.noticed_search`).
 
+## 2 ter. Actes 2 et 3 : quatre scènes (27.10, fen : « 2D voire 2.5D »)
+
+fen a tranché le 27.10 : pas de 3D, de la 2D et de la 2.5D. Deux outils neufs :
+
+- **La lampe** (`darkness`) : la pièce est dans le noir. On promène une lampe
+  à la souris ou au doigt ; ce qu'elle éclaire apparaît sur l'image et rejoint
+  la liste des endroits. Toucher un endroit sombre y pose la lampe (mobile).
+- **L'ambiance 2.5D** (`ambience`) : l'image dérive lentement, grain, poussière,
+  lumière qui vacille. Visuel seulement ; réglage « Scènes de terrain animées ».
+
+| Scène | Dossier | Ce qu'elle apporte |
+| --- | --- | --- |
+| Sous-sol B, à la lampe (4 fouilles / 8 endroits) | 53760 | Bordereaux contresignés « B. » (contredit le vol), carnet de permanence (contredit le « sabotage »), original du 40921, chemise vide « VOSK, A. — 1971 », carton « Contrôle interne — B. » à l'encre verte, travée HALVEK « reclassée », photo « Avec A. — avant » dans le manteau de KREMER |
+| Chaufferie de la Centrale (4 / 7) | 54001 | Bouchon à la place de la soupape (contredit le sabotage), étiquettes « visa L. O. — en attente » (contredit le matériel conforme), arrêt ligaturé « par ordre », registre de quart : RUDA a donné l'alerte, carnet de Mira |
+| Chevet de REIS (5 questions, sang-froid 60) | 54012 | Aucun souvenir de 4 h, la soupape, pas de silhouette ; les deux visiteurs « pour le capitaine » seulement s'il est ébranlé (sang-froid 20 à 50) ; la menace fait sortir l'inspecteur |
+| Atelier d'ADLER, deux pièces (4 / 6) | 54030 | Radio sans ondes courtes, clientèle d'État (contredit le réseau), pendule bloquée à 06h05, notes du père dans sa pendule (« Demander à K. »), cahier de L'HEURE JUSTE versé au dossier (`heure_juste.list_in_file`) |
+
+Fil du père : la chemise vide (53760) puis les notes de la pendule (54030)
+désignent K. = KREMER, qui a connu A. VOSK à la Section 2 (photo de 1969).
+
 ## 2 bis. Décors en 3D (demande de fen du 2026-10-25)
 
 fen veut un visuel plus riche, « en 3D par exemple », avec des modèles qu'il

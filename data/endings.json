@@ -46,7 +46,7 @@
 				}
 			],
 			"lines": [
-				"Vous n'avez rien dénoncé, rien publié, rien crié. Vous avez seulement gardé : l'original du registre que MAZUR avait truqué, et cette feuille absurde où VERITAS, nourri des vrais documents, affiche « sabotage : 0 % ».",
+				"Vous n'avez rien dénoncé, rien publié, rien crié. Vous avez seulement gardé : l'original du registre qu'on avait truqué avant de vous le confier, et cette feuille absurde où VERITAS, nourri des vrais documents, affiche « sabotage : 0 % ».",
 				"Un matin, votre casier est vide et votre badge ne passe plus. On ne vous arrête pas — on ne veut pas de procès autour de ce que vous détenez. Les papiers, eux, ont quitté le Ministère dans une doublure de manteau.",
 				"Quelque part, hors d'atteinte, la preuve existe. C'est peu. C'est tout ce qui compte."
 			]
@@ -88,6 +88,26 @@
 			]
 		},
 		{
+			"id": "fin_miroir",
+			"title": "LE MIROIR PARFAIT",
+			"stamp": "IRRÉPROCHABLE",
+			"rules": [
+				{
+					"requires_flags": [
+						"act4.mirror_signed_clean"
+					],
+					"min_indicators": {
+						"loyalty": 70
+					}
+				}
+			],
+			"lines": [
+				"Vous avez tout signé. SEDLAR, la Centrale, et jusqu'au dossier de votre propre père — réécrit d'une main qui n'a pas tremblé. « Émigré de son plein gré. » Classé.",
+				"Le Ministère vous cite en exemple. Grade supérieur, bureau au premier étage, une plaque à votre nom. Sur le papier, vous êtes parfait : pas une contradiction, pas un remords, pas un vide.",
+				"Pas un vide, sauf un. Mais celui-là, vous l'avez signé vous-même, et personne ne viendra jamais le rouvrir."
+			]
+		},
+		{
 			"id": "fin_milice",
 			"title": "L'ALLIÉ DE LA MILICE",
 			"stamp": "PROMU",
@@ -96,12 +116,18 @@
 					"requires_flags": [
 						"milice.ally",
 						"54001.orlik_protected"
+					],
+					"forbidden_flags": [
+						"milice.hostile"
 					]
 				},
 				{
 					"requires_flags": [
 						"milice.ally",
 						"milice.favor_owed"
+					],
+					"forbidden_flags": [
+						"milice.hostile"
 					]
 				}
 			],
@@ -131,26 +157,6 @@
 				"Vous avez trop cherché, trop noté, trop hésité. Le contrôle interne tient ces choses pour des symptômes, pas pour de la conscience.",
 				"Le dossier 54100 ne se referme pas : il grossit. Votre nom, vos dates, vos heures de service, la ligne scellée de votre père. L'inspectrice BRANDT, votre voisine de couloir, signe la couverture d'un trait égal.",
 				"Vous étiez l'inspecteur. Vous êtes devenu le sujet. La boucle se ferme, comme elle s'était fermée sur lui."
-			]
-		},
-		{
-			"id": "fin_miroir",
-			"title": "LE MIROIR PARFAIT",
-			"stamp": "IRRÉPROCHABLE",
-			"rules": [
-				{
-					"requires_flags": [
-						"act4.mirror_signed_clean"
-					],
-					"min_indicators": {
-						"loyalty": 70
-					}
-				}
-			],
-			"lines": [
-				"Vous avez tout signé. SEDLAR, la Centrale, et jusqu'au dossier de votre propre père — réécrit d'une main qui n'a pas tremblé. « Émigré de son plein gré. » Classé.",
-				"Le Ministère vous cite en exemple. Grade supérieur, bureau au premier étage, une plaque à votre nom. Sur le papier, vous êtes parfait : pas une contradiction, pas un remords, pas un vide.",
-				"Pas un vide, sauf un. Mais celui-là, vous l'avez signé vous-même, et personne ne viendra jamais le rouvrir."
 			]
 		},
 		{

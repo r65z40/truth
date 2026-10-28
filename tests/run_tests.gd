@@ -61,6 +61,12 @@ func _run() -> void:
 		"test_field_bakery_visit",
 		"test_field_benes_search",
 		"test_field_chorale",
+		"test_field_lamp",
+		"test_field_ambience",
+		"test_field_archive_53760",
+		"test_field_centrale_54001",
+		"test_field_reis_54012",
+		"test_field_workshop_54030",
 		"test_fate_card",
 		"test_comparison",
 		"test_timeline",
@@ -129,6 +135,7 @@ func _run() -> void:
 		"test_image_slots",
 		"test_media_catalog",
 		"test_desk_traces",
+		"test_scenario_flags_reachable",
 		"test_evening_echoes",
 		"test_time_in_desk",
 		"test_endings",
@@ -386,6 +393,17 @@ func test_english_version() -> void:
 			if value != "" and value == Localization.text(value) and value.contains("é"):
 				untranslated.append("%s.%s" % [case_id, key])
 	check(untranslated.is_empty(), "titres, résumés et objectifs des dossiers traduits %s" % str(untranslated))
+	# Scènes de terrain des actes 2-3 : textes, endroits et procès-verbaux traduits.
+	var field_french: Array = []
+	for scene_id in ["archive_53760", "visit_54001", "audition_54012", "search_54030"]:
+		var scene := FieldRules.get_scene(scene_id)
+		for text: String in [scene.title, scene.intro, scene.outro] + FieldRules.all_options(scene).map(
+				func(o: Dictionary) -> String: return o.label + o.text):
+			if text.contains("é") or text.contains("è") or text.contains("à "):
+				field_french.append(scene_id)
+	check(field_french.is_empty(), "scènes de terrain des actes 2-3 traduites %s" % str(field_french))
+	check(CaseLibrary.get_fact(CaseLibrary.get_case("53760"), "f_kb_slips").label.begins_with("Withdrawal slips"),
+			"procès-verbal du sous-sol B traduit")
 	check(FictionalCalendar.format_long(0) == "MONDAY 3 NOVEMBER 1986", "date en anglais : %s" % FictionalCalendar.format_long(0))
 	check(FictionalCalendar.format_compact(0).begins_with("MON."), "date courte en anglais")
 	var progress := DossiersWindow.progress_text({"documents": [{}, {}]},
@@ -1228,6 +1246,175 @@ func test_field_chorale() -> void:
 	GameState.apply_decision("53118", "clear")
 	check(GameState.flags.get("53118.choir_cleared") == true and GameState.flags.get("kremer.contact") == true,
 			"la visite seule suffit à classer la veillée comme autorisée")
+	GameState.new_game()
+
+
+## Prépare une partie au jour 2 (travail de terrain débloqué) avec le dossier
+## attribué, et commence sa scène de terrain.
+func _start_field_scene(case_id: String) -> Dictionary:
+	GameState.new_game()
+	GameState.end_day()
+	GameState.assign_case(case_id)
+	GameState.hours_used = 0
+	return GameState.start_field(case_id)
+
+
+## La lampe : logique pure du halo, puis l'écran qui ne liste que ce qu'on a éclairé.
+func test_field_lamp() -> void:
+	check(FieldRules.is_lit([0.4, 0.4, 0.1, 0.1], Vector2(0.45, 0.45), 0.1, 16.0 / 9.0),
+			"la lampe posée sur la zone l'éclaire")
+	check(FieldRules.is_lit([0.4, 0.4, 0.1, 0.1], Vector2(0.55, 0.45), 0.1, 16.0 / 9.0),
+			"le halo déborde un peu autour de la lampe")
+	check(not FieldRules.is_lit([0.4, 0.4, 0.1, 0.1], Vector2(0.9, 0.9), 0.1, 16.0 / 9.0),
+			"une zone loin de la lampe reste dans le noir")
+	# Le halo est un cercle : 0,06 de largeur compte plus que 0,06 de hauteur.
+	check(FieldRules.is_lit([0.0, 0.5, 0.01, 0.01], Vector2(0.0, 0.56), 0.065, 16.0 / 9.0)
+			and not FieldRules.is_lit([0.5, 0.0, 0.01, 0.01], Vector2(0.56, 0.0), 0.065, 16.0 / 9.0),
+			"le rayon tient compte du format de l'image")
+	var scene := FieldRules.get_scene("archive_53760")
+	check(FieldRules.has_darkness(scene) and not FieldRules.has_darkness(FieldRules.get_scene("visit_53118")),
+			"seul le sous-sol B est plongé dans le noir")
+	check(FieldRules.lamp_start(scene) == Vector2(0.33, 0.42), "la lampe part de la lampe du bureau")
+	var lit := FieldRules.lit_options(FieldRules.all_options(scene), Vector2(0.92, 0.9), 0.13, 16.0 / 9.0)
+	check(lit.is_empty(), "le coin vide du sous-sol n'éclaire rien")
+	# Écran : la liste ne montre que les endroits repérés à la lampe.
+	GameState.new_game()
+	Settings.field_3d = false
+	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	check(screen.preview("53760"), "aperçu du sous-sol B")
+	check(screen._lamp.visible, "le voile d'obscurité est posé sur l'image")
+	check(screen.get_choice_ids() == ["radiator"], "au départ, la lampe n'éclaire que le radiateur, près du bureau")
+	screen.set_lamp(Vector2(0.92, 0.9))
+	check(screen.get_choice_ids() == ["radiator"], "dans le coin vide, rien de nouveau n'apparaît")
+	screen.set_lamp(Vector2(0.53, 0.55))
+	var found := screen.get_choice_ids()
+	check("tray" in found and not "coat" in found, "la lampe sur le bac révèle le bac, pas le manteau")
+	screen.set_lamp(Vector2(0.19, 0.7))
+	found = screen.get_choice_ids()
+	check("coat" in found and "tray" in found, "un endroit repéré reste dans la liste quand la lampe s'éloigne")
+	screen.choose("tray")
+	check("f_kb_slips" in GameState.get_case_state("53760").noted_facts, "fouiller un endroit repéré note son élément")
+	screen.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+## L'ambiance 2.5D : réglages par scène, valeurs par défaut, et coupure par le réglage.
+func test_field_ambience() -> void:
+	var plain := FieldRules.ambience(FieldRules.get_scene("visit_53118"))
+	check(plain.drift == 1.0 and plain.dust == 0.0 and plain.grain == 0.5, "sans réglage : dérive et grain légers, pas de poussière")
+	var boiler := FieldRules.ambience(FieldRules.get_scene("visit_54001"))
+	check(boiler.flicker > 0.0 and boiler.dust > 0.0, "la chaufferie a sa suie et son ampoule qui vacille")
+	check(FieldRules.ambience({"ambience": {"dust": 4}}).dust == 1.0, "les valeurs sont bornées entre 0 et 1")
+	GameState.new_game()
+	Settings.field_3d = false
+	var was_on := Settings.field_motion
+	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	Settings.field_motion = true
+	screen.preview("54001")
+	check(screen._drift > 0.0, "réglage actif : l'image dérive")
+	Settings.field_motion = false
+	screen.preview("54001")
+	check(screen._drift == 0.0 and screen.get_node("%Art").get_parent().scale == Vector2.ONE,
+			"réglage coupé : l'image reste fixe")
+	Settings.field_motion = was_on
+	screen.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+## Sous-sol B (53760) : un autre chemin vers l'innocence de KREMER, et le fil du père.
+func test_field_archive_53760() -> void:
+	check(CaseLibrary.validate_case(CaseLibrary.get_case("53760")).is_empty(), "le dossier 53760 reste valide")
+	check(not _start_field_scene("53760").is_empty(), "la visite du sous-sol B commence")
+	check(GameState.flags.get("53760.basement_visited") == true, "la visite est connue")
+	for option_id in ["tray", "drawer", "cabinet", "desk"]:
+		GameState.field_choose("archive_53760", option_id)
+	var noted: Array = GameState.get_case_state("53760").noted_facts
+	for fact_id in ["f_kb_slips", "f_kb_night", "f_kb_folder", "f_kb_original"]:
+		check(fact_id in noted, "relevé du sous-sol B versé au carnet : %s" % fact_id)
+	check(GameState.get_field_state("archive_53760").finished, "quatre fouilles épuisent la visite")
+	check(GameState.confront_facts("53760", "f_kb_slips", "f_sig_theft") == "kremer.theft",
+			"les bordereaux contresignés « B. » contredisent le vol « non enregistré »")
+	check(GameState.confront_facts("53760", "f_kb_night", "f_link_sabotage") == "kremer.motive",
+			"le carnet de permanence contredit le « sabotage documentaire »")
+	check(GameState.flags.get("vosk.father_folder_seen") == true, "la chemise vide du père est vue")
+	GameState.new_game()
+
+
+## Chaufferie de la Centrale (54001) : la défaillance se voit sur place.
+func test_field_centrale_54001() -> void:
+	check(CaseLibrary.validate_case(CaseLibrary.get_case("54001")).is_empty(), "le dossier 54001 reste valide")
+	check(not _start_field_scene("54001").is_empty(), "la visite de la chaufferie commence")
+	for option_id in ["boiler", "valves", "door_log", "stairs"]:
+		GameState.field_choose("visit_54001", option_id)
+	check(GameState.confront_facts("54001", "f_ch_plug", "f_dir_order") == "centrale.cause",
+			"la soupape remplacée par un bouchon contredit l'ordre de retenir le sabotage")
+	check(GameState.confront_facts("54001", "f_ch_tags", "f_inc_material") == "centrale.material",
+			"les pièces en attente contredisent le « matériel conforme »")
+	check(GameState.confront_facts("54001", "f_ch_ruda_alarm", "f_susp_dead") == "suspect.dead",
+			"RUDA a donné l'alerte : il n'est pas le saboteur commode")
+	check(GameState.flags.get("54001.mira_logbook_found") == true, "le carnet de Mira est retrouvé")
+	GameState.new_game()
+
+
+## Chevet de REIS (54012) : l'aveu ne vient que si le témoin est ébranlé sans être brisé.
+func test_field_reis_54012() -> void:
+	check(CaseLibrary.validate_case(CaseLibrary.get_case("54012")).is_empty(), "le dossier 54012 reste valide")
+	check(not _start_field_scene("54012").is_empty(), "l'audition au chevet commence")
+	var ids := func() -> Array:
+		return GameState.get_field_options("audition_54012").map(func(o: Dictionary) -> String: return o.id)
+	check(GameState.field_composure("audition_54012") == 60, "REIS commence avec 60 de sang-froid")
+	check(not "q_visitors" in ids.call(), "trop calme, il ne parle pas encore de ses visiteurs")
+	GameState.field_choose("audition_54012", "q_signed")
+	check("q_visitors" in ids.call(), "ébranlé par la déposition, il peut parler de la nuit")
+	GameState.field_choose("audition_54012", "q_visitors")
+	var noted: Array = GameState.get_case_state("54012").noted_facts
+	check("f_reis_no_memory" in noted and "f_reis_visitors" in noted, "ses déclarations vont au carnet")
+	check(GameState.confront_facts("54012", "f_reis_no_memory", "f_depo_time") == "temoin.lucidity",
+			"aucun souvenir de 4 h : la déposition « lucide » est contredite")
+	GameState.field_choose("audition_54012", "q_threat")
+	check(GameState.get_field_state("audition_54012").finished and GameState.flags.get("54012.reis_frightened") == true,
+			"le menacer fait sortir l'inspecteur : l'audition s'arrête")
+	# Autre chemin : présenter la fiche médicale.
+	_start_field_scene("54012")
+	GameState.note_fact("54012", "f_med_sedated")
+	GameState.field_present("audition_54012", "f_med_sedated")
+	check("f_reis_no_memory" in GameState.get_case_state("54012").noted_facts,
+			"la fiche médicale présentée lui fait dire qu'il dormait")
+	GameState.new_game()
+
+
+## Atelier d'ADLER (54030) : deux pièces, la pendule du père, et le cahier qu'on verse au dossier.
+func test_field_workshop_54030() -> void:
+	check(CaseLibrary.validate_case(CaseLibrary.get_case("54030")).is_empty(), "le dossier 54030 reste valide")
+	var scene := FieldRules.get_scene("search_54030")
+	check(FieldRules.has_rooms(scene) and FieldRules.start_room(scene).id == "atelier", "on entre par la boutique")
+	check(FieldRules.room_of_option(scene, "father_clock") == "arriere", "la pendule du père est dans l'arrière-boutique")
+	check(not _start_field_scene("54030").is_empty(), "la perquisition de l'atelier commence")
+	for option_id in ["radio_box", "bench", "father_clock", "wardrobe"]:
+		GameState.field_choose("search_54030", option_id)
+	check(GameState.confront_facts("54030", "f_at_radio", "f_sig_radio") == "adler.radio",
+			"un récepteur sans ondes courtes contredit la « radio à ondes courtes »")
+	check(GameState.confront_facts("54030", "f_at_clients", "f_sig_network") == "adler.network",
+			"une clientèle d'État contredit le « réseau de sabotage »")
+	check(GameState.flags.get("vosk.father_notes_found") == true and GameState.flags.get("vosk.father_clue") == true,
+			"les notes du père sont retrouvées dans sa pendule")
+	check(GameState.flags.get("heure_juste.list_in_file") == true, "le cahier de L'HEURE JUSTE est versé au dossier")
+	# Sans image livrée, chaque pièce a son décor dessiné.
+	Settings.field_3d = false
+	var screen: FieldScreen = load("res://scenes/field/field_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	GameState.new_game()
+	check(screen.preview("54030"), "aperçu de l'atelier")
+	var art: FieldArt = screen.get_node("%Art")
+	check(not art.has_image() and art.scene == "clock_shop", "la boutique est dessinée en attendant son image")
+	screen._go_to_room("arriere")
+	check(art.scene == "clock_back" and "father_clock" in screen.get_choice_ids(), "l'arrière-boutique a son décor et ses endroits")
+	screen.queue_free()
+	await get_tree().process_frame
 	GameState.new_game()
 
 
@@ -3312,7 +3499,7 @@ func test_desk_traces() -> void:
 		state.flags[flag] = true
 	check(DeskTraces.visible_traces(state).size() == DeskTraces.MAX_VISIBLE, "au plus trois papiers à la fois")
 	var known := {}
-	for path in ["res://data/cases", "res://data/events", "res://data"]:
+	for path in ["res://data/cases", "res://data/events", "res://data/field", "res://data"]:
 		for file_name in DirAccess.get_files_at(path):
 			if file_name.ends_with(".json"):
 				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))
@@ -3330,6 +3517,65 @@ func test_desk_traces() -> void:
 	desk.queue_free()
 	GameState.new_game()
 	await get_tree().process_frame
+
+
+## Audit du scénario : tout drapeau lu par une fin, le dossier personnel ou une
+## vérité d'archive doit être posé quelque part, et les correctifs tiennent dans le
+## vrai déroulé des journées.
+func test_scenario_flags_reachable() -> void:
+	var known := {}
+	for path in ["res://data/cases", "res://data/events", "res://data/field", "res://data"]:
+		for file_name in DirAccess.get_files_at(path):
+			if file_name.ends_with(".json"):
+				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))
+	for ending: Dictionary in EndingRules.get_endings():
+		for rule: Dictionary in ending.get("rules", []):
+			for flag in rule.get("requires_flags", []):
+				check(known.has(flag), "fin %s : le drapeau %s est posé quelque part" % [ending.id, flag])
+	var assessment := FileAccess.get_file_as_string("res://data/assessment.json")
+	for result in RegEx.create_from_string("\"flag\":\\s*\"([a-z0-9_.]+)\"").search_all(assessment):
+		check(known.has(result.get_string(1)), "dossier personnel : le drapeau %s est posé quelque part" % result.get_string(1))
+	for file_name in DirAccess.get_files_at("res://data/cases"):
+		if not file_name.begins_with("case_"):
+			continue
+		for decision: Dictionary in DataLoader.load_json("res://data/cases".path_join(file_name)).get("decisions", []):
+			for flag in decision.get("archive_truth", {}).get("requires_flags", []):
+				check(known.has(flag), "%s : la vérité d'archive (%s) peut s'afficher" % [file_name, flag])
+
+	# La Fuite des originaux : l'original gardé suffit, au jour 17, à poser veritas.zero.
+	GameState.new_game()
+	GameState.flags["act2.original_kept"] = true
+	GameState.day_index = 16
+	var fired: Array = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("veritas_zero_kept" in fired and GameState.flags.get("veritas.zero") == true,
+			"original gardé : la feuille « 0 % » est conservée au jour 17")
+	check(EndingRules.resolve({"flags": GameState.flags, "indicators": {"suspicion": 20}}).id == "fin_fuite",
+			"La Fuite des originaux est atteignable par le vrai déroulé")
+	GameState.new_game()
+	GameState.day_index = 16
+	GameState.end_day()
+	check(not GameState.flags.has("veritas.zero"), "sans l'original, pas de feuille « 0 % »")
+
+	# Le dossier 54100 inscrit le joueur comme sujet.
+	GameState.new_game()
+	GameState.day_index = 12
+	GameState.end_day()
+	check(GameState.flags.get("vosk.subject") == true, "dossier 54100 attribué : vous êtes le sujet")
+
+	# L'Allié de la Milice suppose de ne pas s'être brouillé avec elle.
+	var milice := {"milice.ally": true, "milice.favor_owed": true}
+	check(EndingRules.resolve({"flags": milice, "indicators": {}}).id == "fin_milice", "allié de la Milice → sa fin")
+	milice["milice.hostile"] = true
+	check(EndingRules.resolve({"flags": milice, "indicators": {}}).id != "fin_milice",
+			"allié puis brouillé avec la Milice : plus de fin de la Milice")
+	var loyal := {"milice.ally": true, "milice.favor_owed": true, "act4.mirror_signed_clean": true}
+	check(EndingRules.resolve({"flags": loyal, "indicators": {"loyalty": 80}}).id == "fin_miroir",
+			"MIROIR signé sans réserve : le Miroir parfait prime sur la Milice")
+	var notes := FileAccess.get_file_as_string("res://data/events/events.json")
+	check(not notes.contains("aux archives lundi"), "les notes de KREMER ne datent plus son départ")
+	check(not FileAccess.get_file_as_string("res://data/cases/case_53118.json").contains("soir de la Sainte-Agathe"),
+			"la veillée du 9 novembre n'est plus la Sainte-Agathe (février)")
+	GameState.new_game()
 
 
 ## Drapeaux posés (valeur true) dans un fichier de données JSON.
@@ -3354,7 +3600,7 @@ func test_evening_echoes() -> void:
 	check(EveningRules.intro_text(EveningRules.evening_for_day(2), {"day_index": 2, "flags": {}}).contains("horloge"),
 			"acte 1 : l'horloge de la gare rappelle le père")
 	var known := {}
-	for path in ["res://data/cases", "res://data/events", "res://data"]:
+	for path in ["res://data/cases", "res://data/events", "res://data/field", "res://data"]:
 		for file_name in DirAccess.get_files_at(path):
 			if file_name.ends_with(".json"):
 				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))

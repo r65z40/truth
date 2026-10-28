@@ -1,0 +1,164 @@
+{
+	"note": "Perquisition de l'atelier de V. ADLER, bloc 7 (dossier 54030). Deux pièces : la boutique et l'arrière-boutique, où dort la pendule du père. Pas encore d'image livrée : décors dessinés (clock_shop, clock_back) en attendant search_54030_atelier.webp et search_54030_arriere.webp. Chaque choix pose field.search_54030.<id> ; les éléments du procès-verbal pv_atelier_adler en dépendent. spot : fractions de l'image (ou du dessin), à recaler avec F2 quand les images arriveront.",
+	"id": "search_54030",
+	"case_id": "54030",
+	"type": "search",
+	"button": "PERQUISITION",
+	"title": "PERQUISITION  //  ATELIER ADLER, BLOC 7, REZ-DE-CHAUSSÉE",
+	"time_action": "search_home",
+	"turns": 4,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"54030"
+			]
+		}
+	],
+	"start_flags": {
+		"54030.workshop_searched": true
+	},
+	"art": "clock_shop",
+	"intro": "Le scellé de la Milice pend, déjà décollé. L'atelier sent l'huile fine et le laiton. Partout des pendules, et aucune ne bat : la Milice les a toutes arrêtées pendant la rafle.\n\nVous connaissez cette porte. Enfant, vous attendiez ici que votre père ait fini de parler avec le vieil ADLER.",
+	"rooms": [
+		{
+			"id": "atelier",
+			"label": "La boutique",
+			"start": true,
+			"art": "clock_shop",
+			"image": "res://assets/field/search_54030_atelier.webp",
+			"doors": [
+				{
+					"to": "arriere",
+					"label": "Passer dans l'arrière-boutique",
+					"spot": [
+						0.906,
+						0.13,
+						0.08,
+						0.64
+					]
+				}
+			],
+			"options": [
+				{
+					"id": "wall",
+					"label": "Le mur des pendules",
+					"spot": [
+						0.06,
+						0.07,
+						0.41,
+						0.36
+					],
+					"text": "Vingt pendules arrêtées, toutes sur la même heure : celle de la rafle, 05 h 20. Toutes sauf une, petite, en bois clair, arrêtée à 06 h 05. Ses aiguilles ont été bloquées à la main, avec un fil.\n\n06 h 05. Le dessin du poêle des SEDLAR. Celui de votre escalier.",
+					"note": [
+						"f_at_0605"
+					],
+					"set_flags": {
+						"adler.heure_juste_sign": true
+					}
+				},
+				{
+					"id": "bench",
+					"label": "L'établi et les fiches de réparation",
+					"spot": [
+						0.5,
+						0.53,
+						0.38,
+						0.24
+					],
+					"text": "Sous la loupe, une boîte de fiches. La pendule de l'école n° 4, la pointeuse de l'usine de chaussures, l'horloge de la gare centrale : toutes commandées par des services de l'État, toutes payées au tarif réglementaire, avec tampon. Un réparateur, pas un réseau.",
+					"note": [
+						"f_at_clients"
+					]
+				},
+				{
+					"id": "radio_box",
+					"label": "Le carton du poste de radio",
+					"spot": [
+						0.06,
+						0.53,
+						0.19,
+						0.24
+					],
+					"text": "Le carton d'origine du poste saisi, avec sa notice : « Récepteur VELMIRA 3 — ondes moyennes et longues ». Pas d'ondes courtes. L'étiquette « ondes courtes » du procès-verbal de saisie a été écrite par la Milice.",
+					"note": [
+						"f_at_radio"
+					]
+				}
+			]
+		},
+		{
+			"id": "arriere",
+			"label": "L'arrière-boutique",
+			"art": "clock_back",
+			"image": "res://assets/field/search_54030_arriere.webp",
+			"doors": [
+				{
+					"to": "atelier",
+					"label": "Revenir dans la boutique",
+					"spot": [
+						0.016,
+						0.13,
+						0.06,
+						0.64
+					]
+				}
+			],
+			"options": [
+				{
+					"id": "father_clock",
+					"label": "La pendule sous le drap, sur l'étagère",
+					"spot": [
+						0.09,
+						0.2,
+						0.19,
+						0.3
+					],
+					"text": "Sous le drap, une pendule de voyage. Étiquette : « A. VOSK — déposée mars 1971 ». Dans le boîtier, à la place du balancier, un papier plié en huit, de l'écriture de votre père :\n\n« Salle 3 et couloir B : − 12 min les soirs d'interpellation. Réglées PAR ORDRE. Qui signe l'ordre ? Demander à K. »\n\nK.",
+					"note": [
+						"f_at_father_notes"
+					],
+					"set_flags": {
+						"vosk.father_clue": true,
+						"vosk.father_notes_found": true
+					}
+				},
+				{
+					"id": "cot",
+					"label": "Le lit de camp",
+					"spot": [
+						0.34,
+						0.57,
+						0.31,
+						0.23
+					],
+					"text": "Le lit d'ADLER, fait au carré. Sous l'oreiller, une photo : ADLER, votre père, et un enfant de neuf ans au pied de l'horloge de la gare. L'enfant, c'est vous. Vous ne vous souveniez pas de cette photo. Rien pour le dossier.",
+					"set_flags": {
+						"adler.photo_seen": true
+					}
+				},
+				{
+					"id": "wardrobe",
+					"label": "Le double fond de l'armoire",
+					"spot": [
+						0.72,
+						0.13,
+						0.19,
+						0.64
+					],
+					"text": "Le fond de l'armoire sonne creux. Derrière, un cahier d'écolier : des noms, des dates, des heures. « M. 12.10 : pointé 06 h 05 au lieu de 06 h 40. » « Famille T. : train de 22 h 40 tenu. » Ceux que L'HEURE JUSTE a couverts.\n\nVotre stylo est déjà sur le procès-verbal. Le cahier est versé au dossier.",
+					"note": [
+						"f_at_list"
+					],
+					"set_flags": {
+						"heure_juste.list_in_file": true
+					}
+				}
+			]
+		}
+	],
+	"outro": "Vous recollez le scellé de la Milice, mal. Dans l'escalier, une voisine vous regarde descendre. Elle dira qu'elle vous a vu sortir de chez ADLER. Elle dira aussi que vous étiez seul.",
+	"ambience": {
+		"drift": 0.6,
+		"dust": 0.6
+	}
+}

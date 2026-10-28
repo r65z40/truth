@@ -153,7 +153,7 @@
 			"fields": [
 				[
 					"Suspect 1",
-					"Mira SEDLAR, 23 ans, apprentie-technicienne, équipe de nuit (survivante)"
+					"Mira SEDLAR, 19 ans, apprentie-technicienne, équipe de nuit (survivante)"
 				],
 				[
 					"— lien",
@@ -252,6 +252,78 @@
 					"value": "ORLIK veut étouffer les réquisitions",
 					"label": "Le capitaine ORLIK demande un saboteur pour couvrir ses réquisitions détournées",
 					"quote": "Si on parle de pièces manquantes, c'est moi qu'on regarde."
+				}
+			]
+		},
+		{
+			"id": "pv_chaufferie",
+			"type": "report",
+			"title": "Procès-verbal de visite, atelier des chaudières de la Centrale n° 3",
+			"source": "Section 4, visite conduite par l'inspecteur A. VOSK",
+			"reliability": "B",
+			"date": "1986-11-17",
+			"conditions": {
+				"requires_flags": [
+					"field.visit_54001.started"
+				]
+			},
+			"veritas_remark": "Constatations de terrain postérieures au sinistre, sous garde de la Milice. Valeur administrative limitée selon le système.",
+			"body": "Visite de l'atelier des chaudières de la Centrale n° 3, le lendemain du sinistre, sous la garde d'un milicien. Éléments relevés :",
+			"facts": [
+				{
+					"id": "f_ch_plug",
+					"key": "centrale.cause",
+					"value": "Soupape remplacée par un bouchon de fortune",
+					"label": "Chaudière n° 1, jumelle de la n° 2 : pas de soupape de sûreté, un bouchon de fortune à sa place",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_54001.boiler"
+						]
+					}
+				},
+				{
+					"id": "f_ch_tags",
+					"key": "centrale.material",
+					"value": "Pièces en attente depuis mars, visa L. O.",
+					"label": "Vannes de la conduite : six étiquettes « pièce commandée — visa L. O. — en attente », la plus ancienne de mars",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_54001.valves"
+						]
+					}
+				},
+				{
+					"id": "f_ch_lever",
+					"key": "centrale.stop_sealed",
+					"value": "Arrêt d'urgence ligaturé « par ordre »",
+					"label": "Tableau de commande : levier d'arrêt ligaturé, « NE PAS ARRÊTER — production prioritaire — par ordre, 14.11 »",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_54001.control_panel"
+						]
+					}
+				},
+				{
+					"id": "f_ch_ruda_alarm",
+					"key": "suspect.dead",
+					"value": "RUDA a donné l'alerte à 02 h",
+					"label": "Registre de quart : à 02 h, RUDA signale la soupape et demande l'arrêt, refusé par le bureau du capitaine",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_54001.door_log"
+						]
+					}
+				},
+				{
+					"id": "f_ch_mira_log",
+					"key": "mira.logbook",
+					"value": "Mira faisait les relevés de pression",
+					"label": "Carnet d'apprentie de Mira SEDLAR : relevés de pression horaires, « RUDA dit de ne pas toucher »",
+					"conditions": {
+						"requires_flags": [
+							"field.visit_54001.stairs"
+						]
+					}
 				}
 			]
 		}
@@ -468,5 +540,6 @@
 		"from": "R. MAZUR, Directeur adjoint, Section 4",
 		"subject": "Dossier 54001 : votre question",
 		"body": "Inspecteur,\n\nVous me demandez quoi faire d'une usine qui explose et d'une Direction qui veut un nom pour 20 h.\n\nLisez le registre d'entretien avant le rapport de la Milice. Demandez-vous qui visait les réquisitions de cette chaudière, et pourquoi le même homme signe le rapport qui parle de sabotage. Ensuite, choisissez en sachant ce que vous choisissez. Moi, je n'ai rien dit.\n\nR. MAZUR"
-	}
+	},
+	"field_scene": "visit_54001"
 }
