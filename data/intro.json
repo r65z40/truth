@@ -4,12 +4,12 @@
 		{
 			"art": "city",
 			"title": "VELMIRA, NOVEMBRE 1986",
-			"text": "Une petite république d'Europe centrale. L'électricité manque, la frontière de Halvek est surveillée, et le ministère de la Sécurité nationale veille sur chaque citoyen."
+			"text": "Une petite république d'Europe centrale. L'électricité manque, la frontière de Halvek est surveillée. Le ministère de la Sécurité nationale tient un dossier sur chaque citoyen, et dans les rues la Milice arrête ceux qu'on lui désigne."
 		},
 		{
 			"art": "badge",
 			"title": "VOUS ÊTES A. VOSK",
-			"text": "Inspecteur de 3e classe, premier jour à la Section 4. Votre père, horloger, a disparu en 1971. Le ministère vous a recruté quand même. Ou peut-être pour cette raison."
+			"text": "Inspecteur de 3e classe, premier jour à la Section 4. Votre père était horloger agréé : il réglait les horloges de la gare et des ministères. En 1971, on lui a retiré son agrément, puis il a disparu sans explication. D'ordinaire, le ministère n'engage pas le fils d'un homme tombé en disgrâce. Vous, il vous a pris. Personne ne vous a dit pourquoi."
 		},
 		{
 			"art": "dossier",
@@ -19,7 +19,7 @@
 		{
 			"art": "clock",
 			"title": "HUIT HEURES PAR JOUR",
-			"text": "Une journée de service dure huit heures, de 08h00 à 16h00. Lire une pièce, la noter, confronter deux éléments : c'est gratuit. Mais interroger, perquisitionner, demander une archive ou consulter votre supérieur coûte des heures. Vous pouvez tirer jusqu'à deux heures supplémentaires — au prix de votre soirée. Vous ne pourrez pas tout faire sur chaque dossier : choisir où creuser, c'est déjà une décision."
+			"text": "Une journée de service dure huit heures, de 08h00 à 16h00. Lire une pièce, la noter, confronter deux éléments : c'est gratuit. Mais interroger, perquisitionner, demander une archive ou consulter votre supérieur coûte des heures. Vous pouvez tirer jusqu'à deux heures supplémentaires — au prix de votre soirée. Vous ne pourrez pas tout faire sur chaque dossier : choisir où creuser, c'est déjà une décision. Quand votre journée est finie, cliquez sur FIN DE SERVICE, en bas à droite de l'écran."
 		},
 		{
 			"art": "signature",

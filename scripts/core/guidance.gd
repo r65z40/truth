@@ -13,16 +13,31 @@ extends RefCounted
 ## le premier dossier, qui sert de tutoriel.
 
 const MIN_NOTED_FACTS := 2
+## Pli d'accueil, puis mémento « qui fait quoi » (Milice, Section 7, VERITAS...),
+## à lire avant le premier dossier.
+const WELCOME_MESSAGE_ID := "welcome_mazur"
+const MEMO_MESSAGE_ID := "memento_agent"
 
 
-## state : {cases, flags, day_index} (GameState.get_condition_state())
+## state : {cases, flags, day_index} (GameState.get_condition_state()), plus
+## hours_used (heures de service employées aujourd'hui, 0 par défaut).
 ## messages : GameState.messages
 static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 	for message in messages:
-		if message.id == "welcome_mazur" and not message.read:
+		if message.id == WELCOME_MESSAGE_ID and not message.read:
 			return _step(UiText.of("Lire le message de prise de fonction de R. MAZUR."),
 					UiText.of("Cliquez sur l'icône COURRIER, dans la colonne de gauche."), "messages", "",
 					UiText.of("Bienvenue, inspecteur. Pas d'inquiétude : je vous guide pas à pas. Suivez le bandeau « À FAIRE », en haut, et l'icône qui clignote. Pour commencer, ouvrez votre courrier."))
+	for message in messages:
+		if message.id == MEMO_MESSAGE_ID and not message.read:
+			return _step(UiText.of("Lire le mémento : qui fait quoi au ministère (Milice, Section 7, VERITAS...)."),
+					UiText.of("Dans le COURRIER, cliquez sur le pli « Mémento de l'agent »."), "messages", "",
+					UiText.of("Avant votre premier dossier, lisez le mémento. Il explique qui est la Milice, ce que fait la Section 7, à quoi sert VERITAS, et comment finir votre journée."))
+	# Plus une heure de service, même en heures supplémentaires : il ne reste qu'à rentrer.
+	if WorkTime.remaining(int(state.get("hours_used", 0))) <= 0:
+		return _step(UiText.of("Vos heures de service sont épuisées : terminez la journée."),
+				UiText.of("Bouton FIN DE SERVICE, en bas à droite."), "end_day", "",
+				UiText.of("Il n'y a plus une heure à prendre aujourd'hui. Cliquez sur FIN DE SERVICE, en bas à droite : les dossiers en cours vous attendront demain."))
 	var cases: Dictionary = state.get("cases", {})
 	for case_id in cases:
 		var case_state: Dictionary = cases[case_id]

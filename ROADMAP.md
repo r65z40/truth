@@ -340,6 +340,19 @@ Rapport complet : document « Audit du scénario » (lien dans la pull request).
       du ministère de la Sécurité nationale
 - [ ] ~120 drapeaux posés jamais lus : suites proposées dans le rapport d'audit
 
+## Retours du test complet de fen (28.10)
+
+- [x] Introduction : la phrase sur le père est réécrite (horloger agréé, agrément retiré
+      en 1971, disparu ; le ministère a quand même pris son fils, sans dire pourquoi) ;
+      la Milice est nommée dès la première page ; FIN DE SERVICE annoncé
+- [x] Mémento de l'agent dans le courrier du premier jour (ministère, Section 4,
+      Section 7, Milice, Parti, VERITAS, Direction du personnel, Halvek, fiabilité,
+      fin de journée), conseillé par le guide juste après le message de MAZUR
+- [x] FIN DE SERVICE mis en avant : style rouge propre (`EndDayButton`), guidé toute
+      la première journée, clignote et rappel à 16h00, étape « heures épuisées »
+- [x] Classer les dossiers conclus (CLASSER / DOSSIERS CLASSÉS / RESSORTIR) et mettre
+      les plis lus à la corbeille (SUPPRIMER / CORBEILLE / RESTAURER) ; sauvegarde v7
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)

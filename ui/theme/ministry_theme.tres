@@ -366,6 +366,40 @@ content_margin_top = 5.0
 content_margin_right = 9.0
 content_margin_bottom = 3.0
 
+[sub_resource type="StyleBox" id="sb_bevel_end_day"]
+script = ExtResource("bevel")
+face = Color(0.557, 0.122, 0.122, 1)
+light = Color(0.816, 0.29, 0.227, 1)
+shadow = Color(0.32, 0.07, 0.07, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+content_margin_left = 12.0
+content_margin_top = 4.0
+content_margin_right = 12.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBox" id="sb_bevel_end_day_hover"]
+script = ExtResource("bevel")
+face = Color(0.66, 0.17, 0.15, 1)
+light = Color(0.88, 0.4, 0.33, 1)
+shadow = Color(0.36, 0.08, 0.08, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+content_margin_left = 12.0
+content_margin_top = 4.0
+content_margin_right = 12.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBox" id="sb_bevel_end_day_pressed"]
+script = ExtResource("bevel")
+face = Color(0.557, 0.122, 0.122, 1)
+light = Color(0.816, 0.29, 0.227, 1)
+shadow = Color(0.32, 0.07, 0.07, 1)
+dark = Color(0.07, 0.07, 0.06, 1)
+sunken = true
+content_margin_left = 13.0
+content_margin_top = 5.0
+content_margin_right = 11.0
+content_margin_bottom = 3.0
+
 [sub_resource type="StyleBox" id="sb_taskbar"]
 script = ExtResource("bevel")
 face = Color(0.62, 0.6, 0.55, 1)
@@ -662,6 +696,20 @@ TaskButton/styles/pressed = SubResource("sb_bevel_button_pressed")
 TaskButton/styles/hover_pressed = SubResource("sb_bevel_button_pressed")
 TaskButton/styles/disabled = SubResource("sb_bevel_button")
 TaskButton/styles/focus = SubResource("sb_empty")
+EndDayButton/base_type = &"Button"
+EndDayButton/colors/font_color = Color(0.91, 0.894, 0.847, 1)
+EndDayButton/colors/font_focus_color = Color(0.91, 0.894, 0.847, 1)
+EndDayButton/colors/font_hover_color = Color(1, 0.98, 0.93, 1)
+EndDayButton/colors/font_pressed_color = Color(0.91, 0.894, 0.847, 1)
+EndDayButton/colors/font_hover_pressed_color = Color(1, 0.98, 0.93, 1)
+EndDayButton/font_sizes/font_size = 15
+EndDayButton/fonts/font = SubResource("font_mono_bold")
+EndDayButton/styles/normal = SubResource("sb_bevel_end_day")
+EndDayButton/styles/hover = SubResource("sb_bevel_end_day_hover")
+EndDayButton/styles/pressed = SubResource("sb_bevel_end_day_pressed")
+EndDayButton/styles/hover_pressed = SubResource("sb_bevel_end_day_pressed")
+EndDayButton/styles/disabled = SubResource("sb_bevel_end_day")
+EndDayButton/styles/focus = SubResource("sb_empty")
 StartButton/base_type = &"Button"
 StartButton/colors/font_color = Color(0.1, 0.09, 0.08, 1)
 StartButton/colors/font_focus_color = Color(0.1, 0.09, 0.08, 1)

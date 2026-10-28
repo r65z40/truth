@@ -75,6 +75,8 @@ var _toast_tween: Tween
 ## étape, même si le joueur a fermé la bulle de MAZUR. S'efface une fois rodé.
 var _guide_bar: PanelContainer
 var _guide_bar_label: Label
+## Jour où l'on a déjà prévenu que l'horloge marque 16h00 (une fois par jour).
+var _day_over_notice_day := -1
 
 ## Largeur des papiers posés sur le bureau et marge par rapport aux bords.
 const TRACE_WIDTH := 300
@@ -433,9 +435,13 @@ func _build_guide_bar() -> void:
 
 ## Met à jour l'aide : le bandeau, la bulle et l'icône signalée clignotent doucement.
 func _refresh_objective() -> void:
-	current_step = Guidance.next_step(GameState.get_condition_state(), GameState.messages)
+	var guide_state := GameState.get_condition_state()
+	guide_state["hours_used"] = GameState.hours_used
+	current_step = Guidance.next_step(guide_state, GameState.messages)
+	# Toute la première journée reste guidée, jusqu'au bouton FIN DE SERVICE
+	# compris ; ensuite, l'aide s'efface après deux dossiers conclus.
 	var in_tutorial: bool = Settings.guidance \
-			and GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED
+			and (GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED or GameState.day_index == 0)
 	# Bandeau permanent : la prochaine étape en clair, toujours visible au début.
 	if _guide_bar:
 		_guide_bar.visible = in_tutorial
@@ -450,11 +456,33 @@ func _refresh_objective() -> void:
 		_pulse_tween.kill()
 	for button: Control in _target_buttons.values():
 		button.modulate = Color.WHITE
+	var pulsing: Array[Control] = []
 	var target: Control = _target_buttons.get(current_step.target)
 	if Settings.guidance and target:
-		_pulse_tween = create_tween().set_loops()
-		_pulse_tween.tween_property(target, "modulate", Color(0.6, 1.4, 0.8), 0.7)
-		_pulse_tween.tween_property(target, "modulate", Color.WHITE, 0.7)
+		pulsing.append(target)
+	# 16h00 passées : FIN DE SERVICE clignote aussi, même sans l'aide.
+	if GameState.hours_used >= WorkTime.day_hours():
+		_notify_day_over()
+		if not %EndDayButton in pulsing:
+			pulsing.append(%EndDayButton)
+	if not pulsing.is_empty():
+		_pulse_tween = create_tween().set_loops().set_parallel()
+		for button in pulsing:
+			_pulse_tween.tween_property(button, "modulate", Color(0.6, 1.4, 0.8), 0.7)
+		_pulse_tween.chain()
+		for button in pulsing:
+			_pulse_tween.tween_property(button, "modulate", Color.WHITE, 0.7)
+
+
+## Une fois par jour, quand l'horloge atteint 16h00 : rappelle où finir la journée.
+func _notify_day_over() -> void:
+	if _day_over_notice_day == GameState.day_index:
+		return
+	_day_over_notice_day = GameState.day_index
+	if WorkTime.remaining(GameState.hours_used) <= 0:
+		show_toast(tr("Vos heures sont épuisées.\nCliquez sur FIN DE SERVICE, en bas à droite."), 4.0)
+	else:
+		show_toast(tr("16h00 : votre service est terminé.\nFIN DE SERVICE, en bas à droite, ou heures supplémentaires."), 4.0)
 
 
 ## Identifiant stable de l'étape conseillée, pour retenir laquelle le joueur a
