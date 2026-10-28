@@ -3,7 +3,8 @@ extends MinistryWindow
 ## Fenêtre « Dossiers » : le classeur. Liste des dossiers, pièces du dossier
 ## (lues ou à lire), lecture d'une pièce (ou ouverture dans sa propre fenêtre),
 ## carnet d'enquête (noter et confronter des éléments), avancement de l'enquête
-## et formulaire de conclusion.
+## et formulaire de conclusion. Un dossier conclu peut être classé (CLASSER) :
+## il quitte la liste, mais reste consultable sous « DOSSIERS CLASSÉS ».
 ##
 ## Lit CaseLibrary et GameState ; toutes les modifications passent par GameState.
 
@@ -56,6 +57,8 @@ var _open_aside_button: Button
 ## Pièce pour laquelle la bulle d'aide a déjà fait défiler jusqu'aux éléments.
 var _guide_scrolled_document := ""
 var _photo := IdPhoto.new()
+## Vrai quand la liste montre les dossiers classés plutôt que les dossiers en cours.
+var showing_filed := false
 
 @onready var _case_list: VBoxContainer = %CaseList
 @onready var _notebook: Control = %Notebook
@@ -89,12 +92,16 @@ var _doc_icon: TextureRect
 @onready var _compare_button: Button = %CompareButton
 @onready var _timeline_button: Button = %TimelineButton
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
+@onready var _file_button: Button = %FileButton
+@onready var _filed_toggle: Button = %FiledToggle
 
 
 func _ready() -> void:
 	super()
 	_confront_button.pressed.connect(_on_confront_button)
 	_conclusion_button.pressed.connect(open_conclusion)
+	_file_button.pressed.connect(toggle_current_filed)
+	_filed_toggle.toggled.connect(show_filed)
 	_request_button.pressed.connect(request_next_document)
 	_consult_button.pressed.connect(consult_superior)
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
@@ -150,6 +157,10 @@ func select_case(case_id: String) -> void:
 	var case_data := GameState.get_case_view(case_id)
 	if case_data.is_empty():
 		return
+	# Un dossier classé ouvert depuis les archives : la liste passe sur les classés.
+	if GameState.is_case_filed(case_id) != showing_filed:
+		showing_filed = GameState.is_case_filed(case_id)
+		_filed_toggle.set_pressed_no_signal(showing_filed)
 	if case_id != current_case_id:
 		selected_facts.clear()
 		_set_confront_result("")
@@ -167,6 +178,38 @@ func select_case(case_id: String) -> void:
 			first_document = document.id
 			break
 	select_document(first_document)
+
+
+## Bascule la liste entre les dossiers en cours et les dossiers classés.
+func show_filed(on: bool) -> void:
+	showing_filed = on
+	_filed_toggle.set_pressed_no_signal(on)
+	if current_case_id != "" and GameState.is_case_filed(current_case_id) != on:
+		_clear_case()
+	_refresh_case_list()
+
+
+## Classe le dossier affiché (conclu), ou le ressort s'il est déjà classé.
+func toggle_current_filed() -> void:
+	if current_case_id == "":
+		return
+	var filing := not GameState.is_case_filed(current_case_id)
+	if not GameState.set_case_filed(current_case_id, filing):
+		return
+	notify.emit(tr("Dossier n° %s classé.") % current_case_id if filing \
+			else tr("Dossier n° %s remis parmi les dossiers en cours.") % current_case_id)
+	_clear_case()
+	_refresh_case_list()
+
+
+## Plus aucun dossier affiché (il vient d'être classé ou ressorti).
+func _clear_case() -> void:
+	current_case_id = ""
+	current_document_id = ""
+	selected_facts.clear()
+	_prove_key = ""
+	_conclusion_panel.hide()
+	_show_case_view(false)
 
 
 ## Briefing en tête du dossier : ce qu'on cherche (OBJET) et pourquoi ce dossier
@@ -550,6 +593,12 @@ func _refresh_all() -> void:
 	_refresh_actions_help()
 	_conclusion_button.disabled = not can_decide
 	_conclusion_button.text = tr("RÉDIGER LA CONCLUSION") if can_decide else tr("RAPPORT TRANSMIS")
+	# Un dossier conclu peut quitter la liste : CLASSER, ou RESSORTIR s'il est classé.
+	var filed := GameState.is_case_filed(current_case_id)
+	_file_button.visible = not can_decide
+	_file_button.text = tr("RESSORTIR") if filed else tr("CLASSER")
+	_file_button.tooltip_text = tr("Remettre ce dossier parmi les dossiers en cours.") if filed \
+			else tr("Ranger ce dossier conclu : il quitte la liste et reste consultable dans « DOSSIERS CLASSÉS ».")
 	# « Ouvrir à côté » ne sert qu'à comparer deux pièces : inutile si le dossier
 	# n'en a qu'une.
 	_open_aside_button.visible = not _conclusion_panel.visible and case_data.get("documents", []).size() >= 2
@@ -736,7 +785,17 @@ func _refresh_case_list() -> void:
 	for child in _case_list.get_children():
 		_case_list.remove_child(child)
 		child.queue_free()
+	var filed_count := 0
 	for case_id in GameState.cases:
+		if GameState.is_case_filed(case_id):
+			filed_count += 1
+	# Le bouton des classés n'apparaît qu'une fois un dossier classé.
+	_filed_toggle.visible = filed_count > 0 or showing_filed
+	_filed_toggle.text = tr("◂ RETOUR AUX DOSSIERS EN COURS") if showing_filed else tr("DOSSIERS CLASSÉS (%d)") % filed_count
+	%CaseListTitle.text = tr("DOSSIERS CLASSÉS") if showing_filed else tr("DOSSIERS ASSIGNÉS")
+	for case_id in GameState.cases:
+		if GameState.is_case_filed(case_id) != showing_filed:
+			continue
 		var case_data := GameState.get_case_view(case_id)
 		if case_data.is_empty():
 			continue

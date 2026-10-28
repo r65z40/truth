@@ -189,7 +189,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 focus_mode = 0
-theme_type_variation = &"TaskButton"
+theme_type_variation = &"EndDayButton"
 text = "FIN DE SERVICE"
 
 [node name="SoundButton" type="Button" parent="Main/Taskbar/Row"]

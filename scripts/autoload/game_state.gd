@@ -31,9 +31,11 @@ var player: Dictionary = {}
 var day_index: int = 0
 var indicators: Dictionary = {}
 ## case_id -> {status, viewed_documents, noted_facts, contradictions_found,
-##             contradictions_noticed, decision}
+##             contradictions_noticed, decision, filed}
+## filed : dossier conclu que le joueur a classé (masqué de la liste des dossiers).
 var cases: Dictionary = {}
-## Messages reçus : {id, from, subject, date_label, body, read}
+## Messages reçus : {id, from, subject, date_label, body, read, deleted}
+## deleted : pli lu que le joueur a mis à la corbeille (restaurable).
 var messages: Array = []
 ## Historique des décisions prises : {case_id, decision_id, day_index}
 var decisions: Array = []
@@ -383,6 +385,28 @@ func concluded_case_count() -> int:
 	return count
 
 
+## Un dossier ne peut être classé qu'une fois conclu (et pas déjà classé).
+func can_file_case(case_id: String) -> bool:
+	return cases.has(case_id) and not can_decide(case_id) and not is_case_filed(case_id)
+
+
+func is_case_filed(case_id: String) -> bool:
+	return cases.has(case_id) and cases[case_id].get("filed", false)
+
+
+## Classe un dossier conclu (filed = true) ou le ressort (false). Le dossier reste
+## dans la partie (archives, conditions, fins) : seule la liste l'affiche moins.
+## Renvoie false si l'opération est impossible.
+func set_case_filed(case_id: String, filed: bool) -> bool:
+	if filed and not can_file_case(case_id):
+		return false
+	if not filed and not is_case_filed(case_id):
+		return false
+	cases[case_id]["filed"] = filed
+	state_changed.emit()
+	return true
+
+
 ## Applique une décision : indicateurs, statut, drapeaux, historique, message du supérieur.
 ## Renvoie le résultat de DecisionRules.resolve(), ou {} si la décision est impossible.
 func apply_decision(case_id: String, decision_id: String) -> Dictionary:
@@ -677,6 +701,7 @@ func finish_game(ending_id: String) -> void:
 func receive_message(message: Dictionary, notify := true) -> void:
 	var entry := message.duplicate()
 	entry["read"] = false
+	entry["deleted"] = false
 	messages.append(entry)
 	if notify:
 		state_changed.emit()
@@ -688,6 +713,32 @@ func mark_message_read(message_id: String) -> void:
 			message.read = true
 			state_changed.emit()
 			return
+
+
+## Seul un pli déjà lu peut aller à la corbeille : on ne jette pas un ordre sans l'avoir lu.
+func can_delete_message(message_id: String) -> bool:
+	var message := get_message(message_id)
+	return not message.is_empty() and message.read and not message.get("deleted", false)
+
+
+## Met un pli à la corbeille (deleted = true) ou l'en ressort (false).
+## Renvoie false si l'opération est impossible.
+func set_message_deleted(message_id: String, deleted: bool) -> bool:
+	var message := get_message(message_id)
+	if deleted and not can_delete_message(message_id):
+		return false
+	if not deleted and not message.get("deleted", false):
+		return false
+	message["deleted"] = deleted
+	state_changed.emit()
+	return true
+
+
+func get_message(message_id: String) -> Dictionary:
+	for message in messages:
+		if message.id == message_id:
+			return message
+	return {}
 
 
 func get_unread_count() -> int:
@@ -792,6 +843,8 @@ func from_dict(data: Dictionary) -> void:
 		if not cases.has(case_id):
 			cases[case_id] = _new_case_state()
 	messages = data.get("messages", [])
+	for message: Dictionary in messages:
+		message["deleted"] = message.get("deleted", false)
 	decisions = data.get("decisions", [])
 	flags = data.get("flags", {})
 	fired_events = data.get("fired_events", [])
@@ -810,4 +863,4 @@ func from_dict(data: Dictionary) -> void:
 func _new_case_state() -> Dictionary:
 	return {"status": CASE_OPEN, "viewed_documents": [], "noted_facts": [],
 			"contradictions_found": [], "contradictions_noticed": [], "decision": "",
-			"requested_documents": {}, "consulted": false}
+			"requested_documents": {}, "consulted": false, "filed": false}

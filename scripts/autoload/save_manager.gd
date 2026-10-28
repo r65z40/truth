@@ -15,7 +15,9 @@ signal game_loaded
 ## 3 : événements différés déjà déclenchés (fired_events).
 ## 4 : horloge de service, pièces demandées, consultation, soirées, terrain.
 ## 5 : mémoire institutionnelle (ministry_record).
-const SAVE_VERSION := 6
+## 6 : contradictions repérées mais pas encore prouvées (contradictions_noticed).
+## 7 : dossiers classés (filed) et plis mis à la corbeille (deleted).
+const SAVE_VERSION := 7
 const DEFAULT_PATH := "user://savegame.json"
 
 ## Fichier utilisé quand aucun chemin n'est précisé (les tests le redirigent).
@@ -126,5 +128,12 @@ func _migrate(payload: Dictionary) -> Dictionary:
 		for case_state in payload.state.get("cases", {}).values():
 			case_state["contradictions_noticed"] = case_state.get("contradictions_noticed", [])
 		version = 6
+	if version == 6:
+		# v7 : le joueur peut classer ses dossiers conclus et jeter ses plis lus.
+		for case_state in payload.state.get("cases", {}).values():
+			case_state["filed"] = case_state.get("filed", false)
+		for message in payload.state.get("messages", []):
+			message["deleted"] = message.get("deleted", false)
+		version = 7
 	payload.save_version = version
 	return payload
