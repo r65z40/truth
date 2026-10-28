@@ -20,6 +20,7 @@
 			"veritas_remark": "Ouvrier sans responsabilité. Épouse en longue maladie. Aucun antécédent politique.",
 			"photo": {
 				"caption": "Cliché du 20.05.1985",
+				"image": "res://assets/portraits/visage_53517.webp",
 				"face": "square",
 				"hair": "short",
 				"gray": false,

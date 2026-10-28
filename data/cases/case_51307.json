@@ -19,6 +19,7 @@
 			"veritas_remark": "Membre du Parti depuis 25 ans, décoré. Indice de loyauté du sujet : élevé.",
 			"photo": {
 				"caption": "Cliché du 02.09.1980",
+				"image": "res://assets/portraits/visage_51307.webp",
 				"face": "round",
 				"hair": "receding",
 				"gray": true,

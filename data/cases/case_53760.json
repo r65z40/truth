@@ -28,6 +28,7 @@
 			"veritas_remark": "Ancien cadre de la Section 2. Rétrogradé en 1986. Accès de nuit aux archives centrales.",
 			"photo": {
 				"caption": "Cliché du 03.02.1986",
+				"image": "res://assets/portraits/visage_53760.webp",
 				"face": "long",
 				"hair": "receding",
 				"gray": true,

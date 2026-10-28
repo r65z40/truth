@@ -19,6 +19,7 @@
 			"veritas_remark": "Veuve, sans appartenance au Parti. Accès quotidien aux tickets : exposition au risque élevée.",
 			"photo": {
 				"caption": "Cliché du 21.01.1979",
+				"image": "res://assets/portraits/visage_52044.webp",
 				"face": "round",
 				"hair": "long",
 				"gray": true,

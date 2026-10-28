@@ -72,6 +72,7 @@
 			"veritas_remark": "Organiste de la paroisse depuis 1961. Fonction de rassemblement : facteur de risque.",
 			"photo": {
 				"caption": "Cliché du 03.11.1986",
+				"image": "res://assets/portraits/visage_53118.webp",
 				"face": "long",
 				"hair": "bun",
 				"gray": true,

@@ -93,6 +93,7 @@
 			"veritas_remark": "Famille résidant en zone frontalière. Facteur de risque : élevé.",
 			"photo": {
 				"caption": "Cliché du 14.05.1982",
+				"image": "res://assets/portraits/visage_40921.webp",
 				"face": "long",
 				"hair": "short",
 				"glasses": false,
