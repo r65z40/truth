@@ -81,7 +81,7 @@
 				0.095,
 				0.2
 			],
-			"text": "Tiroir du bas, étiqueté « 1971 ». Les chemises sont serrées, sauf une, plate comme une feuille : « VOSK, A. — Section 2 ». Vide. Un tampon sur la couverture : « Retiré sur ordre ».\n\nDerrière vous, KREMER dit seulement : « Pas maintenant, inspecteur. »",
+			"text": "Tiroir du bas, étiqueté « 1971 ». Les chemises sont serrées, sauf une, plate comme une feuille : « VOSK, A., horloger — inspection Section 2 ». Vide. Un tampon sur la couverture : « Retiré sur ordre ».\n\nDerrière vous, KREMER dit seulement : « Pas maintenant, inspecteur. »",
 			"note": [
 				"f_kb_folder"
 			],
@@ -129,7 +129,7 @@
 				0.11,
 				0.3
 			],
-			"text": "Dans la poche intérieure, une photo pliée en quatre : deux jeunes inspecteurs sur les marches du ministère, 1969. L'un est KREMER. Au dos : « Avec A. — avant. »\n\nKREMER vous la reprend des mains. « Ça, c'est à moi. » Il ne dit plus rien jusqu'à la fin.",
+			"text": "Dans la poche intérieure, une photo pliée en quatre : deux jeunes hommes sur les marches du ministère, 1969 : KREMER, en uniforme d'inspecteur, et un autre en blouse d'horloger. Au dos : « Avec A. — avant. »\n\nKREMER vous la reprend des mains. « Ça, c'est à moi. » Il ne dit plus rien jusqu'à la fin.",
 			"set_flags": {
 				"53760.kremer_photo_seen": true,
 				"53760.kremer_privacy": true

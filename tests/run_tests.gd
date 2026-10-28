@@ -135,6 +135,7 @@ func _run() -> void:
 		"test_image_slots",
 		"test_media_catalog",
 		"test_desk_traces",
+		"test_scenario_flags_reachable",
 		"test_evening_echoes",
 		"test_time_in_desk",
 		"test_endings",
@@ -3516,6 +3517,58 @@ func test_desk_traces() -> void:
 	desk.queue_free()
 	GameState.new_game()
 	await get_tree().process_frame
+
+
+## Audit du scénario : tout drapeau lu par une fin, le dossier personnel ou une
+## vérité d'archive doit être posé quelque part, et les correctifs tiennent dans le
+## vrai déroulé des journées.
+func test_scenario_flags_reachable() -> void:
+	var known := {}
+	for path in ["res://data/cases", "res://data/events", "res://data/field", "res://data"]:
+		for file_name in DirAccess.get_files_at(path):
+			if file_name.ends_with(".json"):
+				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))
+	for ending: Dictionary in EndingRules.get_endings():
+		for rule: Dictionary in ending.get("rules", []):
+			for flag in rule.get("requires_flags", []):
+				check(known.has(flag), "fin %s : le drapeau %s est posé quelque part" % [ending.id, flag])
+	var assessment := FileAccess.get_file_as_string("res://data/assessment.json")
+	for result in RegEx.create_from_string("\"flag\":\\s*\"([a-z0-9_.]+)\"").search_all(assessment):
+		check(known.has(result.get_string(1)), "dossier personnel : le drapeau %s est posé quelque part" % result.get_string(1))
+	for file_name in DirAccess.get_files_at("res://data/cases"):
+		if not file_name.begins_with("case_"):
+			continue
+		for decision: Dictionary in DataLoader.load_json("res://data/cases".path_join(file_name)).get("decisions", []):
+			for flag in decision.get("archive_truth", {}).get("requires_flags", []):
+				check(known.has(flag), "%s : la vérité d'archive (%s) peut s'afficher" % [file_name, flag])
+
+	# La Fuite des originaux : l'original gardé suffit, au jour 17, à poser veritas.zero.
+	GameState.new_game()
+	GameState.flags["act2.original_kept"] = true
+	GameState.day_index = 16
+	var fired: Array = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("veritas_zero_kept" in fired and GameState.flags.get("veritas.zero") == true,
+			"original gardé : la feuille « 0 % » est conservée au jour 17")
+	check(EndingRules.resolve({"flags": GameState.flags, "indicators": {"suspicion": 20}}).id == "fin_fuite",
+			"La Fuite des originaux est atteignable par le vrai déroulé")
+	GameState.new_game()
+	GameState.day_index = 16
+	GameState.end_day()
+	check(not GameState.flags.has("veritas.zero"), "sans l'original, pas de feuille « 0 % »")
+
+	# Le dossier 54100 inscrit le joueur comme sujet.
+	GameState.new_game()
+	GameState.day_index = 12
+	GameState.end_day()
+	check(GameState.flags.get("vosk.subject") == true, "dossier 54100 attribué : vous êtes le sujet")
+
+	# L'Allié de la Milice suppose de ne pas s'être brouillé avec elle.
+	var milice := {"milice.ally": true, "milice.favor_owed": true}
+	check(EndingRules.resolve({"flags": milice, "indicators": {}}).id == "fin_milice", "allié de la Milice → sa fin")
+	milice["milice.hostile"] = true
+	check(EndingRules.resolve({"flags": milice, "indicators": {}}).id != "fin_milice",
+			"allié puis brouillé avec la Milice : plus de fin de la Milice")
+	GameState.new_game()
 
 
 ## Drapeaux posés (valeur true) dans un fichier de données JSON.

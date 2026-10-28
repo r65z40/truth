@@ -272,7 +272,7 @@
 					"id": "f_kb_folder",
 					"key": "vosk.father_folder",
 					"value": "Chemise VOSK, A. vidée « sur ordre »",
-					"label": "Classeur 1971 : une chemise « VOSK, A. — Section 2 », vide, tamponnée « Retiré sur ordre »",
+					"label": "Classeur 1971 : une chemise « VOSK, A., horloger — inspection Section 2 », vide, tamponnée « Retiré sur ordre »",
 					"conditions": {
 						"requires_flags": [
 							"field.archive_53760.cabinet"

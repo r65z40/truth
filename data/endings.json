@@ -46,7 +46,7 @@
 				}
 			],
 			"lines": [
-				"Vous n'avez rien dénoncé, rien publié, rien crié. Vous avez seulement gardé : l'original du registre que MAZUR avait truqué, et cette feuille absurde où VERITAS, nourri des vrais documents, affiche « sabotage : 0 % ».",
+				"Vous n'avez rien dénoncé, rien publié, rien crié. Vous avez seulement gardé : l'original du registre qu'on avait truqué avant de vous le confier, et cette feuille absurde où VERITAS, nourri des vrais documents, affiche « sabotage : 0 % ».",
 				"Un matin, votre casier est vide et votre badge ne passe plus. On ne vous arrête pas — on ne veut pas de procès autour de ce que vous détenez. Les papiers, eux, ont quitté le Ministère dans une doublure de manteau.",
 				"Quelque part, hors d'atteinte, la preuve existe. C'est peu. C'est tout ce qui compte."
 			]
@@ -96,12 +96,18 @@
 					"requires_flags": [
 						"milice.ally",
 						"54001.orlik_protected"
+					],
+					"forbidden_flags": [
+						"milice.hostile"
 					]
 				},
 				{
 					"requires_flags": [
 						"milice.ally",
 						"milice.favor_owed"
+					],
+					"forbidden_flags": [
+						"milice.hostile"
 					]
 				}
 			],

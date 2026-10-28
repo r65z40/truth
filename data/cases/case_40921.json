@@ -56,11 +56,11 @@
 				],
 				[
 					"Situation",
-					"Marié (Vera SEDLAR, institutrice), un enfant"
+					"Marié (Vera SEDLAR, institutrice), deux enfants"
 				],
 				[
 					"Famille hors district",
-					"Mère : Irena SEDLAR, Halvek (zone frontalière). Sœur : Mira DOLAN, Halvek"
+					"Mère : Irena SEDLAR, Halvek (zone frontalière). Sœur : Hana DOLAN, Halvek"
 				],
 				[
 					"Antécédents",
@@ -80,7 +80,7 @@
 					"key": "sedlar.family",
 					"value": "Mère et sœur à Halvek",
 					"label": "Mère et sœur résident à Halvek (zone frontalière)",
-					"quote": "Mère : Irena SEDLAR, Halvek (zone frontalière). Sœur : Mira DOLAN, Halvek"
+					"quote": "Mère : Irena SEDLAR, Halvek (zone frontalière). Sœur : Hana DOLAN, Halvek"
 				},
 				{
 					"id": "f_identity_record",
@@ -134,7 +134,7 @@
 			"source": "Service des écoutes, central téléphonique du District 9",
 			"reliability": "B",
 			"date": "1986-10-19",
-			"body": "Ligne surveillée : cabine publique, rue de l'Unité (District 9)\nAppel sortant vers : Halvek, poste 2-114 (abonnée : M. DOLAN)\nDurée : 1 min 52 s. Transcription partielle.\n\nHOMME : ... je serai là mardi, comme convenu. Le premier train.\nFEMME : Tu es sûr ? Et ton chef ?\nHOMME : Il s'en occupe. Je lui ai rendu service, il me rend service.\nFEMME : Apporte les papiers de maman. Tous. On ne pourra pas recommencer.\nHOMME : Je sais. Ne dis rien au téléphone.\n[Fin de l'appel]\n\nNote de l'opérateur : voix masculine non identifiée formellement. Appel passé depuis la cabine la plus proche du domicile de SEDLAR.",
+			"body": "Ligne surveillée : cabine publique, rue de l'Unité (District 9)\nAppel sortant vers : Halvek, poste 2-114 (abonnée : H. DOLAN)\nDurée : 1 min 52 s. Transcription partielle.\n\nHOMME : ... je serai là mardi, comme convenu. Le premier train.\nFEMME : Tu es sûr ? Et ton chef ?\nHOMME : Il s'en occupe. Je lui ai rendu service, il me rend service.\nFEMME : Apporte les papiers de maman. Tous. On ne pourra pas recommencer.\nHOMME : Je sais. Ne dis rien au téléphone.\n[Fin de l'appel]\n\nNote de l'opérateur : voix masculine non identifiée formellement. Appel passé depuis la cabine la plus proche du domicile de SEDLAR.",
 			"facts": [
 				{
 					"id": "f_intercept_trip",
@@ -506,7 +506,7 @@
 	],
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
-		"what_happened": "SEDLAR s'est bien rendu à Halvek le 21 octobre. Il a apporté à sa sœur les papiers de leur mère malade pour constituer une demande de soins de l'autre côté de la frontière, avec des documents en partie falsifiés. Le chef d'équipe ORLIK a couvert son absence en échange de réparations faites gratuitement chez lui.",
+		"what_happened": "SEDLAR s'est bien rendu à Halvek le 21 octobre, sans que le registre de déplacements l'enregistre : les lignes qui le prouvent ont été ajoutées après coup (dossier 53761). Il a apporté à sa sœur les papiers de leur mère malade pour constituer une demande de soins de l'autre côté de la frontière, avec des documents en partie falsifiés. Le chef d'équipe ORLIK a couvert son absence en échange de réparations faites gratuitement chez lui.",
 		"involved": [
 			"40921",
 			"orlik_b",

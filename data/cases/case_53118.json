@@ -409,7 +409,8 @@
 					"flags": {
 						"53118.choir_arrested": true,
 						"53118.innocents_condemned": true,
-						"53118.decided": true
+						"53118.decided": true,
+						"53118.truth_known": true
 					}
 				},
 				{
@@ -423,7 +424,8 @@
 					"flags": {
 						"53118.choir_arrested": true,
 						"53118.innocents_condemned": true,
-						"53118.decided": true
+						"53118.decided": true,
+						"53118.truth_known": true
 					}
 				},
 				{

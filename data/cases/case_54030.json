@@ -445,7 +445,7 @@
 	},
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
-		"what_happened": "Viktor ADLER est un vieux réparateur d'horloges du bloc 7, voisin de VOSK, qui note depuis 1974 les heures de l'immeuble — en partie pour le réseau L'HEURE JUSTE, qui protège des gens en ajustant les horaires de pointage, en partie par habitude de concierge. Il n'a rien à voir avec l'explosion. En mars 1971, le père de VOSK, inspecteur, était venu l'interroger sur les horloges du ministère qui retardaient les soirs d'arrestation ; il a laissé sa pendule chez ADLER et a disparu peu après. La rafle des horlogers cherche un coupable commode au sabotage ; ADLER en est un.",
+		"what_happened": "Viktor ADLER est un vieux réparateur d'horloges du bloc 7, voisin de VOSK, qui note depuis 1974 les heures de l'immeuble — en partie pour le réseau L'HEURE JUSTE, qui protège des gens en ajustant les horaires de pointage, en partie par habitude de concierge. Il n'a rien à voir avec l'explosion. En mars 1971, le père de VOSK, horloger lui aussi, était venu l'interroger sur les horloges du ministère qui retardaient les soirs d'arrestation ; il a laissé sa pendule chez ADLER et a disparu peu après. La rafle des horlogers cherche un coupable commode au sabotage ; ADLER en est un.",
 		"involved": [
 			"54030",
 			"51307",

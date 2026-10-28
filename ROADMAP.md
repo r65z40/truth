@@ -319,6 +319,24 @@ caviarder) via le système de décisions existant — données pures, sans moteu
 - [ ] Facultatif (proposé à fen) : compteur « fins découvertes X/7 » au menu principal,
       pour inciter à rejouer. À faire si fen le valide.
 
+## Fait : audit de cohérence du scénario (demande de fen du 28.10)
+
+Rapport complet : document « Audit du scénario » (lien dans la pull request).
+- [x] La Fuite des originaux redevient atteignable : l'événement `veritas_zero_kept`
+      (jour 17, original du 40921 gardé) pose `veritas.zero`
+- [x] `vosk.subject` posé à l'attribution du dossier 54100 ; `53118.truth_known` posé
+      quand on arrête les onze en connaissant le permis ou la liste
+- [x] L'Allié de la Milice exclu si l'on s'est brouillé avec elle (`milice.hostile`)
+- [x] Le père est partout horloger (agréé, il réglait les horloges de l'État) ; KREMER
+      est l'inspecteur de la Section 2 qui a reçu son rapport de 1971 (« Demander à K. »)
+- [x] Famille SEDLAR : deux enfants, Mira 19 ans, la sœur de Halvek renommée Hana DOLAN ;
+      atelier d'ADLER situé au District 2 ; lettre BENES sans jour impossible ;
+      fin de la Fuite : le registre n'est plus « truqué par MAZUR »
+- [x] Test `test_scenario_flags_reachable` : tout drapeau lu par une fin, le dossier
+      personnel ou une vérité d'archive est posé quelque part
+- [ ] À trancher par fen : priorité des fins (Milice avant Miroir), notes de KREMER
+      qui annoncent « lundi » quel que soit le jour, ~120 drapeaux posés jamais lus
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
