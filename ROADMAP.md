@@ -353,6 +353,26 @@ Rapport complet : document « Audit du scénario » (lien dans la pull request).
 - [x] Classer les dossiers conclus (CLASSER / DOSSIERS CLASSÉS / RESSORTIR) et mettre
       les plis lus à la corbeille (SUPPRIMER / CORBEILLE / RESTAURER) ; sauvegarde v7
 
+## En cours : refonte de la prise en main (demande de fen du 01.11)
+
+Retour de fen après une partie complète : histoire et concept appréciés, mais forme
+trop compliquée (début difficile, trop d'informations, difficile de relier les
+documents). Proposition : https://claude.ai/artifact/S8yYfcLSN2DkhLVh764bVB ; fen a
+choisi de commencer par un prototype sur les deux premiers dossiers.
+
+- [x] Prototype de la fiche d'enquête (dossiers 40000 et 40921) : questions par
+      dossier (bloc `questions`, logique `CaseSheet`), éléments rangés seuls sous
+      leur question, « deux versions » quand deux pièces se contredisent, l'agent
+      retient une version (établit la contradiction), questions secondaires à
+      découvrir, rapport de conclusion qui reprend la fiche ; sauvegarde v8
+- [x] Écran allégé en mode fiche : en-tête du dossier sur une ligne (objet en tête
+      de la fiche, contexte replié), fiche en colonne à droite, plus de bulle de
+      MAZUR pendant la lecture des pièces (le bandeau suffit)
+- [x] Aide à l'enquête désactivée : carnet libre et CONFRONTER, comme avant
+- [ ] Test de fen dans Godot, puis questions des 15 autres dossiers
+- [ ] Une mécanique nouvelle par journée, gros dossiers livrés en deux temps
+- [ ] Liens visibles entre les pièces, bureau à 4 icônes
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)

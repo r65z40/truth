@@ -450,7 +450,8 @@ func _refresh_objective() -> void:
 				+ ("   —   " + hint if hint != "" else "")
 	# La bulle détaillée s'estompe une fois le joueur rodé ou s'il la ferme ; le
 	# repère clignotant sur l'icône reste tant que l'aide est activée.
-	coach.visible = in_tutorial \
+	# Une étape peut s'en tenir au bandeau (bubble = false) : une seule aide à l'écran.
+	coach.visible = in_tutorial and current_step.get("bubble", true) \
 			and _step_key(current_step) != _coach_dismissed_step
 	if _pulse_tween:
 		_pulse_tween.kill()

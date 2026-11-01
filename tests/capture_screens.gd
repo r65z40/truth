@@ -74,6 +74,9 @@ func _capture_all() -> void:
 	dossiers.select_document("work_report")
 	dossiers.note_fact("f_report_presence")
 	dossiers.note_fact("f_report_author")
+	# Fiche d'enquête : la question du 21 octobre a deux versions à trancher.
+	desk._refresh_objective()
+	await _snap("09b_fiche_deux_versions")
 	dossiers.toggle_fact_selection("f_report_author")
 	dossiers.toggle_fact_selection("f_log_trip")
 	dossiers.confront_selected()

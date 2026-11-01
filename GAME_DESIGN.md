@@ -224,5 +224,10 @@ le refus est mémorisé (`career.refused_promotion`).
 - 2026-10-25 : soirées, une action par soir, perdue en heures supplémentaires.
 - 2026-10-25 : terrain en scènes 2D fixes et cliquables (pas de 3D), validé par fen.
 - 2026-10-25 : fen demande ensuite des décors 3D (caméra fixe, objets cliquables), la 2D restant en réglage.
+- 2026-11-01 : fiche d'enquête (prototype validé par fen sur les deux premiers
+  dossiers). Chaque dossier pose des questions ; les éléments notés s'y rangent
+  seuls ; deux pièces qui répondent différemment à la même question forment
+  « deux versions » et l'agent choisit celle qu'il retient. Le jeu ne dit toujours
+  pas qui ment. Le carnet libre reste disponible si l'aide à l'enquête est coupée.
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

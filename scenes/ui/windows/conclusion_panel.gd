@@ -72,7 +72,31 @@ static func build_summary_bbcode(case_data: Dictionary, case_state: Dictionary) 
 		lines.append(UiText.of("[b]Contradictions établies :[/b]"))
 		for key in case_state.contradictions_found:
 			lines.append("  - %s" % describe_contradiction(case_data, key))
+	if CaseSheet.has_sheet(case_data):
+		lines.append(UiText.of("[b]Fiche d'enquête :[/b]"))
+		for line in sheet_lines(case_data, case_state):
+			lines.append("  - " + line)
 	return "\n".join(lines)
+
+
+## Fiche d'enquête reprise dans le rapport : chaque question découverte avec la
+## version retenue (ou ses réponses), et les questions restées sans réponse.
+static func sheet_lines(case_data: Dictionary, case_state: Dictionary) -> PackedStringArray:
+	var lines: PackedStringArray = []
+	for question in CaseSheet.build(case_data, case_state):
+		if question.state == CaseSheet.HIDDEN:
+			continue
+		var answer := UiText.of("sans réponse")
+		if question.retained != "":
+			for entry in question.answers:
+				if entry.fact_id == question.retained:
+					answer = UiText.of("version retenue : %s (%s)") % [entry.label, entry.document_title]
+		elif question.state in [CaseSheet.CONFLICT, CaseSheet.TO_PROVE]:
+			answer = UiText.of("deux versions, non tranché")
+		elif not question.answers.is_empty():
+			answer = "  /  ".join(PackedStringArray(question.answers.map(func(entry: Dictionary) -> String: return entry.label)))
+		lines.append(("%s %s" % [question.text, answer]).replace("[", "[lb]"))
+	return lines
 
 
 ## Formule lisible d'une contradiction, à partir des éléments qui portent sur la même clé.

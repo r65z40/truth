@@ -7,15 +7,40 @@
 		"objective": "Vérifier la demande de renouvellement de carte de résidence d'Ida NOVAK et relever toute incohérence.",
 		"context": "Dossier de routine, sans gravité, remis aux nouveaux inspecteurs. Deux pièces seulement : c'est l'occasion d'apprendre la marche à suivre avant les vrais dossiers."
 	},
+	"questions": [
+		{
+			"id": "address",
+			"text": "Où habite Ida NOVAK ?",
+			"keys": [
+				"novak.address"
+			],
+			"main": true
+		},
+		{
+			"id": "move",
+			"text": "A-t-elle déclaré un déménagement ?",
+			"keys": [
+				"novak.move"
+			]
+		},
+		{
+			"id": "job",
+			"text": "Où travaille-t-elle ?",
+			"keys": [
+				"novak.job"
+			]
+		}
+	],
 	"priority": "ordinaire",
 	"guide": {
 		"note": "Dossier zéro : tutoriel sur rails, une seule contradiction évidente.",
 		"open": "Commencez par cette vérification de routine : dossier n° 40000, Ida NOVAK. Ouvrez-le.",
 		"read": "Un dossier se compose de pièces. Cliquez sur la pièce marquée « à lire » pour la consulter. Il n'y en a que deux ici.",
-		"facts": "Les passages soulignés en rouge sont des éléments. Cliquez dessus pour les copier dans votre carnet. La déclaration et l'extrait du registre parlent tous deux de son adresse.",
+		"facts": "Les passages soulignés en rouge sont des éléments. Cliquez dessus : chacun se range tout seul sous la bonne question de la fiche, à droite. La déclaration et l'extrait du registre parlent tous deux de son adresse.",
 		"notebook": "Votre carnet est à gauche. Prenez les deux notes qui parlent de l'adresse, sélectionnez-les, puis cliquez sur CONFRONTER : elles ne disent pas la même chose.",
 		"notebook_retry": "Cherchez les deux notes qui portent sur le même point — l'adresse d'Ida NOVAK. La déclaration dit District 4 depuis 1981 ; le registre dit District 7 depuis septembre 1986. Confrontez ces deux-là.",
-		"conclusion": "Contradiction établie : vous avez de quoi conclure. Cliquez sur RÉDIGER LA CONCLUSION, choisissez, signez. Rien de grave ici — c'est un exercice, il n'y a pas de bonne réponse imposée."
+		"conclusion": "Contradiction établie : vous avez de quoi conclure. Cliquez sur RÉDIGER LA CONCLUSION, choisissez, signez. Rien de grave ici — c'est un exercice, il n'y a pas de bonne réponse imposée.",
+		"conflict": "La question « Où habite Ida NOVAK ? » a reçu deux réponses différentes : les deux pièces se contredisent. Choisissez la version que vous retenez. Une déclaration (fiabilité C) contre un registre officiel (fiabilité A) : à vous de juger."
 	},
 	"documents": [
 		{

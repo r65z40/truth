@@ -17,7 +17,8 @@ signal game_loaded
 ## 5 : mémoire institutionnelle (ministry_record).
 ## 6 : contradictions repérées mais pas encore prouvées (contradictions_noticed).
 ## 7 : dossiers classés (filed) et plis mis à la corbeille (deleted).
-const SAVE_VERSION := 7
+## 8 : fiche d'enquête, versions retenues par question (sheet_choices).
+const SAVE_VERSION := 8
 const DEFAULT_PATH := "user://savegame.json"
 
 ## Fichier utilisé quand aucun chemin n'est précisé (les tests le redirigent).
@@ -135,5 +136,10 @@ func _migrate(payload: Dictionary) -> Dictionary:
 		for message in payload.state.get("messages", []):
 			message["deleted"] = message.get("deleted", false)
 		version = 7
+	if version == 7:
+		# v8 : fiche d'enquête (version retenue quand une question a deux versions).
+		for case_state in payload.state.get("cases", {}).values():
+			case_state["sheet_choices"] = case_state.get("sheet_choices", {})
+		version = 8
 	payload.save_version = version
 	return payload

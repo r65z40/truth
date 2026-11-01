@@ -31,8 +31,10 @@ var player: Dictionary = {}
 var day_index: int = 0
 var indicators: Dictionary = {}
 ## case_id -> {status, viewed_documents, noted_facts, contradictions_found,
-##             contradictions_noticed, decision, filed}
+##             contradictions_noticed, decision, filed, sheet_choices}
 ## filed : dossier conclu que le joueur a classé (masqué de la liste des dossiers).
+## sheet_choices : fiche d'enquête, {question_id: fact_id} = version retenue par
+## l'agent quand une question a deux versions (voir CaseSheet).
 var cases: Dictionary = {}
 ## Messages reçus : {id, from, subject, date_label, body, read, deleted}
 ## deleted : pli lu que le joueur a mis à la corbeille (restaurable).
@@ -186,6 +188,29 @@ func confront_facts(case_id: String, fact_a_id: String, fact_b_id: String) -> St
 		case_state.contradictions_noticed.append(key)
 		state_changed.emit()
 	return key
+
+
+## Fiche d'enquête : l'agent retient l'une des deux versions d'une question en
+## conflit (voir CaseSheet). Retenir une version, c'est constater que les deux
+## pièces se contredisent : la contradiction est donc confrontée comme au carnet
+## (établie tout de suite, ou seulement repérée si elle a un prix). Le choix est
+## mémorisé pour le rapport de conclusion ; il ne dit rien de la vérité.
+## Renvoie la clé contredite, ou "" si le choix est impossible.
+func retain_version(case_id: String, question_id: String, fact_id: String) -> String:
+	if not can_decide(case_id):
+		return ""
+	var view := get_case_view(case_id)
+	var sheet := CaseSheet.build(view, get_case_state(case_id))
+	for question: Dictionary in sheet:
+		if question.id != question_id or question.conflict.is_empty() or not fact_id in question.conflict:
+			continue
+		var key := confront_facts(case_id, question.conflict[0], question.conflict[1])
+		if key == "":
+			return ""
+		get_case_state(case_id).sheet_choices[question_id] = fact_id
+		state_changed.emit()
+		return key
+	return ""
 
 
 ## État de l'établissement d'une contradiction, pour l'interface :
@@ -863,4 +888,4 @@ func from_dict(data: Dictionary) -> void:
 func _new_case_state() -> Dictionary:
 	return {"status": CASE_OPEN, "viewed_documents": [], "noted_facts": [],
 			"contradictions_found": [], "contradictions_noticed": [], "decision": "",
-			"requested_documents": {}, "consulted": false, "filed": false}
+			"requested_documents": {}, "consulted": false, "filed": false, "sheet_choices": {}}

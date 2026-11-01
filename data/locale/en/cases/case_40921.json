@@ -5,7 +5,6 @@
 	"Déterminer si Anton SEDLAR était à son poste le 21 octobre, ou s'il s'est déplacé sans le déclarer.": "Determine whether Anton SEDLAR was at his post on 21 October, or whether he travelled without declaring it.",
 	"Au tour du premier vrai dossier : Anton SEDLAR, technicien à la Centrale n° 3. Ouvrez-le.": "On to the first real file: Anton SEDLAR, technician at Power Station No. 3. Open it.",
 	"Un dossier se compose de pièces. Cliquez sur la pièce signalée, marquée « à lire ».": "A file is made up of documents. Click the highlighted document, marked \"to read\".",
-	"Les passages soulignés en rouge sont des éléments. Cliquez dessus pour les copier dans votre carnet. Le rapport de présence et le registre de déplacements parlent tous deux du 21 octobre.": "The passages underlined in red are items. Click them to copy them into your notebook. The attendance report and the travel register both talk about 21 October.",
 	"Votre carnet est à gauche. Sélectionnez deux éléments qui se contredisent, puis cliquez sur CONFRONTER.": "Your notebook is on the left. Select two items that contradict each other, then click COMPARE.",
 	"Ces deux éléments peuvent être vrais en même temps. Où était SEDLAR le 21 octobre ? Notez sa présence dans le rapport de présence, puis confrontez-la au trajet du registre de déplacements.": "Those two items can both be true at the same time. Where was SEDLAR on 21 October? Note his attendance in the attendance report, then compare it with the journey in the travel register.",
 	"Contradiction établie : vous avez de quoi conclure. Cliquez sur RÉDIGER LA CONCLUSION, choisissez, signez. Il n'y a pas de bonne réponse imposée.": "Contradiction established: you have enough to conclude. Click WRITE THE CONCLUSION, choose, sign. There is no imposed right answer.",
@@ -141,5 +140,12 @@
 	"Présence certifiée par la Direction du personnel": "Attendance certified by the Personnel Directorate",
 	"Écart entre présence et déplacement": "Gap between attendance and travel",
 	"Dossier 40921 : votre question": "File 40921: your question",
-	"Inspecteur,\n\nVous me demandez mon avis. Le voici, et il n'ira pas plus loin que ce bureau.\n\nUn registre de train ment rarement. Un chef d'équipe, plus souvent. Regardez qui signe quoi, et demandez-vous ce que chacun avait à y gagner.\n\nR. MAZUR": "Inspector,\n\nYou ask for my opinion. Here it is, and it will go no further than this office.\n\nA train register rarely lies. A team leader, more often. Look at who signs what, and ask yourself what each of them stood to gain.\n\nR. MAZUR"
+	"Inspecteur,\n\nVous me demandez mon avis. Le voici, et il n'ira pas plus loin que ce bureau.\n\nUn registre de train ment rarement. Un chef d'équipe, plus souvent. Regardez qui signe quoi, et demandez-vous ce que chacun avait à y gagner.\n\nR. MAZUR": "Inspector,\n\nYou ask for my opinion. Here it is, and it will go no further than this office.\n\nA train register rarely lies. A team leader, more often. Look at who signs what, and ask yourself what each of them stood to gain.\n\nR. MAZUR",
+	"Où était SEDLAR le 21 octobre ?": "Where was SEDLAR on 21 October?",
+	"Qui certifie sa présence ?": "Who vouches for his presence?",
+	"Est-ce bien lui qui a pris le train ?": "Was it really him on the train?",
+	"Pourquoi irait-il à Halvek ?": "Why would he go to Halvek?",
+	"Les papiers de sa mère sont-ils en règle ?": "Are his mother's papers in order?",
+	"Les passages soulignés en rouge sont des éléments. Cliquez dessus : chacun se range tout seul sous la bonne question de la fiche, à droite. Le rapport de présence et le registre de déplacements parlent tous deux du 21 octobre.": "The passages underlined in red are items. Click them: each one files itself under the right question of the sheet, on the right. The attendance report and the travel register both talk about 21 October.",
+	"Deux pièces ne disent pas la même chose sur le 21 octobre. Sur la fiche, choisissez la version que vous retenez : le rapport signé par ORLIK (fiabilité B), ou le registre du train (fiabilité A).": "Two documents do not say the same thing about 21 October. On the sheet, choose the version you keep: the report signed by ORLIK (reliability B), or the train register (reliability A)."
 }
