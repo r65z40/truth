@@ -45,6 +45,11 @@ func _run() -> void:
 		"test_save_migration_from_v2",
 		"test_save_migration_from_v3",
 		"test_save_migration_from_v5",
+		"test_save_migration_from_v6",
+		"test_file_cases_and_delete_messages",
+		"test_filing_in_windows",
+		"test_end_of_shift_guidance",
+		"test_intro_and_memo_texts",
 		"test_price_of_truth",
 		"test_work_time",
 		"test_request_and_consultation",
@@ -440,7 +445,7 @@ func test_new_game_defaults() -> void:
 	check(GameState.cases.has("40921"), "le dossier 40921 est assigné")
 	check(not GameState.cases.has("51307"), "le dossier 51307 n'arrive pas dès le premier jour")
 	check(GameState.get_case_state("40921").status == GameState.CASE_OPEN, "le dossier est ouvert")
-	check(GameState.get_unread_count() == 2, "deux messages non lus au départ")
+	check(GameState.get_unread_count() == 3, "trois messages non lus au départ (accueil, mémento, note VERITAS)")
 	check(GameState.day_index == 0 and GameState.decisions.is_empty(), "jour 0, aucune décision")
 
 
@@ -462,7 +467,7 @@ func test_document_and_message_tracking() -> void:
 	check(GameState.get_case_state("40921").viewed_documents == ["intercept"], "consultation enregistrée une seule fois")
 	check(emitted[0] == 1, "state_changed émis une seule fois")
 	GameState.mark_message_read("welcome_mazur")
-	check(GameState.get_unread_count() == 1, "message marqué comme lu")
+	check(GameState.get_unread_count() == 2, "message marqué comme lu")
 	GameState.state_changed.disconnect(on_change)
 
 
@@ -484,7 +489,7 @@ func test_save_roundtrip() -> void:
 	check(typeof(GameState.indicators.loyalty) == TYPE_INT, "les indicateurs restent des entiers")
 	check(GameState.day_index == 4, "date restaurée")
 	check(GameState.is_document_viewed("40921", "travel_log"), "pièces consultées restaurées")
-	check(GameState.get_unread_count() == 1, "messages lus restaurés")
+	check(GameState.get_unread_count() == 2, "messages lus restaurés")
 	check(GameState.flags.get("test_flag") == true, "drapeaux restaurés")
 	check(JSON.stringify(GameState.to_dict()) == JSON.stringify(expected), "état identique après rechargement")
 
@@ -762,6 +767,155 @@ func test_save_migration_from_v5() -> void:
 	file.close()
 	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "une sauvegarde v5 se charge")
 	check(GameState.get_case_state("40921").contradictions_noticed == [], "champ des contradictions repérées ajouté aux dossiers")
+
+
+func test_save_migration_from_v6() -> void:
+	GameState.new_game()
+	var data := GameState.to_dict()
+	for case_state in data.cases.values():
+		case_state.erase("filed")
+	for message in data.messages:
+		message.erase("deleted")
+	var file := FileAccess.open(TEST_SAVE_PATH, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"save_version": 6, "state": data}))
+	file.close()
+	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "une sauvegarde v6 se charge")
+	check(GameState.get_case_state("40921").filed == false, "v7 : les dossiers ne sont pas classés")
+	check(GameState.messages.all(func(m: Dictionary) -> bool: return m.deleted == false), "v7 : aucun pli à la corbeille")
+
+
+## Classer un dossier conclu, mettre un pli lu à la corbeille : règles et sauvegarde.
+func test_file_cases_and_delete_messages() -> void:
+	GameState.new_game()
+	check(not GameState.can_file_case("40000"), "un dossier non conclu ne se classe pas")
+	check(not GameState.set_case_filed("40000", true), "classement refusé avant la conclusion")
+	GameState.apply_decision("40000", "regularize")
+	check(GameState.can_file_case("40000"), "un dossier conclu peut être classé")
+	check(GameState.set_case_filed("40000", true) and GameState.is_case_filed("40000"), "le dossier est classé")
+	check(not GameState.can_file_case("40000"), "on ne classe pas deux fois")
+	check(GameState.cases.has("40000") and GameState.concluded_case_count() == 1,
+			"un dossier classé reste dans la partie (archives, fins)")
+	check(not GameState.can_delete_message("welcome_mazur"), "un pli non lu ne va pas à la corbeille")
+	GameState.mark_message_read("welcome_mazur")
+	check(GameState.set_message_deleted("welcome_mazur", true), "un pli lu va à la corbeille")
+	check(GameState.get_message("welcome_mazur").deleted and not GameState.can_delete_message("welcome_mazur"),
+			"le pli est dans la corbeille")
+	check(SaveManager.save_game(GameState, TEST_SAVE_PATH) == OK, "sauvegarde")
+	GameState.new_game()
+	check(SaveManager.load_game(GameState, TEST_SAVE_PATH) == OK, "rechargement")
+	check(GameState.is_case_filed("40000") and GameState.get_message("welcome_mazur").deleted,
+			"classement et corbeille survivent à la sauvegarde")
+	check(GameState.set_case_filed("40000", false) and not GameState.is_case_filed("40000"), "le dossier se ressort")
+	check(GameState.set_message_deleted("welcome_mazur", false) and not GameState.get_message("welcome_mazur").deleted,
+			"le pli se restaure")
+	check(not GameState.set_case_filed("40921", false), "ressortir un dossier non classé : sans effet")
+	GameState.new_game()
+
+
+## Fenêtres Dossiers et Courrier : CLASSER, DOSSIERS CLASSÉS, SUPPRIMER, CORBEILLE.
+func test_filing_in_windows() -> void:
+	SaveManager.delete_save()
+	GameState.new_game()
+	GameState.apply_decision("40000", "regularize")
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.open_app("dossiers")
+	var dossiers: DossiersWindow = desk.windows.dossiers
+	dossiers.select_case("40921")
+	check(not dossiers.get_node("%FileButton").visible, "pas de CLASSER sur un dossier en cours")
+	dossiers.select_case("40000")
+	check(dossiers.get_node("%FileButton").visible and dossiers.get_node("%FileButton").text == "CLASSER",
+			"CLASSER sur un dossier conclu")
+	check(not dossiers.get_node("%FiledToggle").visible, "pas de bouton des classés tant qu'aucun dossier n'est classé")
+	dossiers.get_node("%FileButton").pressed.emit()
+	check(GameState.is_case_filed("40000") and dossiers.current_case_id == "", "le dossier est classé et quitte l'écran")
+	check(dossiers.get_node("%CaseList").get_children().filter(func(b: Node) -> bool:
+			return not b.is_queued_for_deletion()).size() == 1, "il quitte la liste des dossiers assignés")
+	check(dossiers.get_node("%FiledToggle").visible and dossiers.get_node("%FiledToggle").text.contains("(1)"),
+			"le bouton DOSSIERS CLASSÉS (1) apparaît")
+	dossiers.get_node("%FiledToggle").toggled.emit(true)
+	var listed: Array = dossiers.get_node("%CaseList").get_children().filter(func(b: Node) -> bool:
+			return not b.is_queued_for_deletion())
+	check(listed.size() == 1 and listed[0].get_meta("case_id") == "40000", "la liste montre les dossiers classés")
+	dossiers.select_case("40000")
+	check(dossiers.get_node("%FileButton").text == "RESSORTIR", "un dossier classé se ressort")
+	dossiers.get_node("%FileButton").pressed.emit()
+	check(not GameState.is_case_filed("40000"), "le dossier est ressorti")
+	GameState.set_case_filed("40000", true)
+	dossiers.show_filed(false)
+	desk.open_case("40000")
+	check(dossiers.showing_filed and dossiers.current_case_id == "40000",
+			"ouvert depuis les archives, un dossier classé s'affiche quand même")
+	dossiers.close()
+
+	desk.open_app("messages")
+	var messages = desk.windows.messages
+	check(messages.current_message_id == "welcome_mazur", "le courrier s'ouvre sur le premier pli non lu")
+	var delete_button: Button = messages.get_node("%DeleteButton")
+	check(delete_button.visible and not delete_button.disabled and delete_button.text == "SUPPRIMER", "SUPPRIMER sur un pli lu")
+	delete_button.pressed.emit()
+	check(GameState.get_message("welcome_mazur").deleted, "le pli part à la corbeille")
+	check(messages.current_message_id == "memento_agent", "le pli suivant s'ouvre")
+	check(messages.get_node("%TrashButton").text.contains("(1)"), "la corbeille compte le pli")
+	messages.get_node("%TrashButton").toggled.emit(true)
+	check(messages.showing_trash and messages.current_message_id == "welcome_mazur", "la corbeille montre le pli supprimé")
+	check(delete_button.text == "RESTAURER", "dans la corbeille : RESTAURER")
+	delete_button.pressed.emit()
+	check(not GameState.get_message("welcome_mazur").deleted, "le pli est restauré")
+	messages.close()
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+## FIN DE SERVICE : mis en avant quand les heures sont épuisées, et pendant toute
+## la première journée (le tutoriel va jusqu'au bout de la journée).
+func test_end_of_shift_guidance() -> void:
+	GameState.new_game()
+	for message in GameState.messages:
+		message.read = true
+	var state := GameState.get_condition_state()
+	state["hours_used"] = WorkTime.day_hours() + WorkTime.overtime_hours()
+	var step := Guidance.next_step(state, GameState.messages)
+	check(step.target == "end_day" and step.text.contains("épuisées"), "heures épuisées : le guide montre FIN DE SERVICE")
+	state["hours_used"] = WorkTime.day_hours()
+	check(Guidance.next_step(state, GameState.messages).target == "dossiers",
+			"à 16h00, les heures supplémentaires restent possibles : le guide continue")
+	GameState.apply_decision("40000", "regularize")
+	GameState.apply_decision("40921", "close")
+	for message in GameState.messages:
+		message.read = true
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(desk.get_node("%EndDayButton").theme_type_variation == &"EndDayButton", "FIN DE SERVICE a son propre style, bien visible")
+	desk._refresh_objective()
+	check(desk.current_step.target == "end_day" and desk.coach.visible and desk.coach_target() == desk.get_node("%EndDayButton"),
+			"premier jour, dossiers conclus : la bulle montre encore FIN DE SERVICE")
+	GameState.hours_used = WorkTime.day_hours()
+	desk._refresh_objective()
+	check(desk.get_node("%Toast").visible and desk.get_node("%ToastLabel").text.contains("FIN DE SERVICE"),
+			"à 16h00 : un rappel montre où finir la journée")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+## Introduction : la phrase sur le père est claire ; le mémento explique les institutions.
+func test_intro_and_memo_texts() -> void:
+	var pages: Array = DataLoader.load_json("res://data/intro.json").pages
+	var vosk: String = pages[1].text
+	check(vosk.contains("horloger agréé") and vosk.contains("1971") and not vosk.contains("Ou peut-être"),
+			"intro : le père horloger, son agrément retiré en 1971, sans phrase énigmatique")
+	check(pages[0].text.contains("Milice"), "intro : la Milice est nommée dès la première page")
+	check(pages[3].text.contains("FIN DE SERVICE"), "intro : le bouton FIN DE SERVICE est annoncé")
+	var memo: Dictionary = {}
+	for message in DataLoader.load_json(GameState.INITIAL_MESSAGES_PATH).messages:
+		if message.id == "memento_agent":
+			memo = message
+	for term in ["MILICE", "SECTION 7", "VERITAS", "PARTI", "FIN DE SERVICE", "SUPPRIMER", "CLASSER"]:
+		check(memo.get("body", "").contains(term), "mémento : %s expliqué" % term)
 
 
 ## Le prix de la vérité : certaines contradictions (actes 1-2) ne s'établissent
@@ -2679,6 +2833,8 @@ func test_guidance_steps() -> void:
 	var step := func() -> Dictionary: return Guidance.next_step(GameState.get_condition_state(), GameState.messages)
 	check(step.call().target == "messages" and step.call().text.contains("prise de fonction"), "1. lire le message de Mazur")
 	GameState.mark_message_read("welcome_mazur")
+	check(step.call().target == "messages" and step.call().text.contains("Milice"), "1b. lire le mémento « qui fait quoi »")
+	GameState.mark_message_read("memento_agent")
 	# Le dossier zéro (tutoriel sur rails) est guidé en premier, avant le 40921.
 	check(step.call().text.begins_with("Ouvrir le dossier n° 40000"), "2. ouvrir le dossier zéro")
 	GameState.mark_document_viewed("40000", "declaration")
@@ -2754,7 +2910,7 @@ func test_desk_scene_flow() -> void:
 			"date et heure dans la barre des tâches : %s" % desk.get_node("%DateLabel").text)
 	check(desk.get_node("%HoursLabel").text == "8 h restantes", "heures de service dans la barre des tâches")
 	check(desk.get_node("%RankLabel").text == "INSPECTEUR DE 3E CLASSE", "grade affiché dans le menu MINISTÈRE")
-	check(desk.get_node("%MessagesButton").badge == 2, "pastille du courrier : 2 non lus")
+	check(desk.get_node("%MessagesButton").badge == 3, "pastille du courrier : 3 non lus")
 	check(desk.get_open_app() == "", "aucune fenêtre ouverte au départ")
 
 	desk.terminal.submit_command("dossiers")
@@ -2772,8 +2928,9 @@ func test_desk_scene_flow() -> void:
 	desk.get_node("%MessagesButton").pressed.emit()
 	check(desk.get_open_app() == "messages", "le bouton Messages ouvre la messagerie")
 	await get_tree().process_frame
-	check(GameState.get_unread_count() == 1, "le message affiché est marqué lu")
-	check(desk.get_node("%MessagesButton").badge == 1, "la pastille se met à jour")
+	check(GameState.get_unread_count() == 2 and GameState.get_message("welcome_mazur").read,
+			"le message d'accueil s'affiche d'abord et est marqué lu")
+	check(desk.get_node("%MessagesButton").badge == 2, "la pastille se met à jour")
 	desk.terminal.submit_command("archives")
 	check(desk.get_open_app() == "archives" and desk.is_app_open("messages"),
 			"la dernière fenêtre ouverte passe devant, l'autre reste ouverte")
@@ -3137,7 +3294,10 @@ func test_friendly_desk() -> void:
 	check(desk.coach_target() == desk.get_node("%MessagesButton") and desk.coach.text.contains("Bienvenue"),
 			"la bulle d'aide montre l'icône du courrier")
 	desk.get_node("%MessagesButton").pressed.emit()
-	check(desk.coach_target() == desk.get_node("%DossiersButton"), "message lu : la bulle montre l'icône Dossiers")
+	check(desk.coach_target() == desk.windows.messages.get_guide_target("") and desk.coach.text.contains("Milice"),
+			"message d'accueil lu : la bulle montre le mémento")
+	desk.windows.messages.select_message("memento_agent")
+	check(desk.coach_target() == desk.get_node("%DossiersButton"), "mémento lu : la bulle montre l'icône Dossiers")
 	desk.windows.messages.close()
 	check(desk.coach_target() == desk.get_node("%DossiersButton"), "fenêtre fermée : toujours l'icône Dossiers")
 	desk.get_node("%DossiersButton").pressed.emit()

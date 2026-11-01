@@ -47,6 +47,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 6
 
 [node name="CaseListTitle" type="Label" parent="Layout/Content/Columns/CaseScroll/CaseColumn"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 text = "DOSSIERS ASSIGNÉS"
@@ -55,6 +56,15 @@ text = "DOSSIERS ASSIGNÉS"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
+
+[node name="FiledToggle" type="Button" parent="Layout/Content/Columns/CaseScroll/CaseColumn"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+text = "DOSSIERS CLASSÉS"
 
 [node name="PiecesTitle" type="Label" parent="Layout/Content/Columns/CaseScroll/CaseColumn"]
 unique_name_in_owner = true
@@ -289,3 +299,11 @@ custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_type_variation = &"AlertButton"
 text = "RÉDIGER LA CONCLUSION"
+
+[node name="FileButton" type="Button" parent="Layout/Content/Columns/DocumentColumn/Footer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 0
+text = "CLASSER"

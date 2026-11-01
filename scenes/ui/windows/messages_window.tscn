@@ -55,6 +55,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
+[node name="TrashButton" type="Button" parent="Layout/Content/Columns/ListColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+text = "CORBEILLE"
+
 [node name="Reader" type="VBoxContainer" parent="Layout/Content/Columns"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -122,3 +130,15 @@ text = "Aucun pli. Le courrier de la hiérarchie arrivera ici."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
+
+[node name="LetterActions" type="HBoxContainer" parent="Layout/Content/Columns/Reader"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 2
+
+[node name="DeleteButton" type="Button" parent="Layout/Content/Columns/Reader/LetterActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+text = "SUPPRIMER"
