@@ -50,6 +50,7 @@ scripts/
     veritas.gd                VERITAS déterministe (remarques, recommandation)
     assessment.gd             évaluation de l'agent en mots (data/assessment.json)
     guidance.gd               objectif du jour affiché au bureau (étape suivante)
+    case_sheet.gd             fiche d'enquête : questions, réponses, « deux versions »
     field_rules.gd            scènes de terrain (interrogatoires, perquisitions)
     music_rules.gd            choix du morceau selon le moment et l'état de la partie
     sound_rules.gd            bruitages et ambiances (data/sounds.json)
@@ -144,6 +145,27 @@ tout couper. Guide pour ajouter des médias : `docs/MEDIAS.md`.
 
 Évalués à chaque nouvelle journée, dans l'ordre du fichier. Les drapeaux posés par
 les décisions (`flags` des issues) sont le lien entre un dossier et ses suites.
+
+## Fiche d'enquête (`CaseSheet`)
+
+Un dossier peut déclarer un bloc `questions` (prototype : 40000 et 40921) :
+
+```jsonc
+"questions": [
+  {"id": "where", "text": "Où était SEDLAR le 21 octobre ?",
+   "keys": ["sedlar.location.1986-10-21"], "main": true}
+]
+```
+
+Chaque élément noté dont la `key` figure dans `keys` se range sous la question.
+Une question `main` est visible dès l'ouverture, les autres restent « à découvrir »
+jusqu'au premier élément noté. Deux éléments d'une question sur la même clé avec
+des valeurs différentes forment un conflit (« deux versions ») :
+`GameState.retain_version()` confronte la paire (même règle que le carnet, prix
+compris) et mémorise le choix dans `case_state.sheet_choices` (sauvegarde v8).
+Une clé ne peut appartenir qu'à une question (`CaseSheet.validate`). Les éléments
+sans question vont dans « autres notes ». Avec l'aide à l'enquête coupée, la
+fenêtre revient au carnet libre et à CONFRONTER.
 
 ## Accompagnement du joueur
 

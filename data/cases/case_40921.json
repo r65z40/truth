@@ -7,15 +7,64 @@
 		"objective": "Déterminer si Anton SEDLAR était à son poste le 21 octobre, ou s'il s'est déplacé sans le déclarer.",
 		"context": "Le Bureau des transports signale un écart entre sa présence déclarée à l'usine et ses déplacements enregistrés. SEDLAR est technicien à la Centrale n° 3, non-membre du Parti."
 	},
+	"questions": [
+		{
+			"id": "where",
+			"text": "Où était SEDLAR le 21 octobre ?",
+			"keys": [
+				"sedlar.location.1986-10-21"
+			],
+			"main": true
+		},
+		{
+			"id": "witness",
+			"text": "Qui certifie sa présence ?",
+			"keys": [
+				"report.author",
+				"chief.arrangement",
+				"orlik.repairs"
+			],
+			"main": true
+		},
+		{
+			"id": "traveller",
+			"text": "Est-ce bien lui qui a pris le train ?",
+			"keys": [
+				"sedlar.work_card",
+				"control.photo",
+				"intercept.voice",
+				"sedlar.planned_trip"
+			]
+		},
+		{
+			"id": "motive",
+			"text": "Pourquoi irait-il à Halvek ?",
+			"keys": [
+				"sedlar.family",
+				"sedlar.motive",
+				"sedlar.care",
+				"sedlar.child"
+			]
+		},
+		{
+			"id": "papers",
+			"text": "Les papiers de sa mère sont-ils en règle ?",
+			"keys": [
+				"sedlar.papers",
+				"sedlar.papers.forged"
+			]
+		}
+	],
 	"priority": "ordinaire",
 	"guide": {
 		"note": "Conseils de la bulle d'aide : deuxième dossier, premier vrai dossier après le dossier zéro.",
 		"open": "Au tour du premier vrai dossier : Anton SEDLAR, technicien à la Centrale n° 3. Ouvrez-le.",
 		"read": "Un dossier se compose de pièces. Cliquez sur la pièce signalée, marquée « à lire ».",
-		"facts": "Les passages soulignés en rouge sont des éléments. Cliquez dessus pour les copier dans votre carnet. Le rapport de présence et le registre de déplacements parlent tous deux du 21 octobre.",
+		"facts": "Les passages soulignés en rouge sont des éléments. Cliquez dessus : chacun se range tout seul sous la bonne question de la fiche, à droite. Le rapport de présence et le registre de déplacements parlent tous deux du 21 octobre.",
 		"notebook": "Votre carnet est à gauche. Sélectionnez deux éléments qui se contredisent, puis cliquez sur CONFRONTER.",
 		"notebook_retry": "Ces deux éléments peuvent être vrais en même temps. Où était SEDLAR le 21 octobre ? Notez sa présence dans le rapport de présence, puis confrontez-la au trajet du registre de déplacements.",
-		"conclusion": "Contradiction établie : vous avez de quoi conclure. Cliquez sur RÉDIGER LA CONCLUSION, choisissez, signez. Il n'y a pas de bonne réponse imposée."
+		"conclusion": "Contradiction établie : vous avez de quoi conclure. Cliquez sur RÉDIGER LA CONCLUSION, choisissez, signez. Il n'y a pas de bonne réponse imposée.",
+		"conflict": "Deux pièces ne disent pas la même chose sur le 21 octobre. Sur la fiche, choisissez la version que vous retenez : le rapport signé par ORLIK (fiabilité B), ou le registre du train (fiabilité A)."
 	},
 	"documents": [
 		{

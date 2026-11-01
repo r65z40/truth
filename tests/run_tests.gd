@@ -23,6 +23,9 @@ func _run() -> void:
 	var tests := [
 		"test_case_index_and_loading",
 		"test_case_40000",
+		"test_case_sheet_rules",
+		"test_case_sheet_window",
+		"test_save_migration_from_v7",
 		"test_case_40921_structure",
 		"test_case_40921_has_contradiction",
 		"test_document_rendering_escapes_bbcode",
@@ -199,6 +202,118 @@ func test_case_40000() -> void:
 			"deux points différents ne se contredisent pas")
 	check(CaseLibrary.validate_case(case_data).is_empty(),
 			"le dossier zéro est structurellement valide %s" % [CaseLibrary.validate_case(case_data)])
+
+
+## Fiche d'enquête : questions, rangement des éléments, deux versions, choix retenu.
+func test_case_sheet_rules() -> void:
+	GameState.new_game()
+	for case_id in CaseLibrary.get_case_ids():
+		var case_data := CaseLibrary.get_case(case_id)
+		check(CaseSheet.validate(case_data).is_empty(), "questions du dossier %s valides %s" % [case_id, CaseSheet.validate(case_data)])
+	var novak := CaseLibrary.get_case("40000")
+	var sedlar := CaseLibrary.get_case("40921")
+	check(CaseSheet.has_sheet(novak) and CaseSheet.has_sheet(sedlar), "les deux premiers dossiers ont une fiche")
+	check(not CaseSheet.has_sheet(CaseLibrary.get_case("51307")), "les autres dossiers gardent le carnet libre (prototype)")
+	check(CaseSheet.question_of_fact(sedlar, "f_log_trip") == "where" and CaseSheet.question_of_fact(sedlar, "f_report_presence") == "where",
+			"le train et la présence se rangent sous la même question")
+	check(CaseSheet.question_of_fact(sedlar, "f_identity_record") == "", "un élément sans question va dans les autres notes")
+	var sheet := CaseSheet.build(novak, GameState.get_case_state("40000"))
+	check(sheet[0].state == CaseSheet.OPEN and sheet[1].state == CaseSheet.HIDDEN and CaseSheet.hidden_count(sheet) == 2,
+			"au départ : la question principale est ouverte, les autres à découvrir")
+	GameState.note_fact("40000", "f_decl_address")
+	sheet = CaseSheet.build(novak, GameState.get_case_state("40000"))
+	check(sheet[0].state == CaseSheet.ANSWERED and sheet[0].answers[0].reliability == "C", "une réponse : question répondue, avec sa fiabilité")
+	GameState.note_fact("40000", "f_reg_address")
+	sheet = CaseSheet.build(novak, GameState.get_case_state("40000"))
+	check(sheet[0].state == CaseSheet.CONFLICT and CaseSheet.pending_conflict(sheet).id == "address", "deux adresses : deux versions")
+	check(GameState.retain_version("40000", "move", "f_reg_address") == "", "on ne retient pas une version d'une autre question")
+	check(GameState.retain_version("40000", "address", "f_decl_job") == "", "ni un élément hors du conflit")
+	check(GameState.retain_version("40000", "address", "f_reg_address") == "novak.address", "retenir le registre")
+	var state := GameState.get_case_state("40000")
+	check("novak.address" in state.contradictions_found and state.sheet_choices.address == "f_reg_address",
+			"retenir une version établit la contradiction et mémorise le choix")
+	sheet = CaseSheet.build(novak, state)
+	check(sheet[0].state == CaseSheet.SETTLED and sheet[0].retained == "f_reg_address" and CaseSheet.pending_conflict(sheet).is_empty(),
+			"question tranchée")
+	var lines: PackedStringArray = load("res://scenes/ui/windows/conclusion_panel.gd").sheet_lines(novak, state)
+	check(lines.size() == 1 and lines[0].contains("version retenue") and lines[0].contains("District 7"), "le rapport reprend la fiche : %s" % [lines])
+	# Deux valeurs identiques sous une même question ne font pas deux versions.
+	GameState.note_fact("40921", "f_identity_card")
+	GameState.note_fact("40921", "f_log_card")
+	check(CaseSheet.build(sedlar, GameState.get_case_state("40921"))[2].state == CaseSheet.ANSWERED,
+			"même carte sur deux pièces : réponses concordantes")
+	GameState.apply_decision("40000", "regularize")
+	check(GameState.retain_version("40000", "address", "f_decl_address") == "", "dossier conclu : la fiche est figée")
+	var restored := GameState.to_dict()
+	GameState.new_game()
+	GameState.from_dict(restored)
+	check(GameState.get_case_state("40000").sheet_choices.get("address") == "f_reg_address", "le choix retenu est sauvegardé")
+	GameState.new_game()
+
+
+## Fiche dans la fenêtre Dossiers : rangement, deux versions, bouton RETENIR, aide.
+func test_case_sheet_window() -> void:
+	GameState.new_game()
+	for message in GameState.messages:
+		message.read = true
+	Settings.guidance = true
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	desk.open_app("dossiers")
+	var dossiers: DossiersWindow = desk.windows.dossiers
+	dossiers.select_case("40000")
+	check(dossiers._sheet.visible and not dossiers.get_node("%Notebook").visible, "la fiche remplace le carnet")
+	check(dossiers._sheet_questions.has_node("Question_address") and not dossiers._sheet_questions.has_node("Question_move")
+			and dossiers._sheet_questions.has_node("HiddenQuestions"), "une question visible, les autres à découvrir")
+	check(not dossiers.get_node("%ProgressLabel").visible and not dossiers.get_node("%ActionsHelp").visible, "en-tête réduit")
+	dossiers.select_document("registry")
+	dossiers.get_node("%DocBody").meta_clicked.emit("fact:f_reg_date")
+	check(dossiers._sheet_questions.has_node("Question_move"), "noter un élément découvre sa question")
+	dossiers.get_node("%DocBody").meta_clicked.emit("fact:f_reg_address")
+	dossiers.select_document("declaration")
+	dossiers.get_node("%DocBody").meta_clicked.emit("fact:f_decl_address")
+	var card: Node = dossiers._sheet_questions.get_node("Question_address")
+	check(card.get_meta("pending") and card.find_child("Retain_f_decl_address", true, false) != null
+			and card.find_child("Retain_f_reg_address", true, false) != null, "deux versions : un bouton RETENIR par version")
+	desk._refresh_objective()
+	check(desk.current_step.part == "sheet" and desk.coach.visible and desk.coach_target() == card,
+			"la bulle montre la question à trancher")
+	card.find_child("Retain_f_reg_address", true, false).pressed.emit()
+	check("novak.address" in GameState.get_case_state("40000").contradictions_found, "RETENIR établit la contradiction")
+	card = dossiers._sheet_questions.get_node("Question_address")
+	check(card.find_child("Retain_f_reg_address", true, false) == null and card.find_child("Status", true, false).text == "CONTRADICTION ÉTABLIE",
+			"question tranchée : plus de bouton, état affiché")
+	desk._refresh_objective()
+	check(desk.current_step.text.begins_with("Rédiger"), "ensuite : rédiger la conclusion")
+	dossiers.open_conclusion()
+	check(dossiers.get_node("%ConclusionPanel").get_node("%ConclusionSummary").get_parsed_text().contains("version retenue"),
+			"le rapport de conclusion reprend la fiche")
+	dossiers.close_conclusion()
+	# Lire les pièces du 40921 : avec la fiche, le bandeau suffit (pas de bulle).
+	dossiers.select_case("40921")
+	desk._refresh_objective()
+	check(desk.current_step.case_id == "40000" or not desk.current_step.get("bubble", true) or desk.current_step.part != "tab:work_report",
+			"lecture des pièces : pas de bulle en plus du bandeau")
+	# Aide coupée : carnet libre et CONFRONTER, comme avant.
+	Settings.guidance = false
+	dossiers.select_case("40000")
+	check(not dossiers._sheet.visible and dossiers.get_node("%Notebook").visible, "sans l'aide à l'enquête : carnet libre")
+	Settings.guidance = true
+	desk.queue_free()
+	GameState.new_game()
+	await get_tree().process_frame
+
+
+func test_save_migration_from_v7() -> void:
+	var path := "user://test_v7.json"
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"save_version": 7, "state": {"cases": {"40921": {"status": "open", "filed": false}}, "messages": []}}))
+	file.close()
+	var payload: Dictionary = SaveManager._migrate(JSON.parse_string(FileAccess.get_file_as_string(path)))
+	check(int(payload.save_version) == SaveManager.SAVE_VERSION and payload.state.cases["40921"].sheet_choices == {},
+			"migration v7 -> v8 : fiche vide ajoutée")
+	DirAccess.remove_absolute(path)
 
 
 func test_case_40921_structure() -> void:
@@ -2843,8 +2958,8 @@ func test_guidance_steps() -> void:
 	check(step.call().text.begins_with("Noter"), "4. noter des éléments")
 	GameState.note_fact("40000", "f_decl_address")
 	GameState.note_fact("40000", "f_reg_address")
-	check(step.call().text.begins_with("Confronter"), "5. confronter")
-	GameState.confront_facts("40000", "f_decl_address", "f_reg_address")
+	check(step.call().text.begins_with("Trancher") and step.call().part == "sheet", "5. trancher entre les deux versions de la fiche")
+	check(GameState.retain_version("40000", "address", "f_reg_address") == "novak.address", "5b. retenir une version")
 	check(step.call().text.begins_with("Rédiger"), "6. conclure")
 	GameState.apply_decision("40000", "regularize")
 	# Une fois le dossier zéro bouclé, la guidance enchaîne sur le premier vrai dossier.
@@ -3278,7 +3393,8 @@ func test_friendly_desk() -> void:
 	desk.terminal.submit_command("dossiers")
 	desk.windows.dossiers.select_case("40921")
 	desk.windows.dossiers.note_fact("f_identity_card")
-	check(desk.get_node("%Toast").visible and desk.get_node("%ToastLabel").text.contains("carnet"), "notification après avoir noté")
+	check(desk.get_node("%Toast").visible and desk.get_node("%ToastLabel").text.contains("Est-ce bien lui qui a pris le train"),
+			"notification après avoir noté : la question de la fiche où l'élément s'est rangé")
 	check(desk.windows.dossiers.get_node("%FactsPanel").visible, "les éléments notables restent visibles sous la pièce")
 	check(desk.has_unsaved_changes, "des changements non sauvegardés")
 	desk.windows.dossiers.close()
@@ -3428,8 +3544,10 @@ func test_document_windows() -> void:
 	check(tabs.get_node("Tab_work_report").theme_type_variation == &"DocumentTabNew", "pièce à lire mise en avant")
 	check(dossiers.get_node("%ProgressLabel").text.contains("1/4 pièces lues") \
 			and dossiers.get_node("%ProgressLabel").text.contains("aucune contradiction"), "avancement lisible en une ligne")
-	check(dossiers.get_node("%ObjectiveLabel").visible \
-			and dossiers.get_node("%ObjectiveLabel").text.contains("OBJET DE L'ENQUÊTE"), "le briefing affiche l'objet de l'enquête")
+	# Fiche d'enquête : l'objet passe en tête de la fiche, l'en-tête tient en une ligne.
+	check(not dossiers.get_node("%ObjectiveLabel").visible and not dossiers.get_node("%CaseSummary").visible \
+			and dossiers._sheet.visible and dossiers._sheet_objective.text.contains("21 octobre"),
+			"fiche d'enquête : l'objet de l'enquête est en tête de la fiche")
 	# Pendant le tutoriel, l'en-tête du dossier est épuré : ni rappel « Vous
 	# pouvez… » ni compteur d'avancement (le bandeau « À FAIRE » du bureau guide).
 	check(not dossiers.get_node("%ActionsHelp").visible \

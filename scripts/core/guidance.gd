@@ -9,8 +9,14 @@ extends RefCounted
 ## la fenêtre ouverte : "case", "tab:<pièce>", "facts", "notebook", "conclusion"
 ## ou "" ; case_id, le dossier concerné.
 ## coach : conseil plus détaillé pour la bulle d'aide ; un dossier peut le
-## préciser dans son bloc "guide" (clés facts, notebook, conclusion), ce que fait
-## le premier dossier, qui sert de tutoriel.
+## préciser dans son bloc "guide" (clés facts, notebook, conflict, conclusion), ce
+## que fait le premier dossier, qui sert de tutoriel.
+## bubble : faux quand le bandeau « À FAIRE » suffit (la bulle reste alors masquée,
+## pour ne pas empiler deux aides à l'écran).
+##
+## Dossier avec fiche d'enquête (bloc "questions", voir CaseSheet) : on ne parle
+## plus de carnet ni de CONFRONTER. Les éléments se rangent sous les questions ;
+## quand une question reçoit deux versions, l'étape est de trancher (part "sheet").
 
 const MIN_NOTED_FACTS := 2
 ## Pli d'accueil, puis mémento « qui fait quoi » (Milice, Section 7, VERITAS...),
@@ -57,15 +63,30 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 			return _case_step(case_id, _step(UiText.of("Ouvrir le dossier n° %s (%s).") % [case_id, view.get("subject_name", "?")],
 					UiText.of("Cliquez sur DOSSIERS, puis sur le dossier."), "dossiers", "case",
 					guide.get("open", UiText.of("Un dossier vous attend : n° %s, %s. Ouvrez-le.") % [case_id, view.get("subject_name", "?")])))
+		var sheet_case := CaseSheet.has_sheet(view)
 		if viewed < total:
-			return _case_step(case_id, _step(UiText.of("Lire toutes les pièces du dossier n° %s (%d/%d).") % [case_id, viewed, total],
+			var read_step := _step(UiText.of("Lire toutes les pièces du dossier n° %s (%d/%d).") % [case_id, viewed, total],
 					UiText.of("Les pièces marquées « à lire » restent à consulter."), "dossiers",
 					"tab:" + next_unviewed,
-					guide.get("read", UiText.of("Lisez chaque pièce : cliquez sur la pièce signalée (%d/%d).") % [viewed, total])))
+					guide.get("read", UiText.of("Lisez chaque pièce : cliquez sur la pièce signalée (%d/%d).") % [viewed, total]))
+			# Avec la fiche, le bandeau et la mention « à lire » suffisent.
+			read_step["bubble"] = not sheet_case
+			return _case_step(case_id, read_step)
 		if case_state.get("noted_facts", []).size() < MIN_NOTED_FACTS:
 			return _case_step(case_id, _step(UiText.of("Noter les éléments importants du dossier n° %s dans votre carnet.") % case_id,
 					UiText.of("Cliquez sur les passages soulignés du texte (ou « + NOTER »)."), "dossiers", "facts",
 					guide.get("facts", UiText.of("Sous la pièce, cliquez sur les éléments qui vous semblent importants : ils vont dans votre carnet."))))
+		# Fiche d'enquête : une question a deux versions, l'agent doit trancher.
+		if sheet_case:
+			var pending := CaseSheet.pending_conflict(CaseSheet.build(view, case_state))
+			if pending.get("state", "") == CaseSheet.CONFLICT:
+				return _case_step(case_id, _step(UiText.of("Trancher : « %s » a deux versions.") % pending.text,
+						UiText.of("Sur la fiche, à droite, choisissez la version que vous retenez."), "dossiers", "sheet",
+						guide.get("conflict", UiText.of("Deux pièces répondent différemment à la même question. Sur la fiche, choisissez la version que vous retenez. Le ministère ne vous dira pas laquelle est vraie."))))
+			if pending.get("state", "") == CaseSheet.TO_PROVE and case_state.get("contradictions_found", []).is_empty():
+				return _case_step(case_id, _step(UiText.of("Prouver la contradiction sur « %s », ou rédiger votre conclusion.") % pending.text,
+						UiText.of("Sur la fiche, bouton PROUVER."), "dossiers", "sheet",
+						UiText.of("Cette contradiction a un prix : il faut la prouver pour qu'elle compte dans votre rapport.")))
 		# Mini-jeu facultatif mais conseillé : quand le dossier propose une
 		# confrontation de pièces accessible, on la met en avant, avec la loupe
 		# pour examiner cachets et signatures de près.
@@ -76,6 +97,12 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 					UiText.of("Comparer deux pièces du dossier n° %s, ou confronter deux éléments du carnet.") % case_id,
 					UiText.of("Bouton COMPARER. Touchez AGRANDIR pour examiner une pièce de près."), "dossiers", "compare",
 					guide.get("compare", UiText.of("Deux pièces de ce dossier peuvent se contredire. Ouvrez COMPARER, et servez-vous de la loupe (AGRANDIR) pour examiner de près les cachets et les signatures."))))
+		if case_state.get("contradictions_found", []).is_empty() and sheet_case:
+			var more_step := _step(UiText.of("Compléter la fiche du dossier n° %s, ou rédiger votre conclusion.") % case_id,
+					UiText.of("Cliquez d'autres passages soulignés : ils se rangent sous les questions."), "dossiers", "facts",
+					guide.get("sheet_more", UiText.of("Cherchez deux pièces qui répondent différemment à la même question.")))
+			more_step["bubble"] = false
+			return _case_step(case_id, more_step)
 		if case_state.get("contradictions_found", []).is_empty():
 			return _case_step(case_id, _step(UiText.of("Confronter deux éléments du carnet, ou rédiger votre conclusion."),
 					UiText.of("Sélectionnez deux éléments à gauche, puis CONFRONTER."), "dossiers", "notebook",
@@ -97,7 +124,7 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 
 static func _step(text: String, hint: String, target: String, part := "", coach := "") -> Dictionary:
 	return {"text": text, "hint": hint, "target": target, "part": part, "coach": coach if coach != "" else text,
-			"case_id": ""}
+			"case_id": "", "bubble": true}
 
 
 static func _case_step(case_id: String, step: Dictionary) -> Dictionary:

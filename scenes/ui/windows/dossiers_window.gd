@@ -6,6 +6,12 @@ extends MinistryWindow
 ## et formulaire de conclusion. Un dossier conclu peut être classé (CLASSER) :
 ## il quitte la liste, mais reste consultable sous « DOSSIERS CLASSÉS ».
 ##
+## Fiche d'enquête (dossiers qui déclarent des « questions », aide à l'enquête
+## activée) : le carnet libre et CONFRONTER laissent place à une fiche. Chaque
+## passage noté se range sous sa question ; une question à deux versions se
+## tranche en retenant l'une d'elles (voir CaseSheet). L'en-tête du dossier se
+## réduit à une ligne : la pièce prend la place libérée.
+##
 ## Lit CaseLibrary et GameState ; toutes les modifications passent par GameState.
 
 const RELIABILITY_LABELS := {
@@ -59,6 +65,14 @@ var _guide_scrolled_document := ""
 var _photo := IdPhoto.new()
 ## Vrai quand la liste montre les dossiers classés plutôt que les dossiers en cours.
 var showing_filed := false
+## Fiche d'enquête, construite en code sous la liste des pièces (voir _build_sheet).
+var _sheet: VBoxContainer
+## Colonne de droite qui porte la fiche (défile si elle s'allonge).
+var _sheet_scroll: ScrollContainer
+var _sheet_objective: Label
+var _sheet_context: Label
+var _sheet_context_button: Button
+var _sheet_questions: VBoxContainer
 
 @onready var _case_list: VBoxContainer = %CaseList
 @onready var _notebook: Control = %Notebook
@@ -138,6 +152,7 @@ func _ready() -> void:
 	_open_aside_button.add_theme_font_size_override("font_size", 14)
 	_open_aside_button.pressed.connect(open_current_aside)
 	_document_tabs_scroll.add_sibling(_open_aside_button)
+	_build_sheet()
 	_show_case_view(false)
 	_doc_body.meta_clicked.connect(func(meta: Variant) -> void: DocumentWindow.on_passage_clicked(str(meta), note_fact))
 	# Un élément noté depuis une pièce ouverte à part apparaît aussitôt au carnet.
@@ -248,7 +263,7 @@ func _notes_share_point(case_data: Dictionary, noted_facts: Array) -> bool:
 ## Rappel des actions possibles, utile une fois le tutoriel passé (acte 1).
 ## Pendant le tutoriel il fait doublon avec le bandeau « À FAIRE » : on le masque.
 func _refresh_actions_help() -> void:
-	if current_case_id == "" or GameState.day_index >= 5 or _in_tutorial():
+	if current_case_id == "" or GameState.day_index >= 5 or _in_tutorial() or _sheet_mode():
 		_actions_help.visible = false
 		return
 	var parts: PackedStringArray = [
@@ -306,7 +321,13 @@ func note_fact(fact_id: String) -> void:
 		return
 	GameState.note_fact(current_case_id, fact_id)
 	Sound.play("note")
-	notify.emit(tr("Élément noté dans votre carnet."))
+	if _sheet_mode():
+		var case_data := GameState.get_case_view(current_case_id)
+		var question := CaseSheet.get_question(case_data, CaseSheet.question_of_fact(case_data, fact_id))
+		notify.emit(tr("Rangé sur la fiche : « %s »") % question.text if not question.is_empty()
+				else tr("Noté sur la fiche, dans les autres notes."))
+	else:
+		notify.emit(tr("Élément noté dans votre carnet."))
 	_refresh_all()
 
 
@@ -439,6 +460,7 @@ func open_conclusion() -> void:
 func close_conclusion() -> void:
 	_conclusion_panel.hide()
 	_show_case_view(current_case_id != "")
+	_refresh_all()
 
 
 func _on_conclusion_submitted(decision_id: String) -> void:
@@ -587,7 +609,12 @@ func _refresh_all() -> void:
 	_progress_label.text = progress_text(case_data, case_state)
 	# Pendant l'apprentissage, on masque le compteur d'avancement : le bandeau
 	# « À FAIRE » dit déjà quoi faire, et l'en-tête reste épuré.
-	_progress_label.visible = not _in_tutorial()
+	_progress_label.visible = not _in_tutorial() and not _sheet_mode()
+	# Fiche d'enquête : l'objet passe en tête de la fiche, le contexte dans un pli ;
+	# l'en-tête du dossier tient en une ligne et la pièce gagne la place.
+	if _sheet_mode():
+		_objective_label.visible = false
+		_case_summary.visible = false
 	var can_decide := GameState.can_decide(current_case_id)
 	_refresh_actions(can_decide)
 	_refresh_actions_help()
@@ -605,6 +632,7 @@ func _refresh_all() -> void:
 	_refresh_facts(case_data)
 	_refresh_tab_states()
 	_refresh_notebook()
+	_refresh_sheet(case_data, case_state)
 	_refresh_case_list()
 
 
@@ -749,7 +777,7 @@ func _refresh_notebook() -> void:
 		_notebook_list.add_child(button)
 	# Le carnet n'apparaît qu'une fois un premier élément noté : écran plus clair
 	# au début, le carnet se révèle quand il sert.
-	_notebook.visible = current_case_id != "" and not case_state.noted_facts.is_empty()
+	_notebook.visible = current_case_id != "" and not case_state.noted_facts.is_empty() and not _sheet_mode()
 	# Mode PROUVER : contradiction repérée et payante, pas encore établie. Le bouton
 	# reste actif pour payer son prix, quel que soit l'état de la sélection.
 	if _prove_key != "" and not _prove_key in case_state.contradictions_found:
@@ -868,6 +896,7 @@ func _show_case_view(has_case: bool) -> void:
 	_facts_panel.visible = has_case
 	_footer.visible = has_case
 	_notebook.visible = has_case
+	_set_sheet_visible(has_case and _sheet_mode())
 	_empty_hint.visible = not has_case
 
 
@@ -907,6 +936,12 @@ func get_guide_target(part: String, case_id := "") -> Control:
 			return _compare_button
 		"notebook":
 			return _confront_button if selected_facts.size() == MAX_SELECTED_FACTS else _notebook_list
+		"sheet":
+			# La question qui attend que l'agent tranche, sinon la fiche entière.
+			for card in _sheet_questions.get_children():
+				if not card.is_queued_for_deletion() and card.get_meta("pending", false):
+					return card
+			return _sheet
 		"conclusion":
 			return _conclusion_button
 	return null
@@ -917,3 +952,229 @@ func get_guide_target(part: String, case_id := "") -> Control:
 func _scroll_to_tab(tab: Button) -> void:
 	if is_instance_valid(tab) and _document_tabs_scroll.is_ancestor_of(tab):
 		_document_tabs_scroll.ensure_control_visible(tab)
+
+
+# --- Fiche d'enquête -------------------------------------------------------------
+
+## Vrai si le dossier affiché se mène avec la fiche d'enquête : il déclare des
+## questions et l'aide à l'enquête est activée (sinon, carnet libre et CONFRONTER).
+func _sheet_mode() -> bool:
+	return current_case_id != "" and Settings.guidance \
+			and CaseSheet.has_sheet(GameState.get_case_view(current_case_id))
+
+
+## Largeur de la colonne de gauche (dossiers, pièces) avec et sans fiche, et de la fiche.
+const CASE_COLUMN_WIDTH := 330.0
+const CASE_COLUMN_WIDTH_WITH_SHEET := 230.0
+const SHEET_COLUMN_WIDTH := 280.0
+
+## Construit le cadre de la fiche, en colonne à droite de la pièce (contenu : _refresh_sheet).
+func _build_sheet() -> void:
+	_sheet = VBoxContainer.new()
+	_sheet.name = "Sheet"
+	_sheet.add_theme_constant_override("separation", 8)
+	var title := Label.new()
+	title.name = "SheetTitle"
+	title.theme_type_variation = &"HeaderLabel"
+	title.text = tr("FICHE D'ENQUÊTE")
+	_sheet.add_child(title)
+	_sheet_objective = Label.new()
+	_sheet_objective.name = "SheetObjective"
+	_sheet_objective.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_sheet_objective.add_theme_font_size_override("font_size", 15)
+	_sheet.add_child(_sheet_objective)
+	# Le contexte du dossier reste à portée, replié pour ne pas charger l'écran.
+	_sheet_context_button = Button.new()
+	_sheet_context_button.name = "SheetContextButton"
+	_sheet_context_button.toggle_mode = true
+	_sheet_context_button.flat = true
+	_sheet_context_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_sheet_context_button.custom_minimum_size = Vector2(0, 44)
+	_sheet_context_button.focus_mode = Control.FOCUS_NONE
+	_sheet_context_button.add_theme_font_size_override("font_size", 14)
+	_sheet_context_button.toggled.connect(func(on: bool) -> void:
+		_sheet_context.visible = on
+		_sheet_context_button.text = tr("CONTEXTE  ▾") if on else tr("CONTEXTE  ▸"))
+	_sheet_context_button.text = tr("CONTEXTE  ▸")
+	_sheet.add_child(_sheet_context_button)
+	_sheet_context = Label.new()
+	_sheet_context.name = "SheetContext"
+	_sheet_context.theme_type_variation = &"MutedLabel"
+	_sheet_context.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_sheet_context.add_theme_font_size_override("font_size", 14)
+	_sheet_context.visible = false
+	_sheet.add_child(_sheet_context)
+	_sheet_questions = VBoxContainer.new()
+	_sheet_questions.name = "SheetQuestions"
+	_sheet_questions.add_theme_constant_override("separation", 8)
+	_sheet.add_child(_sheet_questions)
+	_sheet.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_sheet_scroll = ScrollContainer.new()
+	_sheet_scroll.name = "SheetScroll"
+	_sheet_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_sheet_scroll.custom_minimum_size = Vector2(SHEET_COLUMN_WIDTH, 0)
+	_sheet_scroll.add_child(_sheet)
+	get_node("Layout/Content/Columns").add_child(_sheet_scroll)
+	_set_sheet_visible(false)
+
+
+## Montre ou masque la colonne de la fiche ; la colonne de gauche se resserre
+## pour laisser la pièce assez large.
+func _set_sheet_visible(on: bool) -> void:
+	_sheet.visible = on
+	_sheet_scroll.visible = on
+	(get_node("Layout/Content/Columns/CaseScroll") as Control).custom_minimum_size.x = \
+			CASE_COLUMN_WIDTH_WITH_SHEET if on else CASE_COLUMN_WIDTH
+	# Pièce plus étroite à côté de la fiche : un titre un peu plus petit évite les coupures.
+	_doc_title.add_theme_font_size_override("font_size", 20 if on else 24)
+
+
+## Remplit la fiche : une carte par question visible, les questions encore à
+## découvrir en une ligne, puis les notes qui ne répondent à aucune question.
+func _refresh_sheet(case_data: Dictionary, case_state: Dictionary) -> void:
+	for child in _sheet_questions.get_children():
+		_sheet_questions.remove_child(child)
+		child.queue_free()
+	_set_sheet_visible(_sheet_mode())
+	if not _sheet.visible:
+		return
+	var briefing: Dictionary = case_data.get("briefing", {})
+	_sheet_objective.text = briefing.get("objective", case_data.get("summary", ""))
+	_sheet_context.text = briefing.get("context", case_data.get("summary", ""))
+	_sheet_context_button.visible = _sheet_context.text != ""
+	var sheet := CaseSheet.build(case_data, case_state)
+	var can_decide := GameState.can_decide(current_case_id)
+	for question in sheet:
+		if question.state != CaseSheet.HIDDEN:
+			var card := _make_question_card(question, can_decide)
+			_sheet_questions.add_child(card)
+			# La question à trancher reste en vue, même si la fiche défile.
+			if card.get_meta("pending"):
+				_scroll_sheet_to.call_deferred(card)
+	var hidden_questions := CaseSheet.hidden_count(sheet)
+	if hidden_questions > 0 and can_decide:
+		var more := Label.new()
+		more.name = "HiddenQuestions"
+		more.theme_type_variation = &"MutedLabel"
+		more.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		more.add_theme_font_size_override("font_size", 14)
+		more.text = tr("? Une question reste à découvrir dans les pièces.") if hidden_questions == 1 \
+				else tr("? %d questions restent à découvrir dans les pièces.") % hidden_questions
+		_sheet_questions.add_child(more)
+	var loose := CaseSheet.loose_facts(case_data, case_state.noted_facts)
+	if not loose.is_empty():
+		var title := Label.new()
+		title.name = "LooseTitle"
+		title.theme_type_variation = &"MutedLabel"
+		title.text = tr("AUTRES NOTES")
+		_sheet_questions.add_child(title)
+		for fact_id in loose:
+			_sheet_questions.add_child(_make_answer_label("• " + CaseLibrary.get_fact(case_data, fact_id).get("label", fact_id)))
+
+
+## Carte d'une question : son texte, son état et ses réponses. Une question à
+## deux versions propose de retenir l'une ou l'autre ; repérée mais payante, de
+## la prouver.
+func _make_question_card(question: Dictionary, can_decide: bool) -> Control:
+	var card := PanelContainer.new()
+	card.name = "Question_" + question.id
+	card.set_meta("pending", question.state in [CaseSheet.CONFLICT, CaseSheet.TO_PROVE])
+	var pad := MarginContainer.new()
+	for side in ["left", "right", "top", "bottom"]:
+		pad.add_theme_constant_override("margin_" + side, 8)
+	card.add_child(pad)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 4)
+	pad.add_child(box)
+	var title := Label.new()
+	title.text = question.text
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.add_theme_font_size_override("font_size", 15)
+	box.add_child(title)
+	var status := Label.new()
+	status.name = "Status"
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	status.add_theme_font_size_override("font_size", 13)
+	match question.state:
+		CaseSheet.OPEN:
+			status.text = tr("Pas encore de réponse.")
+			status.theme_type_variation = &"MutedLabel"
+		CaseSheet.ANSWERED:
+			status.text = tr("RÉPONDU")
+			status.theme_type_variation = &"HeaderLabel"
+		CaseSheet.CONFLICT:
+			status.text = tr("DEUX VERSIONS : laquelle retenez-vous ?")
+			status.theme_type_variation = &"StampLabel"
+		CaseSheet.TO_PROVE:
+			status.text = tr("CONTRADICTION REPÉRÉE : à prouver")
+			status.theme_type_variation = &"StampLabel"
+		CaseSheet.SETTLED:
+			status.text = tr("CONTRADICTION ÉTABLIE")
+			status.theme_type_variation = &"HeaderLabel"
+	box.add_child(status)
+	for answer in question.answers:
+		var source := "%s · %s" % [answer.document_title, answer.reliability]
+		if question.state == CaseSheet.CONFLICT and can_decide and answer.fact_id in question.conflict:
+			var button := Button.new()
+			button.name = "Retain_" + answer.fact_id
+			button.text = tr("RETENIR : %s") % answer.label + "\n" + source
+			button.tooltip_text = tr("Retenir cette version dans votre rapport. L'autre pièce sera notée comme contradictoire.")
+			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			button.custom_minimum_size = Vector2(0, 44)
+			button.focus_mode = Control.FOCUS_NONE
+			button.add_theme_font_size_override("font_size", 14)
+			button.pressed.connect(retain_version.bind(question.id, answer.fact_id))
+			box.add_child(button)
+		else:
+			var prefix := tr("RETENU : ") if question.retained == answer.fact_id else "• "
+			box.add_child(_make_answer_label("%s%s  (%s)" % [prefix, answer.label, source]))
+	if question.state == CaseSheet.TO_PROVE and can_decide:
+		var price: Dictionary = GameState.contradiction_prove_state(current_case_id, question.key).price
+		var prove := Button.new()
+		prove.name = "Prove_" + question.id
+		prove.text = tr(PROVE_LABEL)
+		prove.tooltip_text = price.get("label", "")
+		prove.custom_minimum_size = Vector2(0, 44)
+		prove.focus_mode = Control.FOCUS_NONE
+		prove.add_theme_font_size_override("font_size", 14)
+		prove.pressed.connect(_prove_from_sheet.bind(question.key))
+		box.add_child(prove)
+	return card
+
+
+func _make_answer_label(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_font_size_override("font_size", 14)
+	return label
+
+
+## L'agent retient une version : la contradiction est constatée (établie, ou
+## seulement repérée si elle a un prix). Toute la règle est dans GameState.
+func retain_version(question_id: String, fact_id: String) -> void:
+	var key := GameState.retain_version(current_case_id, question_id, fact_id)
+	if key == "":
+		return
+	Sound.play("confront_success")
+	var state := GameState.contradiction_prove_state(current_case_id, key)
+	if state.priced and not state.established:
+		notify.emit(tr("CONTRADICTION REPÉRÉE — à prouver"))
+	else:
+		notify.emit(tr("CONTRADICTION ÉTABLIE"))
+	_refresh_all()
+
+
+## Bouton PROUVER d'une question : même règle que dans le carnet ; si la preuve
+## échoue, la raison s'affiche en notification (la ligne du carnet est masquée).
+func _prove_from_sheet(key: String) -> void:
+	_prove_key = key
+	prove_noticed()
+	if not key in GameState.get_case_state(current_case_id).contradictions_found:
+		notify.emit(_confront_result.text)
+
+
+func _scroll_sheet_to(card: Control) -> void:
+	if is_instance_valid(card) and _sheet_scroll.is_ancestor_of(card):
+		_sheet_scroll.ensure_control_visible(card)
