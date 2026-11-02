@@ -502,5 +502,7 @@
 	"Cette contradiction a un prix : il faut la prouver pour qu'elle compte dans votre rapport.": "This contradiction has a price: it must be proven to count in your report.",
 	"Compléter la fiche du dossier n° %s, ou rédiger votre conclusion.": "Complete the sheet for file no. %s, or write your conclusion.",
 	"Cliquez d'autres passages soulignés : ils se rangent sous les questions.": "Click more underlined passages: they file themselves under the questions.",
-	"Cherchez deux pièces qui répondent différemment à la même question.": "Look for two documents that answer the same question differently."
+	"Cherchez deux pièces qui répondent différemment à la même question.": "Look for two documents that answer the same question differently.",
+	"[b]RELATIONS :[/b]": "[b]RELATIONS:[/b]",
+	"- %s : %s": "- %s: %s"
 }

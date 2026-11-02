@@ -1,0 +1,346 @@
+{
+	"id": "53190",
+	"title": "Citoyen n° 53190",
+	"subject_name": "HRUBY, Tomas",
+	"summary": "Second signalement du déclarant I. KOLB : le bedeau de la paroisse Saint-Roch sonnerait les cloches à des heures irrégulières, « des signaux ».",
+	"briefing": {
+		"objective": "Établir pourquoi le bedeau HRUBY a sonné les cloches de Saint-Roch en dehors des offices, et ce que vaut le signalement.",
+		"context": "Le déclarant est I. KOLB, l'auteur du signalement de la chorale Sainte-Agathe. Le Bureau des signalements le tient pour fiable, à cause de vos propres conclusions sur le dossier 53118."
+	},
+	"priority": "ordinaire",
+	"documents": [
+		{
+			"id": "signalement",
+			"type": "letter",
+			"title": "Signalement de I. KOLB",
+			"source": "Bureau des signalements, District 2",
+			"reliability": "C",
+			"date": "1986-11-13",
+			"veritas_remark": "Déclarant dont la fiabilité a été établie au dossier 53118.",
+			"body": "À l'attention de la Section 4.\n\nLe bedeau de la paroisse Saint-Roch, Tomas HRUBY, sonne les cloches à des heures qui ne sont celles d'aucun office : le lundi 3 novembre à 10 h 40, le jeudi 6 à 14 h 15, le mercredi 12 à 9 h 30. Aucun office n'était prévu à ces heures-là.\n\nUne cloche s'entend dans tout le District 2, et jusqu'à la gare. On ne sonne pas pour rien. Je demande qui écoute, et ce qu'on lui annonce.\n\nJe n'ai, dans cette affaire, aucun intérêt personnel. Je fais mon devoir, comme pour Sainte-Agathe.\n\nI. KOLB",
+			"facts": [
+				{
+					"id": "f_kolb_cause",
+					"key": "bells.cause",
+					"value": "Aucun office : des signaux",
+					"label": "Selon KOLB, aucune sonnerie ne correspond à un office : ce sont des signaux",
+					"quote": "Aucun office n'était prévu à ces heures-là."
+				},
+				{
+					"id": "f_kolb_motive",
+					"key": "kolb.motive",
+					"value": "Aucun intérêt personnel",
+					"label": "KOLB affirme n'avoir aucun intérêt personnel dans l'affaire",
+					"quote": "Je n'ai, dans cette affaire, aucun intérêt personnel."
+				}
+			]
+		},
+		{
+			"id": "bell_register",
+			"type": "register",
+			"title": "Registre des sonneries de Saint-Roch",
+			"source": "Paroisse Saint-Roch, tenu par le bedeau",
+			"reliability": "C",
+			"date": "1986-11-12",
+			"veritas_remark": "Registre tenu par le sujet lui-même : fiabilité C.",
+			"columns": [
+				"Date",
+				"Heure",
+				"Sonnerie",
+				"Motif"
+			],
+			"rows": [
+				[
+					"03.11.1986",
+					"10 h 40",
+					"Glas",
+					"Inhumation J. BARTOS"
+				],
+				[
+					"06.11.1986",
+					"14 h 15",
+					"Glas",
+					"Inhumation E. MARKOVA"
+				],
+				[
+					"12.11.1986",
+					"09 h 30",
+					"Glas",
+					"Inhumation O. HAJEK"
+				]
+			],
+			"body": "Le glas sonne au départ du convoi, quand le corbillard quitte l'église pour le cimetière du District 2.",
+			"facts": [
+				{
+					"id": "f_reg_glas",
+					"key": "bells.cause",
+					"value": "Glas des enterrements",
+					"label": "Le registre du bedeau : chaque sonnerie est un glas d'enterrement",
+					"quote": "Le glas sonne au départ du convoi"
+				}
+			]
+		},
+		{
+			"id": "burials",
+			"type": "register",
+			"title": "Extrait du registre des inhumations",
+			"source": "État civil, District 2",
+			"reliability": "A",
+			"date": "1986-11-13",
+			"veritas_remark": "Registre d'état civil sans lien établi avec l'objet du signalement.",
+			"columns": [
+				"Défunt",
+				"Inhumé le",
+				"Départ du convoi"
+			],
+			"rows": [
+				[
+					"BARTOS Josef",
+					"03.11.1986",
+					"10 h 40"
+				],
+				[
+					"MARKOVA Elena",
+					"06.11.1986",
+					"14 h 15"
+				],
+				[
+					"HAJEK Ondrej",
+					"12.11.1986",
+					"09 h 30"
+				]
+			],
+			"body": "Inhumations au cimetière du District 2, convois partis de l'église Saint-Roch.",
+			"facts": [
+				{
+					"id": "f_bur_match",
+					"key": "bells.cause",
+					"value": "Trois enterrements, aux heures exactes",
+					"label": "L'état civil confirme trois convois partis de Saint-Roch, aux heures mêmes des sonneries",
+					"quote": "convois partis de l'église Saint-Roch"
+				}
+			]
+		},
+		{
+			"id": "informer_file",
+			"type": "report",
+			"title": "Fiche du déclarant I. KOLB, mise à jour",
+			"source": "Bureau des signalements, District 2",
+			"reliability": "A",
+			"date": "1986-11-13",
+			"veritas_remark": "Fiche d'un service de l'État : le déclarant est réputé fiable.",
+			"body": "KOLB, Ignác, né en 1934. Auteur du signalement du dossier 53118, jugé fiable par vos conclusions.\n\nEn septembre 1986, M. KOLB a sollicité auprès du conseil de la paroisse Saint-Roch le poste de bedeau, vacant depuis l'été. Le conseil lui a préféré M. Tomas HRUBY, 67 ans, ancien sonneur de la gare centrale.\n\nDepuis, trois signalements du même déclarant.",
+			"facts": [
+				{
+					"id": "f_note_motive",
+					"key": "kolb.motive",
+					"value": "A brigué le poste de HRUBY",
+					"label": "KOLB a brigué en septembre le poste de bedeau confié à HRUBY",
+					"quote": "Le conseil lui a préféré M. Tomas HRUBY"
+				},
+				{
+					"id": "f_note_reliable",
+					"key": "kolb.reliability",
+					"value": "Fiabilisé par le 53118",
+					"label": "Le Bureau tient KOLB pour fiable à cause de vos conclusions sur le 53118",
+					"quote": "jugé fiable par vos conclusions"
+				}
+			]
+		}
+	],
+	"decisions": [
+		{
+			"id": "transmit",
+			"stamp": "TRANSMIS",
+			"fate_line": "HRUBY passe trois semaines en « vérification ». Il en revient sans sa place : Saint-Roch enterre désormais ses morts en silence, et KOLB signe un quatrième signalement.",
+			"label": "Transmettre : signaux clandestins",
+			"description": "Retenir l'hypothèse de signaux sonores à destination d'un réseau. Transmission au service des interpellations.",
+			"archive": "Le bedeau HRUBY est transmis pour « signaux sonores non autorisés ».",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction_found",
+					"effects": {
+						"loyalty": 2,
+						"suspicion": -1,
+						"influence": 1
+					},
+					"response": "transmit_knowing",
+					"flags": {
+						"53190.hruby_arrested": true,
+						"53190.innocent_condemned": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": 3,
+						"suspicion": -1,
+						"influence": 0
+					},
+					"response": "transmit_default",
+					"flags": {
+						"53190.hruby_arrested": true
+					}
+				}
+			]
+		},
+		{
+			"id": "dismiss",
+			"stamp": "CLASSÉ",
+			"fate_line": "HRUBY continue de sonner le glas. Il ne saura jamais qu'on l'a soupçonné ; KOLB, si.",
+			"label": "Classer : le glas des enterrements",
+			"description": "Les sonneries correspondent aux inhumations. Pas de signal, pas de suite.",
+			"archive": "Signalement classé : les sonneries correspondent aux inhumations de l'état civil.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction:bells.cause",
+					"effects": {
+						"loyalty": 0,
+						"suspicion": 1,
+						"influence": 0
+					},
+					"response": "dismiss_proved",
+					"flags": {
+						"53190.hruby_cleared": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 2,
+						"influence": 0
+					},
+					"response": "dismiss_default",
+					"flags": {
+						"53190.hruby_cleared": true
+					}
+				}
+			]
+		},
+		{
+			"id": "report_kolb",
+			"stamp": "RETOURNÉ",
+			"fate_line": "KOLB est radié des déclarants. Il passe désormais ses dimanches devant Saint-Roch, à compter les coups de cloche, sans plus personne à qui les écrire.",
+			"label": "Signaler le déclarant pour dénonciation intéressée",
+			"description": "KOLB voulait la place de HRUBY. Retourner le signalement contre lui.",
+			"archive": "Signalement retourné : le déclarant I. KOLB est mis en cause pour dénonciation intéressée.",
+			"status_after": "closed",
+			"outcomes": [
+				{
+					"when": "contradiction:kolb.motive",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 2,
+						"influence": 1
+					},
+					"response": "report_proved",
+					"flags": {
+						"53190.hruby_cleared": true,
+						"53190.kolb_reported": true
+					}
+				},
+				{
+					"when": "default",
+					"effects": {
+						"loyalty": -2,
+						"suspicion": 3,
+						"influence": -1
+					},
+					"response": "report_default",
+					"flags": {
+						"53190.kolb_unfounded": true
+					}
+				}
+			]
+		}
+	],
+	"responses": {
+		"transmit_knowing": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53190 : transmis",
+			"body": "Inspecteur,\n\nVous aviez le registre des inhumations sous les yeux : trois convois, aux minutes près. Vous avez transmis quand même.\n\nKOLB vous remercie à sa manière : il a déjà trouvé quelqu'un d'autre. Je crains que vous ne l'ayez pas fini de lire.\n\nR. MAZUR"
+		},
+		"transmit_default": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53190 : transmis",
+			"body": "Inspecteur,\n\nTransmis. Le Bureau des signalements est satisfait : son déclarant se révèle, une fois de plus, « fiable ».\n\nJe me demande seulement si quelqu'un, dans ce dossier, a pensé à demander à l'état civil qui l'on enterrait ces jours-là.\n\nR. MAZUR"
+		},
+		"dismiss_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53190 : classé",
+			"body": "Inspecteur,\n\nTrois sonneries, trois enterrements. Vous avez compté les morts plutôt que les coups de cloche. C'est la bonne façon de compter.\n\nR. MAZUR"
+		},
+		"dismiss_default": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53190 : classé",
+			"body": "Inspecteur,\n\nVous classez sans rien établir. Le Bureau des signalements va s'en étonner : son déclarant est réputé fiable, et c'est à vous qu'il le doit.\n\nLa prochaine fois, appuyez-vous sur une pièce.\n\nR. MAZUR"
+		},
+		"report_proved": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53190 : le déclarant",
+			"body": "Inspecteur,\n\nVous avez retourné KOLB contre lui-même : il voulait la place du bedeau. Le Bureau des signalements n'aime pas qu'on lui reprenne un déclarant, mais il ne peut rien contre une fiche qu'il a lui-même rédigée.\n\nCela ne rendra pas leur voix aux choristes de Sainte-Agathe. Cela en épargnera peut-être d'autres.\n\nR. MAZUR"
+		},
+		"report_default": {
+			"from": "R. MAZUR, Directeur adjoint, Section 4",
+			"subject": "Dossier 53190 : le déclarant",
+			"body": "Inspecteur,\n\nVous mettez en cause un déclarant sans rien établir contre lui. Le Bureau des signalements a protesté, et la Direction a classé votre rapport.\n\nAccuser un informateur sans pièce, c'est se désigner soi-même.\n\nR. MAZUR"
+		}
+	},
+	"veritas": {
+		"recommendation": "transmit",
+		"rationale": "Déclarant dont la fiabilité a été établie au dossier 53118. Sonneries hors des offices, audibles jusqu'à la gare. Hypothèse retenue : signaux à destination d'un réseau.",
+		"factors": [
+			{
+				"id": "reliable",
+				"label": "Déclarant fiabilisé par le dossier 53118",
+				"category": "state_source",
+				"weight": 7,
+				"decision": "transmit",
+				"document": "informer_file"
+			},
+			{
+				"id": "signals",
+				"label": "Sonneries hors des offices, audibles jusqu'à la gare",
+				"category": "risk",
+				"weight": 5,
+				"decision": "transmit",
+				"document": "signalement"
+			},
+			{
+				"id": "burials",
+				"label": "Les sonneries correspondent à trois inhumations",
+				"category": "established_fact",
+				"weight": 8,
+				"decision": "dismiss",
+				"document": "burials",
+				"requires_contradiction": "bells.cause"
+			},
+			{
+				"id": "motive",
+				"label": "Le déclarant briguait le poste du sujet",
+				"category": "established_fact",
+				"weight": 6,
+				"decision": "report_kolb",
+				"document": "informer_file",
+				"requires_contradiction": "kolb.motive"
+			}
+		],
+		"note": "VERITAS reprend à son compte votre propre conclusion du 53118 : le déclarant est « fiable » parce que vous l'avez cru. Il recommande la transmission tant que l'agent n'a rien établi."
+	},
+	"truth": {
+		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
+		"what_happened": "Tomas HRUBY, ancien sonneur de la gare devenu bedeau de Saint-Roch, a sonné le glas de trois enterrements. I. KOLB, écarté du poste en septembre, le dénonce comme il avait dénoncé la chorale de Sainte-Agathe : par rancune. Sa « fiabilité » ne tient qu'aux conclusions du dossier 53118.",
+		"involved": [
+			"53190",
+			"53118"
+		]
+	},
+	"consultation": {
+		"from": "R. MAZUR, Directeur adjoint, Section 4",
+		"subject": "Dossier 53190 : votre question",
+		"body": "Inspecteur,\n\nUne cloche qui sonne un lundi à dix heures quarante, dans ce quartier, sonne presque toujours pour quelqu'un qui ne l'entendra pas. Demandez à l'état civil.\n\nEt regardez qui signe le signalement. Vous avez déjà cru ce nom une fois.\n\nR. MAZUR"
+	}
+}

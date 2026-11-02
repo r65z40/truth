@@ -649,7 +649,7 @@ func get_act_review() -> Dictionary:
 	if evaluation.eligible:
 		letter = rules.offer_bought if evaluation.bought else rules.offer
 	return {"act": int(act.number), "title": act.title, "subjects": subjects, "evaluation": evaluation,
-			"letter": letter, "target_rank": Career.rank_title(int(rules.to_rank)),
+			"letter": letter, "target_rank": Career.rank_title(Career.target_rank(rules, int(player.get("rank", 0)))),
 			"unlocks": rules.get("unlocks", "")}
 
 
@@ -670,8 +670,11 @@ func complete_act_review(accept: bool) -> String:
 	if not review.evaluation.eligible:
 		_set_flag(prefix + "_denied", true)
 	elif accept:
-		player["rank"] = int(rules.to_rank)
+		player["rank"] = Career.target_rank(rules, int(player.get("rank", 0)))
 		_set_flag(prefix + "_promoted", true)
+		for indicator in rules.get("effects", {}):
+			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(rules.effects[indicator]),
+					INDICATOR_MIN, INDICATOR_MAX)
 		if review.evaluation.bought:
 			_set_flag("career.promotion_bought", true)
 		text = rules.accepted

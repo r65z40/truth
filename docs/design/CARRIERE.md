@@ -1,5 +1,7 @@
 # Système de carrière (proposition)
 
+> État au 02.11 : socle implémenté (voir ROADMAP, « carrière et factions »). Le reste de ce document reste une proposition.
+
 Principe : la carrière ouvre des **actions**, jamais un simple chiffre. Les
 promotions ne sont pas garanties ; on peut aussi refuser de monter.
 

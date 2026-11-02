@@ -3,18 +3,94 @@
 	"acts": [
 		{
 			"act": 1,
-			"cases": ["40921", "51307", "52044", "52310"],
+			"cases": [
+				"40921",
+				"51307",
+				"52044",
+				"52310"
+			],
 			"to_rank": 1,
 			"min_supported_conclusions": 2,
 			"min_loyalty": 45,
 			"max_suspicion": 49,
-			"bought_by_flags": ["milice.favor_owed"],
+			"bought_by_flags": [
+				"milice.favor_owed"
+			],
 			"unlocks": "Demander une archive confidentielle (une par jour).",
 			"offer": "Inspecteur,\n\nLa commission d'avancement a examiné vos premiers dossiers. Elle propose votre nomination au grade d'inspecteur de 2e classe, avec accès aux archives confidentielles.\n\nLa nomination prend effet lundi si vous l'acceptez. Une nomination refusée ne se représente pas avant longtemps.\n\nR. MAZUR",
 			"offer_bought": "Inspecteur,\n\nLa commission d'avancement propose votre nomination au grade d'inspecteur de 2e classe. Je dois vous dire que la recommandation du capitaine de la Milice du District 9 a pesé plus que vos dossiers.\n\nAcceptez si vous le voulez. Mais vous saurez à qui vous la devez, et lui aussi.\n\nR. MAZUR",
 			"denied": "Inspecteur,\n\nLa commission d'avancement a examiné vos premiers dossiers. Vous êtes maintenu au grade d'inspecteur de 3e classe.\n\nR. MAZUR",
 			"accepted": "Nomination enregistrée. Votre nouvelle carte vous attend lundi au secrétariat.",
 			"refused": "Vous signez la mention « décline la proposition ». MAZUR range la feuille sans un mot. En sortant, vous croisez KREMER dans l'escalier des archives ; il vous fait un signe de tête."
+		},
+		{
+			"act": 2,
+			"cases": [
+				"53118",
+				"53402",
+				"53517",
+				"53760"
+			],
+			"to_rank": 2,
+			"min_supported_conclusions": 2,
+			"min_loyalty": 50,
+			"max_suspicion": 49,
+			"bought_by_flags": [
+				"player.courted"
+			],
+			"faction_requirements": [
+				{
+					"faction": "direction",
+					"at_least": "neutre",
+					"label": "La Direction ne s'y oppose pas"
+				}
+			],
+			"effects": {
+				"influence": 3,
+				"loyalty": 2
+			},
+			"unlocks": "Une voix à la commission : votre influence grandit, et le cabinet HALM vous écoute.",
+			"offer": "Inspecteur,\n\nLa commission d'avancement a examiné vos dossiers de novembre : la chorale, Brenec, PETRAS, l'archiviste. Elle propose votre nomination au grade d'inspecteur principal.\n\nJe vous la transmets sans commentaire. Vous savez ce qu'on a récompensé ; moi aussi.\n\nR. MAZUR",
+			"offer_bought": "Inspecteur,\n\nLa commission propose votre nomination au grade d'inspecteur principal. La recommandation est venue d'en haut, du cabinet du Directeur HALM, avant même que vos dossiers soient lus.\n\nOn ne refuse pas un cadeau du cabinet. On le paie plus tard.\n\nR. MAZUR",
+			"denied": "Inspecteur,\n\nLa commission d'avancement vous maintient à votre grade. Vos dossiers de novembre n'ont pas convaincu, ou ont trop convaincu les mauvaises personnes.\n\nR. MAZUR",
+			"accepted": "Nomination enregistrée. On vous attribue un bureau avec une fenêtre ; elle donne sur la cour où l'on fait monter les fourgons.",
+			"refused": "Vous déclinez. MAZUR vous regarde longtemps, puis range la feuille. « Un jour, il faudra me dire de quel côté vous êtes. Pas aujourd'hui. »"
+		},
+		{
+			"act": 3,
+			"cases": [
+				"54001",
+				"54012",
+				"54030"
+			],
+			"to_rank": 3,
+			"min_supported_conclusions": 2,
+			"min_loyalty": 55,
+			"max_suspicion": 49,
+			"bought_by_flags": [
+				"milice.ally"
+			],
+			"faction_requirements": [
+				{
+					"faction": "direction",
+					"at_least": "neutre",
+					"label": "La Direction ne s'y oppose pas"
+				},
+				{
+					"faction": "section7",
+					"at_least": "mefiante",
+					"label": "La Section 7 ne vous tient pas pour suspect"
+				}
+			],
+			"effects": {
+				"influence": 4
+			},
+			"unlocks": "MIROIR vous est confié en chef, avec la promesse du poste de directeur adjoint.",
+			"offer": "Inspecteur,\n\nLa Section 4 a perdu son directeur adjoint cette semaine. Le Directeur HALM a besoin d'un chef de section adjoint qui a su tenir pendant la Centrale.\n\nLa commission propose votre nomination. Elle prend effet lundi, avec une mission : l'opération MIROIR.\n\nLe cabinet du Directeur HALM",
+			"offer_bought": "Inspecteur,\n\nLa commission propose votre nomination au grade de chef de section adjoint. Le capitaine ORLIK, de la Milice du District 9, a tenu à appuyer votre candidature par écrit. Le Directeur a lu la lettre.\n\nLe cabinet du Directeur HALM",
+			"denied": "Inspecteur,\n\nLa commission d'avancement vous maintient à votre grade. Le Directeur HALM a d'autres projets pour vous : l'opération MIROIR a besoin d'exécutants.\n\nLe cabinet du Directeur HALM",
+			"accepted": "Nomination enregistrée. Au secrétariat, on ne vous appelle plus « inspecteur » : on ne vous appelle plus du tout, on vient.",
+			"refused": "Vous déclinez. Le cabinet prend note. Dans le couloir, BRANDT vous sourit comme on sourit à quelqu'un dont on vient de lire le dossier."
 		}
 	]
 }

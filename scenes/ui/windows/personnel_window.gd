@@ -34,6 +34,10 @@ GRADE : %s     AFFECTATION : Section 4
 	for line in assessment.lines:
 		lines.append("[b]%s :[/b] %s" % [line.label.to_upper(), line.text])
 	lines.append("")
+	lines.append(tr("[b]RELATIONS :[/b]"))
+	for faction in FactionRules.describe(GameState.flags):
+		lines.append(tr("- %s : %s") % [faction.name, faction.label])
+	lines.append("")
 	lines.append(tr("[b]OBSERVATIONS :[/b]"))
 	if assessment.notes.is_empty():
 		lines.append(tr("Néant."))
