@@ -145,6 +145,7 @@ func _run() -> void:
 		"test_media_catalog",
 		"test_desk_traces",
 		"test_scenario_flags_reachable",
+		"test_story_threads",
 		"test_evening_echoes",
 		"test_time_in_desk",
 		"test_endings",
@@ -3887,6 +3888,58 @@ func test_scenario_flags_reachable() -> void:
 	check(not notes.contains("aux archives lundi"), "les notes de KREMER ne datent plus son départ")
 	check(not FileAccess.get_file_as_string("res://data/cases/case_53118.json").contains("soir de la Sainte-Agathe"),
 			"la veillée du 9 novembre n'est plus la Sainte-Agathe (février)")
+	GameState.new_game()
+
+
+## Fils d'histoire raccordés (demande de fen du 02.11) : chaque drapeau autrefois
+## sans suite produit désormais un courrier, une pièce ou une fin.
+func test_story_threads() -> void:
+	var fired_after := func(flags: Dictionary, day: int) -> Array:
+		GameState.new_game()
+		GameState.flags.merge(flags, true)
+		GameState.day_index = day
+		return GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+
+	check("halm_defied_53402" in fired_after.call({"halm.defied": true}, 8) and GameState.flags.get("halm.grudge") == true,
+			"Brenec classé : le cabinet HALM le fait savoir")
+	check(GameState.get_case_view("54100").documents.any(func(d: Dictionary) -> bool: return d.id == "halm_annex"),
+			"le dossier 54100 garde la trace de Brenec")
+	check("bribe_drazek_wink" in fired_after.call({"player.bribed": true}, 4) and GameState.flags.get("player.compromised") == true,
+			"le carnet gardé : DRAZEK révèle qu'il est celui d'un mort")
+	check(not "bribe_drazek_wink" in fired_after.call({"player.bribed": true, "52044.drazek_exposed": true}, 4),
+			"DRAZEK suspendu n'écrit pas")
+	check(GameState.get_case_view("54100").documents.size() > CaseLibrary.filter_case(CaseLibrary.get_case("54100"), {"flags": {}}).documents.size(),
+			"le carnet figure en annexe du 54100")
+	check("act4_cadran" in fired_after.call({"heure_juste.list_in_file": true}, 14), "le cahier versé au dossier sert à l'opération CADRAN")
+	var with_network := {"mazur.fled": true, "kremer.protected": true}
+	check(EndingRules.resolve({"flags": with_network, "indicators": {"suspicion": 50}}).id == "fin_heure_juste", "L'Heure juste reste possible")
+	with_network["heure_juste.network_hit"] = true
+	check(EndingRules.resolve({"flags": with_network, "indicators": {"suspicion": 50}}).id != "fin_heure_juste",
+			"après CADRAN, le réseau ne compte pas sur vous")
+	check("act4_lena_leverage" in fired_after.call({"lena.leverage": true}, 15), "acte 4 : HALM se sert de la recommandation pour Lena")
+	check(GameState.get_case_view("60003").documents.any(func(d: Dictionary) -> bool: return d.id == "lena_note"),
+			"la fiche de Lena est jointe au dossier du père")
+	check("act4_lena_transferred" in fired_after.call({"act4.lena_threatened": true, "act4.father_truth": true}, 18),
+			"rétablir la vérité du père : Lena est mutée")
+	var proof := {"act4.father_truth": true, "vosk.father_proof_found": true,
+			"53118.choir_cleared": true, "adler.freed": true, "54001.accident_established": true}
+	check(EndingRules.resolve({"flags": proof, "indicators": {}}).id == "fin_correction",
+			"les papiers de la pendule ouvrent La Correction sans KREMER")
+	proof["kremer.arrested"] = true
+	check(EndingRules.resolve({"flags": proof, "indicators": {}}).id != "fin_correction",
+			"mais pas si le sous-sol B a été scellé")
+	GameState.new_game()
+	GameState.flags["vosk.father_proof_found"] = true
+	check(GameState.get_case_view("60003").documents.any(func(d: Dictionary) -> bool: return d.id == "father_papers"),
+			"les papiers du père sont une pièce du 60003")
+
+	# Le second signalement de KOLB devient le dossier 53190.
+	var kolb := CaseLibrary.get_case("53190")
+	check(CaseLibrary.validate_case(kolb).is_empty(), "dossier 53190 valide")
+	var keys: Array = CaseLibrary.find_contradictions(kolb).map(func(c: Dictionary) -> String: return c.key)
+	check("bells.cause" in keys and "kolb.motive" in keys, "53190 : le glas et le mobile de KOLB se confrontent")
+	check("53118_kolb_recidive" in fired_after.call({"53118.choir_arrested": true}, 8) and GameState.cases.has("53190"),
+			"la chorale arrêtée : KOLB revient avec le bedeau de Saint-Roch")
 	GameState.new_game()
 
 

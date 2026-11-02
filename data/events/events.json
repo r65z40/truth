@@ -311,6 +311,30 @@
 			}
 		},
 		{
+			"id": "bribe_drazek_wink",
+			"conditions": {
+				"min_day": 5,
+				"requires_flags": [
+					"player.bribed"
+				],
+				"forbidden_flags": [
+					"52044.drazek_exposed",
+					"52044.drazek_transferred"
+				]
+			},
+			"set_flags": {
+				"player.compromised": true
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"message": {
+				"from": "P. DRAZEK, préposé, Bureau du ravitaillement du District 4",
+				"subject": "Le carnet SIMKO",
+				"body": "Inspecteur,\n\nJ'espère que le carnet vous rend service. Le pain de la rue du Moulin est le meilleur du District.\n\nNe vous inquiétez pas pour le titulaire : SIMKO Pavol est mort à la fin du mois d'août, il n'en a plus l'usage. Le registre, lui, ne le sait pas encore. Nous sommes désormais deux à ne pas le lui dire.\n\nRespectueusement,\nP. DRAZEK"
+			}
+		},
+		{
 			"id": "52044_kovac_thanks",
 			"conditions": {
 				"min_day": 4,
@@ -767,6 +791,27 @@
 			}
 		},
 		{
+			"id": "halm_defied_53402",
+			"conditions": {
+				"min_day": 9,
+				"requires_flags": [
+					"halm.defied"
+				]
+			},
+			"set_flags": {
+				"halm.grudge": true
+			},
+			"effects": {
+				"suspicion": 2,
+				"influence": -1
+			},
+			"message": {
+				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
+				"subject": "Dossier 53402 : classement noté",
+				"body": "Inspecteur,\n\nVous avez classé l'affaire de Brenec en « défaillance technique », la semaine même du décret 86-31. La garde-frontière n'a pas eu son nom. Elle l'a demandé au Directeur HALM, personnellement.\n\nLe Directeur ne réécrit pas vos conclusions. Il les relit. Toutes. À partir d'aujourd'hui, vos dossiers passeront par son cabinet avant d'être archivés.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
 			"id": "assign_53517",
 			"conditions": {
 				"min_day": 8
@@ -857,7 +902,62 @@
 			"message": {
 				"from": "Bureau des signalements, District 2",
 				"subject": "Nouveau signalement — même déclarant",
-				"body": "Pour information et suite à donner.\n\nLe citoyen I. KOLB, dont le précédent signalement a conduit aux arrestations de la paroisse Sainte-Agathe, en dépose un second : il désigne cette fois le bedeau de la paroisse voisine, « qui sonne les cloches à des heures irrégulières ».\n\nLe Bureau note que vos conclusions sur le premier dossier ont établi la fiabilité du déclarant. Nous vous transmettons donc le suivant.\n\nBureau des signalements"
+				"body": "Pour information et suite à donner.\n\nLe citoyen I. KOLB, dont le précédent signalement a conduit aux arrestations de la paroisse Sainte-Agathe, en dépose un second : il désigne cette fois le bedeau de la paroisse voisine, « qui sonne les cloches à des heures irrégulières ».\n\nLe Bureau note que vos conclusions sur le premier dossier ont établi la fiabilité du déclarant. Nous vous transmettons donc le suivant : dossier 53190.\n\nBureau des signalements"
+			},
+			"assign_cases": [
+				"53190"
+			]
+		},
+		{
+			"id": "53190_reminder",
+			"conditions": {
+				"min_day": 11,
+				"undecided_cases": [
+					"53190"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"message": {
+				"from": "Bureau des signalements, District 2",
+				"subject": "Dossier 53190 : en attente",
+				"body": "Pour information.\n\nLe déclarant I. KOLB s'est présenté deux fois à l'accueil pour demander la suite donnée à son signalement contre le bedeau de Saint-Roch. Il dit que la cloche continue de sonner.\n\nBureau des signalements"
+			}
+		},
+		{
+			"id": "53190_silent_bells",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"53190.hruby_arrested"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Saint-Roch",
+				"body": "Monsieur l'Inspecteur,\n\nOn a enterré mon père hier sans le glas. Le curé dit que le bedeau est « en vérification ». Mon père a sonné pour tout le quartier pendant quarante ans, à la gare ; personne n'a sonné pour lui.\n\nP. RYBA\n\n[Mention du Bureau des requêtes : requête classée, aucune suite à donner.]"
+			}
+		},
+		{
+			"id": "53190_kolb_struck",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"53190.kolb_reported"
+				]
+			},
+			"set_flags": {
+				"kolb.struck_off": true
+			},
+			"effects": {
+				"suspicion": -1
+			},
+			"message": {
+				"from": "Bureau des signalements, District 2",
+				"subject": "Déclarant I. KOLB : radiation",
+				"body": "Pour information.\n\nSur votre rapport, le citoyen I. KOLB est radié de la liste des déclarants du District 2 pour dénonciation intéressée. Ses signalements antérieurs, dont celui qui vous visait, sont reclassés « sans valeur probante ».\n\nLes signalements concernant la paroisse Sainte-Agathe ne sont pas rouverts pour autant.\n\nBureau des signalements"
 			}
 		},
 		{
@@ -1246,6 +1346,27 @@
 			}
 		},
 		{
+			"id": "act4_cadran",
+			"conditions": {
+				"min_day": 15,
+				"requires_flags": [
+					"heure_juste.list_in_file"
+				]
+			},
+			"set_flags": {
+				"heure_juste.network_hit": true
+			},
+			"effects": {
+				"loyalty": 2,
+				"suspicion": -1
+			},
+			"message": {
+				"from": "Direction de la Section 4",
+				"subject": "Opération CADRAN : résultats",
+				"body": "À l'attention des agents de la Section 4.\n\nSur la base du cahier saisi dans l'atelier de l'horloger V. ADLER (dossier 54030, procès-verbal de l'inspecteur VOSK), la Milice a interpellé cette nuit sept horlogers, deux cheminots du dépôt de la gare centrale et une employée du service des pointages.\n\nLe réseau dit de « L'HEURE JUSTE » est considéré comme démantelé. La Direction remercie l'inspecteur instructeur pour la qualité de son procès-verbal."
+			}
+		},
+		{
 			"id": "assign_60001",
 			"conditions": {
 				"min_day": 15
@@ -1273,6 +1394,26 @@
 				"from": "Cabinet du Directeur HALM, opération MIROIR",
 				"subject": "Réécriture : rapport de la Centrale",
 				"body": "Le rapport de fond sur la Centrale n° 3 vous revient. Il faut un coupable nommé, pas une « défaillance ».\n\nLe dossier 60002 est ouvert à votre carnet."
+			}
+		},
+		{
+			"id": "act4_lena_leverage",
+			"conditions": {
+				"min_day": 16,
+				"requires_flags": [
+					"lena.leverage"
+				]
+			},
+			"set_flags": {
+				"act4.lena_threatened": true
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"message": {
+				"from": "Cabinet du Directeur HALM, opération MIROIR",
+				"subject": "Hôpital n° 2, service des urgences",
+				"body": "Inspecteur,\n\nVotre dossier personnel mentionne une recommandation téléphonique du 6 novembre, en faveur d'une étudiante en médecine, L. VOSK. Elle a été suivie.\n\nLes affectations de stage restent révisables jusqu'au 31 décembre. Je ne doute pas que votre travail dans MIROIR rendra toute révision inutile.\n\nHALM"
 			}
 		},
 		{
@@ -1313,6 +1454,25 @@
 				"from": "Cabinet du Directeur HALM, opération MIROIR",
 				"subject": "La dernière pièce",
 				"body": "Il reste un dossier. Vous savez lequel : celui de 1971, scellé, au nom de votre père.\n\nLe dossier 60003 est ouvert à votre carnet. Fermez-le, et le vôtre s'ouvrira — vide. C'est le marché."
+			}
+		},
+		{
+			"id": "act4_lena_transferred",
+			"conditions": {
+				"min_day": 19,
+				"requires_flags": [
+					"act4.lena_threatened",
+					"act4.father_truth"
+				]
+			},
+			"set_flags": {
+				"lena.transferred": true
+			},
+			"effects": {},
+			"message": {
+				"from": "Direction du personnel, ministère de la Santé",
+				"subject": "Révision d'affectation : L. VOSK",
+				"body": "Pour information de l'agent recommandant.\n\nL'affectation de la stagiaire L. VOSK au service des urgences de l'hôpital n° 2 est révisée. Elle est mutée, à compter du 8 décembre, au dispensaire de Brenec (secteur frontalier).\n\nAucune suite n'est plus donnée à la recommandation du 6 novembre."
 			}
 		},
 		{

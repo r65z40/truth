@@ -235,6 +235,38 @@
 		{
 			"flag": "act4.mirror_refused",
 			"text": "Vous avez refusé de réécrire le dossier de votre père. Ni promu, ni jugé : oublié."
+		},
+		{
+			"flag": "halm.grudge",
+			"text": "Le cabinet du Directeur HALM relit toutes vos conclusions depuis l'affaire de Brenec."
+		},
+		{
+			"flag": "player.compromised",
+			"text": "Vous avez gardé un carnet de rationnement établi au nom d'un mort. DRAZEK le sait."
+		},
+		{
+			"flag": "heure_juste.network_hit",
+			"text": "Le cahier que vous avez versé au dossier 54030 a servi : dix arrestations dans le réseau L'HEURE JUSTE."
+		},
+		{
+			"flag": "act4.lena_threatened",
+			"text": "La Direction tient votre sœur : son affectation dépend de vos rédactions."
+		},
+		{
+			"flag": "lena.transferred",
+			"text": "Votre sœur a été mutée au dispensaire de Brenec, en zone frontalière."
+		},
+		{
+			"flag": "vosk.father_proof_found",
+			"text": "Vous détenez les papiers de votre père, de sa main : « je n'ai pas émigré »."
+		},
+		{
+			"flag": "53190.hruby_arrested",
+			"text": "Le bedeau de Saint-Roch a été transmis sur le second signalement de KOLB."
+		},
+		{
+			"flag": "kolb.struck_off",
+			"text": "Sur votre rapport, l'informateur I. KOLB a été radié des déclarants."
 		}
 	]
 }
