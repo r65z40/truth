@@ -146,6 +146,7 @@ func _run() -> void:
 		"test_desk_traces",
 		"test_scenario_flags_reachable",
 		"test_story_threads",
+		"test_factions_and_career",
 		"test_evening_echoes",
 		"test_time_in_desk",
 		"test_endings",
@@ -3841,6 +3842,12 @@ func test_scenario_flags_reachable() -> void:
 		for file_name in DirAccess.get_files_at(path):
 			if file_name.ends_with(".json"):
 				known.merge(_flags_set_in(FileAccess.get_file_as_string(path.path_join(file_name))))
+	# Drapeaux posés par le code de la commission d'avancement (GameState.complete_act_review).
+	for act in [1, 2, 3]:
+		for outcome in ["promoted", "denied", "refused"]:
+			known["career.act%d_%s" % [act, outcome]] = true
+	known["career.promotion_bought"] = true
+	known["career.refused_promotion"] = true
 	for ending: Dictionary in EndingRules.get_endings():
 		for rule: Dictionary in ending.get("rules", []):
 			for flag in rule.get("requires_flags", []):
@@ -3940,6 +3947,74 @@ func test_story_threads() -> void:
 	check("bells.cause" in keys and "kolb.motive" in keys, "53190 : le glas et le mobile de KOLB se confrontent")
 	check("53118_kolb_recidive" in fired_after.call({"53118.choir_arrested": true}, 8) and GameState.cases.has("53190"),
 			"la chorale arrêtée : KOLB revient avec le bedeau de Saint-Roch")
+	GameState.new_game()
+
+
+## Factions et carrière (demande de fen du 02.11) : l'attitude des factions se
+## déduit des drapeaux, change les courriers et pèse sur l'avancement.
+func test_factions_and_career() -> void:
+	var standing := func(faction: String, flags: Dictionary) -> String:
+		return FactionRules.standing(faction, flags)
+	check(FactionRules.describe({}).size() == 5 and FactionRules.describe({}).all(func(f: Dictionary) -> bool: return f.level == "neutre"),
+			"début de partie : cinq factions, toutes neutres")
+	check(standing.call("milice", {"milice.favor_owed": true, "milice.ally": true, "54001.orlik_protected": true}) == "alliee",
+			"ORLIK classé puis protégé : la Milice est alliée")
+	check(standing.call("milice", {"milice.hostile": true}) == "mefiante", "une brouille : la Milice est méfiante")
+	check(standing.call("milice", {"milice.hostile": true, "orlik.captain_hostile": true}) == "hostile",
+			"le capitaine accusé en plus : hostile")
+	check(standing.call("heure_juste", {"kremer.protected": true, "adler.freed": true, "heure_juste.network_hit": true}) == "mefiante",
+			"le cahier versé au dossier efface ce qu'on avait fait pour le réseau")
+	check(EventRules.are_conditions_met({"faction_at_most": {"milice": "hostile"}}, {"flags": {"milice.hostile": true, "orlik.captain_hostile": true}}),
+			"condition d'événement : faction au plus hostile")
+	check(not EventRules.are_conditions_met({"faction_at_least": {"familles": "favorable"}}, {"flags": {}}),
+			"condition d'événement : faction au moins favorable")
+
+	GameState.new_game()
+	GameState.flags.merge({"milice.hostile": true, "orlik.captain_hostile": true}, true)
+	GameState.day_index = 10
+	var fired: Array = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("faction_milice_search" in fired and GameState.flags.get("player.flat_searched") == true,
+			"Milice hostile : elle fouille l'appartement de l'agent")
+
+	# Avancement des actes 2 et 3.
+	var act2 := Career.act_rules(2)
+	var act3 := Career.act_rules(3)
+	check(not act2.is_empty() and not act3.is_empty(), "commission d'avancement aux actes 2 et 3")
+	check(Career.target_rank(act3, 1) == 2 and Career.target_rank(act3, 2) == 3, "on monte d'un échelon à la fois")
+	var cases := {}
+	for case_id in act2.cases:
+		cases[case_id] = {"decision": "x", "contradictions_found": ["k"]}
+	var good := {"indicators": {"loyalty": 60, "suspicion": 30}, "flags": {}, "cases": cases}
+	check(Career.evaluate(act2, good).eligible, "acte 2 : bons dossiers, Direction neutre → promotion proposée")
+	var defied := good.duplicate(true)
+	defied.flags = {"halm.defied": true, "ministry.embarrassed": true}
+	var evaluation := Career.evaluate(act2, defied)
+	check(not evaluation.eligible and evaluation.criteria.any(func(c: Dictionary) -> bool: return not c.ok),
+			"acte 2 : la Direction hostile bloque la promotion, et le critère le dit")
+	GameState.new_game()
+	GameState.day_index = 9
+	for case_id in act2.cases:
+		GameState.cases[case_id] = {"decision": "x", "contradictions_found": ["k"]}
+	GameState.indicators.loyalty = 60
+	GameState.player.rank = 1
+	var influence_before: int = GameState.indicators.influence
+	check(GameState.has_act_review_pending() and GameState.get_act_review().evaluation.eligible, "revue de fin d'acte 2")
+	GameState.complete_act_review(true)
+	check(GameState.player.rank == 2 and GameState.get_rank_title() == "Inspecteur principal", "nommé inspecteur principal")
+	check(GameState.indicators.influence > influence_before, "la promotion donne de l'influence")
+
+	# Le grade change la place dans MIROIR.
+	GameState.new_game()
+	GameState.day_index = 14
+	fired = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("miroir_status_low" in fired and not "miroir_status_chief" in fired, "sans promotion : MIROIR sous surveillance")
+	GameState.new_game()
+	GameState.flags["career.act3_promoted"] = true
+	GameState.day_index = 14
+	fired = GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
+	check("miroir_status_chief" in fired, "chef de section adjoint : vous dirigez MIROIR")
+	check(EndingRules.resolve({"flags": {"act4.mirror_signed_clean": true, "career.act3_promoted": true}, "indicators": {"loyalty": 62}}).id == "fin_miroir",
+			"le Miroir parfait est aussi au bout de la carrière")
 	GameState.new_game()
 
 

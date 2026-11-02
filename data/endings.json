@@ -118,6 +118,15 @@
 					"min_indicators": {
 						"loyalty": 70
 					}
+				},
+				{
+					"requires_flags": [
+						"act4.mirror_signed_clean",
+						"career.act3_promoted"
+					],
+					"min_indicators": {
+						"loyalty": 60
+					}
 				}
 			],
 			"lines": [

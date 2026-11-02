@@ -267,6 +267,38 @@
 		{
 			"flag": "kolb.struck_off",
 			"text": "Sur votre rapport, l'informateur I. KOLB a été radié des déclarants."
+		},
+		{
+			"flag": "player.flat_searched",
+			"text": "La Milice a fouillé votre appartement et demandé l'adresse de votre sœur."
+		},
+		{
+			"flag": "milice.favor_used",
+			"text": "Le capitaine ORLIK a fait muter le gardien de votre immeuble. Il tient le compte."
+		},
+		{
+			"flag": "player.mail_opened",
+			"text": "Votre courrier personnel passe par la Section 7."
+		},
+		{
+			"flag": "heure_juste.warned",
+			"text": "Quelqu'un, dans le réseau, vous a prévenu d'un contrôle."
+		},
+		{
+			"flag": "familles.grateful",
+			"text": "Dans le District 2, des familles vous savent gré de ne pas tout signer."
+		},
+		{
+			"flag": "player.sidelined",
+			"text": "Le cabinet HALM ne vous confie plus de dossier prioritaire sans visa."
+		},
+		{
+			"flag": "act4.mirror_chief",
+			"text": "Chef de section adjoint, vous dirigez MIROIR. Le poste de MAZUR vous est promis."
+		},
+		{
+			"flag": "act4.mirror_supervised",
+			"text": "Dans MIROIR, chacune de vos signatures est contresignée par BRANDT."
 		}
 	]
 }

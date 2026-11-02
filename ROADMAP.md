@@ -386,6 +386,17 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
 - [x] Le second signalement de KOLB : nouveau dossier 53190 (le bedeau de Saint-Roch),
       relance, glas manquant, radiation de KOLB ; épargner HRUBY compte pour La Correction
 
+## Fait : carrière et factions (demande de fen du 02.11)
+
+- [x] Cinq factions (direction, Section 7, Milice, L'Heure juste, familles) dont l'attitude
+      (hostile → alliée) est déduite des drapeaux (`data/factions.json`, `FactionRules`) :
+      pas de changement de sauvegarde
+- [x] Conditions d'événement `faction_at_least` / `faction_at_most`, six courriers de faction
+      (perquisition, faveur de la Milice, courrier ouvert, avertissement, remerciements, mise à l'écart)
+- [x] Rubrique « RELATIONS » dans le dossier personnel
+- [x] Commissions de fin d'actes 2 et 3 (un grade à la fois, exigences de faction, effets sur
+      les indicateurs) ; le rôle dans MIROIR dépend du grade, seconde voie vers la fin Miroir
+
 ## Prochaine itération
 
 - [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
@@ -416,6 +427,6 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
 ## Plus tard
 
 - [ ] Réseaux d'informateurs, fiabilité des sources, interrogatoires
-- [ ] Promotions et carrière, factions, simulation politique
+- [ ] Simulation politique (promotions et factions : faites le 02.11)
 - [ ] Interface LLM optionnelle pour VERITAS (formulation seulement, via serveur)
 - [ ] Adaptation mobile complète

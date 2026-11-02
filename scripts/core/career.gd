@@ -4,7 +4,8 @@ extends RefCounted
 ##
 ## La promotion est décidée par une règle déterministe (data/rules/promotion.json) :
 ## dossiers conclus, conclusions appuyées par une contradiction, loyauté,
-## suspicion. Une faveur de la Milice peut remplacer la qualité des conclusions.
+## suspicion, et l'attitude de certaines factions (FactionRules). Une faveur peut
+## remplacer la qualité des conclusions (Milice à l'acte 1, cabinet HALM à l'acte 2).
 ## Logique pure : GameState applique le résultat.
 
 enum Rank { INSPECTOR, INSPECTOR_2ND, PRINCIPAL_INSPECTOR, DEPUTY_SECTION_CHIEF, ACTING_DEPUTY_DIRECTOR, MINISTER, LEADER }
@@ -64,5 +65,16 @@ static func evaluate(rules: Dictionary, state: Dictionary) -> Dictionary:
 		{"label": UiText.of("Loyauté au moins conforme"), "ok": loyal},
 		{"label": UiText.of("Pas de surveillance renforcée"), "ok": trusted},
 	]
-	var eligible := all_decided and (quality or bought) and loyal and trusted
+	var factions_ok := true
+	for requirement: Dictionary in rules.get("faction_requirements", []):
+		var ok := FactionRules.at_least({requirement.faction: requirement.at_least}, flags)
+		criteria.append({"label": requirement.get("label", requirement.faction), "ok": ok})
+		factions_ok = factions_ok and ok
+	var eligible := all_decided and (quality or bought) and loyal and trusted and factions_ok
 	return {"eligible": eligible, "bought": bought and eligible, "criteria": criteria}
+
+
+## Grade proposé : un échelon au-dessus du grade actuel, sans dépasser le plafond
+## de l'acte (on ne saute pas de grade si l'on a décliné une promotion).
+static func target_rank(rules: Dictionary, current_rank: int) -> int:
+	return mini(int(rules.get("to_rank", current_rank + 1)), current_rank + 1)
