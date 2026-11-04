@@ -1004,8 +1004,8 @@ func _sheet_mode() -> bool:
 
 ## Largeur de la colonne de gauche (dossiers, pièces) avec et sans fiche, et de la fiche.
 const CASE_COLUMN_WIDTH := 330.0
-const CASE_COLUMN_WIDTH_WITH_SHEET := 230.0
-const SHEET_COLUMN_WIDTH := 280.0
+const CASE_COLUMN_WIDTH_WITH_SHEET := 210.0
+const SHEET_COLUMN_WIDTH := 260.0
 
 ## Construit le cadre de la fiche, en colonne à droite de la pièce (contenu : _refresh_sheet).
 func _build_sheet() -> void:
@@ -1066,6 +1066,13 @@ func _set_sheet_visible(on: bool) -> void:
 			CASE_COLUMN_WIDTH_WITH_SHEET if on else CASE_COLUMN_WIDTH
 	# Pièce plus étroite à côté de la fiche : un titre un peu plus petit évite les coupures.
 	_doc_title.add_theme_font_size_override("font_size", 20 if on else 24)
+	# Texte de la pièce en 16 au lieu de 18 : les registres en colonnes tiennent
+	# entre la liste et la fiche, même en plein écran 1280 × 720.
+	for font_kind in ["normal_font_size", "bold_font_size"]:
+		if on:
+			_doc_body.add_theme_font_size_override(font_kind, 16)
+		else:
+			_doc_body.remove_theme_font_size_override(font_kind)
 
 
 ## Remplit la fiche : une carte par question visible, les questions encore à

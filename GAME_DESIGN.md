@@ -232,5 +232,8 @@ le refus est mémorisé (`career.refused_promotion`).
 - 2026-11-04 : deux niveaux de difficulté (fen) : débutant avec la fiche
   d'enquête, expérimenté avec le jeu d'origine (carnet libre). Choisi à la
   nouvelle partie, modifiable dans Paramètres.
+- 2026-11-04 : interface simplifiée (fen) : applications du bureau en plein
+  écran avec « ← RETOUR », une seule aide à l'écran (MAZUR dans le bandeau),
+  bureau à cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal).
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.
