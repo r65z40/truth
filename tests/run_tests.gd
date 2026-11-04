@@ -303,6 +303,15 @@ func test_case_sheet_window() -> void:
 	card = dossiers._sheet_questions.get_node("Question_address")
 	check(card.find_child("Retain_f_reg_address", true, false) == null and card.find_child("Status", true, false).text == "CONTRADICTION ÉTABLIE",
 			"question tranchée : plus de bouton, état affiché")
+	check(card.find_child("Status", true, false).has_meta("stamped") and not desk.get_node("%ToastLabel").text.contains("CONTRADICTION"),
+			"le verdict s'imprime en tampon sur la carte, sans notification au milieu de l'écran")
+	desk.show_toast("essai")
+	await get_tree().process_frame
+	var toast: Control = desk.get_node("%Toast")
+	desk._place_toast()
+	check(absf(toast.get_global_rect().position.y - desk._guide_bar.get_global_rect().end.y - 12.0) < 1.0
+			and toast.mouse_filter == Control.MOUSE_FILTER_IGNORE,
+			"les notifications se posent en haut, sous le bandeau, sans bloquer les clics")
 	desk._refresh_objective()
 	check(desk.current_step.text.begins_with("Rédiger"), "ensuite : rédiger la conclusion")
 	dossiers.open_conclusion()
@@ -2739,7 +2748,9 @@ func test_coach_bubble_can_be_closed() -> void:
 	await get_tree().process_frame
 	desk._refresh_objective()
 	check(desk.coach.visible, "bulle d'astuce affichée au départ")
-	check(desk.coach.get_node("%CloseButton") != null, "la bulle a un bouton de fermeture")
+	check(desk.coach.close_button() != null, "la bulle a un bouton de fermeture")
+	check(desk.coach.is_docked() and desk._guide_bar.is_ancestor_of(desk.coach.close_button()),
+			"la bulle est rangée dans le bandeau À FAIRE, pas sur le contenu")
 	desk.coach.dismissed.emit()
 	check(not desk.coach.visible, "la bulle se masque quand on la ferme")
 	# Elle réapparaît dès que l'étape conseillée change.

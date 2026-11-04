@@ -136,6 +136,12 @@ func _ready() -> void:
 	for button_name in TOOLTIPS:
 		(get_node("%" + button_name) as Control).tooltip_text = tr(TOOLTIPS[button_name])
 	_toast.hide()
+	_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_toast.grow_horizontal = Control.GROW_DIRECTION_END
+	_toast.grow_vertical = Control.GROW_DIRECTION_END
+	_toast.custom_minimum_size.x = 520.0
 	_day_transition.hide()
 	coach.target_provider = coach_target
 	coach.dismissed.connect(_on_coach_dismissed)
@@ -285,6 +291,7 @@ func _refresh_sound_button() -> void:
 func show_toast(text: String, duration := 1.8) -> void:
 	Sound.play("notification")
 	_toast_label.text = text
+	_place_toast.call_deferred()
 	_toast.show()
 	_toast.modulate.a = 1.0
 	if _toast_tween:
@@ -293,6 +300,16 @@ func show_toast(text: String, duration := 1.8) -> void:
 	_toast_tween.tween_interval(duration)
 	_toast_tween.tween_property(_toast, "modulate:a", 0.0, 0.5)
 	_toast_tween.tween_callback(_toast.hide)
+
+
+## La notification se pose en haut, juste sous le bandeau d'aide (sur la barre de
+## titre des fenêtres) : elle ne cache ni le texte des pièces ni les boutons.
+func _place_toast() -> void:
+	_toast.reset_size()
+	var top := 12.0
+	if _guide_bar and _guide_bar.visible:
+		top += _guide_bar.get_global_rect().end.y - global_position.y
+	_toast.position = Vector2((size.x - _toast.size.x) / 2.0, top)
 
 
 func _boot_terminal() -> void:
@@ -415,9 +432,12 @@ func _build_guide_bar() -> void:
 	pad.add_theme_constant_override("margin_top", 6)
 	pad.add_theme_constant_override("margin_bottom", 6)
 	_guide_bar.add_child(pad)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 6)
+	pad.add_child(column)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 12)
-	pad.add_child(row)
+	column.add_child(row)
 	var tag := Label.new()
 	tag.text = tr("▸ À FAIRE")
 	tag.theme_type_variation = &"HeaderLabel"
@@ -431,6 +451,9 @@ func _build_guide_bar() -> void:
 	main.add_child(_guide_bar)
 	main.move_child(_guide_bar, 0)
 	_guide_bar.visible = false
+	# Une seule aide à l'écran : le mot de MAZUR se range sous le bandeau, au lieu
+	# d'une bulle posée sur le contenu (le cadre clignotant montre où cliquer).
+	coach.dock = column
 
 
 ## Met à jour l'aide : le bandeau, la bulle et l'icône signalée clignotent doucement.
@@ -443,17 +466,19 @@ func _refresh_objective() -> void:
 	# compris ; ensuite, l'aide s'efface après deux dossiers conclus.
 	var in_tutorial: bool = Settings.guidance \
 			and (GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED or GameState.day_index == 0)
+	var coach_shown: bool = in_tutorial and current_step.get("bubble", true) \
+			and _step_key(current_step) != _coach_dismissed_step
 	# Bandeau permanent : la prochaine étape en clair, toujours visible au début.
 	if _guide_bar:
 		_guide_bar.visible = in_tutorial
-		var hint: String = current_step.get("hint", "")
+		# Le mot de MAZUR, sous le bandeau, remplace l'indication courte.
+		var hint: String = "" if coach_shown else current_step.get("hint", "")
 		_guide_bar_label.text = current_step.get("text", "") \
 				+ ("   —   " + hint if hint != "" else "")
 	# La bulle détaillée s'estompe une fois le joueur rodé ou s'il la ferme ; le
 	# repère clignotant sur l'icône reste tant que l'aide est activée.
 	# Une étape peut s'en tenir au bandeau (bubble = false) : une seule aide à l'écran.
-	coach.visible = in_tutorial and current_step.get("bubble", true) \
-			and _step_key(current_step) != _coach_dismissed_step
+	coach.visible = coach_shown
 	if _pulse_tween:
 		_pulse_tween.kill()
 	for button: Control in _target_buttons.values():

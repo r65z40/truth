@@ -57,6 +57,8 @@ var selected_facts: Array[String] = []
 ## Contradiction repérée mais pas encore prouvée (voir « le prix de la vérité ») :
 ## le bouton CONFRONTER devient alors PROUVER le temps de la payer. "" sinon.
 var _prove_key := ""
+## Question dont la carte reçoit le tampon du verdict au prochain affichage.
+var _stamp_question := ""
 var _tab_group := ButtonGroup.new()
 var _open_aside_button: Button
 ## Pièce pour laquelle la bulle d'aide a déjà fait défiler jusqu'aux éléments.
@@ -387,7 +389,11 @@ func prove_noticed() -> void:
 	var result := GameState.prove_contradiction(current_case_id, _prove_key)
 	if result.ok:
 		_set_confront_result(tr("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport."))
-		notify.emit(tr("CONTRADICTION ÉTABLIE"))
+		# Avec la fiche, le tampon sur la carte tient lieu de notification.
+		if _stamp_question == "":
+			notify.emit(tr("CONTRADICTION ÉTABLIE"))
+		else:
+			Sound.play("stamp")
 		_prove_key = ""
 	elif result.reason == "faveur_manquante":
 		_set_confront_result(tr("Vous ne pouvez pas encore la prouver : il vous manque un appui. ")
@@ -1111,6 +1117,8 @@ func _make_question_card(question: Dictionary, can_decide: bool) -> Control:
 			status.text = tr("CONTRADICTION ÉTABLIE")
 			status.theme_type_variation = &"HeaderLabel"
 	box.add_child(status)
+	if question.id == _stamp_question and question.state in [CaseSheet.SETTLED, CaseSheet.TO_PROVE]:
+		_stamp(status)
 	for answer in question.answers:
 		var source := "%s · %s" % [answer.document_title, answer.reliability]
 		if question.state == CaseSheet.CONFLICT and can_decide and answer.fact_id in question.conflict:
@@ -1142,6 +1150,18 @@ func _make_question_card(question: Dictionary, can_decide: bool) -> Control:
 	return card
 
 
+## Le verdict tombe comme un tampon : l'étiquette arrive grossie et s'écrase.
+func _stamp(label: Label) -> void:
+	label.set_meta("stamped", true)
+	label.ready.connect(func() -> void:
+		label.pivot_offset = label.size / 2.0
+		label.scale = Vector2(1.8, 1.8)
+		label.modulate.a = 0.0
+		var tween := label.create_tween().set_parallel()
+		tween.tween_property(label, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		tween.tween_property(label, "modulate:a", 1.0, 0.12), CONNECT_ONE_SHOT)
+
+
 func _make_answer_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
@@ -1157,19 +1177,25 @@ func retain_version(question_id: String, fact_id: String) -> void:
 	if key == "":
 		return
 	Sound.play("confront_success")
-	var state := GameState.contradiction_prove_state(current_case_id, key)
-	if state.priced and not state.established:
-		notify.emit(tr("CONTRADICTION REPÉRÉE — à prouver"))
-	else:
-		notify.emit(tr("CONTRADICTION ÉTABLIE"))
+	Sound.play("stamp")
+	# Pas de notification au milieu de l'écran : le verdict s'imprime en tampon
+	# sur la carte de la question.
+	_stamp_question = question_id
 	_refresh_all()
+	_stamp_question = ""
 
 
 ## Bouton PROUVER d'une question : même règle que dans le carnet ; si la preuve
 ## échoue, la raison s'affiche en notification (la ligne du carnet est masquée).
 func _prove_from_sheet(key: String) -> void:
 	_prove_key = key
+	var question_id := ""
+	for question in GameState.get_case_view(current_case_id).get("questions", []):
+		if key in question.get("keys", []):
+			question_id = question.get("id", "")
+	_stamp_question = question_id
 	prove_noticed()
+	_stamp_question = ""
 	if not key in GameState.get_case_state(current_case_id).contradictions_found:
 		notify.emit(_confront_result.text)
 
