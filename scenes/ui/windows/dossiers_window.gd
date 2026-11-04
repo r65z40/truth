@@ -6,8 +6,7 @@ extends MinistryWindow
 ## et formulaire de conclusion. Un dossier conclu peut être classé (CLASSER) :
 ## il quitte la liste, mais reste consultable sous « DOSSIERS CLASSÉS ».
 ##
-## Fiche d'enquête (dossiers qui déclarent des « questions », aide à l'enquête
-## activée) : le carnet libre et CONFRONTER laissent place à une fiche. Chaque
+## Fiche d'enquête (dossiers qui déclarent des « questions », niveau débutant) : le carnet libre et CONFRONTER laissent place à une fiche. Chaque
 ## passage noté se range sous sa question ; une question à deux versions se
 ## tranche en retenant l'une d'elles (voir CaseSheet). L'en-tête du dossier se
 ## réduit à une ligne : la pièce prend la place libérée.
@@ -47,8 +46,12 @@ signal timeline_requested(case_id: String)
 signal document_window_requested(case_id: String, document_id: String)
 ## Le formulaire de conclusion demande l'avis de VERITAS.
 signal veritas_requested(case_id: String)
+## Le joueur ouvre les archives (rapports transmis) depuis la liste des dossiers.
+signal archives_requested
 
 var current_case_id := ""
+var _archives_link: Button
+var _next_case_button: Button
 var current_document_id := ""
 ## Vrai si la dernière confrontation de ce dossier n'a rien donné (la bulle
 ## d'aide donne alors un conseil plus précis).
@@ -58,6 +61,8 @@ var selected_facts: Array[String] = []
 ## Contradiction repérée mais pas encore prouvée (voir « le prix de la vérité ») :
 ## le bouton CONFRONTER devient alors PROUVER le temps de la payer. "" sinon.
 var _prove_key := ""
+## Question dont la carte reçoit le tampon du verdict au prochain affichage.
+var _stamp_question := ""
 var _tab_group := ButtonGroup.new()
 var _open_aside_button: Button
 ## Pièce pour laquelle la bulle d'aide a déjà fait défiler jusqu'aux éléments.
@@ -116,6 +121,24 @@ func _ready() -> void:
 	_conclusion_button.pressed.connect(open_conclusion)
 	_file_button.pressed.connect(toggle_current_filed)
 	_filed_toggle.toggled.connect(show_filed)
+	# Les archives n'ont plus d'icône sur le bureau : on y va depuis le classeur.
+	_archives_link = Button.new()
+	_archives_link.name = "ArchivesLink"
+	_archives_link.text = tr("RAPPORTS TRANSMIS ▸")
+	_archives_link.tooltip_text = tr("Voir les rapports que vous avez transmis.")
+	_archives_link.custom_minimum_size = Vector2(0, 44)
+	_archives_link.focus_mode = Control.FOCUS_NONE
+	_archives_link.pressed.connect(func() -> void: archives_requested.emit())
+	_filed_toggle.add_sibling(_archives_link)
+	_next_case_button = Button.new()
+	_next_case_button.name = "NextCaseButton"
+	_next_case_button.text = tr("DOSSIER SUIVANT ▸")
+	_next_case_button.tooltip_text = tr("Ouvrir le prochain dossier qui attend votre conclusion.")
+	_next_case_button.custom_minimum_size = Vector2(0, 44)
+	_next_case_button.focus_mode = Control.FOCUS_NONE
+	_next_case_button.visible = false
+	_next_case_button.pressed.connect(func() -> void: select_case(next_case_id()))
+	_file_button.add_sibling(_next_case_button)
 	_request_button.pressed.connect(request_next_document)
 	_consult_button.pressed.connect(consult_superior)
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
@@ -196,6 +219,15 @@ func select_case(case_id: String) -> void:
 
 
 ## Bascule la liste entre les dossiers en cours et les dossiers classés.
+## Prochain dossier en attente de conclusion (dans l'ordre de la liste), ou "".
+func next_case_id() -> String:
+	for case_id in GameState.cases:
+		if case_id != current_case_id and GameState.can_decide(case_id) and not GameState.is_case_filed(case_id) \
+				and not GameState.get_case_view(case_id).is_empty():
+			return case_id
+	return ""
+
+
 func show_filed(on: bool) -> void:
 	showing_filed = on
 	_filed_toggle.set_pressed_no_signal(on)
@@ -388,7 +420,11 @@ func prove_noticed() -> void:
 	var result := GameState.prove_contradiction(current_case_id, _prove_key)
 	if result.ok:
 		_set_confront_result(tr("CONTRADICTION ÉTABLIE. Elle figurera dans votre rapport."))
-		notify.emit(tr("CONTRADICTION ÉTABLIE"))
+		# Avec la fiche, le tampon sur la carte tient lieu de notification.
+		if _stamp_question == "":
+			notify.emit(tr("CONTRADICTION ÉTABLIE"))
+		else:
+			Sound.play("stamp")
 		_prove_key = ""
 	elif result.reason == "faveur_manquante":
 		_set_confront_result(tr("Vous ne pouvez pas encore la prouver : il vous manque un appui. ")
@@ -623,6 +659,8 @@ func _refresh_all() -> void:
 	# Un dossier conclu peut quitter la liste : CLASSER, ou RESSORTIR s'il est classé.
 	var filed := GameState.is_case_filed(current_case_id)
 	_file_button.visible = not can_decide
+	# Rapport transmis : on enchaîne sur le dossier suivant en un clic.
+	_next_case_button.visible = not can_decide and next_case_id() != ""
 	_file_button.text = tr("RESSORTIR") if filed else tr("CLASSER")
 	_file_button.tooltip_text = tr("Remettre ce dossier parmi les dossiers en cours.") if filed \
 			else tr("Ranger ce dossier conclu : il quitte la liste et reste consultable dans « DOSSIERS CLASSÉS ».")
@@ -819,6 +857,7 @@ func _refresh_case_list() -> void:
 			filed_count += 1
 	# Le bouton des classés n'apparaît qu'une fois un dossier classé.
 	_filed_toggle.visible = filed_count > 0 or showing_filed
+	_archives_link.visible = GameState.is_feature_unlocked("archives") and not showing_filed
 	_filed_toggle.text = tr("◂ RETOUR AUX DOSSIERS EN COURS") if showing_filed else tr("DOSSIERS CLASSÉS (%d)") % filed_count
 	%CaseListTitle.text = tr("DOSSIERS CLASSÉS") if showing_filed else tr("DOSSIERS ASSIGNÉS")
 	for case_id in GameState.cases:
@@ -957,16 +996,16 @@ func _scroll_to_tab(tab: Button) -> void:
 # --- Fiche d'enquête -------------------------------------------------------------
 
 ## Vrai si le dossier affiché se mène avec la fiche d'enquête : il déclare des
-## questions et l'aide à l'enquête est activée (sinon, carnet libre et CONFRONTER).
+## questions et le niveau est débutant (expérimenté : carnet libre et CONFRONTER).
 func _sheet_mode() -> bool:
-	return current_case_id != "" and Settings.guidance \
+	return current_case_id != "" and Settings.is_beginner() \
 			and CaseSheet.has_sheet(GameState.get_case_view(current_case_id))
 
 
 ## Largeur de la colonne de gauche (dossiers, pièces) avec et sans fiche, et de la fiche.
 const CASE_COLUMN_WIDTH := 330.0
-const CASE_COLUMN_WIDTH_WITH_SHEET := 230.0
-const SHEET_COLUMN_WIDTH := 280.0
+const CASE_COLUMN_WIDTH_WITH_SHEET := 210.0
+const SHEET_COLUMN_WIDTH := 260.0
 
 ## Construit le cadre de la fiche, en colonne à droite de la pièce (contenu : _refresh_sheet).
 func _build_sheet() -> void:
@@ -1027,6 +1066,13 @@ func _set_sheet_visible(on: bool) -> void:
 			CASE_COLUMN_WIDTH_WITH_SHEET if on else CASE_COLUMN_WIDTH
 	# Pièce plus étroite à côté de la fiche : un titre un peu plus petit évite les coupures.
 	_doc_title.add_theme_font_size_override("font_size", 20 if on else 24)
+	# Texte de la pièce en 16 au lieu de 18 : les registres en colonnes tiennent
+	# entre la liste et la fiche, même en plein écran 1280 × 720.
+	for font_kind in ["normal_font_size", "bold_font_size"]:
+		if on:
+			_doc_body.add_theme_font_size_override(font_kind, 16)
+		else:
+			_doc_body.remove_theme_font_size_override(font_kind)
 
 
 ## Remplit la fiche : une carte par question visible, les questions encore à
@@ -1112,6 +1158,8 @@ func _make_question_card(question: Dictionary, can_decide: bool) -> Control:
 			status.text = tr("CONTRADICTION ÉTABLIE")
 			status.theme_type_variation = &"HeaderLabel"
 	box.add_child(status)
+	if question.id == _stamp_question and question.state in [CaseSheet.SETTLED, CaseSheet.TO_PROVE]:
+		_stamp(status)
 	for answer in question.answers:
 		var source := "%s · %s" % [answer.document_title, answer.reliability]
 		if question.state == CaseSheet.CONFLICT and can_decide and answer.fact_id in question.conflict:
@@ -1143,6 +1191,18 @@ func _make_question_card(question: Dictionary, can_decide: bool) -> Control:
 	return card
 
 
+## Le verdict tombe comme un tampon : l'étiquette arrive grossie et s'écrase.
+func _stamp(label: Label) -> void:
+	label.set_meta("stamped", true)
+	label.ready.connect(func() -> void:
+		label.pivot_offset = label.size / 2.0
+		label.scale = Vector2(1.8, 1.8)
+		label.modulate.a = 0.0
+		var tween := label.create_tween().set_parallel()
+		tween.tween_property(label, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		tween.tween_property(label, "modulate:a", 1.0, 0.12), CONNECT_ONE_SHOT)
+
+
 func _make_answer_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
@@ -1158,19 +1218,25 @@ func retain_version(question_id: String, fact_id: String) -> void:
 	if key == "":
 		return
 	Sound.play("confront_success")
-	var state := GameState.contradiction_prove_state(current_case_id, key)
-	if state.priced and not state.established:
-		notify.emit(tr("CONTRADICTION REPÉRÉE — à prouver"))
-	else:
-		notify.emit(tr("CONTRADICTION ÉTABLIE"))
+	Sound.play("stamp")
+	# Pas de notification au milieu de l'écran : le verdict s'imprime en tampon
+	# sur la carte de la question.
+	_stamp_question = question_id
 	_refresh_all()
+	_stamp_question = ""
 
 
 ## Bouton PROUVER d'une question : même règle que dans le carnet ; si la preuve
 ## échoue, la raison s'affiche en notification (la ligne du carnet est masquée).
 func _prove_from_sheet(key: String) -> void:
 	_prove_key = key
+	var question_id := ""
+	for question in GameState.get_case_view(current_case_id).get("questions", []):
+		if key in question.get("keys", []):
+			question_id = question.get("id", "")
+	_stamp_question = question_id
 	prove_noticed()
+	_stamp_question = ""
 	if not key in GameState.get_case_state(current_case_id).contradictions_found:
 		notify.emit(_confront_result.text)
 

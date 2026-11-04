@@ -7,6 +7,27 @@
 		"objective": "Rédiger la version définitive du dossier scellé de 1971 : celui de votre père. C'est le dernier document de MIROIR, et le vôtre.",
 		"context": "Pour devenir inattaquable, MIROIR doit refermer le dossier par lequel tout a commencé : l'inspection de 1971 : votre père, horloger, avait découvert qui réglait les horloges, et il a disparu. HALM vous confie sa réécriture. On ne recrute pas le fils par hasard."
 	},
+	"questions": [
+		{
+			"id": "order",
+			"text": "Que vous ordonne-t-on d'écrire ?",
+			"keys": [
+				"miroir.order",
+				"miroir.deal",
+				"miroir.erase"
+			],
+			"main": true
+		},
+		{
+			"id": "father",
+			"text": "Qu'est-il arrivé à votre père ?",
+			"keys": [
+				"vosk.father_truth",
+				"vosk.father_fate"
+			],
+			"main": true
+		}
+	],
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Acte 4 : le choix final. Le fils réécrit le dossier du père. Nourrit les fins (dont La Correction).",

@@ -26,6 +26,7 @@ func _run() -> void:
 		"test_case_sheet_rules",
 		"test_case_sheet_window",
 		"test_save_migration_from_v7",
+		"test_difficulty_setting",
 		"test_case_40921_structure",
 		"test_case_40921_has_contradiction",
 		"test_document_rendering_escapes_bbcode",
@@ -107,6 +108,7 @@ func _run() -> void:
 		"test_document_field_icons",
 		"test_tutorial_bubble_fades",
 		"test_coach_bubble_can_be_closed",
+		"test_fewer_clicks",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -213,7 +215,12 @@ func test_case_sheet_rules() -> void:
 	var novak := CaseLibrary.get_case("40000")
 	var sedlar := CaseLibrary.get_case("40921")
 	check(CaseSheet.has_sheet(novak) and CaseSheet.has_sheet(sedlar), "les deux premiers dossiers ont une fiche")
-	check(not CaseSheet.has_sheet(CaseLibrary.get_case("51307")), "les autres dossiers gardent le carnet libre (prototype)")
+	for case_id in CaseLibrary.get_case_ids():
+		check(CaseSheet.has_sheet(CaseLibrary.get_case(case_id)), "le dossier %s a sa fiche d'enquête" % case_id)
+	var broken := CaseSheet.validate({"documents": [{"id": "a", "facts": [{"id": "x", "key": "k", "value": "1"}, {"id": "y", "key": "k", "value": "2"}]}],
+			"questions": [{"id": "q", "text": "?", "keys": ["autre"]}]})
+	check(broken.any(func(p: String) -> bool: return p.begins_with("clé contradictoire k")),
+			"une contradiction sans question est signalée")
 	check(CaseSheet.question_of_fact(sedlar, "f_log_trip") == "where" and CaseSheet.question_of_fact(sedlar, "f_report_presence") == "where",
 			"le train et la présence se rangent sous la même question")
 	check(CaseSheet.question_of_fact(sedlar, "f_identity_record") == "", "un élément sans question va dans les autres notes")
@@ -248,6 +255,19 @@ func test_case_sheet_rules() -> void:
 	GameState.new_game()
 	GameState.from_dict(restored)
 	check(GameState.get_case_state("40000").sheet_choices.get("address") == "f_reg_address", "le choix retenu est sauvegardé")
+	# Toutes les questions sont traduites en anglais.
+	var french := {}
+	for case_id in CaseLibrary.get_case_ids():
+		for question in CaseLibrary.get_case(case_id).questions:
+			french["%s.%s" % [case_id, question.id]] = question.text
+	Localization.set_locale("en")
+	var untranslated := []
+	for case_id in CaseLibrary.get_case_ids():
+		for question in CaseLibrary.get_case(case_id).questions:
+			if question.text == french["%s.%s" % [case_id, question.id]]:
+				untranslated.append("%s.%s" % [case_id, question.id])
+	Localization.set_locale("fr")
+	check(untranslated.is_empty(), "questions traduites en anglais %s" % [untranslated])
 	GameState.new_game()
 
 
@@ -284,6 +304,15 @@ func test_case_sheet_window() -> void:
 	card = dossiers._sheet_questions.get_node("Question_address")
 	check(card.find_child("Retain_f_reg_address", true, false) == null and card.find_child("Status", true, false).text == "CONTRADICTION ÉTABLIE",
 			"question tranchée : plus de bouton, état affiché")
+	check(card.find_child("Status", true, false).has_meta("stamped") and not desk.get_node("%ToastLabel").text.contains("CONTRADICTION"),
+			"le verdict s'imprime en tampon sur la carte, sans notification au milieu de l'écran")
+	desk.show_toast("essai")
+	await get_tree().process_frame
+	var toast: Control = desk.get_node("%Toast")
+	desk._place_toast()
+	check(absf(toast.get_global_rect().position.y - desk._guide_bar.get_global_rect().end.y - 12.0) < 1.0
+			and toast.mouse_filter == Control.MOUSE_FILTER_IGNORE,
+			"les notifications se posent en haut, sous le bandeau, sans bloquer les clics")
 	desk._refresh_objective()
 	check(desk.current_step.text.begins_with("Rédiger"), "ensuite : rédiger la conclusion")
 	dossiers.open_conclusion()
@@ -295,13 +324,50 @@ func test_case_sheet_window() -> void:
 	desk._refresh_objective()
 	check(desk.current_step.case_id == "40000" or not desk.current_step.get("bubble", true) or desk.current_step.part != "tab:work_report",
 			"lecture des pièces : pas de bulle en plus du bandeau")
-	# Aide coupée : carnet libre et CONFRONTER, comme avant.
+	# Niveau expérimenté : carnet libre et CONFRONTER, comme avant.
+	Settings.difficulty = Settings.DIFFICULTY_EXPERT
+	dossiers.select_case("40000")
+	check(not dossiers._sheet.visible and dossiers.get_node("%Notebook").visible, "niveau expérimenté : carnet libre")
+	desk._refresh_objective()
+	check(desk.current_step.text.begins_with("Confronter") or desk.current_step.text.begins_with("Rédiger")
+			or desk.current_step.part != "sheet", "niveau expérimenté : le guide ne parle pas de la fiche")
+	# Aide coupée mais niveau débutant : la fiche reste.
+	Settings.difficulty = Settings.DIFFICULTY_BEGINNER
 	Settings.guidance = false
 	dossiers.select_case("40000")
-	check(not dossiers._sheet.visible and dossiers.get_node("%Notebook").visible, "sans l'aide à l'enquête : carnet libre")
+	check(dossiers._sheet.visible, "aide coupée au niveau débutant : la fiche reste")
 	Settings.guidance = true
 	desk.queue_free()
 	GameState.new_game()
+	await get_tree().process_frame
+
+
+## Niveau de difficulté : enregistré dans les paramètres, choisi au menu, modifiable.
+func test_difficulty_setting() -> void:
+	var before := Settings.difficulty
+	Settings.set_difficulty(Settings.DIFFICULTY_EXPERT)
+	Settings.difficulty = Settings.DIFFICULTY_BEGINNER
+	Settings.load_settings()
+	check(Settings.difficulty == Settings.DIFFICULTY_EXPERT and not Settings.is_beginner(), "le niveau est enregistré")
+	Settings.set_difficulty("inconnu")
+	check(Settings.difficulty == Settings.DIFFICULTY_BEGINNER, "un niveau inconnu revient à débutant")
+	var window: MinistryWindow = load("res://scenes/ui/windows/settings_window.tscn").instantiate()
+	get_tree().root.add_child(window)
+	await get_tree().process_frame
+	window.open()
+	var option: OptionButton = window.get_node("%DifficultyOption")
+	check(option.item_count == 2 and option.selected == 0, "Paramètres : deux niveaux, débutant sélectionné")
+	option.item_selected.emit(1)
+	check(Settings.difficulty == Settings.DIFFICULTY_EXPERT, "Paramètres : on passe au niveau expérimenté")
+	window.queue_free()
+	var menu: Node = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	check(not menu.get_node("%DifficultyPanel").visible, "le choix du niveau est caché au départ")
+	menu.get_node("%DifficultyCancelButton").pressed.emit()
+	check(not menu.get_node("%DifficultyPanel").visible, "ANNULER ferme le choix du niveau")
+	menu.queue_free()
+	Settings.set_difficulty(before)
 	await get_tree().process_frame
 
 
@@ -464,7 +530,7 @@ func test_desk_apps() -> void:
 			"la bulle d'aide pointe le premier pli non lu")
 
 	# Archives vides en début de partie, fonds historique verrouillé.
-	desk.get_node("%ArchivesButton").pressed.emit()
+	desk.get_node("%StartArchives").pressed.emit()
 	check(desk.windows.archives.get_node("%ArchiveEmpty").visible and ArchivesWindow.archived_cases().is_empty(),
 			"aucun rapport aux archives au départ")
 	check(desk.windows.archives.get_node("%ClearanceLabel").text.contains("NIVEAU 3"), "le fonds historique est verrouillé")
@@ -1957,6 +2023,9 @@ func test_comparison() -> void:
 	var guide_docs: Array = guide_view.documents.map(func(d: Dictionary) -> String: return d.id)
 	guide_state.cases["52310"] = {"decision": "", "viewed_documents": guide_docs,
 			"noted_facts": ["f_rc_mark", "f_var_mark"], "contradictions_found": []}
+	# Niveau débutant : les deux signalements forment « deux versions » sur la fiche.
+	check(Guidance.next_step(guide_state, []).part == "sheet", "niveau débutant : trancher d'abord sur la fiche")
+	guide_state["sheet_mode"] = false
 	var compare_step := Guidance.next_step(guide_state, [])
 	check(compare_step.part == "compare" and compare_step.text.begins_with("Comparer"),
 			"la guidance propose COMPARER quand une comparaison est accessible")
@@ -2672,6 +2741,48 @@ func test_tutorial_bubble_fades() -> void:
 	await get_tree().process_frame
 
 
+## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier
+## suivant après un rapport, VERITAS ouvert sur le dossier en cours.
+func test_fewer_clicks() -> void:
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	var messages = desk.windows.messages
+	desk.open_app("messages")
+	messages.select_message("welcome_mazur")
+	var list: VBoxContainer = messages.get_node("%MessageList")
+	var fold: Button = list.get_node_or_null("ReadFold")
+	check(fold != null and list.get_node_or_null("Message_welcome_mazur") == null,
+			"pli lu : rangé sous « PLIS LUS », replié tant qu'il reste des plis non lus")
+	fold.pressed.emit()
+	check(list.get_node_or_null("Message_welcome_mazur") != null, "PLIS LUS se déplie")
+	check(_case_of_message("welcome_mazur") in ["40000", "40921"] and messages.find_child("OpenCaseButton", true, false).visible,
+			"le pli d'accueil parle d'un dossier : bouton OUVRIR LE DOSSIER")
+	messages.find_child("OpenCaseButton", true, false).pressed.emit()
+	check(desk.get_open_app() == "dossiers" and desk.windows.dossiers.current_case_id == _case_of_message("welcome_mazur"),
+			"OUVRIR LE DOSSIER ouvre le classeur sur ce dossier")
+	var dossiers: DossiersWindow = desk.windows.dossiers
+	dossiers.select_case("40000")
+	check(not dossiers.find_child("NextCaseButton", true, false).visible, "dossier en cours : pas de DOSSIER SUIVANT")
+	desk.open_veritas_app()
+	check(desk.windows.veritas.current_case_id == "40000", "VERITAS s'ouvre sur le dossier en cours")
+	desk.windows.veritas.close()
+	GameState.apply_decision("40000", "regularize")
+	desk.open_case("40000")
+	var next: Button = dossiers.find_child("NextCaseButton", true, false)
+	check(next.visible and dossiers.next_case_id() == "40921", "rapport transmis : DOSSIER SUIVANT")
+	next.pressed.emit()
+	check(dossiers.current_case_id == "40921", "DOSSIER SUIVANT ouvre le prochain dossier en attente")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+func _case_of_message(message_id: String) -> String:
+	return load("res://scenes/ui/windows/messages_window.gd").case_of_message(message_id)
+
+
 func test_coach_bubble_can_be_closed() -> void:
 	GameState.new_game()
 	Settings.guidance = true
@@ -2680,7 +2791,9 @@ func test_coach_bubble_can_be_closed() -> void:
 	await get_tree().process_frame
 	desk._refresh_objective()
 	check(desk.coach.visible, "bulle d'astuce affichée au départ")
-	check(desk.coach.get_node("%CloseButton") != null, "la bulle a un bouton de fermeture")
+	check(desk.coach.close_button() != null, "la bulle a un bouton de fermeture")
+	check(desk.coach.is_docked() and desk._guide_bar.is_ancestor_of(desk.coach.close_button()),
+			"la bulle est rangée dans le bandeau À FAIRE, pas sur le contenu")
 	desk.coach.dismissed.emit()
 	check(not desk.coach.visible, "la bulle se masque quand on la ferme")
 	# Elle réapparaît dès que l'étape conseillée change.
@@ -2959,6 +3072,10 @@ func test_guidance_steps() -> void:
 	GameState.note_fact("40000", "f_decl_address")
 	GameState.note_fact("40000", "f_reg_address")
 	check(step.call().text.begins_with("Trancher") and step.call().part == "sheet", "5. trancher entre les deux versions de la fiche")
+	var expert_state := GameState.get_condition_state()
+	expert_state["sheet_mode"] = false
+	check(Guidance.next_step(expert_state, GameState.messages).text.begins_with("Confronter"),
+			"5'. niveau expérimenté : confronter au carnet, comme avant")
 	check(GameState.retain_version("40000", "address", "f_reg_address") == "novak.address", "5b. retenir une version")
 	check(step.call().text.begins_with("Rédiger"), "6. conclure")
 	GameState.apply_decision("40000", "regularize")
@@ -3050,7 +3167,7 @@ func test_desk_scene_flow() -> void:
 	check(desk.get_open_app() == "archives" and desk.is_app_open("messages"),
 			"la dernière fenêtre ouverte passe devant, l'autre reste ouverte")
 
-	desk.get_node("%PersonnelButton").pressed.emit()
+	desk.get_node("%StartPersonnel").pressed.emit()
 	check(desk.get_open_app() == "personnel", "le bouton Dossier personnel ouvre l'évaluation")
 	var personnel_text: String = desk.windows.personnel.get_node("%PersonnelText").get_parsed_text()
 	check(personnel_text.contains("LOYAUTÉ ENVERS LE RÉGIME : conforme"), "l'évaluation est rédigée en mots")
@@ -3074,6 +3191,9 @@ func test_full_session_flow() -> void:
 	get_tree().current_scene = menu
 	await get_tree().process_frame
 	menu.get_node("%NewGameButton").pressed.emit()
+	check(menu.get_node("%DifficultyPanel").visible, "« Nouvelle partie » demande le niveau de difficulté")
+	menu.get_node("%BeginnerButton").pressed.emit()
+	check(Settings.difficulty == Settings.DIFFICULTY_BEGINNER, "niveau débutant enregistré")
 	await _wait_for_scene("Intro")
 	var intro := get_tree().current_scene
 	check(intro.name == "Intro" and intro.get_node("%PageLabel").text == "1 / 5", "« Nouvelle partie » ouvre l'introduction")
@@ -3449,8 +3569,14 @@ func test_desktop_windows() -> void:
 	check(messages.is_active and not dossiers.is_active, "seule la fenêtre au premier plan a sa barre de titre active")
 	check(manager.get_child(-1) == messages, "la fenêtre au premier plan est dessinée en dernier")
 	check(desk.get_node("%TaskButtons").get_child_count() == 2, "un bouton par fenêtre dans la barre des tâches")
-	check(dossiers.get_anchor(SIDE_RIGHT) == 0.0 and Rect2(Vector2.ZERO, manager.size).encloses(dossiers.get_rect()),
-			"la fenêtre a une position libre, dans la zone de travail")
+	check(dossiers.fullscreen and dossiers.get_rect() == Rect2(Vector2.ZERO, manager.size),
+			"Dossiers s'ouvre en plein écran, dans la zone de travail")
+	var bar: Node = dossiers.get_node("Layout/TitleBar")
+	check(bar.find_child("BackButton", true, false).visible and not bar.find_child("MaximizeButton", true, false).visible
+			and not bar.find_child("MinimizeButton", true, false).visible, "plein écran : bouton ← RETOUR, ni Réduire ni Agrandir")
+	for app_name in ["messages", "archives", "personnel", "veritas", "news"]:
+		check(desk.windows[app_name].fullscreen, "%s : application en plein écran" % app_name)
+	check(not desk.windows.terminal.fullscreen and not desk.windows.settings.fullscreen, "terminal et paramètres restent des fenêtres")
 	manager.raise_window(dossiers)
 	check(desk.get_open_app() == "dossiers" and manager.get_child(-1) == dossiers, "on repasse une fenêtre devant")
 
@@ -3460,21 +3586,28 @@ func test_desktop_windows() -> void:
 	check(desk.get_open_app() == "messages", "la fenêtre suivante passe devant")
 	manager.toggle_from_taskbar(dossiers)
 	check(dossiers.visible and desk.get_open_app() == "dossiers", "le bouton de la barre des tâches la ressort")
-	dossiers.get_node("Layout/TitleBar").find_child("MinimizeButton", true, false).pressed.emit()
-	check(dossiers.is_minimized, "le bouton _ réduit la fenêtre")
+	dossiers.minimize()
+	check(dossiers.is_minimized, "la fenêtre se réduit")
 	desk.open_app("dossiers")
 	check(dossiers.visible and not dossiers.is_minimized, "rouvrir une fenêtre réduite la ressort")
+	bar.find_child("BackButton", true, false).pressed.emit()
+	check(not desk.is_app_open("dossiers") and desk.get_open_app() == "messages", "← RETOUR ferme et revient à l'application d'avant")
+	desk.open_app("dossiers")
 
-	# Agrandir et déplacer.
-	var before := dossiers.get_rect()
-	dossiers.toggle_maximize()
-	check(dossiers.get_rect() == Rect2(Vector2.ZERO, manager.size), "agrandie : toute la zone de travail")
-	dossiers.toggle_maximize()
-	check(dossiers.get_rect() == before, "rétablie : taille et place d'origine")
-	messages.position = Vector2(-5000, 9000)
-	messages.clamp_to_parent()
-	check(messages.get_rect().end.y <= manager.size.y and messages.position.x + messages.size.x >= MinistryWindow.KEEP_VISIBLE.x,
+	# Fenêtre flottante (terminal) : agrandir et déplacer.
+	var terminal_window: MinistryWindow = desk.windows.terminal
+	desk.open_app("terminal")
+	await get_tree().process_frame
+	var before := terminal_window.get_rect()
+	terminal_window.toggle_maximize()
+	check(terminal_window.get_rect() == Rect2(Vector2.ZERO, manager.size), "agrandie : toute la zone de travail")
+	terminal_window.toggle_maximize()
+	check(terminal_window.get_rect() == before, "rétablie : taille et place d'origine")
+	terminal_window.position = Vector2(-5000, 9000)
+	terminal_window.clamp_to_parent()
+	check(terminal_window.get_rect().end.y <= manager.size.y and terminal_window.position.x + terminal_window.size.x >= MinistryWindow.KEEP_VISIBLE.x,
 			"une fenêtre déplacée garde sa barre de titre à portée")
+	terminal_window.close()
 
 	# Fermer, aide, menu MINISTÈRE.
 	messages.get_close_button().pressed.emit()
@@ -3552,12 +3685,14 @@ func test_document_windows() -> void:
 	# pouvez… » ni compteur d'avancement (le bandeau « À FAIRE » du bureau guide).
 	check(not dossiers.get_node("%ActionsHelp").visible \
 			and not dossiers.get_node("%ProgressLabel").visible, "tutoriel : en-tête du dossier allégé")
-	# Une fois l'aide coupée (joueur rodé), le rappel des actions réapparaît.
+	# Niveau expérimenté et aide coupée (joueur rodé) : le rappel des actions réapparaît.
 	Settings.set_guidance(false)
+	Settings.set_difficulty(Settings.DIFFICULTY_EXPERT)
 	dossiers.select_case("40921")
 	check(dossiers.get_node("%ActionsHelp").visible \
 			and dossiers.get_node("%ActionsHelp").text.contains("confronter"), "les actions possibles sont expliquées une fois le tutoriel passé")
 	Settings.set_guidance(true)
+	Settings.set_difficulty(Settings.DIFFICULTY_BEGINNER)
 
 	dossiers.select_document("work_report")
 	dossiers.open_current_aside()
@@ -3926,16 +4061,22 @@ func test_time_in_desk() -> void:
 	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
-	check(not desk.get_node("%ArchivesButton").visible and not desk.get_node("%PersonnelButton").visible,
+	check(not desk.get_node("%StartArchives").visible and not desk.get_node("%StartPersonnel").visible,
 			"premier jour : ni Archives ni Dossier personnel")
+	check(desk.get_node("Main/Body/Icons/List").get_child_count() == 5, "bureau : cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal)")
 	desk.terminal.submit_command("dossiers")
 	desk.windows.dossiers.select_case("40921")
 	check(not desk.windows.dossiers.get_node("%RequestButton").visible and not desk.windows.dossiers.get_node("%ConsultButton").visible,
 			"premier jour : ni DEMANDER ni CONSULTER")
 	desk.windows.dossiers.close()
 	GameState.end_day()
-	check(desk.get_node("%ArchivesButton").visible and desk.get_node("%PersonnelButton").visible, "deuxième jour : tout est débloqué")
+	check(desk.get_node("%StartArchives").visible and desk.get_node("%StartPersonnel").visible, "deuxième jour : tout est débloqué")
 	desk.terminal.submit_command("dossiers")
+	var archives_link: Button = desk.windows.dossiers.find_child("ArchivesLink", true, false)
+	check(archives_link.visible, "deuxième jour : le classeur mène aux rapports transmis")
+	archives_link.pressed.emit()
+	check(desk.get_open_app() == "archives", "RAPPORTS TRANSMIS ouvre les archives")
+	desk.windows.archives.close()
 	var dossiers_window = desk.windows.dossiers
 	dossiers_window.select_case("40921")
 	check(dossiers_window.get_node("%RequestButton").text == "DEMANDER (1 h)" and not dossiers_window.get_node("%RequestButton").disabled,

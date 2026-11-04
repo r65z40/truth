@@ -40,9 +40,13 @@ const OPEN_SECONDS := 0.12
 var movable := false:
 	set(value):
 		movable = value
-		if _minimize_button:
-			_minimize_button.visible = value
-			_maximize_button.visible = value
+		_refresh_title_buttons()
+## Application en plein écran : la fenêtre occupe toute la zone de travail, ne
+## se déplace pas, et un bouton « ← RETOUR » remplace Réduire et Agrandir.
+var fullscreen := false:
+	set(value):
+		fullscreen = value
+		_refresh_title_buttons()
 var is_minimized := false
 var is_maximized := false
 var is_active := true
@@ -50,6 +54,7 @@ var is_active := true
 var _title_bar: PanelContainer
 var _minimize_button: Button
 var _maximize_button: Button
+var _back_button: Button
 var _dragging := false
 var _drag_offset := Vector2.ZERO
 var _restore_rect := Rect2()
@@ -138,8 +143,18 @@ func set_active(active: bool) -> void:
 		_title_bar.theme_type_variation = &"TitleBarActive" if active else &"TitleBarInactive"
 
 
+func _refresh_title_buttons() -> void:
+	if not _minimize_button:
+		return
+	_minimize_button.visible = movable and not fullscreen
+	_maximize_button.visible = movable and not fullscreen
+	_back_button.visible = movable and fullscreen
+
+
 ## Agrandit la fenêtre à toute la zone de travail, ou lui rend sa taille.
 func toggle_maximize() -> void:
+	if fullscreen:
+		return
 	if is_maximized:
 		is_maximized = false
 		position = _restore_rect.position
@@ -194,7 +209,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_title_bar_input(event: InputEvent) -> void:
-	if not movable:
+	if not movable or fullscreen:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.double_click:
@@ -217,6 +232,12 @@ func _build_title_bar() -> PanelContainer:
 	row.add_theme_constant_override("separation", 8)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bar.add_child(row)
+
+	# Plein écran : on revient à ce qu'il y avait avant (bureau ou application).
+	_back_button = _title_button("BackButton", tr("← RETOUR"), tr("Fermer et revenir"), close)
+	_back_button.custom_minimum_size.x = 120
+	_back_button.set_meta("sound", "")
+	row.add_child(_back_button)
 
 	var icon := TextureRect.new()
 	icon.name = "TitleIcon"
@@ -257,6 +278,7 @@ func _build_title_bar() -> PanelContainer:
 	# La fermeture a son propre son (window_close), pas le clic ordinaire.
 	close_button.set_meta("sound", "")
 	row.add_child(close_button)
+	_refresh_title_buttons.call_deferred()
 	return bar
 
 

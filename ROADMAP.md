@@ -368,10 +368,31 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
 - [x] Écran allégé en mode fiche : en-tête du dossier sur une ligne (objet en tête
       de la fiche, contexte replié), fiche en colonne à droite, plus de bulle de
       MAZUR pendant la lecture des pièces (le bandeau suffit)
-- [x] Aide à l'enquête désactivée : carnet libre et CONFRONTER, comme avant
-- [ ] Test de fen dans Godot, puis questions des 15 autres dossiers
+- [x] Test de fen (04.11) : validé
+- [x] Niveaux de difficulté (demande de fen du 04.11) : choisis à « Nouvelle partie »,
+      modifiables dans Paramètres (`Settings.difficulty`). Débutant = fiche d'enquête ;
+      expérimenté = jeu d'origine (carnet libre, CONFRONTER, bulle pendant la lecture)
+- [x] Questions des 15 autres dossiers (pour que le niveau débutant couvre tout le jeu)
 - [ ] Une mécanique nouvelle par journée, gros dossiers livrés en deux temps
-- [ ] Liens visibles entre les pièces, bureau à 4 icônes
+- [ ] Liens visibles entre les pièces
+
+### Interface plus simple et fluide (demande de fen du 04.11)
+
+Proposition : https://claude.ai/artifact/Dua5iU65YykqvSUREUESug. fen : « plein
+écran pour tout le monde, garde le terminal pour le moment ».
+
+- [x] Une seule aide à l'écran : le mot de MAZUR rangé sous le bandeau « À FAIRE »
+      (plus de bulle sur le contenu), notifications en haut, tampon du verdict sur
+      la carte de la fiche
+- [x] Dossiers, Courrier, Archives, Personnel, VERITAS et Journal en plein écran,
+      bouton « ← RETOUR » ; terminal, paramètres et pièces « à côté » flottent
+- [x] Bureau à cinq icônes (Archives et Personnel dans le menu MINISTÈRE, archives
+      aussi depuis le classeur) ; barre des tâches en icônes quand la place manque
+- [x] Moins de clics : plis lus repliés, OUVRIR LE DOSSIER depuis un pli, DOSSIER
+      SUIVANT, VERITAS ouvert sur le dossier en cours
+- [x] COMPARER compact (une ligne par trait) ; pied du dossier qui passe à la ligne ;
+      pièce en 16 px à côté de la fiche
+- [ ] Test de fen
 
 ## Prochaine itération
 

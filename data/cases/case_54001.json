@@ -7,6 +7,40 @@
 		"objective": "Établir la cause de l'explosion de la Centrale n° 3 : sabotage, ou défaillance matérielle — et nommer, ou non, un responsable avant le bulletin de 20 h.",
 		"context": "La chaudière n° 2 a explosé cette nuit. Trois ouvriers de l'équipe de nuit sont morts. La Direction a déjà retenu l'hypothèse du sabotage et joint trois noms. L'un d'eux : Mira SEDLAR, fille du citoyen du dossier 40921."
 	},
+	"questions": [
+		{
+			"id": "cause",
+			"text": "Qu'est-ce qui a causé l'explosion ?",
+			"keys": [
+				"centrale.cause",
+				"centrale.explosive",
+				"centrale.accident_excluded"
+			],
+			"main": true
+		},
+		{
+			"id": "suspects",
+			"text": "Qui désigne-t-on comme responsable ?",
+			"keys": [
+				"suspect.dead",
+				"suspect.sedlar",
+				"suspect.convenience",
+				"mira.logbook"
+			],
+			"main": true
+		},
+		{
+			"id": "material",
+			"text": "Le matériel était-il en état ?",
+			"keys": [
+				"centrale.material",
+				"centrale.warning",
+				"centrale.stop_sealed",
+				"incident.author",
+				"orlik.cover"
+			]
+		}
+	],
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Ouverture de l'acte 3 : la peur. Le ministère veut un coupable avant le journal du soir.",

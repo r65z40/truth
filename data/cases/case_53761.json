@@ -7,6 +7,28 @@
 		"objective": "Comparer l'original d'archive du registre de déplacements du 40921 avec la copie transmise à la Section 4, et déterminer si la copie a été modifiée.",
 		"context": "Vous avez classé le dossier de KREMER. Il tient parole : il vous sort du sous-sol B l'original du registre sur lequel reposait toute votre première enquête, le dossier 40921."
 	},
+	"questions": [
+		{
+			"id": "copy",
+			"text": "La copie transmise est-elle conforme à l'original ?",
+			"keys": [
+				"register.21oct",
+				"register.altered",
+				"register.closed",
+				"register.insert"
+			],
+			"main": true
+		},
+		{
+			"id": "who",
+			"text": "Qui a constitué la copie ?",
+			"keys": [
+				"routing.40921",
+				"routing.date",
+				"veritas.cover"
+			]
+		}
+	],
 	"priority": "sensible",
 	"guide": {
 		"note": "Révélation de fin d'acte 2 : la première « vérité » du joueur était fabriquée.",

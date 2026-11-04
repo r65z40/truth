@@ -7,6 +7,53 @@
 		"objective": "Comprendre pourquoi la Boulangerie n° 12 encaisse plus de tickets de pain que le quartier ne compte d'habitants.",
 		"context": "L'Inspection du commerce a relevé l'écart. La gérante, Zora KOVAC, tient seule le commerce depuis des années."
 	},
+	"questions": [
+		{
+			"id": "books",
+			"text": "Combien de carnets de pain le secteur compte-t-il ?",
+			"keys": [
+				"sector.books",
+				"tickets.authentic"
+			],
+			"main": true
+		},
+		{
+			"id": "origin",
+			"text": "D'où viennent les carnets en trop ?",
+			"keys": [
+				"books.origin",
+				"buyers.new",
+				"buyers.day",
+				"bureau.protected"
+			],
+			"main": true
+		},
+		{
+			"id": "horvat",
+			"text": "HORVAT est-il vivant ?",
+			"keys": [
+				"horvat.status"
+			]
+		},
+		{
+			"id": "lenska",
+			"text": "LENSKA est-elle vivante ?",
+			"keys": [
+				"lenska.status",
+				"notice.sent",
+				"drazek.knew"
+			]
+		},
+		{
+			"id": "kovac",
+			"text": "Que savait la gérante ?",
+			"keys": [
+				"kovac.role",
+				"kovac.warned",
+				"kovac.bread"
+			]
+		}
+	],
 	"priority": "ordinaire",
 	"documents": [
 		{

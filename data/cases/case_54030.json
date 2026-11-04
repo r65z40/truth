@@ -7,6 +7,34 @@
 		"objective": "Établir si le réparateur ADLER appartient à un réseau de sabotage par les horloges, ou s'il n'est qu'un vieil homme qui règle des pendules.",
 		"context": "Après la Centrale, la Milice ramasse les horlogers : on les soupçonne de fabriquer de faux alibis en déréglant les horloges de pointage. Viktor ADLER tient depuis des années un cahier des heures. Il a connu votre père."
 	},
+	"questions": [
+		{
+			"id": "network",
+			"text": "ADLER dirige-t-il un réseau ?",
+			"keys": [
+				"adler.network",
+				"heure_juste.list",
+				"adler.heure_juste"
+			],
+			"main": true
+		},
+		{
+			"id": "radio",
+			"text": "Qu'a-t-on vraiment saisi chez lui ?",
+			"keys": [
+				"adler.radio"
+			]
+		},
+		{
+			"id": "father",
+			"text": "Que sait ADLER de votre père ?",
+			"keys": [
+				"vosk.father",
+				"vosk.father_notes",
+				"adler.covered_vosk"
+			]
+		}
+	],
 	"priority": "sensible",
 	"guide": {
 		"note": "Acte 3 : le fil du père. L'horloger qui reconnaît le nom VOSK.",

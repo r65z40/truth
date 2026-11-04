@@ -7,6 +7,45 @@
 		"objective": "Établir si les certificats de présence signés par B. ORLIK couvrent de vraies absences, et pourquoi.",
 		"context": "La Direction de la Centrale n° 3 signale un volume anormal de certificats. ORLIK est chef d'équipe, membre du Parti décoré ; son frère est capitaine de la Milice."
 	},
+	"questions": [
+		{
+			"id": "clock",
+			"text": "La pointeuse était-elle en panne en octobre ?",
+			"keys": [
+				"clock.status.october",
+				"orlik.certificates"
+			],
+			"main": true
+		},
+		{
+			"id": "motive",
+			"text": "Pourquoi ORLIK signe-t-il ces certificats ?",
+			"keys": [
+				"orlik.motive",
+				"orlik.sedlar"
+			],
+			"main": true
+		},
+		{
+			"id": "petras_days",
+			"text": "Combien de jeudis PETRAS a-t-il manqués ?",
+			"keys": [
+				"petras.days",
+				"petras.unpaid",
+				"petras.payment"
+			]
+		},
+		{
+			"id": "informant",
+			"text": "ORLIK travaille-t-il pour la Milice ?",
+			"keys": [
+				"orlik.informant",
+				"orlik.brother",
+				"orlik.protection",
+				"orlik.party"
+			]
+		}
+	],
 	"priority": "ordinaire",
 	"documents": [
 		{
