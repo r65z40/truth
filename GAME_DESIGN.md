@@ -228,6 +228,9 @@ le refus est mémorisé (`career.refused_promotion`).
   dossiers). Chaque dossier pose des questions ; les éléments notés s'y rangent
   seuls ; deux pièces qui répondent différemment à la même question forment
   « deux versions » et l'agent choisit celle qu'il retient. Le jeu ne dit toujours
-  pas qui ment. Le carnet libre reste disponible si l'aide à l'enquête est coupée.
+  pas qui ment.
+- 2026-11-04 : deux niveaux de difficulté (fen) : débutant avec la fiche
+  d'enquête, expérimenté avec le jeu d'origine (carnet libre). Choisi à la
+  nouvelle partie, modifiable dans Paramètres.
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

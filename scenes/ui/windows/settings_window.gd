@@ -15,6 +15,15 @@ extends MinistryWindow
 @onready var _ambience_option: OptionButton = %AmbienceOption
 @onready var _sfx_option: OptionButton = %SfxOption
 @onready var _language_option: OptionButton = %LanguageOption
+@onready var _difficulty_option: OptionButton = %DifficultyOption
+
+## Libellés des niveaux, dans l'ordre de Settings.DIFFICULTIES.
+const DIFFICULTY_LABELS := ["Débutant", "Expérimenté"]
+## Explication de chaque niveau (info-bulle).
+const DIFFICULTY_HINTS := [
+	"Fiche d'enquête : chaque élément noté se range sous une question, et les contradictions apparaissent en « deux versions ».",
+	"Carnet libre : à vous de relier les pièces et de confronter les éléments deux à deux.",
+]
 
 
 func _ready() -> void:
@@ -51,6 +60,12 @@ func _ready() -> void:
 	for code in Localization.LOCALES:
 		_language_option.add_item(Localization.LOCALE_LABELS.get(code, code))
 	_language_option.item_selected.connect(func(index: int) -> void: Settings.set_language(Localization.LOCALES[index]))
+	for i in Settings.DIFFICULTIES.size():
+		_difficulty_option.add_item(tr(DIFFICULTY_LABELS[i]))
+		_difficulty_option.set_item_tooltip(i, tr(DIFFICULTY_HINTS[i]))
+	_difficulty_option.item_selected.connect(func(index: int) -> void:
+		Settings.set_difficulty(Settings.DIFFICULTIES[index])
+		_difficulty_option.tooltip_text = tr(DIFFICULTY_HINTS[index]))
 	%DoneButton.pressed.connect(close)
 
 
@@ -68,6 +83,9 @@ func _on_opened() -> void:
 	_ambience_option.select(_closest_level(Settings.ambience_volume))
 	_sfx_option.select(_closest_level(Settings.sfx_volume))
 	_language_option.select(maxi(Localization.LOCALES.find(Settings.language), 0))
+	var level := maxi(Settings.DIFFICULTIES.find(Settings.difficulty), 0)
+	_difficulty_option.select(level)
+	_difficulty_option.tooltip_text = tr(DIFFICULTY_HINTS[level])
 	_refresh_toggle_labels()
 
 

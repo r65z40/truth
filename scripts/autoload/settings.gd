@@ -14,6 +14,10 @@ const WINDOW_SIZES: Array[Vector2i] = [
 ]
 ## Crans de volume proposés dans Paramètres (musique, ambiances, bruitages).
 const MUSIC_LEVELS := [0.0, 0.25, 0.5, 0.8, 1.0]
+## Niveaux de difficulté (voir difficulty).
+const DIFFICULTY_BEGINNER := "beginner"
+const DIFFICULTY_EXPERT := "expert"
+const DIFFICULTIES := [DIFFICULTY_BEGINNER, DIFFICULTY_EXPERT]
 
 var fullscreen := false
 ## Résolution de la fenêtre en mode fenêtré.
@@ -21,6 +25,10 @@ var window_size := Vector2i(1280, 720)
 var crt_effect := true
 ## Affiche l'objectif conseillé en haut du bureau.
 var guidance := true
+## Niveau de difficulté, choisi à la nouvelle partie et modifiable dans Paramètres :
+## DIFFICULTY_BEGINNER = fiche d'enquête (questions, deux versions) dans les dossiers
+## qui en ont une ; DIFFICULTY_EXPERT = carnet libre et CONFRONTER, sans aide à relier.
+var difficulty := DIFFICULTY_BEGINNER
 ## Agrandit toute l'interface (lisibilité, petits écrans).
 var ui_scale := 1.0
 ## Scènes de terrain en 3D (sinon décors dessinés en 2D, plus légers).
@@ -55,6 +63,9 @@ func load_settings() -> void:
 	window_size = config.get_value("display", "window_size", window_size)
 	crt_effect = config.get_value("display", "crt_effect", crt_effect)
 	guidance = config.get_value("gameplay", "guidance", guidance)
+	difficulty = config.get_value("gameplay", "difficulty", difficulty)
+	if not difficulty in DIFFICULTIES:
+		difficulty = DIFFICULTY_BEGINNER
 	ui_scale = config.get_value("display", "ui_scale", ui_scale)
 	field_3d = config.get_value("display", "field_3d", field_3d)
 	field_motion = config.get_value("display", "field_motion", field_motion)
@@ -72,6 +83,7 @@ func save_settings() -> void:
 	config.set_value("display", "window_size", window_size)
 	config.set_value("display", "crt_effect", crt_effect)
 	config.set_value("gameplay", "guidance", guidance)
+	config.set_value("gameplay", "difficulty", difficulty)
 	config.set_value("display", "ui_scale", ui_scale)
 	config.set_value("display", "field_3d", field_3d)
 	config.set_value("display", "field_motion", field_motion)
@@ -117,6 +129,16 @@ func set_crt_effect(value: bool) -> void:
 func set_guidance(value: bool) -> void:
 	guidance = value
 	_commit()
+
+
+func set_difficulty(value: String) -> void:
+	difficulty = value if value in DIFFICULTIES else DIFFICULTY_BEGINNER
+	_commit()
+
+
+## Vrai au niveau débutant : les dossiers qui ont une fiche d'enquête l'utilisent.
+func is_beginner() -> bool:
+	return difficulty == DIFFICULTY_BEGINNER
 
 
 func set_field_3d(value: bool) -> void:

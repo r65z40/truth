@@ -6,8 +6,7 @@ extends MinistryWindow
 ## et formulaire de conclusion. Un dossier conclu peut être classé (CLASSER) :
 ## il quitte la liste, mais reste consultable sous « DOSSIERS CLASSÉS ».
 ##
-## Fiche d'enquête (dossiers qui déclarent des « questions », aide à l'enquête
-## activée) : le carnet libre et CONFRONTER laissent place à une fiche. Chaque
+## Fiche d'enquête (dossiers qui déclarent des « questions », niveau débutant) : le carnet libre et CONFRONTER laissent place à une fiche. Chaque
 ## passage noté se range sous sa question ; une question à deux versions se
 ## tranche en retenant l'une d'elles (voir CaseSheet). L'en-tête du dossier se
 ## réduit à une ligne : la pièce prend la place libérée.
@@ -957,9 +956,9 @@ func _scroll_to_tab(tab: Button) -> void:
 # --- Fiche d'enquête -------------------------------------------------------------
 
 ## Vrai si le dossier affiché se mène avec la fiche d'enquête : il déclare des
-## questions et l'aide à l'enquête est activée (sinon, carnet libre et CONFRONTER).
+## questions et le niveau est débutant (expérimenté : carnet libre et CONFRONTER).
 func _sheet_mode() -> bool:
-	return current_case_id != "" and Settings.guidance \
+	return current_case_id != "" and Settings.is_beginner() \
 			and CaseSheet.has_sheet(GameState.get_case_view(current_case_id))
 
 

@@ -437,6 +437,7 @@ func _build_guide_bar() -> void:
 func _refresh_objective() -> void:
 	var guide_state := GameState.get_condition_state()
 	guide_state["hours_used"] = GameState.hours_used
+	guide_state["sheet_mode"] = Settings.is_beginner()
 	current_step = Guidance.next_step(guide_state, GameState.messages)
 	# Toute la première journée reste guidée, jusqu'au bouton FIN DE SERVICE
 	# compris ; ensuite, l'aide s'efface après deux dossiers conclus.

@@ -502,5 +502,14 @@
 	"Cette contradiction a un prix : il faut la prouver pour qu'elle compte dans votre rapport.": "This contradiction has a price: it must be proven to count in your report.",
 	"Compléter la fiche du dossier n° %s, ou rédiger votre conclusion.": "Complete the sheet for file no. %s, or write your conclusion.",
 	"Cliquez d'autres passages soulignés : ils se rangent sous les questions.": "Click more underlined passages: they file themselves under the questions.",
-	"Cherchez deux pièces qui répondent différemment à la même question.": "Look for two documents that answer the same question differently."
+	"Cherchez deux pièces qui répondent différemment à la même question.": "Look for two documents that answer the same question differently.",
+	"Difficulté": "Difficulty",
+	"Débutant": "Beginner",
+	"Expérimenté": "Experienced",
+	"Fiche d'enquête : chaque élément noté se range sous une question, et les contradictions apparaissent en « deux versions ».": "Investigation sheet: each noted item files itself under a question, and contradictions show up as \"two versions\".",
+	"Carnet libre : à vous de relier les pièces et de confronter les éléments deux à deux.": "Free notebook: it is up to you to link the documents and compare items two by two.",
+	"NIVEAU DE DIFFICULTÉ": "DIFFICULTY LEVEL",
+	"DÉBUTANT\nFiche d'enquête : chaque élément se range sous une question, les contradictions apparaissent.": "BEGINNER\nInvestigation sheet: each item files itself under a question, contradictions show up.",
+	"EXPÉRIMENTÉ\nCarnet libre : à vous de relier les pièces et de confronter les éléments.": "EXPERIENCED\nFree notebook: it is up to you to link the documents and compare the items.",
+	"Modifiable à tout moment dans Paramètres.": "Can be changed at any time in Settings."
 }

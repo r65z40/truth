@@ -26,6 +26,7 @@ func _run() -> void:
 		"test_case_sheet_rules",
 		"test_case_sheet_window",
 		"test_save_migration_from_v7",
+		"test_difficulty_setting",
 		"test_case_40921_structure",
 		"test_case_40921_has_contradiction",
 		"test_document_rendering_escapes_bbcode",
@@ -295,13 +296,50 @@ func test_case_sheet_window() -> void:
 	desk._refresh_objective()
 	check(desk.current_step.case_id == "40000" or not desk.current_step.get("bubble", true) or desk.current_step.part != "tab:work_report",
 			"lecture des pièces : pas de bulle en plus du bandeau")
-	# Aide coupée : carnet libre et CONFRONTER, comme avant.
+	# Niveau expérimenté : carnet libre et CONFRONTER, comme avant.
+	Settings.difficulty = Settings.DIFFICULTY_EXPERT
+	dossiers.select_case("40000")
+	check(not dossiers._sheet.visible and dossiers.get_node("%Notebook").visible, "niveau expérimenté : carnet libre")
+	desk._refresh_objective()
+	check(desk.current_step.text.begins_with("Confronter") or desk.current_step.text.begins_with("Rédiger")
+			or desk.current_step.part != "sheet", "niveau expérimenté : le guide ne parle pas de la fiche")
+	# Aide coupée mais niveau débutant : la fiche reste.
+	Settings.difficulty = Settings.DIFFICULTY_BEGINNER
 	Settings.guidance = false
 	dossiers.select_case("40000")
-	check(not dossiers._sheet.visible and dossiers.get_node("%Notebook").visible, "sans l'aide à l'enquête : carnet libre")
+	check(dossiers._sheet.visible, "aide coupée au niveau débutant : la fiche reste")
 	Settings.guidance = true
 	desk.queue_free()
 	GameState.new_game()
+	await get_tree().process_frame
+
+
+## Niveau de difficulté : enregistré dans les paramètres, choisi au menu, modifiable.
+func test_difficulty_setting() -> void:
+	var before := Settings.difficulty
+	Settings.set_difficulty(Settings.DIFFICULTY_EXPERT)
+	Settings.difficulty = Settings.DIFFICULTY_BEGINNER
+	Settings.load_settings()
+	check(Settings.difficulty == Settings.DIFFICULTY_EXPERT and not Settings.is_beginner(), "le niveau est enregistré")
+	Settings.set_difficulty("inconnu")
+	check(Settings.difficulty == Settings.DIFFICULTY_BEGINNER, "un niveau inconnu revient à débutant")
+	var window: MinistryWindow = load("res://scenes/ui/windows/settings_window.tscn").instantiate()
+	get_tree().root.add_child(window)
+	await get_tree().process_frame
+	window.open()
+	var option: OptionButton = window.get_node("%DifficultyOption")
+	check(option.item_count == 2 and option.selected == 0, "Paramètres : deux niveaux, débutant sélectionné")
+	option.item_selected.emit(1)
+	check(Settings.difficulty == Settings.DIFFICULTY_EXPERT, "Paramètres : on passe au niveau expérimenté")
+	window.queue_free()
+	var menu: Node = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	check(not menu.get_node("%DifficultyPanel").visible, "le choix du niveau est caché au départ")
+	menu.get_node("%DifficultyCancelButton").pressed.emit()
+	check(not menu.get_node("%DifficultyPanel").visible, "ANNULER ferme le choix du niveau")
+	menu.queue_free()
+	Settings.set_difficulty(before)
 	await get_tree().process_frame
 
 
@@ -2959,6 +2997,10 @@ func test_guidance_steps() -> void:
 	GameState.note_fact("40000", "f_decl_address")
 	GameState.note_fact("40000", "f_reg_address")
 	check(step.call().text.begins_with("Trancher") and step.call().part == "sheet", "5. trancher entre les deux versions de la fiche")
+	var expert_state := GameState.get_condition_state()
+	expert_state["sheet_mode"] = false
+	check(Guidance.next_step(expert_state, GameState.messages).text.begins_with("Confronter"),
+			"5'. niveau expérimenté : confronter au carnet, comme avant")
 	check(GameState.retain_version("40000", "address", "f_reg_address") == "novak.address", "5b. retenir une version")
 	check(step.call().text.begins_with("Rédiger"), "6. conclure")
 	GameState.apply_decision("40000", "regularize")
@@ -3074,6 +3116,9 @@ func test_full_session_flow() -> void:
 	get_tree().current_scene = menu
 	await get_tree().process_frame
 	menu.get_node("%NewGameButton").pressed.emit()
+	check(menu.get_node("%DifficultyPanel").visible, "« Nouvelle partie » demande le niveau de difficulté")
+	menu.get_node("%BeginnerButton").pressed.emit()
+	check(Settings.difficulty == Settings.DIFFICULTY_BEGINNER, "niveau débutant enregistré")
 	await _wait_for_scene("Intro")
 	var intro := get_tree().current_scene
 	check(intro.name == "Intro" and intro.get_node("%PageLabel").text == "1 / 5", "« Nouvelle partie » ouvre l'introduction")
@@ -3552,12 +3597,14 @@ func test_document_windows() -> void:
 	# pouvez… » ni compteur d'avancement (le bandeau « À FAIRE » du bureau guide).
 	check(not dossiers.get_node("%ActionsHelp").visible \
 			and not dossiers.get_node("%ProgressLabel").visible, "tutoriel : en-tête du dossier allégé")
-	# Une fois l'aide coupée (joueur rodé), le rappel des actions réapparaît.
+	# Niveau expérimenté et aide coupée (joueur rodé) : le rappel des actions réapparaît.
 	Settings.set_guidance(false)
+	Settings.set_difficulty(Settings.DIFFICULTY_EXPERT)
 	dossiers.select_case("40921")
 	check(dossiers.get_node("%ActionsHelp").visible \
 			and dossiers.get_node("%ActionsHelp").text.contains("confronter"), "les actions possibles sont expliquées une fois le tutoriel passé")
 	Settings.set_guidance(true)
+	Settings.set_difficulty(Settings.DIFFICULTY_BEGINNER)
 
 	dossiers.select_document("work_report")
 	dossiers.open_current_aside()

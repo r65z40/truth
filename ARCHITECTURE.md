@@ -164,8 +164,10 @@ des valeurs différentes forment un conflit (« deux versions ») :
 `GameState.retain_version()` confronte la paire (même règle que le carnet, prix
 compris) et mémorise le choix dans `case_state.sheet_choices` (sauvegarde v8).
 Une clé ne peut appartenir qu'à une question (`CaseSheet.validate`). Les éléments
-sans question vont dans « autres notes ». Avec l'aide à l'enquête coupée, la
-fenêtre revient au carnet libre et à CONFRONTER.
+sans question vont dans « autres notes ». Au niveau expérimenté
+(`Settings.difficulty`, choisi à « Nouvelle partie » et dans Paramètres), la
+fenêtre revient au carnet libre et à CONFRONTER ; le bureau passe `sheet_mode` à
+`Guidance.next_step()`. Le niveau est un paramètre, pas une donnée de partie.
 
 ## Accompagnement du joueur
 
