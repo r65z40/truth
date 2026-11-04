@@ -1,6 +1,11 @@
 {
 	"_note": "Traductions anglaises de l'interface. Clé = texte français (langue source). Une chaîne absente reste en français.",
 	"NOUVELLE PARTIE": "NEW GAME",
+	"DOSSIER SUIVANT ▸": "NEXT FILE ▸",
+	"Ouvrir le prochain dossier qui attend votre conclusion.": "Open the next file awaiting your conclusion.",
+	"PLIS LUS (%d) ▸": "READ MAIL (%d) ▸",
+	"PLIS LUS (%d) ▾": "READ MAIL (%d) ▾",
+	"OUVRIR LE DOSSIER N° %s": "OPEN FILE No. %s",
 	"QUITTER": "QUIT",
 	"PARAMÈTRES": "SETTINGS",
 	"PARAMÈTRES DU TERMINAL": "TERMINAL SETTINGS",

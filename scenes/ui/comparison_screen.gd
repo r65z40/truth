@@ -9,6 +9,10 @@ extends ColorRect
 
 signal closed
 
+## Largeurs fixes de la grille des traits : nom du trait, puis les deux boutons.
+const TRAIT_WIDTH := 170.0
+const JUDGE_WIDTH := 220.0
+
 var _case_id: String = ""
 var _comparison: Dictionary = {}
 var _left_photo := IdPhoto.new()
@@ -187,38 +191,59 @@ func open_case(case_id: String) -> bool:
 	return true
 
 
-## Une carte par trait : la mention de chaque pièce, puis deux boutons de jugement.
+## Une ligne par trait : le trait, la mention de chaque pièce, puis deux boutons
+## de jugement. Les noms des pièces sont en tête de colonne : tout tient sans
+## faire défiler.
 func _build_points() -> void:
 	for child in _points_box.get_children():
 		child.queue_free()
+	var header := _points_box.get_parent().get_node_or_null("PointsHeader") as HBoxContainer
+	if header == null:
+		header = HBoxContainer.new()
+		header.name = "PointsHeader"
+		_points_box.add_sibling(header)
+		_points_box.get_parent().move_child(header, _points_box.get_index())
+	for child in header.get_children():
+		child.queue_free()
+	for text in ["", _left_label.text, _right_label.text, ""]:
+		header.add_child(_cell(text, &"MutedLabel"))
+	header.get_child(0).custom_minimum_size.x = TRAIT_WIDTH
+	header.get_child(3).custom_minimum_size.x = JUDGE_WIDTH
+	header.get_child(3).size_flags_horizontal = Control.SIZE_FILL
+	header.get_child(0).size_flags_horizontal = Control.SIZE_FILL
 	for point in _comparison.get("points", []):
 		var point_id: String = point.get("id", "")
 		var compared := ComparisonRules.compare_point(point, _left_photo.photo, _right_photo.photo)
 		var card := PanelContainer.new()
-		card.theme_type_variation = &"DocumentPanel"
+		card.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 		var pad := MarginContainer.new()
-		for side in ["left", "right", "top", "bottom"]:
-			pad.add_theme_constant_override("margin_" + side, 10)
+		pad.add_theme_constant_override("margin_top", 2)
+		pad.add_theme_constant_override("margin_bottom", 2)
 		card.add_child(pad)
-		var box := VBoxContainer.new()
-		box.add_theme_constant_override("separation", 4)
+		var box := HBoxContainer.new()
+		box.add_theme_constant_override("separation", 8)
 		pad.add_child(box)
-		var trait_label := Label.new()
-		trait_label.text = point.get("label", "")
-		trait_label.theme_type_variation = &"HeaderLabel"
+		var trait_label := _cell(point.get("label", ""), &"HeaderLabel")
+		trait_label.custom_minimum_size.x = TRAIT_WIDTH
+		trait_label.size_flags_horizontal = Control.SIZE_FILL
 		box.add_child(trait_label)
-		box.add_child(_detail_line(_left_label.text, compared.left))
-		box.add_child(_detail_line(_right_label.text, compared.right))
-		box.add_child(_judgement_row(point_id))
+		box.add_child(_cell(compared.left, &"DocumentLabel"))
+		box.add_child(_cell(compared.right, &"DocumentLabel"))
+		var judge := _judgement_row(point_id)
+		judge.custom_minimum_size.x = JUDGE_WIDTH
+		box.add_child(judge)
 		_points_box.add_child(card)
 
 
-## Ligne « <pièce> : <mention> ».
-func _detail_line(piece: String, mention: String) -> Label:
+## Case de la grille : texte qui passe à la ligne, colonne extensible.
+func _cell(text: String, variation: StringName) -> Label:
 	var label := Label.new()
-	label.text = "%s : %s" % [piece, mention]
-	label.theme_type_variation = &"DocumentLabel"
+	label.text = text
+	label.theme_type_variation = variation
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	label.add_theme_font_size_override("font_size", 15)
 	return label
 
 
@@ -234,6 +259,7 @@ func _judgement_row(point_id: String) -> HBoxContainer:
 		button.button_group = group
 		button.custom_minimum_size = Vector2(0, 44)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.add_theme_font_size_override("font_size", 14)
 		button.toggled.connect(func(pressed: bool) -> void:
 			if pressed:
 				_verdicts[point_id] = is_diff

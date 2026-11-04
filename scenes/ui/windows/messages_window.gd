@@ -4,7 +4,13 @@ extends MinistryWindow
 ## la lettre ouverte sur papier à en-tête du ministère. Un pli lu peut aller à
 ## la corbeille (SUPPRIMER) ; la corbeille le garde, d'où on peut le restaurer.
 
+## Le joueur ouvre le dossier dont parle le pli.
+signal case_requested(case_id: String)
+
 var current_message_id := ""
+## Plis déjà lus repliés sous « PLIS LUS » : les nouveaux restent seuls en tête.
+var read_folded := true
+var _open_case_button: Button
 ## Vrai quand la liste montre la corbeille plutôt que les plis reçus.
 var showing_trash := false
 
@@ -24,6 +30,30 @@ func _ready() -> void:
 	super()
 	_trash_button.toggled.connect(show_trash)
 	_delete_button.pressed.connect(_on_delete_pressed)
+	_open_case_button = Button.new()
+	_open_case_button.name = "OpenCaseButton"
+	_open_case_button.custom_minimum_size = Vector2(0, 44)
+	_open_case_button.focus_mode = Control.FOCUS_NONE
+	_open_case_button.pressed.connect(func() -> void:
+		var case_id := case_of_message(current_message_id)
+		if case_id != "":
+			case_requested.emit(case_id))
+	_delete_button.add_sibling(_open_case_button)
+	_delete_button.get_parent().move_child(_open_case_button, _delete_button.get_index())
+
+
+## Dossier dont parle un pli (« Dossier 40921 », « n° 51307 »...), s'il est sur le
+## bureau de l'agent ; sinon "".
+static func case_of_message(message_id: String) -> String:
+	for message in GameState.messages:
+		if message.id != message_id:
+			continue
+		var text: String = Localization.text(message.subject) + " " + Localization.text(message.body)
+		var regex := RegEx.create_from_string("\\b(\\d{5})\\b")
+		for found in regex.search_all(text):
+			if GameState.cases.has(found.get_string(1)):
+				return found.get_string(1)
+	return ""
 
 
 func _on_opened() -> void:
@@ -114,8 +144,29 @@ func _refresh_list() -> void:
 	for message in GameState.messages:
 		if message.get("deleted", false):
 			trashed += 1
-	# Le plus récent en haut.
-	for message: Dictionary in _shown_messages():
+	# Les non lus d'abord, puis les lus sous un pli repliable ; le plus récent en haut.
+	var shown := _shown_messages()
+	var unread_first := shown.filter(func(m: Dictionary) -> bool: return not m.read)
+	var already_read := shown.filter(func(m: Dictionary) -> bool: return m.read)
+	var fold := read_folded and not showing_trash and not unread_first.is_empty()
+	var ordered := unread_first.duplicate()
+	if not showing_trash and not unread_first.is_empty() and not already_read.is_empty():
+		ordered.append({"fold": true})
+	if not fold or showing_trash:
+		ordered.append_array(already_read)
+	for message: Dictionary in ordered:
+		if message.has("fold"):
+			var toggle := Button.new()
+			toggle.name = "ReadFold"
+			toggle.text = (tr("PLIS LUS (%d) ▸") if fold else tr("PLIS LUS (%d) ▾")) % already_read.size()
+			toggle.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			toggle.custom_minimum_size = Vector2(0, 44)
+			toggle.focus_mode = Control.FOCUS_NONE
+			toggle.pressed.connect(func() -> void:
+				read_folded = not read_folded
+				_refresh_list())
+			_message_list.add_child(toggle)
+			continue
 		if not message.read:
 			unread += 1
 		var button := Button.new()
@@ -145,6 +196,9 @@ func _refresh_list() -> void:
 	_empty_hint.text = tr("La corbeille est vide.") if showing_trash else tr("Aucun pli. Le courrier de la hiérarchie arrivera ici.")
 	# SUPPRIMER : seulement un pli déjà lu ; dans la corbeille, RESTAURER.
 	_letter_actions.visible = _letter.visible
+	var linked_case := case_of_message(current_message_id) if _letter.visible else ""
+	_open_case_button.visible = linked_case != ""
+	_open_case_button.text = tr("OUVRIR LE DOSSIER N° %s") % linked_case
 	_delete_button.text = tr("RESTAURER") if showing_trash else tr("SUPPRIMER")
 	_delete_button.disabled = not showing_trash and not GameState.can_delete_message(current_message_id)
 	_delete_button.tooltip_text = tr("Remettre ce pli parmi les plis reçus.") if showing_trash \

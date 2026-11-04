@@ -27,7 +27,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Card" type="PanelContainer" parent="Scroll/Center"]
-custom_minimum_size = Vector2(760, 0)
+custom_minimum_size = Vector2(1000, 0)
 layout_mode = 2
 theme_type_variation = &"DocumentPanel"
 
@@ -71,6 +71,7 @@ theme_override_constants/separation = 6
 [node name="LeftLabel" type="Label" parent="Scroll/Center/Card/Pad/VBox/Row/LeftCol"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"DocumentLabel"
 horizontal_alignment = 1
 
 [node name="LeftPhoto" type="VBoxContainer" parent="Scroll/Center/Card/Pad/VBox/Row/LeftCol"]
@@ -85,6 +86,7 @@ theme_override_constants/separation = 6
 [node name="RightLabel" type="Label" parent="Scroll/Center/Card/Pad/VBox/Row/RightCol"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"DocumentLabel"
 horizontal_alignment = 1
 
 [node name="RightPhoto" type="VBoxContainer" parent="Scroll/Center/Card/Pad/VBox/Row/RightCol"]

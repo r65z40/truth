@@ -115,7 +115,8 @@ func _ready() -> void:
 	%StartArchives.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
 	windows.dossiers.archives_requested.connect(terminal.submit_command.bind("ARCHIVES"))
 	%TerminalButton.pressed.connect(open_app.bind("terminal"))
-	%VeritasButton.pressed.connect(open_app.bind("veritas"))
+	%VeritasButton.pressed.connect(open_veritas_app)
+	windows.messages.case_requested.connect(open_case)
 	%NewsButton.pressed.connect(open_news)
 	%SaveButton.pressed.connect(terminal.submit_command.bind("SAUVER"))
 	%MenuButton.pressed.connect(terminal.submit_command.bind("MENU"))
@@ -605,6 +606,14 @@ func open_news() -> void:
 
 
 ## Lance VERITAS sur un dossier (depuis le formulaire de conclusion).
+## Icône VERITAS : le programme s'ouvre directement sur le dossier en cours.
+func open_veritas_app() -> void:
+	open_app("veritas")
+	var case_id: String = windows.dossiers.current_case_id
+	if windows.veritas.current_case_id == "" and case_id in VeritasWindow.pending_case_ids():
+		windows.veritas.select_case(case_id)
+
+
 func open_veritas(case_id: String) -> void:
 	open_app("veritas")
 	windows.veritas.run_analysis(case_id)

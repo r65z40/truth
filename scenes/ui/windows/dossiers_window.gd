@@ -51,6 +51,7 @@ signal archives_requested
 
 var current_case_id := ""
 var _archives_link: Button
+var _next_case_button: Button
 var current_document_id := ""
 ## Vrai si la dernière confrontation de ce dossier n'a rien donné (la bulle
 ## d'aide donne alors un conseil plus précis).
@@ -129,6 +130,15 @@ func _ready() -> void:
 	_archives_link.focus_mode = Control.FOCUS_NONE
 	_archives_link.pressed.connect(func() -> void: archives_requested.emit())
 	_filed_toggle.add_sibling(_archives_link)
+	_next_case_button = Button.new()
+	_next_case_button.name = "NextCaseButton"
+	_next_case_button.text = tr("DOSSIER SUIVANT ▸")
+	_next_case_button.tooltip_text = tr("Ouvrir le prochain dossier qui attend votre conclusion.")
+	_next_case_button.custom_minimum_size = Vector2(0, 44)
+	_next_case_button.focus_mode = Control.FOCUS_NONE
+	_next_case_button.visible = false
+	_next_case_button.pressed.connect(func() -> void: select_case(next_case_id()))
+	_file_button.add_sibling(_next_case_button)
 	_request_button.pressed.connect(request_next_document)
 	_consult_button.pressed.connect(consult_superior)
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
@@ -209,6 +219,15 @@ func select_case(case_id: String) -> void:
 
 
 ## Bascule la liste entre les dossiers en cours et les dossiers classés.
+## Prochain dossier en attente de conclusion (dans l'ordre de la liste), ou "".
+func next_case_id() -> String:
+	for case_id in GameState.cases:
+		if case_id != current_case_id and GameState.can_decide(case_id) and not GameState.is_case_filed(case_id) \
+				and not GameState.get_case_view(case_id).is_empty():
+			return case_id
+	return ""
+
+
 func show_filed(on: bool) -> void:
 	showing_filed = on
 	_filed_toggle.set_pressed_no_signal(on)
@@ -640,6 +659,8 @@ func _refresh_all() -> void:
 	# Un dossier conclu peut quitter la liste : CLASSER, ou RESSORTIR s'il est classé.
 	var filed := GameState.is_case_filed(current_case_id)
 	_file_button.visible = not can_decide
+	# Rapport transmis : on enchaîne sur le dossier suivant en un clic.
+	_next_case_button.visible = not can_decide and next_case_id() != ""
 	_file_button.text = tr("RESSORTIR") if filed else tr("CLASSER")
 	_file_button.tooltip_text = tr("Remettre ce dossier parmi les dossiers en cours.") if filed \
 			else tr("Ranger ce dossier conclu : il quitte la liste et reste consultable dans « DOSSIERS CLASSÉS ».")

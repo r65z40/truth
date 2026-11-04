@@ -108,6 +108,7 @@ func _run() -> void:
 		"test_document_field_icons",
 		"test_tutorial_bubble_fades",
 		"test_coach_bubble_can_be_closed",
+		"test_fewer_clicks",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2738,6 +2739,48 @@ func test_tutorial_bubble_fades() -> void:
 	desk.queue_free()
 	GameState.new_game()
 	await get_tree().process_frame
+
+
+## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier
+## suivant après un rapport, VERITAS ouvert sur le dossier en cours.
+func test_fewer_clicks() -> void:
+	GameState.new_game()
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	var messages = desk.windows.messages
+	desk.open_app("messages")
+	messages.select_message("welcome_mazur")
+	var list: VBoxContainer = messages.get_node("%MessageList")
+	var fold: Button = list.get_node_or_null("ReadFold")
+	check(fold != null and list.get_node_or_null("Message_welcome_mazur") == null,
+			"pli lu : rangé sous « PLIS LUS », replié tant qu'il reste des plis non lus")
+	fold.pressed.emit()
+	check(list.get_node_or_null("Message_welcome_mazur") != null, "PLIS LUS se déplie")
+	check(_case_of_message("welcome_mazur") in ["40000", "40921"] and messages.find_child("OpenCaseButton", true, false).visible,
+			"le pli d'accueil parle d'un dossier : bouton OUVRIR LE DOSSIER")
+	messages.find_child("OpenCaseButton", true, false).pressed.emit()
+	check(desk.get_open_app() == "dossiers" and desk.windows.dossiers.current_case_id == _case_of_message("welcome_mazur"),
+			"OUVRIR LE DOSSIER ouvre le classeur sur ce dossier")
+	var dossiers: DossiersWindow = desk.windows.dossiers
+	dossiers.select_case("40000")
+	check(not dossiers.find_child("NextCaseButton", true, false).visible, "dossier en cours : pas de DOSSIER SUIVANT")
+	desk.open_veritas_app()
+	check(desk.windows.veritas.current_case_id == "40000", "VERITAS s'ouvre sur le dossier en cours")
+	desk.windows.veritas.close()
+	GameState.apply_decision("40000", "regularize")
+	desk.open_case("40000")
+	var next: Button = dossiers.find_child("NextCaseButton", true, false)
+	check(next.visible and dossiers.next_case_id() == "40921", "rapport transmis : DOSSIER SUIVANT")
+	next.pressed.emit()
+	check(dossiers.current_case_id == "40921", "DOSSIER SUIVANT ouvre le prochain dossier en attente")
+	desk.queue_free()
+	await get_tree().process_frame
+	GameState.new_game()
+
+
+func _case_of_message(message_id: String) -> String:
+	return load("res://scenes/ui/windows/messages_window.gd").case_of_message(message_id)
 
 
 func test_coach_bubble_can_be_closed() -> void:
