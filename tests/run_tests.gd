@@ -529,7 +529,7 @@ func test_desk_apps() -> void:
 			"la bulle d'aide pointe le premier pli non lu")
 
 	# Archives vides en début de partie, fonds historique verrouillé.
-	desk.get_node("%ArchivesButton").pressed.emit()
+	desk.get_node("%StartArchives").pressed.emit()
 	check(desk.windows.archives.get_node("%ArchiveEmpty").visible and ArchivesWindow.archived_cases().is_empty(),
 			"aucun rapport aux archives au départ")
 	check(desk.windows.archives.get_node("%ClearanceLabel").text.contains("NIVEAU 3"), "le fonds historique est verrouillé")
@@ -3124,7 +3124,7 @@ func test_desk_scene_flow() -> void:
 	check(desk.get_open_app() == "archives" and desk.is_app_open("messages"),
 			"la dernière fenêtre ouverte passe devant, l'autre reste ouverte")
 
-	desk.get_node("%PersonnelButton").pressed.emit()
+	desk.get_node("%StartPersonnel").pressed.emit()
 	check(desk.get_open_app() == "personnel", "le bouton Dossier personnel ouvre l'évaluation")
 	var personnel_text: String = desk.windows.personnel.get_node("%PersonnelText").get_parsed_text()
 	check(personnel_text.contains("LOYAUTÉ ENVERS LE RÉGIME : conforme"), "l'évaluation est rédigée en mots")
@@ -4018,16 +4018,22 @@ func test_time_in_desk() -> void:
 	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
 	get_tree().root.add_child(desk)
 	await get_tree().process_frame
-	check(not desk.get_node("%ArchivesButton").visible and not desk.get_node("%PersonnelButton").visible,
+	check(not desk.get_node("%StartArchives").visible and not desk.get_node("%StartPersonnel").visible,
 			"premier jour : ni Archives ni Dossier personnel")
+	check(desk.get_node("Main/Body/Icons/List").get_child_count() == 5, "bureau : cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal)")
 	desk.terminal.submit_command("dossiers")
 	desk.windows.dossiers.select_case("40921")
 	check(not desk.windows.dossiers.get_node("%RequestButton").visible and not desk.windows.dossiers.get_node("%ConsultButton").visible,
 			"premier jour : ni DEMANDER ni CONSULTER")
 	desk.windows.dossiers.close()
 	GameState.end_day()
-	check(desk.get_node("%ArchivesButton").visible and desk.get_node("%PersonnelButton").visible, "deuxième jour : tout est débloqué")
+	check(desk.get_node("%StartArchives").visible and desk.get_node("%StartPersonnel").visible, "deuxième jour : tout est débloqué")
 	desk.terminal.submit_command("dossiers")
+	var archives_link: Button = desk.windows.dossiers.find_child("ArchivesLink", true, false)
+	check(archives_link.visible, "deuxième jour : le classeur mène aux rapports transmis")
+	archives_link.pressed.emit()
+	check(desk.get_open_app() == "archives", "RAPPORTS TRANSMIS ouvre les archives")
+	desk.windows.archives.close()
 	var dossiers_window = desk.windows.dossiers
 	dossiers_window.select_case("40921")
 	check(dossiers_window.get_node("%RequestButton").text == "DEMANDER (1 h)" and not dossiers_window.get_node("%RequestButton").disabled,

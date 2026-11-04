@@ -46,8 +46,11 @@ signal timeline_requested(case_id: String)
 signal document_window_requested(case_id: String, document_id: String)
 ## Le formulaire de conclusion demande l'avis de VERITAS.
 signal veritas_requested(case_id: String)
+## Le joueur ouvre les archives (rapports transmis) depuis la liste des dossiers.
+signal archives_requested
 
 var current_case_id := ""
+var _archives_link: Button
 var current_document_id := ""
 ## Vrai si la dernière confrontation de ce dossier n'a rien donné (la bulle
 ## d'aide donne alors un conseil plus précis).
@@ -117,6 +120,15 @@ func _ready() -> void:
 	_conclusion_button.pressed.connect(open_conclusion)
 	_file_button.pressed.connect(toggle_current_filed)
 	_filed_toggle.toggled.connect(show_filed)
+	# Les archives n'ont plus d'icône sur le bureau : on y va depuis le classeur.
+	_archives_link = Button.new()
+	_archives_link.name = "ArchivesLink"
+	_archives_link.text = tr("RAPPORTS TRANSMIS ▸")
+	_archives_link.tooltip_text = tr("Voir les rapports que vous avez transmis.")
+	_archives_link.custom_minimum_size = Vector2(0, 44)
+	_archives_link.focus_mode = Control.FOCUS_NONE
+	_archives_link.pressed.connect(func() -> void: archives_requested.emit())
+	_filed_toggle.add_sibling(_archives_link)
 	_request_button.pressed.connect(request_next_document)
 	_consult_button.pressed.connect(consult_superior)
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
@@ -824,6 +836,7 @@ func _refresh_case_list() -> void:
 			filed_count += 1
 	# Le bouton des classés n'apparaît qu'une fois un dossier classé.
 	_filed_toggle.visible = filed_count > 0 or showing_filed
+	_archives_link.visible = GameState.is_feature_unlocked("archives") and not showing_filed
 	_filed_toggle.text = tr("◂ RETOUR AUX DOSSIERS EN COURS") if showing_filed else tr("DOSSIERS CLASSÉS (%d)") % filed_count
 	%CaseListTitle.text = tr("DOSSIERS CLASSÉS") if showing_filed else tr("DOSSIERS ASSIGNÉS")
 	for case_id in GameState.cases:

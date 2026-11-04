@@ -15,6 +15,8 @@ const DOCUMENT_CASCADE := Vector2(32, 32)
 ## clignotant subsiste. L'aide reste réactivable/désactivable dans les paramètres.
 const TUTORIAL_BUBBLE_UNTIL_CONCLUDED := 2
 ## Applications ouvertes en plein écran dans la zone de travail.
+## Largeur en dessous de laquelle un bouton de la barre des tâches n'affiche que l'icône.
+const TASK_LABEL_MIN_WIDTH := 150.0
 const FULLSCREEN_APPS: Array[String] = ["dossiers", "messages", "archives", "personnel", "veritas", "news"]
 
 @onready var terminal: Terminal = %TerminalWindow.get_node("%Terminal")
@@ -89,8 +91,6 @@ const TOOLTIPS := {
 	"MessagesButton": "Lire le courrier interne et les réponses de la hiérarchie.",
 	"NewsButton": "Le journal du matin, La Voix de Velmira. Le lire ne coûte pas d'heures.",
 	"VeritasButton": "VERITAS, le système d'analyse : il recommande une conclusion pour un dossier.",
-	"ArchivesButton": "Voir les rapports que vous avez transmis.",
-	"PersonnelButton": "Votre évaluation par la Direction du personnel.",
 	"TerminalButton": "Le terminal du ministère, pour les commandes tapées au clavier.",
 	"StartButton": "Menu du ministère : identité, terminal, paramètres, sauvegarde.",
 	"EndDayButton": "Terminer la journée : la suite de vos décisions arrive le lendemain.",
@@ -110,8 +110,10 @@ func _ready() -> void:
 	terminal.end_day_requested.connect(request_end_day)
 	%DossiersButton.pressed.connect(terminal.submit_command.bind("DOSSIERS"))
 	_messages_button.pressed.connect(terminal.submit_command.bind("MESSAGES"))
-	%ArchivesButton.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
-	%PersonnelButton.pressed.connect(terminal.submit_command.bind("PROFIL"))
+	# Bureau réduit à l'essentiel : Archives et Personnel sont dans le menu
+	# MINISTÈRE (et les archives aussi dans le classeur des dossiers).
+	%StartArchives.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
+	windows.dossiers.archives_requested.connect(terminal.submit_command.bind("ARCHIVES"))
 	%TerminalButton.pressed.connect(open_app.bind("terminal"))
 	%VeritasButton.pressed.connect(open_app.bind("veritas"))
 	%NewsButton.pressed.connect(open_news)
@@ -137,8 +139,10 @@ func _ready() -> void:
 		window.notify.connect(show_toast)
 	window_manager.windows_changed.connect(_refresh_taskbar)
 	_task_buttons.get_parent().resized.connect(func() -> void:
+		var width := _task_button_width()
 		for button: Button in _task_buttons.get_children():
-			button.custom_minimum_size.x = _task_button_width())
+			button.custom_minimum_size.x = width
+			button.text = button.tooltip_text if width >= TASK_LABEL_MIN_WIDTH or button.icon == null else "")
 	for button_name in TOOLTIPS:
 		(get_node("%" + button_name) as Control).tooltip_text = tr(TOOLTIPS[button_name])
 	_toast.hide()
@@ -419,9 +423,8 @@ func _refresh_header() -> void:
 	%DossiersButton.tooltip_text = "%s\n%s" % [tr(TOOLTIPS.DossiersButton),
 			tr("%d dossier(s) à traiter.") % pending if pending > 0 else tr("Aucun dossier en attente.")]
 	%NewsButton.badge = 0 if news_read_day == GameState.day_index else 1
-	%ArchivesButton.visible = GameState.is_feature_unlocked("archives")
-	%PersonnelButton.visible = GameState.is_feature_unlocked("personnel")
-	%StartPersonnel.visible = %PersonnelButton.visible
+	%StartArchives.visible = GameState.is_feature_unlocked("archives")
+	%StartPersonnel.visible = GameState.is_feature_unlocked("personnel")
 	terminal.set_advanced_visible(GameState.is_feature_unlocked("terminal_advanced"))
 	_refresh_objective()
 
@@ -536,15 +539,18 @@ func _refresh_taskbar() -> void:
 	for child in _task_buttons.get_children():
 		child.queue_free()
 	var focused := window_manager.get_focused()
+	var width := _task_button_width()
 	for window in window_manager.get_open_windows():
 		var button := Button.new()
 		button.name = "Task_" + window.name
-		button.text = window.short_title()
+		# Peu de place : l'icône seule plutôt qu'un nom coupé (« Dossie… »).
+		button.text = window.short_title() if width >= TASK_LABEL_MIN_WIDTH or window.app_icon == "" else ""
+		button.tooltip_text = window.short_title()
 		button.icon = PixelIcons.get_icon(window.app_icon, 2) if window.app_icon != "" else null
 		button.theme_type_variation = &"TaskButton"
 		button.toggle_mode = true
 		button.button_pressed = window == focused
-		button.custom_minimum_size = Vector2(_task_button_width(), 44)
+		button.custom_minimum_size = Vector2(width, 44)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.clip_text = true
 		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
