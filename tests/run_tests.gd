@@ -3526,8 +3526,14 @@ func test_desktop_windows() -> void:
 	check(messages.is_active and not dossiers.is_active, "seule la fenêtre au premier plan a sa barre de titre active")
 	check(manager.get_child(-1) == messages, "la fenêtre au premier plan est dessinée en dernier")
 	check(desk.get_node("%TaskButtons").get_child_count() == 2, "un bouton par fenêtre dans la barre des tâches")
-	check(dossiers.get_anchor(SIDE_RIGHT) == 0.0 and Rect2(Vector2.ZERO, manager.size).encloses(dossiers.get_rect()),
-			"la fenêtre a une position libre, dans la zone de travail")
+	check(dossiers.fullscreen and dossiers.get_rect() == Rect2(Vector2.ZERO, manager.size),
+			"Dossiers s'ouvre en plein écran, dans la zone de travail")
+	var bar: Node = dossiers.get_node("Layout/TitleBar")
+	check(bar.find_child("BackButton", true, false).visible and not bar.find_child("MaximizeButton", true, false).visible
+			and not bar.find_child("MinimizeButton", true, false).visible, "plein écran : bouton ← RETOUR, ni Réduire ni Agrandir")
+	for app_name in ["messages", "archives", "personnel", "veritas", "news"]:
+		check(desk.windows[app_name].fullscreen, "%s : application en plein écran" % app_name)
+	check(not desk.windows.terminal.fullscreen and not desk.windows.settings.fullscreen, "terminal et paramètres restent des fenêtres")
 	manager.raise_window(dossiers)
 	check(desk.get_open_app() == "dossiers" and manager.get_child(-1) == dossiers, "on repasse une fenêtre devant")
 
@@ -3537,21 +3543,28 @@ func test_desktop_windows() -> void:
 	check(desk.get_open_app() == "messages", "la fenêtre suivante passe devant")
 	manager.toggle_from_taskbar(dossiers)
 	check(dossiers.visible and desk.get_open_app() == "dossiers", "le bouton de la barre des tâches la ressort")
-	dossiers.get_node("Layout/TitleBar").find_child("MinimizeButton", true, false).pressed.emit()
-	check(dossiers.is_minimized, "le bouton _ réduit la fenêtre")
+	dossiers.minimize()
+	check(dossiers.is_minimized, "la fenêtre se réduit")
 	desk.open_app("dossiers")
 	check(dossiers.visible and not dossiers.is_minimized, "rouvrir une fenêtre réduite la ressort")
+	bar.find_child("BackButton", true, false).pressed.emit()
+	check(not desk.is_app_open("dossiers") and desk.get_open_app() == "messages", "← RETOUR ferme et revient à l'application d'avant")
+	desk.open_app("dossiers")
 
-	# Agrandir et déplacer.
-	var before := dossiers.get_rect()
-	dossiers.toggle_maximize()
-	check(dossiers.get_rect() == Rect2(Vector2.ZERO, manager.size), "agrandie : toute la zone de travail")
-	dossiers.toggle_maximize()
-	check(dossiers.get_rect() == before, "rétablie : taille et place d'origine")
-	messages.position = Vector2(-5000, 9000)
-	messages.clamp_to_parent()
-	check(messages.get_rect().end.y <= manager.size.y and messages.position.x + messages.size.x >= MinistryWindow.KEEP_VISIBLE.x,
+	# Fenêtre flottante (terminal) : agrandir et déplacer.
+	var terminal_window: MinistryWindow = desk.windows.terminal
+	desk.open_app("terminal")
+	await get_tree().process_frame
+	var before := terminal_window.get_rect()
+	terminal_window.toggle_maximize()
+	check(terminal_window.get_rect() == Rect2(Vector2.ZERO, manager.size), "agrandie : toute la zone de travail")
+	terminal_window.toggle_maximize()
+	check(terminal_window.get_rect() == before, "rétablie : taille et place d'origine")
+	terminal_window.position = Vector2(-5000, 9000)
+	terminal_window.clamp_to_parent()
+	check(terminal_window.get_rect().end.y <= manager.size.y and terminal_window.position.x + terminal_window.size.x >= MinistryWindow.KEEP_VISIBLE.x,
 			"une fenêtre déplacée garde sa barre de titre à portée")
+	terminal_window.close()
 
 	# Fermer, aide, menu MINISTÈRE.
 	messages.get_close_button().pressed.emit()

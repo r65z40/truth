@@ -14,6 +14,8 @@ const DOCUMENT_CASCADE := Vector2(32, 32)
 ## s'affiche plus d'elle-même (le joueur a pris la main) ; seul le repère
 ## clignotant subsiste. L'aide reste réactivable/désactivable dans les paramètres.
 const TUTORIAL_BUBBLE_UNTIL_CONCLUDED := 2
+## Applications ouvertes en plein écran dans la zone de travail.
+const FULLSCREEN_APPS: Array[String] = ["dossiers", "messages", "archives", "personnel", "veritas", "news"]
 
 @onready var terminal: Terminal = %TerminalWindow.get_node("%Terminal")
 @onready var windows: Dictionary = {
@@ -125,6 +127,10 @@ func _ready() -> void:
 	%StartSettings.pressed.connect(open_app.bind("settings"))
 	for item: Button in _start_menu.find_children("*", "Button", true, false):
 		item.pressed.connect(close_start_menu)
+	# Les applications du travail s'ouvrent en plein écran, comme les scènes de
+	# terrain ; seuls le terminal, les paramètres et les pièces « à côté » flottent.
+	for app_name in FULLSCREEN_APPS:
+		windows[app_name].fullscreen = true
 	for window: MinistryWindow in windows.values():
 		window.hide()
 		window.closed.connect(_on_window_closed)
