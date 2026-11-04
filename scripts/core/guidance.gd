@@ -73,6 +73,10 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 			# Avec la fiche, le bandeau et la mention « à lire » suffisent.
 			read_step["bubble"] = not sheet_case
 			return _case_step(case_id, read_step)
+		if case_state.get("noted_facts", []).size() < MIN_NOTED_FACTS and sheet_case:
+			return _case_step(case_id, _step(UiText.of("Noter les éléments importants du dossier n° %s sur la fiche.") % case_id,
+					UiText.of("Cliquez sur les passages soulignés : ils se rangent sous les questions."), "dossiers", "facts",
+					guide.get("facts", UiText.of("Cliquez sur les passages soulignés des pièces : chacun se range sous la bonne question de la fiche, à droite."))))
 		if case_state.get("noted_facts", []).size() < MIN_NOTED_FACTS:
 			return _case_step(case_id, _step(UiText.of("Noter les éléments importants du dossier n° %s dans votre carnet.") % case_id,
 					UiText.of("Cliquez sur les passages soulignés du texte (ou « + NOTER »)."), "dossiers", "facts",

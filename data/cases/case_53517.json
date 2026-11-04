@@ -7,6 +7,42 @@
 		"objective": "Établir si les absences du jeudi de l'ouvrier PETRAS cachent une activité clandestine, ou autre chose.",
 		"context": "Un informateur de la Milice (« CHAUDRON ») l'a dénoncé pour des « réunions » hebdomadaires. PETRAS travaille à la Centrale n° 3 et a une épouse invalide."
 	},
+	"questions": [
+		{
+			"id": "thursdays",
+			"text": "Que fait PETRAS le jeudi ?",
+			"keys": [
+				"petras.thursdays",
+				"petras.workplace"
+			],
+			"main": true
+		},
+		{
+			"id": "informer",
+			"text": "Qui l'a dénoncé, et pourquoi ?",
+			"keys": [
+				"informer.code",
+				"informer.identity",
+				"informer.motive"
+			],
+			"main": true
+		},
+		{
+			"id": "network",
+			"text": "PETRAS appartient-il à un réseau ?",
+			"keys": [
+				"petras.network",
+				"petras.debt"
+			]
+		},
+		{
+			"id": "wife",
+			"text": "De quoi souffre sa femme ?",
+			"keys": [
+				"petras.wife"
+			]
+		}
+	],
 	"priority": "ordinaire",
 	"field_scene": "search_53517",
 	"documents": [

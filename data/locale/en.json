@@ -511,5 +511,7 @@
 	"NIVEAU DE DIFFICULTÉ": "DIFFICULTY LEVEL",
 	"DÉBUTANT\nFiche d'enquête : chaque élément se range sous une question, les contradictions apparaissent.": "BEGINNER\nInvestigation sheet: each item files itself under a question, contradictions show up.",
 	"EXPÉRIMENTÉ\nCarnet libre : à vous de relier les pièces et de confronter les éléments.": "EXPERIENCED\nFree notebook: it is up to you to link the documents and compare the items.",
-	"Modifiable à tout moment dans Paramètres.": "Can be changed at any time in Settings."
+	"Modifiable à tout moment dans Paramètres.": "Can be changed at any time in Settings.",
+	"Noter les éléments importants du dossier n° %s sur la fiche.": "Note the important items of file no. %s on the sheet.",
+	"Cliquez sur les passages soulignés des pièces : chacun se range sous la bonne question de la fiche, à droite.": "Click the underlined passages in the documents: each one files itself under the right question of the sheet, on the right."
 }

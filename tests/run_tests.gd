@@ -214,7 +214,12 @@ func test_case_sheet_rules() -> void:
 	var novak := CaseLibrary.get_case("40000")
 	var sedlar := CaseLibrary.get_case("40921")
 	check(CaseSheet.has_sheet(novak) and CaseSheet.has_sheet(sedlar), "les deux premiers dossiers ont une fiche")
-	check(not CaseSheet.has_sheet(CaseLibrary.get_case("51307")), "les autres dossiers gardent le carnet libre (prototype)")
+	for case_id in CaseLibrary.get_case_ids():
+		check(CaseSheet.has_sheet(CaseLibrary.get_case(case_id)), "le dossier %s a sa fiche d'enquête" % case_id)
+	var broken := CaseSheet.validate({"documents": [{"id": "a", "facts": [{"id": "x", "key": "k", "value": "1"}, {"id": "y", "key": "k", "value": "2"}]}],
+			"questions": [{"id": "q", "text": "?", "keys": ["autre"]}]})
+	check(broken.any(func(p: String) -> bool: return p.begins_with("clé contradictoire k")),
+			"une contradiction sans question est signalée")
 	check(CaseSheet.question_of_fact(sedlar, "f_log_trip") == "where" and CaseSheet.question_of_fact(sedlar, "f_report_presence") == "where",
 			"le train et la présence se rangent sous la même question")
 	check(CaseSheet.question_of_fact(sedlar, "f_identity_record") == "", "un élément sans question va dans les autres notes")
@@ -249,6 +254,19 @@ func test_case_sheet_rules() -> void:
 	GameState.new_game()
 	GameState.from_dict(restored)
 	check(GameState.get_case_state("40000").sheet_choices.get("address") == "f_reg_address", "le choix retenu est sauvegardé")
+	# Toutes les questions sont traduites en anglais.
+	var french := {}
+	for case_id in CaseLibrary.get_case_ids():
+		for question in CaseLibrary.get_case(case_id).questions:
+			french["%s.%s" % [case_id, question.id]] = question.text
+	Localization.set_locale("en")
+	var untranslated := []
+	for case_id in CaseLibrary.get_case_ids():
+		for question in CaseLibrary.get_case(case_id).questions:
+			if question.text == french["%s.%s" % [case_id, question.id]]:
+				untranslated.append("%s.%s" % [case_id, question.id])
+	Localization.set_locale("fr")
+	check(untranslated.is_empty(), "questions traduites en anglais %s" % [untranslated])
 	GameState.new_game()
 
 
@@ -1995,6 +2013,9 @@ func test_comparison() -> void:
 	var guide_docs: Array = guide_view.documents.map(func(d: Dictionary) -> String: return d.id)
 	guide_state.cases["52310"] = {"decision": "", "viewed_documents": guide_docs,
 			"noted_facts": ["f_rc_mark", "f_var_mark"], "contradictions_found": []}
+	# Niveau débutant : les deux signalements forment « deux versions » sur la fiche.
+	check(Guidance.next_step(guide_state, []).part == "sheet", "niveau débutant : trancher d'abord sur la fiche")
+	guide_state["sheet_mode"] = false
 	var compare_step := Guidance.next_step(guide_state, [])
 	check(compare_step.part == "compare" and compare_step.text.begins_with("Comparer"),
 			"la guidance propose COMPARER quand une comparaison est accessible")

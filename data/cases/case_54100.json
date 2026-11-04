@@ -7,6 +7,28 @@
 		"objective": "Aucun : ce dossier porte votre nom. Vous n'êtes pas habilité à l'instruire ni à le conclure. Vous pouvez seulement le lire.",
 		"context": "Dans la liste des dossiers du jour, un numéro de plus : 54100, au nom d'A. VOSK. Le vôtre. Il est déjà ouvert, et quelqu'un le remplit à mesure."
 	},
+	"questions": [
+		{
+			"id": "subject",
+			"text": "Que vous reproche-t-on ?",
+			"keys": [
+				"vosk.subject",
+				"vosk.suspicion_word",
+				"vosk.assessment",
+				"vosk.procedure",
+				"brandt.role"
+			],
+			"main": true
+		},
+		{
+			"id": "father",
+			"text": "Que dit le dossier de votre père ?",
+			"keys": [
+				"vosk.father",
+				"vosk.recruited"
+			]
+		}
+	],
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Acte 3 : le joueur devient le sujet. Dossier en lecture seule, révélation de BRANDT.",

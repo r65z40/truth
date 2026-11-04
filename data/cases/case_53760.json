@@ -7,6 +7,37 @@
 		"objective": "Établir si l'archiviste KREMER a soustrait des documents d'archive, ou si les consultations qu'on lui reproche étaient régulières.",
 		"context": "H. KREMER, ancien inspecteur de la Section 2 relégué aux archives, est signalé par le contrôle interne pour des sorties de documents « non enregistrées ». C'est lui qui vous a adressé une note sur le dossier 52310."
 	},
+	"questions": [
+		{
+			"id": "theft",
+			"text": "KREMER a-t-il sorti des documents sans les enregistrer ?",
+			"keys": [
+				"kremer.theft",
+				"kremer.access",
+				"kremer.role",
+				"controle.initial"
+			],
+			"main": true
+		},
+		{
+			"id": "motive",
+			"text": "Pourquoi consultait-il ces archives ?",
+			"keys": [
+				"kremer.motive",
+				"kremer.method",
+				"archive.40921_pulled"
+			]
+		},
+		{
+			"id": "register",
+			"text": "Le registre du 40921 a-t-il été modifié ?",
+			"keys": [
+				"register.altered",
+				"register.original",
+				"controle.corrections"
+			]
+		}
+	],
 	"priority": "sensible",
 	"guide": {
 		"note": "Dossier de l'acte 2 : le joueur doit juger son propre allié.",

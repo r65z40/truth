@@ -118,7 +118,10 @@ static func loose_facts(case_data: Dictionary, noted: Array) -> Array:
 
 
 ## Vérifie le bloc "questions" d'un dossier : identifiants uniques, texte, clés
-## existantes. Renvoie la liste des problèmes (vide si tout va bien).
+## existantes, une clé par question au plus. Comme la fiche ne montre qu'un conflit
+## par question, une question ne porte qu'une clé contradictoire ; et toute clé
+## contradictoire a sa question (sinon cette contradiction serait introuvable au
+## niveau débutant). Renvoie la liste des problèmes (vide si tout va bien).
 static func validate(case_data: Dictionary) -> Array[String]:
 	var problems: Array[String] = []
 	var known_keys := {}
@@ -142,4 +145,17 @@ static func validate(case_data: Dictionary) -> Array[String]:
 			if claimed.has(key):
 				problems.append("clé %s rangée sous deux questions" % key)
 			claimed[key] = true
+	if not has_sheet(case_data):
+		return problems
+	var conflicting := CaseLibrary.find_contradictions(case_data).map(func(c: Dictionary) -> String: return c.key)
+	for question in case_data.get("questions", []):
+		var count := 0
+		for key in question.get("keys", []):
+			if key in conflicting:
+				count += 1
+		if count > 1:
+			problems.append("question %s : plusieurs clés contradictoires" % question.get("id", ""))
+	for key in conflicting:
+		if not claimed.has(key):
+			problems.append("clé contradictoire %s sans question" % key)
 	return problems

@@ -134,6 +134,11 @@ func _capture_all() -> void:
 	await _snap("17_dossier_51307_interrogatoire")
 	desk.windows.dossiers.select_document("clock_log")
 	await _snap("18_dossier_51307_horloge")
+	# Fiche d'enquête du 51307 : la pointeuse a deux versions.
+	desk.windows.dossiers.note_fact("f_clock_ok")
+	desk.windows.dossiers.select_document("certificates")
+	desk.windows.dossiers.note_fact("f_cert_reason")
+	await _snap("18b_dossier_51307_fiche")
 	desk.terminal.submit_command("profil")
 	await _snap("19_dossier_personnel")
 	desk.windows.personnel.hide()

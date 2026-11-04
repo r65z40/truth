@@ -7,6 +7,48 @@
 		"objective": "Vérifier si le poème de T. VARGA contient réellement un message codé visant la zone frontalière.",
 		"context": "Le Service de la censure a transmis le signalement. VARGA est un poète âgé, publié bien avant le durcissement du régime."
 	},
+	"questions": [
+		{
+			"id": "poem",
+			"text": "Le poème cache-t-il un message ?",
+			"keys": [
+				"poem.acrostic",
+				"varga.wife"
+			],
+			"main": true
+		},
+		{
+			"id": "edition",
+			"text": "Qui a corrigé l'édition de 1986 ?",
+			"keys": [
+				"poem.edition",
+				"edition.origin",
+				"edition.page"
+			]
+		},
+		{
+			"id": "mark",
+			"text": "Les deux fiches décrivent-elles le même homme ?",
+			"keys": [
+				"varga.mark",
+				"varga.file_redone"
+			]
+		},
+		{
+			"id": "home",
+			"text": "Qui habite l'appartement 40 ?",
+			"keys": [
+				"apt40.occupant"
+			]
+		},
+		{
+			"id": "fate",
+			"text": "Où est Teodor VARGA ?",
+			"keys": [
+				"varga.arrest"
+			]
+		}
+	],
 	"priority": "prioritaire",
 	"documents": [
 		{

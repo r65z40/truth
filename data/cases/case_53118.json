@@ -7,6 +7,48 @@
 		"objective": "Déterminer si la veillée de la chorale Sainte-Agathe était un rassemblement interdit, et qui était réellement présent.",
 		"context": "Un informateur a dénoncé onze choristes pour avoir chanté après le couvre-feu. La Milice attend une liste de responsables."
 	},
+	"questions": [
+		{
+			"id": "curfew",
+			"text": "La veillée était-elle autorisée ?",
+			"keys": [
+				"choir.curfew",
+				"choir.time"
+			],
+			"main": true
+		},
+		{
+			"id": "list",
+			"text": "Combien de personnes étaient présentes ?",
+			"keys": [
+				"choir.list"
+			],
+			"main": true
+		},
+		{
+			"id": "absent",
+			"text": "Qui manquait ce soir-là ?",
+			"keys": [
+				"choir.absent"
+			]
+		},
+		{
+			"id": "source",
+			"text": "Qui a dénoncé la chorale, et pourquoi ?",
+			"keys": [
+				"choir.source",
+				"choir.network"
+			]
+		},
+		{
+			"id": "till",
+			"text": "Qui est Ewa TILL ?",
+			"keys": [
+				"till.role",
+				"till.family"
+			]
+		}
+	],
 	"priority": "prioritaire",
 	"documents": [
 		{

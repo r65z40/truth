@@ -7,6 +7,25 @@
 		"objective": "Rédiger la version définitive du dossier 40921 (SEDLAR). Vous choisissez ce que l'archive dira désormais — et ce qu'elle n'aura jamais dit.",
 		"context": "Le Directeur HALM a lancé MIROIR : faire concorder les archives des actes 1 à 3 avec la version officielle du sabotage. Première pièce à corriger : le premier dossier qu'on vous ait confié."
 	},
+	"questions": [
+		{
+			"id": "order",
+			"text": "Que vous ordonne-t-on d'écrire ?",
+			"keys": [
+				"miroir.order",
+				"miroir.erase",
+				"miroir.logged"
+			],
+			"main": true
+		},
+		{
+			"id": "truth",
+			"text": "Que savez-vous de la vérité ?",
+			"keys": [
+				"miroir.truth_known"
+			]
+		}
+	],
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Acte 4 : le joueur ne vérifie plus, il rédige. Mécanique de réécriture (modélisée par le choix de version).",

@@ -132,5 +132,8 @@
 	"RUDA a donné l'alerte à 02 h": "RUDA raised the alarm at 02h00",
 	"Registre de quart : à 02 h, RUDA signale la soupape et demande l'arrêt, refusé par le bureau du capitaine": "Shift log: at 02h00 RUDA reports the valve and requests a shutdown, refused by the captain's office",
 	"Mira faisait les relevés de pression": "Mira was taking the pressure readings",
-	"Carnet d'apprentie de Mira SEDLAR : relevés de pression horaires, « RUDA dit de ne pas toucher »": "Mira SEDLAR's apprentice notebook: hourly pressure readings, \"RUDA says don't touch\""
+	"Carnet d'apprentie de Mira SEDLAR : relevés de pression horaires, « RUDA dit de ne pas toucher »": "Mira SEDLAR's apprentice notebook: hourly pressure readings, \"RUDA says don't touch\"",
+	"Qu'est-ce qui a causé l'explosion ?": "What caused the explosion?",
+	"Qui désigne-t-on comme responsable ?": "Who is being named as responsible?",
+	"Le matériel était-il en état ?": "Was the equipment in working order?"
 }

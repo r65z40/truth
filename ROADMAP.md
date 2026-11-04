@@ -372,7 +372,7 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
 - [x] Niveaux de difficulté (demande de fen du 04.11) : choisis à « Nouvelle partie »,
       modifiables dans Paramètres (`Settings.difficulty`). Débutant = fiche d'enquête ;
       expérimenté = jeu d'origine (carnet libre, CONFRONTER, bulle pendant la lecture)
-- [ ] Questions des 15 autres dossiers (pour que le niveau débutant couvre tout le jeu)
+- [x] Questions des 15 autres dossiers (pour que le niveau débutant couvre tout le jeu)
 - [ ] Une mécanique nouvelle par journée, gros dossiers livrés en deux temps
 - [ ] Liens visibles entre les pièces, bureau à 4 icônes
 

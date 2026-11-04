@@ -7,6 +7,43 @@
 		"objective": "Établir pourquoi l'aiguilleur VRABEC retarde le train 2241 certaines nuits, près de la frontière de Halvek.",
 		"context": "La Direction de la ligne signale des retards anormaux. Depuis le décret 86-31, toute exposition frontalière est traitée avec la plus grande sévérité."
 	},
+	"questions": [
+		{
+			"id": "delays",
+			"text": "Pourquoi le train 2241 a-t-il du retard ?",
+			"keys": [
+				"train.delays.october",
+				"train.delays.count",
+				"train.delays.motive"
+			],
+			"main": true
+		},
+		{
+			"id": "movements",
+			"text": "Qui a franchi la frontière ces nuits-là ?",
+			"keys": [
+				"halvek.movements",
+				"halvek.permits"
+			],
+			"main": true
+		},
+		{
+			"id": "family",
+			"text": "Qu'est-ce qui lie VRABEC à l'étranger ?",
+			"keys": [
+				"vrabec.family",
+				"vrabec.post"
+			]
+		},
+		{
+			"id": "network",
+			"text": "VRABEC fait-il partie d'une filière ?",
+			"keys": [
+				"vrabec.network",
+				"vrabec.payment"
+			]
+		}
+	],
 	"priority": "prioritaire",
 	"field_scene": "audition_53402",
 	"documents": [
