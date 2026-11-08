@@ -50,6 +50,8 @@ signal veritas_requested(case_id: String)
 signal archives_requested
 
 var current_case_id := ""
+## Fil rouge : élément de la fiche dont on montre le passage d'origine ("" : aucun).
+var focused_fact_id := ""
 var _archives_link: Button
 var _next_case_button: Button
 var current_document_id := ""
@@ -195,6 +197,7 @@ func select_case(case_id: String) -> void:
 	var case_data := GameState.get_case_view(case_id)
 	if case_data.is_empty():
 		return
+	focused_fact_id = ""
 	# Un dossier classé ouvert depuis les archives : la liste passe sur les classés.
 	if GameState.is_case_filed(case_id) != showing_filed:
 		showing_filed = GameState.is_case_filed(case_id)
@@ -321,6 +324,9 @@ func select_document(document_id: String) -> void:
 		return
 	if document_id != current_document_id:
 		Sound.play("paper")
+		var focused := CaseLibrary.get_fact(case_data, focused_fact_id)
+		if focused.get("document_id", "") != document_id:
+			focused_fact_id = ""
 	current_document_id = document_id
 	for tab: Button in _document_tabs.get_children():
 		tab.set_pressed_no_signal(tab.get_meta("document_id") == document_id)
@@ -618,7 +624,10 @@ class PassageMarker:
 		for span in spans:
 			out += DossiersWindow._escape(text.substr(cursor, span[0] - cursor))
 			var inner := DossiersWindow._escape(text.substr(span[0], span[1] - span[0]))
-			if span[2] in _style.get("noted", []):
+			if span[2] == _style.get("focus", ""):
+				# Fil rouge : le passage d'où vient une réponse de la fiche.
+				out += "[url=fact:%s][bgcolor=#%s][b]▸ %s[/b][/bgcolor][/url]" % [span[2], _style.highlight, inner]
+			elif span[2] in _style.get("noted", []):
 				out += "[url=fact:%s][bgcolor=#%s]%s[/bgcolor][/url]" % [span[2], _style.highlight, inner]
 			else:
 				out += "[url=fact:%s][color=#%s][u]%s[/u][/color][/url]" % [span[2], _style.link, inner]
@@ -783,7 +792,9 @@ func consult_superior() -> void:
 func _refresh_facts(case_data: Dictionary) -> void:
 	var document := CaseLibrary.get_document(case_data, current_document_id)
 	var noted: Array = GameState.get_case_state(current_case_id).noted_facts
-	_doc_body.text = render_document_bbcode(document, passage_style(_doc_body, noted))
+	var style := passage_style(_doc_body, noted)
+	style["focus"] = focused_fact_id
+	_doc_body.text = render_document_bbcode(document, style)
 	DocumentWindow.fill_facts(_facts_list, %FactsTitle, document, noted, note_fact)
 	_facts_panel.visible = not document.get("facts", []).is_empty() and not _conclusion_panel.visible
 
@@ -1176,7 +1187,7 @@ func _make_question_card(question: Dictionary, can_decide: bool) -> Control:
 			box.add_child(button)
 		else:
 			var prefix := tr("RETENU : ") if question.retained == answer.fact_id else "• "
-			box.add_child(_make_answer_label("%s%s  (%s)" % [prefix, answer.label, source]))
+			box.add_child(_make_answer_link(answer.fact_id, "%s%s  (%s)" % [prefix, answer.label, source]))
 	if question.state == CaseSheet.TO_PROVE and can_decide:
 		var price: Dictionary = GameState.contradiction_prove_state(current_case_id, question.key).price
 		var prove := Button.new()
@@ -1201,6 +1212,43 @@ func _stamp(label: Label) -> void:
 		var tween := label.create_tween().set_parallel()
 		tween.tween_property(label, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 		tween.tween_property(label, "modulate:a", 1.0, 0.12), CONNECT_ONE_SHOT)
+
+
+## Réponse de la fiche : un clic ouvre la pièce d'où elle vient, passage marqué.
+func _make_answer_link(fact_id: String, text: String) -> Button:
+	var button := Button.new()
+	button.name = "Answer_" + fact_id
+	button.text = text
+	button.flat = true
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	button.custom_minimum_size = Vector2(0, 44)
+	button.focus_mode = Control.FOCUS_NONE
+	button.tooltip_text = tr("Voir le passage dans la pièce.")
+	button.add_theme_font_size_override("font_size", 14)
+	button.pressed.connect(show_fact_source.bind(fact_id))
+	return button
+
+
+## Fil rouge : ouvre la pièce d'un élément et fait défiler jusqu'à son passage.
+func show_fact_source(fact_id: String) -> void:
+	var fact := CaseLibrary.get_fact(GameState.get_case_view(current_case_id), fact_id)
+	if fact.is_empty():
+		return
+	focused_fact_id = fact_id
+	select_document(fact.document_id)
+	_refresh_all()
+	_scroll_to_quote.call_deferred(fact.get("quote", ""))
+
+
+func _scroll_to_quote(quote: String) -> void:
+	if quote == "":
+		return
+	var at := _doc_body.get_parsed_text().find(quote)
+	if at < 0:
+		return
+	var line := _doc_body.get_character_line(at)
+	_doc_scroll.scroll_vertical = maxi(int(_doc_body.get_line_offset(line)) - 40, 0)
 
 
 func _make_answer_label(text: String) -> Label:

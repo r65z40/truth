@@ -317,6 +317,15 @@ func test_case_sheet_window() -> void:
 			"les notifications se posent en haut, sous le bandeau, sans bloquer les clics")
 	desk._refresh_objective()
 	check(desk.current_step.text.begins_with("Rédiger"), "ensuite : rédiger la conclusion")
+	# Fil rouge : une réponse de la fiche ramène à son passage, marqué dans la pièce.
+	dossiers.select_document("registry")
+	var answer: Button = dossiers._sheet_questions.find_child("Answer_f_decl_address", true, false)
+	check(answer != null, "chaque réponse de la fiche est un lien")
+	answer.pressed.emit()
+	check(dossiers.current_document_id == "declaration" and dossiers.focused_fact_id == "f_decl_address"
+			and dossiers.get_node("%DocBody").text.contains("[b]▸ "), "le lien ouvre la pièce d'origine, passage marqué")
+	dossiers.select_document("registry")
+	check(dossiers.focused_fact_id == "", "changer de pièce efface le marquage")
 	dossiers.open_conclusion()
 	check(dossiers.get_node("%ConclusionPanel").get_node("%ConclusionSummary").get_parsed_text().contains("version retenue"),
 			"le rapport de conclusion reprend la fiche")
