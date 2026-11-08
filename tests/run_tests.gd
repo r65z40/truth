@@ -115,6 +115,7 @@ func _run() -> void:
 		"test_returning_citizens",
 		"test_urgent_case",
 		"test_source_wear",
+		"test_phone_calls",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2911,6 +2912,48 @@ func test_source_wear() -> void:
 	var translations := Localization.load_content_translations("en")
 	for rule in SourceWear.get_data().rules:
 		check(translations.has(rule.remark), "usure traduite : " + rule.id)
+
+
+## Le téléphone : appels courts, deux ou trois réponses, sans chronomètre.
+func test_phone_calls() -> void:
+	for call in CallRules.get_data().calls:
+		var count: int = call.answers.size()
+		check(count >= 2 and count <= 3, "appel %s : deux ou trois réponses" % call.id)
+	GameState.new_game()
+	check(GameState.get_pending_call().is_empty(), "premier jour : le téléphone ne sonne pas")
+	GameState.day_index = 2
+	check(GameState.get_pending_call().get("id", "") == "mazur_welcome", "jour 2 : MAZUR appelle")
+	check(GameState.answer_call("mazur_welcome", "inconnue") == "", "réponse inconnue refusée")
+	var suspicion := GameState.get_indicator("suspicion")
+	var reply := GameState.answer_call("mazur_welcome", "honest")
+	check(reply.contains("Pas sur cette ligne") and GameState.get_indicator("suspicion") == suspicion + 1, "répondre franchement : réplique et soupçon")
+	check(GameState.flags.get("call.mazur_welcome.honest", false) and GameState.get_pending_call().is_empty(), "appel pris : le téléphone se tait")
+	GameState.day_index = 14
+	GameState.indicators["suspicion"] = 40
+	check(GameState.get_pending_call().get("id", "") == "control_line_check", "soupçonné : le Contrôle interne vérifie la ligne")
+	GameState.end_day()
+	check(GameState.flags.get("call.control_line_check.missed", false) and GameState.get_indicator("suspicion") >= 42, "appel non pris le soir : manqué, et ça se remarque")
+	var saved := GameState.to_dict()
+	GameState.from_dict(saved)
+	check(GameState.flags.get("call.mazur_welcome.honest", false), "réponses au téléphone sauvegardées (drapeaux)")
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	GameState.new_game()
+	GameState.day_index = 2
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(desk.phone_button.visible, "le bouton DÉCROCHER apparaît quand ça sonne")
+	desk.open_phone()
+	check(desk.phone_screen.visible and desk.phone_screen.find_child("Answers", true, false).get_child_count() == 2, "l'écran d'appel montre les réponses")
+	desk.phone_screen.choose("fine")
+	check(desk.phone_screen.find_child("ReplyLabel", true, false).visible and desk.phone_screen.find_child("HangUpButton", true, false).visible, "réplique affichée, on raccroche quand on veut")
+	desk.phone_screen.close()
+	await get_tree().process_frame
+	check(not desk.phone_button.visible, "après l'appel, le bouton disparaît")
+	desk.queue_free()
+	var translations := Localization.load_content_translations("en")
+	for call in CallRules.get_data().calls:
+		check(translations.has(call.text) and translations.has(call.caller), "appel traduit : " + call.id)
+	GameState.new_game()
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier

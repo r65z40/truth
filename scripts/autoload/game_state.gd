@@ -478,6 +478,27 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	return result
 
 
+# --- Téléphone --------------------------------------------------------------
+
+## Appel en attente (le téléphone sonne), ou {}.
+func get_pending_call() -> Dictionary:
+	return CallRules.pending(get_condition_state())
+
+
+## Répond à l'appel en cours ; renvoie la réplique de l'interlocuteur ("" si refusé).
+func answer_call(call_id: String, answer_id: String) -> String:
+	var call := get_pending_call()
+	if call.get("id", "") != call_id:
+		return ""
+	var result := CallRules.answer(call, answer_id)
+	if result.is_empty():
+		return ""
+	_apply_effects(result.effects)
+	_merge_flags(result.flags)
+	state_changed.emit()
+	return result.reply
+
+
 ## État de l'échéance d'un dossier : "none", "pending", "late", "met" (rendu à temps).
 func deadline_status(case_id: String) -> String:
 	var case_data := CaseLibrary.get_case(case_id)
@@ -878,6 +899,12 @@ func get_unread_count() -> int:
 ## Termine la journée : passe au jour suivant et applique les événements dus.
 ## Renvoie la liste des événements déclenchés.
 func end_day() -> Array:
+	# Le téléphone a sonné sans réponse : appel manqué.
+	var unanswered := get_pending_call()
+	if not unanswered.is_empty():
+		var missed := CallRules.missed(unanswered)
+		_apply_effects(missed.effects)
+		_merge_flags(missed.flags)
 	# Un dossier urgent laissé ouvert à la fin de son jour d'échéance est en retard.
 	for case_id in cases:
 		if can_decide(case_id) and not _deadline_settled(case_id):

@@ -15,7 +15,9 @@
 		"mail": {"files": ["res://assets/sounds/effets/courrier.ogg"], "volume_db": -6, "usage": "début de journée : courrier et événements arrivés"},
 		"day_end": {"files": ["res://assets/sounds/effets/fin_de_service.ogg"], "volume_db": -4, "usage": "fin de service (transition vers le lendemain)"},
 		"door": {"files": ["res://assets/sounds/effets/porte.ogg"], "volume_db": -6, "pitch_variation": 0.05, "usage": "changement de pièce pendant une perquisition"},
-		"lamp_find": {"files": ["res://assets/sounds/effets/lampe_trouve.ogg"], "volume_db": -8, "pitch_variation": 0.05, "usage": "la lampe éclaire un endroit à fouiller (scène dans le noir)"}
+		"lamp_find": {"files": ["res://assets/sounds/effets/lampe_trouve.ogg"], "volume_db": -8, "pitch_variation": 0.05, "usage": "la lampe éclaire un endroit à fouiller (scène dans le noir)"},
+		"phone_ring": {"files": ["res://assets/sounds/effets/telephone_sonnerie.ogg"], "volume_db": -6, "usage": "le téléphone du bureau sonne (un appel attend)"},
+		"phone_hangup": {"files": ["res://assets/sounds/effets/telephone_raccroche.ogg"], "volume_db": -8, "usage": "on repose le combiné après un appel"}
 	},
 	"ambiances": {
 		"rain": {"file": "res://assets/sounds/ambiances/pluie.ogg", "volume_db": -10, "usage": "menu principal et introduction"},

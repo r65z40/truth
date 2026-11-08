@@ -539,5 +539,10 @@
 	"À RENDRE AVANT %s": "DUE BEFORE %s",
 	"HORS DÉLAI": "PAST DEADLINE",
 	"RENDU À L'HEURE": "DELIVERED ON TIME",
-	" (abaissée, était %s)": " (lowered, was %s)"
+	" (abaissée, était %s)": " (lowered, was %s)",
+	"LE TÉLÉPHONE SONNE": "THE PHONE IS RINGING",
+	"RACCROCHER": "HANG UP",
+	"DÉCROCHER": "ANSWER",
+	"Le téléphone sonne. Personne ne vous presse.": "The phone is ringing. Nobody is rushing you.",
+	"Appel : %s.": "Call: %s."
 }

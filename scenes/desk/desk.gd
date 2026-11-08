@@ -78,6 +78,8 @@ var _toast_tween: Tween
 ## Bandeau d'aide permanent (début de partie) : rappelle en clair la prochaine
 ## étape, même si le joueur a fermé la bulle de MAZUR. S'efface une fois rodé.
 var _guide_bar: PanelContainer
+var phone_button: Button
+var phone_screen: PhoneScreen
 var _guide_bar_label: Label
 ## Jour où l'on a déjà prévenu que l'horloge marque 16h00 (une fois par jour).
 var _day_over_notice_day := -1
@@ -157,6 +159,7 @@ func _ready() -> void:
 	coach.target_provider = coach_target
 	coach.dismissed.connect(_on_coach_dismissed)
 	_build_guide_bar()
+	_build_phone()
 	windows.dossiers.field_requested.connect(open_field)
 	windows.dossiers.comparison_requested.connect(open_comparison)
 	windows.dossiers.timeline_requested.connect(open_timeline)
@@ -430,7 +433,43 @@ func _refresh_header() -> void:
 	%StartArchives.visible = GameState.is_feature_unlocked("archives")
 	%StartPersonnel.visible = GameState.is_feature_unlocked("personnel")
 	terminal.set_advanced_visible(GameState.is_feature_unlocked("terminal_advanced"))
+	_refresh_phone()
 	_refresh_objective()
+
+
+## Le téléphone : un bouton dans la barre des tâches, visible quand il sonne,
+## et l'écran d'appel posé sur le bureau.
+func _build_phone() -> void:
+	phone_button = Button.new()
+	phone_button.name = "PhoneButton"
+	phone_button.theme_type_variation = &"AlertButton"
+	phone_button.text = tr("DÉCROCHER")
+	phone_button.tooltip_text = tr("Le téléphone sonne. Personne ne vous presse.")
+	phone_button.custom_minimum_size = Vector2(0, 44)
+	phone_button.visible = false
+	phone_button.pressed.connect(open_phone)
+	var end_day_button: Button = %EndDayButton
+	end_day_button.get_parent().add_child(phone_button)
+	end_day_button.get_parent().move_child(phone_button, end_day_button.get_index())
+	phone_screen = PhoneScreen.new()
+	add_child(phone_screen)
+	phone_screen.closed.connect(_refresh_header)
+	_refresh_phone()
+
+
+func open_phone() -> void:
+	close_start_menu()
+	if phone_screen.open():
+		terminal.print_line(tr("Appel : %s.") % phone_screen._caller.text, Terminal.COLOR_DIM)
+
+
+func _refresh_phone() -> void:
+	if phone_button == null:
+		return
+	var ringing := not GameState.get_pending_call().is_empty()
+	if ringing and not phone_button.visible:
+		Sound.play("phone_ring")
+	phone_button.visible = ringing
 
 
 ## Bandeau d'aide permanent, posé en haut du bureau pendant l'apprentissage.

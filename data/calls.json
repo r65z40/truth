@@ -1,0 +1,58 @@
+{
+	"_comment": "Le téléphone : appels courts pendant le service, deux ou trois réponses, sans chronomètre. conditions : mêmes clés que les événements (min_day, requires_flags...). Un appel non pris avant la fin du service est manqué (bloc missed facultatif). Répondre pose le drapeau « call.<id>.<réponse> » ; manquer pose « call.<id>.missed ». Voir scripts/core/call_rules.gd.",
+	"calls": [
+		{
+			"id": "mazur_welcome",
+			"conditions": {"min_day": 2},
+			"caller": "R. MAZUR, poste 4-12",
+			"text": "Inspecteur ? MAZUR. Je ne vous dérange pas longtemps. On me dit que vous lisez tout, jusqu'aux tampons. C'est bien. Ce n'est pas toujours apprécié. Vous tenez le coup ?",
+			"answers": [
+				{"id": "fine", "label": "« Je tiens, chef. »", "reply": "Bien. Ne dites jamais autre chose au téléphone. Bonne journée.", "effects": {"loyalty": 1}},
+				{"id": "honest", "label": "« Je me demande parfois à quoi servent nos rapports. »", "reply": "Un silence. « Nous en reparlerons. Pas sur cette ligne. » Il raccroche.", "effects": {"suspicion": 1, "influence": 1}}
+			]
+		},
+		{
+			"id": "orlik_call",
+			"conditions": {"min_day": 6, "requires_flags": ["milice.favor_owed"]},
+			"caller": "Capitaine L. ORLIK, Milice du District 9",
+			"text": "Inspecteur. Le Capitaine ORLIK. Je n'oublie pas que vous avez classé l'affaire de mon frère. La Milice a de la mémoire. Un jour, je vous demanderai un service. Vous me le rendrez ?",
+			"answers": [
+				{"id": "accept", "label": "« Nous verrons, Capitaine. »", "reply": "« Nous verrons. C'est déjà oui. » Il raccroche.", "effects": {"influence": 2, "suspicion": 2}, "flags": {"milice.ally": true}},
+				{"id": "refuse", "label": "« J'ai fait mon travail. Je ne vous dois rien. »", "reply": "« Personne ne fait seulement son travail, Inspecteur. » Il raccroche.", "effects": {"loyalty": 1}},
+				{"id": "hang_up", "label": "Raccrocher sans répondre.", "reply": "Vous reposez le combiné. Le téléphone ne sonne plus de la matinée.", "effects": {}, "flags": {"milice.hostile": true}}
+			]
+		},
+		{
+			"id": "sedlar_call",
+			"conditions": {"min_day": 8, "requires_flags": ["40921.sedlar_arrested"]},
+			"caller": "Ligne extérieure, cabine publique du District 9",
+			"text": "Une voix de femme, très basse. « C'est bien le bureau de l'inspecteur ? Je suis Vera SEDLAR. On ne me dit rien. Est-ce que mon mari est vivant ? Dites-moi seulement oui ou non. »",
+			"answers": [
+				{"id": "silent", "label": "« Je ne peux rien vous dire, madame. »", "reply": "« Je sais. Personne ne peut. » On raccroche.", "effects": {"loyalty": 1}},
+				{"id": "yes", "label": "« Oui. »", "reply": "Un souffle, puis plus rien. La ligne est restée ouverte trois secondes de trop : le central l'aura noté.", "effects": {"suspicion": 4}, "flags": {"sedlar.told": true}},
+				{"id": "report", "label": "Transférer l'appel au service des écoutes.", "reply": "Vous composez le 9. Une tonalité, un déclic. La cabine du District 9 aura de la visite.", "effects": {"loyalty": 3, "suspicion": -1}, "flags": {"sedlar.reported_call": true}}
+			]
+		},
+		{
+			"id": "kremer_call",
+			"conditions": {"min_day": 11, "requires_flags": ["kremer.contact"]},
+			"caller": "Poste intérieur, sous-sol B",
+			"text": "« Pas de nom. Vous reconnaissez ma voix. Ce que vous cherchez sur votre père n'est pas dans les dossiers qu'on vous donne. Il est dans ceux qu'on ne vous donne pas. Ne me rappelez pas. »",
+			"answers": [
+				{"id": "thanks", "label": "« Merci. »", "reply": "On a déjà raccroché.", "effects": {"influence": 1}, "flags": {"kremer.called": true}},
+				{"id": "warn", "label": "« Cette ligne est écoutée. »", "reply": "« Toutes les lignes sont écoutées. Celle-ci par moi. » Il raccroche.", "effects": {}, "flags": {"kremer.called": true}}
+			]
+		},
+		{
+			"id": "control_line_check",
+			"conditions": {"min_day": 14, "min_indicators": {"suspicion": 30}},
+			"caller": "Contrôle interne, vérification des lignes",
+			"text": "« Vérification de routine de votre poste. Confirmez votre matricule, je vous prie. Restez en ligne après la confirmation. »",
+			"answers": [
+				{"id": "confirm", "label": "Donner votre matricule et attendre.", "reply": "Vous attendez. Quarante secondes de silence, puis un déclic. « Merci, Inspecteur. »", "effects": {"loyalty": 1}},
+				{"id": "ask_why", "label": "« Pourquoi mon poste ? »", "reply": "« Tous les postes sont vérifiés, Inspecteur. Le vôtre aujourd'hui. » Un déclic.", "effects": {"suspicion": 2}}
+			],
+			"missed": {"effects": {"suspicion": 2}}
+		}
+	]
+}
