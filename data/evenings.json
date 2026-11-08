@@ -1,6 +1,18 @@
 {
 	"note": "Soirées de Vosk, appartement du bloc 7, District 2. Une action par soir. Une journée finie en heures supplémentaires fait perdre la soirée. Les conditions suivent le format des événements, plus min_count (nombre de soirées passées à une activité, choix du soir compris).",
 	"location": "BLOC 7, DISTRICT 2",
+	"places": {
+		"_comment": "Lieux des soirées (piste 4, 08.11). Chaque action se passe dans un lieu : clé place de l'action, sinon celui de son kind (by_kind), sinon la cuisine. L'image vient de l'emplacement slot (data/images.json) ; absente, on garde le fond de la cuisine.",
+		"default": "kitchen",
+		"by_kind": {"radio": "kitchen", "work": "kitchen", "lena": "kitchen", "adler": "lodge", "visit": "landing", "civic": "courtyard"},
+		"list": {
+			"kitchen": {"label": "LA CUISINE", "slot": "evening_kitchen"},
+			"lodge": {"label": "LA LOGE DE M. ADLER", "slot": "evening_lodge"},
+			"booth": {"label": "LA CABINE DU HALL", "slot": "evening_booth"},
+			"landing": {"label": "LE PALIER", "slot": "evening_landing"},
+			"courtyard": {"label": "LA COUR DE L'IMMEUBLE", "slot": "evening_courtyard"}
+		}
+	},
 	"overtime": {
 		"text": "Vous quittez le ministère après vingt heures. Le dernier tramway est parti ; vous rentrez à pied par le quai. Dans le hall, la lampe de M. ADLER est encore allumée. Vous vous couchez sans dîner.",
 		"set_flags": {
@@ -90,6 +102,7 @@
 				},
 				{
 					"id": "lena_call",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena depuis la cabine du hall",
 					"description": "Trois minutes, une seule pièce dans l'appareil.",
@@ -235,6 +248,7 @@
 			"actions": [
 				{
 					"id": "lena_permit_call",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler le ministère de la Santé pour Lena",
 					"description": "Donner votre matricule. Ce sera noté quelque part.",
@@ -365,6 +379,7 @@
 				},
 				{
 					"id": "lena_news",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena",
 					"description": "La commission s'est réunie ce matin.",
@@ -477,6 +492,7 @@
 				},
 				{
 					"id": "lena_5",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena",
 					"description": "Sa première semaine à son nouveau poste.",
@@ -960,6 +976,7 @@
 				},
 				{
 					"id": "lena_11",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena",
 					"description": "L'hôpital a reçu les blessés de la Centrale.",
@@ -1070,6 +1087,7 @@
 			"actions": [
 				{
 					"id": "work_13",
+					"place": "landing",
 					"kind": "work",
 					"label": "Observer votre nouvelle voisine",
 					"description": "Sans en avoir l'air, par l'œilleton.",
@@ -1190,6 +1208,7 @@
 				},
 				{
 					"id": "lena_14",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Parler à Lena du nom barré",
 					"description": "Elle était trop petite, mais elle écoute.",
@@ -1294,6 +1313,7 @@
 			"actions": [
 				{
 					"id": "lena_16",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Rappeler Lena",
 					"description": "Trois appels manqués, c'est rare.",
@@ -1548,6 +1568,7 @@
 				},
 				{
 					"id": "lena_19",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena une dernière fois",
 					"description": "Avant demain, entendre sa voix.",

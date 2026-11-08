@@ -128,7 +128,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Perquisition chez SEDLAR (40921) : endroits cliquables sur le dessin, rapport versé au dossier
 - [x] Indice L'HEURE JUSTE : l'horloge sans aiguilles (escalier, soirée 1, puis poêle de SEDLAR)
 - [x] Visite de la boulangerie n° 12 (52044) et perquisition chez Karel BENES (52310)
-- [ ] Soirées dans des lieux dessinés (cuisine, loge d'ADLER, cabine du hall)
+- [x] Soirées dans des lieux (08.11) : chaque action a son lieu (cuisine, loge d'ADLER,
+      cabine du hall, palier, cour), montré au survol et pendant le résultat
+- [ ] Images de fen : loge d'ADLER (`assets/images/soir_loge_adler.webp`) et cabine du hall
+      (`assets/images/soir_cabine_hall.webp`) ; d'ici là, la cuisine
+- [ ] Zones cliquables sur l'image du soir (quand les images seront là ; il faudra
+      dégager le centre de l'écran, aujourd'hui couvert par le panneau)
 - [x] Décors 3D (demande de fen du 25.10) : moteur `FieldStage3D`, audition d'ORLIK et appartement des SEDLAR en formes simples, réglage 2D/3D
 - [x] Images de terrain livrées par fen : clé `image` par scène, affichées en fond (cadrage « cover »), prioritaires sur la 3D (réglage `field_3d` désormais optionnel, désactivé par défaut)
 - [x] Perquisition en plusieurs pièces : clé `rooms` + `doors`, on clique une porte pour changer de pièce (gratuit), budget de fouilles commun. Pilote : 40921 (salon + chambre)

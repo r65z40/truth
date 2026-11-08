@@ -85,6 +85,11 @@ Chaque écran demande son image par un nom d'emplacement stable :
 | `desk_wallpaper` | fond d'écran du bureau | trame et emblème dessinés |
 | `intro_city` … `intro_signature` | pages de l'introduction | dessin |
 | `evening_background` | fond des soirées (assombri) | fond uni |
+| `evening_kitchen` | soirée : la cuisine (radio, travail, lettres) | fond des soirées |
+| `evening_lodge` | soirée : la loge de M. ADLER (`assets/images/soir_loge_adler.webp`, à fournir) | la cuisine |
+| `evening_booth` | soirée : la cabine du hall (`assets/images/soir_cabine_hall.webp`, à fournir) | la cuisine |
+| `evening_landing` | soirée : le palier et l'escalier | la cuisine |
+| `evening_courtyard` | soirée : la cour de l'immeuble | la cuisine |
 | `act_review_background` | fin d'acte (assombri) | fond uni |
 
 Remplacer une image : écraser le fichier (même nom), ou changer le chemin dans

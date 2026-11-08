@@ -179,6 +179,7 @@ func _run() -> void:
 		"test_radio_denunciation_letter",
 		"test_people_directory",
 		"test_flag_followups",
+		"test_evening_places",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -5097,4 +5098,27 @@ func test_flag_followups() -> void:
 	GameState.flags["brandt.confronted_landing"] = true
 	state = GameState.get_condition_state()
 	check("brandt_landing_note" in ids.call(state) and "brandt_confront_note" in ids.call(state), "54100 : les notes de BRANDT suivent vos soirées")
+	GameState.new_game()
+
+
+## Piste 4 (08.11) : chaque action du soir se passe dans un lieu, montré en fond.
+func test_evening_places() -> void:
+	var data := EveningRules.get_data()
+	for evening in data.evenings:
+		for action in evening.actions:
+			var place := EveningRules.place_of(action, data)
+			check(not EveningRules.place_info(place, data).is_empty(), "lieu connu pour %s (%s)" % [action.id, place])
+	check(EveningRules.place_of({"kind": "adler"}) == "lodge", "ADLER : sa loge")
+	check(EveningRules.place_of({"kind": "civic"}) == "courtyard", "profil bas : la cour")
+	check(EveningRules.place_of({"kind": "lena", "place": "booth"}) == "booth", "un appel : la cabine du hall")
+	check(EveningRules.place_of({"kind": "inconnu"}) == "kitchen", "par défaut : la cuisine")
+	check(EveningRules.place_of(EveningRules.get_action(EveningRules.evening_for_day(1), "lena_call")) == "booth", "lena_call se passe dans la cabine")
+	GameState.new_game()
+	var screen: Node = load("res://scenes/evening/evening_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	screen.open()
+	check(screen.place == "kitchen" and screen.get_node("%PlaceLabel").text.contains("CUISINE"), "le soir commence à la cuisine")
+	screen.choose("adler_0")
+	check(screen.place == "lodge" and screen.get_node("%PlaceLabel").text.contains("ADLER"), "le résultat se lit dans la loge d'ADLER")
+	screen.queue_free()
 	GameState.new_game()

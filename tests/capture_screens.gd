@@ -440,6 +440,8 @@ func _capture_new_mechanics() -> void:
 	get_tree().root.add_child(civic)
 	civic.open()
 	await _snap("61_soiree_profil_bas")
+	civic.choose("civic_5")
+	await _snap("61b_soiree_cour")
 	civic.queue_free()
 	GameState.new_game()
 	var evening: Node = load("res://scenes/evening/evening_screen.tscn").instantiate()

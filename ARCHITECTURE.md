@@ -329,7 +329,11 @@ défaut). Les conditions sont celles des événements, plus `min_count`
 (`{"radio": 2}` : au moins deux soirées passées à ce `kind`) et `max_count`
 (`{"radio": 0}` : au plus). Les mêmes conditions servent aux lettres du tri du
 courrier (`MailSorting.pending`). Kinds : lena, radio, civic (profil bas), adler,
-visit, work. Logique dans
+visit, work.
+Lieux (`places`) : chaque action se passe dans un lieu (clé `place`, sinon
+`places.by_kind[kind]`, sinon `places.default`) ; un lieu a un `label` et un
+emplacement d'image `slot` (`data/images.json`). `EveningRules.place_of` /
+`place_info` ; l'écran montre le lieu au survol d'une action et pendant le résultat. Logique dans
 `EveningRules`, état dans `GameState.evenings`, écran
 `scenes/evening/evening_screen.tscn` ouvert par le bureau avant le jour suivant.
 `echoes` (facultatif) : liste de {conditions, text} ajoutés à l'introduction du

@@ -15,18 +15,38 @@ signal finished
 @onready var _result_label: Label = %ResultLabel
 @onready var _continue_button: Button = %ContinueButton
 
+## Lieu affiché (piste 4) : la cuisine au début du soir, puis celui de l'action.
+var place := ""
+var _backdrop: Backdrop
+
 
 func _ready() -> void:
-	Backdrop.add_to(self, "evening_background")
+	_backdrop = Backdrop.add_to(self, "evening_background")
 	_continue_button.pressed.connect(_on_continue)
+
+
+## Montre un lieu : son nom dans l'en-tête et son image en fond. Sans image,
+## le fond de la cuisine reste.
+func show_place(place_id: String) -> void:
+	place = place_id
+	var info := EveningRules.place_info(place_id)
+	var label: String = info.get("label", "")
+	var location: String = EveningRules.get_data().get("location", "")
+	_place_label.text = "%s  //  %s" % [(label + ", " + location) if label != "" else location, GameState.get_date_long()]
+	if _backdrop == null:
+		return
+	var texture := ImageSlots.texture(info.get("slot", ""))
+	if texture == null:
+		texture = ImageSlots.texture("evening_background")
+	if texture != null:
+		_backdrop.texture = texture
 
 
 ## Ouvre la soirée du jour. Renvoie false s'il n'y a pas de soirée ce soir.
 func open() -> bool:
 	if not GameState.has_evening_pending():
 		return false
-	_place_label.text = "%s  //  %s" % [EveningRules.get_data().get("location", ""),
-			GameState.get_date_long()]
+	show_place(EveningRules.get_data().get("places", {}).get("default", "kitchen"))
 	_clear_actions()
 	_result_label.hide()
 	_continue_button.hide()
@@ -73,6 +93,7 @@ func choose(action_id: String, volume := "") -> void:
 	var result := GameState.choose_evening_action(action_id, volume)
 	if result.is_empty():
 		return
+	show_place(EveningRules.place_of(EveningRules.get_action(GameState.get_evening(), action_id)))
 	_clear_actions()
 	_choice_label.hide()
 	_result_label.text = result.text
@@ -88,6 +109,10 @@ func get_action_ids() -> Array:
 func _add_action(action: Dictionary) -> void:
 	var button := Button.new()
 	button.text = action.get("label", "")
+	# Survoler une action montre son lieu (souris) ; au toucher, on choisit directement.
+	var action_place := EveningRules.place_of(action)
+	button.mouse_entered.connect(show_place.bind(action_place))
+	button.focus_entered.connect(show_place.bind(action_place))
 	button.tooltip_text = action.get("description", "")
 	button.custom_minimum_size = Vector2(0, 48)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT

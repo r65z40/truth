@@ -108,3 +108,17 @@ static func resolve(action: Dictionary, state: Dictionary) -> Dictionary:
 			effects[indicator] = int(effects.get(indicator, 0)) + int(followup.effects[indicator])
 		set_flags.merge(followup.get("set_flags", {}), true)
 	return {"text": "\n\n".join(texts), "effects": effects, "set_flags": set_flags}
+
+
+## Lieu d'une action (piste 4) : clé « place », sinon le lieu de son kind,
+## sinon le lieu par défaut. Renvoie l'identifiant du lieu.
+static func place_of(action: Dictionary, data: Dictionary = get_data()) -> String:
+	var places: Dictionary = data.get("places", {})
+	if action.has("place"):
+		return action.place
+	return places.get("by_kind", {}).get(action.get("kind", ""), places.get("default", "kitchen"))
+
+
+## {label, slot} d'un lieu ; {} s'il est inconnu.
+static func place_info(place_id: String, data: Dictionary = get_data()) -> Dictionary:
+	return data.get("places", {}).get("list", {}).get(place_id, {})
