@@ -178,6 +178,7 @@ func _run() -> void:
 		"test_civic_evenings",
 		"test_radio_denunciation_letter",
 		"test_people_directory",
+		"test_flag_followups",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -5060,4 +5061,40 @@ func test_people_directory() -> void:
 	item.pressed.emit()
 	check(desk.people_screen.visible, "l'entrée ouvre le répertoire")
 	desk.queue_free()
+	GameState.new_game()
+
+
+## Piste 6 (08.11) : des drapeaux autrefois sans suite ont maintenant un écho
+## visible (soir, bureau, courrier, dossier 54100).
+func test_flag_followups() -> void:
+	var echoes := {3: "lena.left_early", 5: "adler.mail_reported", 6: "radio.halvek_heard",
+			11: "lena.warned_papers", 14: "adler.kolar_known", 15: "lena.father_1971_told",
+			17: "heure_juste.network_hit", 18: "brandt.confronted_landing", 19: "radio.varga_again"}
+	for day in echoes:
+		var evening := EveningRules.evening_for_day(day)
+		var without := EveningRules.intro_text(evening, {"day_index": day, "flags": {}})
+		var with_flag := EveningRules.intro_text(evening, {"day_index": day, "flags": {echoes[day]: true}})
+		check(with_flag.length() > without.length(), "soir %d : écho de %s" % [day, echoes[day]])
+	var traces := {"lena_photo": [4, "lena.dinner"], "pocket_watch": [7, "heure_juste.letter_passed"], "typist_gone": [18, "mail.typist_reported"]}
+	for id in traces:
+		var state := {"day_index": traces[id][0], "flags": {traces[id][1]: true}, "indicators": {}}
+		check(DeskTraces.visible_traces(state).any(func(t: Dictionary) -> bool: return t.id == id), "trace sur le bureau : " + id)
+		state.flags = {}
+		check(not DeskTraces.visible_traces(state).any(func(t: Dictionary) -> bool: return t.id == id), "pas de trace sans drapeau : " + id)
+	GameState.new_game()
+	GameState.day_index = 16
+	check(not GameState.get_pending_letters().any(func(l: Dictionary) -> bool: return l.id == "cadran_wife"), "sans CADRAN : pas de lettre de Ruzena")
+	GameState.flags["heure_juste.network_hit"] = true
+	check(GameState.get_pending_letters().any(func(l: Dictionary) -> bool: return l.id == "cadran_wife"), "après CADRAN : la lettre de la femme du cheminot")
+	check(GameState.sort_letter("cadran_wife", "report") and GameState.flags.get("mail.cadran_wife_reported", false), "la lettre CADRAN se trie")
+	GameState.new_game()
+	var state := GameState.get_condition_state()
+	var case_54100 := CaseLibrary.get_case("54100")
+	var ids := func(s: Dictionary) -> Array:
+		return CaseLibrary.filter_case(case_54100, s).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "brandt_landing_note" in ids.call(state), "54100 : pas de note de voisinage sans salut")
+	GameState.flags["brandt.greeted"] = true
+	GameState.flags["brandt.confronted_landing"] = true
+	state = GameState.get_condition_state()
+	check("brandt_landing_note" in ids.call(state) and "brandt_confront_note" in ids.call(state), "54100 : les notes de BRANDT suivent vos soirées")
 	GameState.new_game()

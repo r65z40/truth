@@ -291,6 +291,36 @@
 							}
 						}
 					}
+				},
+				{
+					"id": "cadran_wife",
+					"conditions": {
+						"requires_flags": [
+							"heure_juste.network_hit"
+						]
+					},
+					"from": "Mme R. HOLUB, cité des cheminots, Velmira",
+					"to": "M. P. HOLUB, Brenec",
+					"text": "Petit frère,\n\nIls ont pris Oskar au dépôt mardi, avec deux autres de l'équipe de nuit. On me dit que c'est à cause d'un cahier trouvé chez un horloger. Oskar n'a jamais su lire l'heure sans ses lunettes.\n\nSi tu peux venir, viens. Ne parle de rien au guichet.\n\nRuzena",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 1
+							},
+							"flags": {
+								"mail.cadran_wife.passed": true
+							}
+						},
+						"hold": {},
+						"report": {
+							"effects": {
+								"loyalty": 1
+							},
+							"flags": {
+								"mail.cadran_wife_reported": true
+							}
+						}
+					}
 				}
 			]
 		}

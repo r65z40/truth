@@ -326,6 +326,14 @@
 						]
 					},
 					"text": "Sous votre porte, une enveloppe sans timbre : un bon de charbon, deux sacs, au nom de la Milice du district. Personne ne vous a rien demandé. Pas encore."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"lena.left_early"
+						]
+					},
+					"text": "Lena n'a pas rappelé. Sur la table, son torchon plié en quatre, à la place exacte où elle l'avait posé. Elle range comme papa rangeait ses outils."
 				}
 			]
 		},
@@ -494,6 +502,16 @@
 						"lena.week2_called": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"adler.mail_reported"
+						]
+					},
+					"text": "Dans le hall, M. ADLER trie le courrier de l'immeuble. Il vous tend le vôtre sans vous regarder. « Les cartes postales se perdent beaucoup, en ce moment. » Il sait."
+				}
 			]
 		},
 		{
@@ -564,6 +582,14 @@
 						]
 					},
 					"text": "Sur un mur du District 2, quelqu'un a recopié à la craie deux vers de VARGA. Personne ne les efface. Vous les relisez en passant, comme un mot de passe."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"radio.halvek_heard"
+						]
+					},
+					"text": "Le bulletin du soir parle d'une « provocation armée » à Halvek. L'autre soir, Aldria parlait d'un berger et d'un fusil de chasse. Vous ne savez plus laquelle des deux voix vous croyez."
 				}
 			]
 		},
@@ -949,6 +975,16 @@
 						"lena.blast_called": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"lena.warned_papers"
+						]
+					},
+					"text": "Lena a laissé un mot au gardien : « Les papiers dorment chez une amie. Je n'en parle plus. Toi non plus. » Le gardien a lu le mot, bien sûr. Il le replie avec soin avant de vous le donner."
+				}
 			]
 		},
 		{
@@ -1171,6 +1207,16 @@
 						"lena.father_1971_told": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"adler.kolar_known"
+						]
+					},
+					"text": "Au troisième, la porte des KOLAR est ouverte. L'appartement est vide, le poste de radio aussi a disparu. M. ADLER balaie le palier. « Ils ont déménagé. » Il ne dit pas qui les a aidés."
+				}
 			]
 		},
 		{
@@ -1229,6 +1275,16 @@
 					"set_flags": {
 						"brandt.delivered_mirror": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"lena.father_1971_told"
+						]
+					},
+					"text": "Une lettre de Lena, courte : « J'ai demandé aux anciennes de l'hôpital. Personne ne se souvient d'un horloger. Toutes se souviennent qu'en 1971, l'horloge de la gare s'est arrêtée trois jours. »"
 				}
 			]
 		},
@@ -1376,6 +1432,16 @@
 						"brandt.confronted_landing": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"heure_juste.network_hit"
+						]
+					},
+					"text": "Rue des Tisserands, trois ateliers portent des scellés. Devant le dernier, une femme en manteau de cheminot attend, un cabas à la main. Elle attend quelqu'un qui ne sortira pas."
+				}
 			]
 		},
 		{
@@ -1432,6 +1498,16 @@
 					"set_flags": {
 						"vosk.father_proof_found": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"brandt.confronted_landing"
+						]
+					},
+					"text": "Mme BRANDT a fait poser un second verrou. Ce soir, pour la première fois, sa porte reste fermée quand vous passez. Vous l'entendez taper à la machine très tard."
 				}
 			]
 		},
@@ -1491,6 +1567,16 @@
 					"set_flags": {
 						"lena.last_call": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"radio.varga_again"
+						]
+					},
+					"text": "Dans l'escalier, vous vous surprenez à murmurer les derniers vers de « Halina ». Vous vous taisez. Au palier du dessus, quelqu'un les termine à votre place."
 				}
 			]
 		}

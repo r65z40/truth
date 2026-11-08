@@ -201,6 +201,54 @@
 					"quote": "relecture systématique de ses conclusions"
 				}
 			]
+		},
+		{
+			"id": "brandt_landing_note",
+			"type": "report",
+			"title": "Note de voisinage",
+			"source": "I. BRANDT, inspectrice, poste voisin de la Section 4",
+			"reliability": "B",
+			"date": "1986-11-20",
+			"conditions": {
+				"requires_flags": [
+					"brandt.greeted"
+				]
+			},
+			"veritas_remark": "Note d'une contrôleuse interne, fiabilité B.",
+			"body": "L'agent a rendu son salut à l'inspectrice chargée de son dossier, sur le palier, sans surprise apparente.\n\nInterprétation : l'agent est poli. Un agent poli est un agent prudent. Un agent prudent a quelque chose à protéger.",
+			"facts": [
+				{
+					"id": "f_brandt_greeted",
+					"key": "vosk.neighbor",
+					"value": "Même votre salut est noté",
+					"label": "Même votre salut est noté",
+					"quote": "Un agent poli est un agent prudent"
+				}
+			]
+		},
+		{
+			"id": "brandt_confront_note",
+			"type": "report",
+			"title": "Note après incident",
+			"source": "I. BRANDT, inspectrice, poste voisin de la Section 4",
+			"reliability": "B",
+			"date": "1986-12-05",
+			"conditions": {
+				"requires_flags": [
+					"brandt.confronted_landing"
+				]
+			},
+			"veritas_remark": "Note d'une contrôleuse interne, fiabilité B.",
+			"body": "Le 4 décembre au soir, l'agent m'a interpellée sur le palier au sujet du présent dossier. Ton calme, propos précis. Il sait qui le tient.\n\nProposition : relever le niveau d'observation. Un agent qui sait qu'on l'observe cesse d'être lisible.",
+			"facts": [
+				{
+					"id": "f_brandt_confronted",
+					"key": "vosk.confronted",
+					"value": "Vous l'avez affrontée : elle relève le niveau d'observation",
+					"label": "Vous l'avez affrontée : elle relève le niveau d'observation",
+					"quote": "Il sait qui le tient"
+				}
+			]
 		}
 	],
 	"decisions": [

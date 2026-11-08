@@ -145,7 +145,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Atelier d'ADLER (54030, acte 3), deux pièces : radio sans ondes courtes, clientèle d'État, pendule bloquée à 06h05, notes du père (« Demander à K. »), cahier de L'HEURE JUSTE versé au dossier
 - [x] Traces sur le bureau des nouvelles scènes (chemise du père, encre verte, carnet de Mira, notes du père, cahier « exploité »)
 - [ ] Images de l'atelier d'ADLER à livrer (`search_54030_atelier.webp`, `search_54030_arriere.webp`) ; décors dessinés en attendant
-- [ ] Suites du cahier de L'HEURE JUSTE versé au dossier (`heure_juste.list_in_file`) : arrestations à l'acte 4, fin ?
+- [x] Suites du cahier de L'HEURE JUSTE versé au dossier : opération CADRAN (acte 4), ateliers scellés le soir 17, lettre de la femme d'un cheminot au tri du jour 16
 - [ ] Autres idées gardées (doc du 27.10) : BRANDT qui vous interroge dans le couloir, la salle d'audition vide (MIROIR), l'escalier de l'immeuble, la filature, la table d'écoute
 - [ ] Repositionner finement les zones des autres scènes (51307, 52044, 52310, 53517) avec l'éditeur
 - [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
@@ -338,7 +338,9 @@ Rapport complet : document « Audit du scénario » (lien dans la pull request).
       KREMER sans « lundi » ; la veillée du 9 novembre fête la dédicace de l'église
       (plus la Sainte-Agathe, qui tombe en février) ; le Bureau du ravitaillement relève
       du ministère de la Sécurité nationale
-- [ ] ~120 drapeaux posés jamais lus : suites proposées dans le rapport d'audit
+- [x] Drapeaux posés jamais lus (118 au 08.11) : une quinzaine ont désormais une suite
+      (échos du soir, traces sur le bureau, lettre CADRAN au tri du jour 16, notes de BRANDT
+      au 54100). Les autres restent des archives de choix, sans suite prévue
 
 ## Retours du test complet de fen (28.10)
 
