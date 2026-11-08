@@ -478,6 +478,20 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	return result
 
 
+# --- Caviarder (acte 4, MIROIR) ---------------------------------------------
+
+## Noircit ou rend lisible une ligne du projet MIROIR (gratuit, tant que le
+## dossier n'est pas signé). Renvoie les lignes noircies.
+func toggle_redaction(case_id: String, line_id: String) -> Array:
+	if not can_decide(case_id):
+		return get_case_state(case_id).get("redacted_lines", [])
+	var case_state := get_case_state(case_id)
+	case_state["redacted_lines"] = RedactionRules.toggle(CaseLibrary.get_case(case_id),
+			case_state.get("redacted_lines", []), line_id)
+	state_changed.emit()
+	return case_state.redacted_lines
+
+
 # --- Téléphone --------------------------------------------------------------
 
 ## Appel en attente (le téléphone sonne), ou {}.
@@ -1029,4 +1043,5 @@ func from_dict(data: Dictionary) -> void:
 func _new_case_state() -> Dictionary:
 	return {"status": CASE_OPEN, "viewed_documents": [], "noted_facts": [],
 			"contradictions_found": [], "contradictions_noticed": [], "decision": "",
-			"requested_documents": {}, "consulted": false, "filed": false, "sheet_choices": {}}
+			"requested_documents": {}, "consulted": false, "filed": false, "sheet_choices": {},
+			"redacted_lines": []}

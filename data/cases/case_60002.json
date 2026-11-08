@@ -132,6 +132,23 @@
 			]
 		}
 	],
+	"redaction": {
+		"document": "official_version",
+		"lines": [
+			{
+				"id": "ruda",
+				"text": "L'explosion résulte d'un acte volontaire du chef d'atelier RUDA, en lien avec le réseau de dérèglement d'horloges."
+			},
+			{
+				"id": "allegations",
+				"text": "Les défauts d'entretien invoqués par certains sont des allégations postérieures, destinées à disculper le saboteur."
+			},
+			{
+				"id": "probability",
+				"text": "Probabilité de sabotage calculée par VERITAS : 96 %."
+			}
+		]
+	},
 	"decisions": [
 		{
 			"id": "name_scapegoat",
@@ -190,6 +207,31 @@
 			"status_after": "closed",
 			"outcomes": [
 				{
+					"when": "redacted:ruda+allegations+probability",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 6,
+						"influence": 0
+					},
+					"response": "redacted",
+					"flags": {
+						"act4.centrale_redacted": true
+					}
+				},
+				{
+					"when": "redacted_any",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 3,
+						"influence": 0
+					},
+					"response": "redacted_partial",
+					"flags": {
+						"act4.centrale_redacted": true,
+						"act4.centrale_half_blamed": true
+					}
+				},
+				{
 					"when": "default",
 					"effects": {
 						"loyalty": -3,
@@ -219,6 +261,11 @@
 			"from": "Cabinet du Directeur HALM, opération MIROIR",
 			"subject": "Rapport Centrale : caviardage",
 			"body": "Inspecteur,\n\nUn rapport sans cause, c'est un aveu qu'il y en avait une à cacher. Vous croyez vous protéger en ne nommant personne ; vous ne faites que montrer que vous saviez.\n\nIl faudra choisir, à la fin. Le noir sur la page n'est pas un choix, c'est un sursis.\n\nHALM"
+		},
+		"redacted_partial": {
+			"from": "Cabinet du Directeur HALM, opération MIROIR",
+			"subject": "Rapport Centrale : caviardage partiel",
+			"body": "Inspecteur,\n\nVotre rapport noircit une partie de la page et laisse le reste parler. Ce qui reste suffit à la presse : une cause volontaire, un pourcentage, un mort qui ne répondra pas.\n\nVous n'avez pas écrit le nom. Vous l'avez laissé écrit. Nous ferons la différence ; d'autres ne la feront pas.\n\nHALM"
 		}
 	},
 	"veritas": {

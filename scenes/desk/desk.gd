@@ -80,6 +80,7 @@ var _toast_tween: Tween
 var _guide_bar: PanelContainer
 var phone_button: Button
 var phone_screen: PhoneScreen
+var redaction_screen: RedactionScreen
 var _guide_bar_label: Label
 ## Jour où l'on a déjà prévenu que l'horloge marque 16h00 (une fois par jour).
 var _day_over_notice_day := -1
@@ -163,6 +164,11 @@ func _ready() -> void:
 	windows.dossiers.field_requested.connect(open_field)
 	windows.dossiers.comparison_requested.connect(open_comparison)
 	windows.dossiers.timeline_requested.connect(open_timeline)
+	windows.dossiers.redaction_requested.connect(open_redaction)
+	redaction_screen = RedactionScreen.new()
+	add_child(redaction_screen)
+	redaction_screen.closed.connect(func() -> void: windows.dossiers.select_case(redaction_screen.case_id))
+	redaction_screen.signed.connect(func(case_id: String) -> void: windows.dossiers.select_case(case_id))
 	windows.dossiers.document_window_requested.connect(open_document_window)
 	windows.dossiers.veritas_requested.connect(open_veritas)
 	windows.archives.case_requested.connect(open_case)
@@ -681,6 +687,11 @@ func open_comparison(case_id: String) -> void:
 
 
 ## Ouvre le mini-jeu « frise chronologique » pour ce dossier (facultatif).
+func open_redaction(case_id: String) -> void:
+	if redaction_screen.open_case(case_id):
+		terminal.print_line(tr("Caviardage MIROIR : dossier n° %s.") % case_id)
+
+
 func open_timeline(case_id: String) -> void:
 	if timeline_screen.open_case(case_id):
 		terminal.print_line(tr("Frise chronologique : dossier n° %s.") % case_id)

@@ -40,6 +40,8 @@ const TUTORIAL_UNTIL_CONCLUDED := 2
 signal field_requested(case_id: String)
 ## Le joueur ouvre le mini-jeu « comparer deux pièces » (facultatif).
 signal comparison_requested(case_id: String)
+## Caviarder le projet MIROIR (acte 4).
+signal redaction_requested(case_id: String)
 ## Le joueur ouvre le mini-jeu « frise chronologique » (facultatif).
 signal timeline_requested(case_id: String)
 ## Le joueur veut poser une pièce à côté, dans sa propre fenêtre.
@@ -112,6 +114,7 @@ var _doc_icon: TextureRect
 @onready var _field_button: Button = %FieldButton
 @onready var _compare_button: Button = %CompareButton
 @onready var _timeline_button: Button = %TimelineButton
+var _redact_button: Button
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
 @onready var _file_button: Button = %FileButton
 @onready var _filed_toggle: Button = %FiledToggle
@@ -146,8 +149,15 @@ func _ready() -> void:
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
 	_compare_button.pressed.connect(func() -> void: comparison_requested.emit(current_case_id))
 	_timeline_button.pressed.connect(func() -> void: timeline_requested.emit(current_case_id))
+	_redact_button = Button.new()
+	_redact_button.name = "RedactButton"
+	_redact_button.text = tr("CAVIARDER")
+	_redact_button.custom_minimum_size = Vector2(0, 48)
+	_redact_button.visible = false
+	_redact_button.pressed.connect(func() -> void: redaction_requested.emit(current_case_id))
+	_timeline_button.add_sibling(_redact_button)
 	# Actions secondaires en plus petit, pour que le pied de pièce tienne sur une ligne.
-	for button: Button in [_request_button, _consult_button, _field_button, _compare_button, _timeline_button]:
+	for button: Button in [_request_button, _consult_button, _field_button, _compare_button, _timeline_button, _redact_button]:
 		button.add_theme_font_size_override("font_size", 14)
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
@@ -774,6 +784,12 @@ func _refresh_actions(can_decide: bool) -> void:
 		var tdone: bool = timeline.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
 		_timeline_button.text = tr("FRISE : FAITE") if tdone else tr("FRISE")
 		_timeline_button.tooltip_text = timeline.get("title", "")
+	# Caviarder (acte 4) : noircir des lignes du projet MIROIR avant de signer.
+	_redact_button.visible = not RedactionRules.get_redaction(CaseLibrary.get_case(current_case_id)).is_empty() \
+			and GameState.can_decide(current_case_id)
+	if _redact_button.visible:
+		var count: int = GameState.get_case_state(current_case_id).get("redacted_lines", []).size()
+		_redact_button.text = tr("CAVIARDER (%d)") % count if count > 0 else tr("CAVIARDER")
 
 
 ## Libellés des pièces demandées aujourd'hui, pas encore arrivées.

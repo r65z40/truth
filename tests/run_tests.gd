@@ -117,6 +117,7 @@ func _run() -> void:
 		"test_source_wear",
 		"test_phone_calls",
 		"test_foreign_radio",
+		"test_redaction",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2987,6 +2988,56 @@ func test_foreign_radio() -> void:
 	screen.queue_free()
 	var translations := Localization.load_content_translations("en")
 	check(translations.has(RadioRules.get_data().muffled_suffix), "brouillage traduit")
+	GameState.new_game()
+
+
+## Caviarder (acte 4) : noircir le projet MIROIR ligne par ligne ; ce qui reste lisible compte.
+func test_redaction() -> void:
+	for case_id in ["60001", "60002"]:
+		var case_data := CaseLibrary.get_case(case_id)
+		var redaction := RedactionRules.get_redaction(case_data)
+		var body: String = CaseLibrary.get_document(case_data, redaction.document).body
+		for line in redaction.lines:
+			check(body.contains(line.text), "%s : la ligne %s figure dans le projet" % [case_id, line.id])
+	check(RedactionRules.is_condition_met("redacted:a+b", ["b", "a"]) and not RedactionRules.is_condition_met("redacted:a+b", ["a"]), "condition : toutes les lignes citées")
+	GameState.new_game()
+	GameState.assign_case("60001")
+	GameState.toggle_redaction("60001", "trip")
+	GameState.toggle_redaction("60001", "inconnue")
+	check(GameState.get_case_state("60001").redacted_lines == ["trip"], "une ligne noircie, l'inconnue ignorée")
+	GameState.toggle_redaction("60001", "trip")
+	check(GameState.get_case_state("60001").redacted_lines.is_empty(), "toucher encore : la ligne redevient lisible")
+	GameState.toggle_redaction("60001", "trip")
+	var result := GameState.apply_decision("60001", "redact")
+	check(result.response_id == "redacted_partial" and GameState.flags.get("act4.sedlar_still_accused", false), "caviardage partiel : SEDLAR reste accusé")
+	check(GameState.flags.get("act4.sedlar_redacted", false), "les fins voient toujours un dossier caviardé")
+	GameState.toggle_redaction("60001", "cover")
+	check(not "cover" in GameState.get_case_state("60001").redacted_lines, "dossier signé : plus de caviardage")
+	GameState.new_game()
+	GameState.assign_case("60002")
+	for line_id in ["ruda", "allegations", "probability"]:
+		GameState.toggle_redaction("60002", line_id)
+	result = GameState.apply_decision("60002", "redact")
+	check(result.response_id == "redacted" and not GameState.flags.get("act4.centrale_half_blamed", false), "tout noirci : rapport vidé de sa cause")
+	var saved := GameState.to_dict()
+	GameState.from_dict(saved)
+	check(GameState.get_case_state("60002").redacted_lines.size() == 3, "lignes noircies sauvegardées")
+	GameState.new_game()
+	GameState.assign_case("60001")
+	var screen := RedactionScreen.new()
+	get_tree().root.add_child(screen)
+	check(screen.open_case("60001") and screen.find_child("Lines", true, false).get_child_count() == 5, "l'écran montre les cinq lignes du projet")
+	screen.toggle("profile")
+	await get_tree().process_frame
+	var line_button: Button = screen.find_child("Line_profile", true, false)
+	check(line_button.button_pressed and line_button.text.begins_with("█"), "ligne noircie à l'écran")
+	screen.sign()
+	check(not GameState.can_decide("60001") and not screen.visible, "signer le caviardage conclut le dossier")
+	screen.queue_free()
+	var translations := Localization.load_content_translations("en")
+	for case_id in ["60001", "60002"]:
+		for line in RedactionRules.get_redaction(CaseLibrary.get_case(case_id)).lines:
+			check(translations.has(line.text), "ligne traduite : %s/%s" % [case_id, line.id])
 	GameState.new_game()
 
 

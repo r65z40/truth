@@ -549,5 +549,13 @@
 	"Volume au plus bas, la couverture sur le poste": "Volume right down, blanket over the set",
 	"On n'entend que le début du bulletin. Personne n'entend rien.": "You only hear the start of the bulletin. Nobody hears a thing.",
 	"Monter le son pour tout entendre": "Turn it up to hear everything",
-	"Le bulletin entier. Les murs de l'immeuble sont minces.": "The whole bulletin. The building's walls are thin."
+	"Le bulletin entier. Les murs de l'immeuble sont minces.": "The whole bulletin. The building's walls are thin.",
+	"MIROIR : CAVIARDAGE": "MIRROR: REDACTION",
+	"Touchez une ligne pour la noircir, encore une fois pour la rendre lisible. Ce qui reste lisible sera signé de votre nom.": "Tap a line to black it out, once more to make it legible again. Whatever stays legible will be signed with your name.",
+	"SIGNER LE CAVIARDAGE": "SIGN THE REDACTION",
+	"FERMER (garder le brouillon)": "CLOSE (keep the draft)",
+	"%d ligne(s) noircie(s) sur %d.": "%d of %d line(s) blacked out.",
+	"CAVIARDER": "REDACT",
+	"CAVIARDER (%d)": "REDACT (%d)",
+	"Caviardage MIROIR : dossier n° %s.": "MIRROR redaction: file no. %s."
 }

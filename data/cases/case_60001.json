@@ -107,6 +107,31 @@
 			]
 		}
 	],
+	"redaction": {
+		"document": "official_version",
+		"lines": [
+			{
+				"id": "trip",
+				"text": "Le citoyen SEDLAR s'est rendu à Halvek le 21.10.1986 pour y rencontrer un correspondant du réseau de dérèglement d'horloges."
+			},
+			{
+				"id": "cover",
+				"text": "La « mère malade » est une couverture."
+			},
+			{
+				"id": "certificate",
+				"text": "Le certificat de présence établi par ORLIK confirme qu'on cherchait à masquer l'absence."
+			},
+			{
+				"id": "profile",
+				"text": "Profil : agent de liaison du réseau responsable du sabotage de la Centrale n° 3."
+			},
+			{
+				"id": "erase_list",
+				"text": "Mentions à supprimer : dossier médical de la mère, demande de soins, visite à l'hôpital de Halvek."
+			}
+		]
+	},
 	"decisions": [
 		{
 			"id": "certify_lie",
@@ -165,6 +190,31 @@
 			"status_after": "closed",
 			"outcomes": [
 				{
+					"when": "redacted:trip+cover+certificate+profile",
+					"effects": {
+						"loyalty": -3,
+						"suspicion": 5,
+						"influence": 0
+					},
+					"response": "redacted",
+					"flags": {
+						"act4.sedlar_redacted": true
+					}
+				},
+				{
+					"when": "redacted_any",
+					"effects": {
+						"loyalty": -1,
+						"suspicion": 3,
+						"influence": 0
+					},
+					"response": "redacted_partial",
+					"flags": {
+						"act4.sedlar_redacted": true,
+						"act4.sedlar_still_accused": true
+					}
+				},
+				{
 					"when": "default",
 					"effects": {
 						"loyalty": -3,
@@ -194,6 +244,11 @@
 			"from": "Cabinet du Directeur HALM, opération MIROIR",
 			"subject": "Dossier 40921 : caviardage",
 			"body": "Inspecteur,\n\nVous n'avez ni signé ni rétabli : vous avez noirci. Un dossier illisible, voilà votre réponse.\n\nHALM n'aime pas les demi-mesures ; elles trahissent une conscience qui hésite. Un dossier caviardé, c'est un aveu qu'il y avait quelque chose à cacher, et que vous le saviez. Nous le noterons.\n\nHALM"
+		},
+		"redacted_partial": {
+			"from": "Cabinet du Directeur HALM, opération MIROIR",
+			"subject": "Dossier 40921 : caviardage partiel",
+			"body": "Inspecteur,\n\nVous avez noirci des lignes, pas toutes. Ce qui reste lisible suffit à faire de SEDLAR un agent de liaison : le dossier tiendra.\n\nMerci pour le reste. Vous apprenez que la vérité se dose.\n\nHALM"
 		}
 	},
 	"veritas": {
