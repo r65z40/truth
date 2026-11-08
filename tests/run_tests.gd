@@ -110,6 +110,7 @@ func _run() -> void:
 		"test_coach_bubble_can_be_closed",
 		"test_fewer_clicks",
 		"test_wrong_version_audit",
+		"test_quick_start",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2783,6 +2784,36 @@ func test_wrong_version_audit() -> void:
 	check(CaseSheet.wrong_versions(novak, GameState.get_case_state("40000")).is_empty(), "bonne version : rien de faux")
 	GameState.apply_decision("40000", "regularize")
 	check(not GameState.flags.get("40000.version_contestee", false), "bonne version : pas de relecture")
+	GameState.new_game()
+
+
+## Départ rapide : une nouvelle partie qui commence à l'acte voulu, les jours
+## d'avant conclus selon VERITAS ; proposé au menu une fois une fin découverte.
+func test_quick_start() -> void:
+	GameState.new_game_at_act(3)
+	check(GameState.day_index == 10 and FictionalCalendar.act_for_day(GameState.day_index).number == 3, "départ rapide : premier jour de l'acte 3")
+	check(not GameState.can_decide("40921") and not GameState.can_decide("51307"), "les dossiers d'avant sont conclus")
+	check(GameState.flags.get("act1.reviewed", false) and GameState.flags.get("act2.reviewed", false), "les commissions d'acte sont passées")
+	check(GameState.get_unread_count() == 0 and GameState.flags.get("game.quick_start", false), "courrier lu, départ rapide noté")
+	var day := GameState.day_index
+	var first_flags := GameState.flags.duplicate(true)
+	GameState.new_game_at_act(3)
+	check(GameState.day_index == day and GameState.flags == first_flags, "départ rapide déterministe")
+	var original: Array = Settings.endings_discovered.duplicate()
+	Settings.endings_discovered = []
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	menu._on_new_game_pressed()
+	check(not menu.find_child("StartActRow", true, false).visible, "aucune fin connue : pas de départ rapide")
+	Settings.endings_discovered = ["fin_silence"]
+	menu._on_new_game_pressed()
+	var option: OptionButton = menu.find_child("StartActOption", true, false)
+	check(menu.find_child("StartActRow", true, false).visible and option.item_count == 4, "une fin connue : départ rapide aux actes 1 à 4")
+	option.item_selected.emit(2)
+	check(menu.start_act == 3, "on choisit l'acte 3")
+	menu.queue_free()
+	Settings.endings_discovered = original
 	GameState.new_game()
 
 

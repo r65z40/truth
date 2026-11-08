@@ -689,6 +689,51 @@ func complete_act_review(accept: bool) -> String:
 	return text
 
 
+# --- Départ rapide -----------------------------------------------------------
+
+## Départ rapide (menu, une fois une fin découverte) : nouvelle partie qui
+## commence au premier jour de l'acte voulu. Les jours d'avant passent seuls :
+## chaque dossier est conclu selon l'avis de VERITAS (sinon la première décision),
+## les commissions d'acte acceptent la promotion offerte, chaque soirée prend
+## la première action proposée.
+## Déterministe : deux départs rapides au même acte donnent le même état.
+func new_game_at_act(act_number: int) -> void:
+	new_game()
+	var first_day := -1
+	for act in FictionalCalendar._data().get("acts", []):
+		if int(act.number) == act_number:
+			first_day = int(act.first_day)
+	if first_day <= 0:
+		return
+	while day_index < first_day:
+		for case_id in cases.keys():
+			if can_decide(case_id):
+				_auto_decide(case_id)
+		if has_act_review_pending():
+			complete_act_review(true)
+		if has_evening_pending():
+			var actions := get_evening_actions()
+			if actions.is_empty():
+				lose_evening()
+			else:
+				choose_evening_action(actions[0].id)
+		end_day()
+	for message in messages:
+		message.read = true
+	_set_flag("game.quick_start", true)
+	state_changed.emit()
+
+
+func _auto_decide(case_id: String) -> void:
+	var view := get_case_view(case_id)
+	var advice := Veritas.recommendation(view, get_case_state(case_id), flags)
+	var choice: String = advice.get("decision_id", "")
+	if choice == "" and not view.get("decisions", []).is_empty():
+		choice = view.decisions[0].id
+	if choice != "":
+		apply_decision(case_id, choice)
+
+
 # --- Fin de partie -----------------------------------------------------------
 
 ## Vrai si la journée en cours est la dernière journée de service (terme de
