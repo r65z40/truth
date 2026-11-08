@@ -14,7 +14,10 @@
 			"keys": [
 				"sedlar.location.1986-10-21"
 			],
-			"main": true
+			"main": true,
+			"truth": [
+				"Train Velmira > Halvek (06h05), retour 21h40"
+			]
 		},
 		{
 			"id": "witness",

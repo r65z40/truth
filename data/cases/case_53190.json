@@ -14,13 +14,20 @@
 			"keys": [
 				"bells.cause"
 			],
-			"main": true
+			"main": true,
+			"truth": [
+				"Glas des enterrements",
+				"Trois enterrements, aux heures exactes"
+			]
 		},
 		{
 			"id": "motive",
 			"text": "KOLB a-t-il un intérêt à dénoncer HRUBY ?",
 			"keys": [
 				"kolb.motive"
+			],
+			"truth": [
+				"A brigué le poste de HRUBY"
 			]
 		},
 		{

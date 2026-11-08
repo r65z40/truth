@@ -1720,6 +1720,86 @@
 				"subject": "Dossiers prioritaires",
 				"body": "Inspecteur,\n\nLe Directeur HALM a décidé que les dossiers prioritaires ne vous seraient plus confiés sans visa préalable de son cabinet.\n\nIl ne s'agit pas d'une sanction. Il s'agit d'une précaution.\n\nLe cabinet du Directeur HALM"
 			}
+		},
+		{
+			"id": "audit_40000",
+			"conditions": {
+				"min_day": 2,
+				"requires_flags": [
+					"40000.version_contestee"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"40000.audit_recu": true
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Relecture du rapport n° 40000",
+				"body": "Inspecteur,\n\nLe contrôle interne relit au hasard les premiers rapports de chaque agent. Dans le dossier 40000, vous avez retenu l'adresse déclarée par la citoyenne NOVAK. Le registre des résidences, coté A, disait autre chose, et le registre avait raison : la citoyenne a déménagé en septembre.\n\nUne erreur de forme sur un dossier sans enjeu. Elle est notée.\n\nContrôle interne, Section 4"
+			}
+		},
+		{
+			"id": "audit_40921",
+			"conditions": {
+				"min_day": 3,
+				"requires_flags": [
+					"40921.version_contestee"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"40921.audit_recu": true
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Relecture du rapport n° 40921",
+				"body": "Inspecteur,\n\nVotre rapport sur le citoyen SEDLAR retient sa présence à la Centrale le 21 octobre, sur la foi d'un certificat signé B. ORLIK. Le Bureau des transports confirme pourtant son passage au contrôle de Halvek ce jour-là.\n\nUn agent qui croit un certificat de complaisance contre un registre de l'État doit s'attendre à ce qu'on relise ses autres rapports.\n\nContrôle interne, Section 4"
+			}
+		},
+		{
+			"id": "audit_51307",
+			"conditions": {
+				"min_day": 5,
+				"requires_flags": [
+					"51307.version_contestee"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"51307.audit_recu": true
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Relecture du rapport n° 51307",
+				"body": "Inspecteur,\n\nDans le dossier ORLIK, vous avez retenu une version que les pièces démentaient : le relevé d'entretien de l'horloge pointeuse, ou ses propres aveux, disaient autre chose.\n\nLe capitaine ORLIK, de la Milice, a lu votre rapport avec intérêt. Nous aussi.\n\nContrôle interne, Section 4"
+			}
+		},
+		{
+			"id": "audit_53190",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"53190.version_contestee"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"53190.audit_recu": true
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Relecture du rapport n° 53190",
+				"body": "Inspecteur,\n\nLe registre de Saint-Roch et l'état civil concordaient : les cloches sonnaient le glas, et le citoyen KOLB briguait la place du bedeau. Votre rapport a retenu autre chose.\n\nLe Bureau des signalements continue de tenir KOLB pour fiable. C'est désormais en partie votre faute.\n\nContrôle interne, Section 4"
+			}
 		}
 	]
 }

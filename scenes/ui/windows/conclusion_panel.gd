@@ -96,6 +96,9 @@ static func sheet_lines(case_data: Dictionary, case_state: Dictionary) -> Packed
 		elif not question.answers.is_empty():
 			answer = "  /  ".join(PackedStringArray(question.answers.map(func(entry: Dictionary) -> String: return entry.label)))
 		lines.append(("%s %s" % [question.text, answer]).replace("[", "[lb]"))
+		var comment := Veritas.sheet_comment(question)
+		if comment != "":
+			lines.append(("    %s > %s" % [Veritas.NAME, comment]).replace("[", "[lb]"))
 	return lines
 
 

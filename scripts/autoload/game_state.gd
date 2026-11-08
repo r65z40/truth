@@ -456,6 +456,9 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	case_state.status = result.status_after
 	case_state.decision = decision_id
 	_merge_flags(result.flags)
+	# Une version retenue que les pièces démentent : le rapport pourra être contesté.
+	if not CaseSheet.wrong_versions(get_case_view(case_id), case_state).is_empty():
+		_set_flag("%s.version_contestee" % case_id, true)
 	# On garde la trace de l'accord avec VERITAS : le système s'en souviendra.
 	decisions.append({"case_id": case_id, "decision_id": decision_id, "day_index": day_index,
 			"outcome": result.response_id, "veritas_agreed": advice.get("decision_id", "") == decision_id})

@@ -15,7 +15,10 @@
 				"clock.status.october",
 				"orlik.certificates"
 			],
-			"main": true
+			"main": true,
+			"truth": [
+				"En état de marche tout le mois"
+			]
 		},
 		{
 			"id": "motive",
@@ -24,7 +27,10 @@
 				"orlik.motive",
 				"orlik.sedlar"
 			],
-			"main": true
+			"main": true,
+			"truth": [
+				"Contre des denrées"
+			]
 		},
 		{
 			"id": "petras_days",

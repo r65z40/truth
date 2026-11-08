@@ -109,6 +109,7 @@ func _run() -> void:
 		"test_tutorial_bubble_fades",
 		"test_coach_bubble_can_be_closed",
 		"test_fewer_clicks",
+		"test_wrong_version_audit",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -245,7 +246,7 @@ func test_case_sheet_rules() -> void:
 	check(sheet[0].state == CaseSheet.SETTLED and sheet[0].retained == "f_reg_address" and CaseSheet.pending_conflict(sheet).is_empty(),
 			"question tranchée")
 	var lines: PackedStringArray = load("res://scenes/ui/windows/conclusion_panel.gd").sheet_lines(novak, state)
-	check(lines.size() == 1 and lines[0].contains("version retenue") and lines[0].contains("District 7"), "le rapport reprend la fiche : %s" % [lines])
+	check(lines.size() == 2 and lines[1].contains("VERITAS") and lines[0].contains("version retenue") and lines[0].contains("District 7"), "le rapport reprend la fiche : %s" % [lines])
 	# Deux valeurs identiques sous une même question ne font pas deux versions.
 	GameState.note_fact("40921", "f_identity_card")
 	GameState.note_fact("40921", "f_log_card")
@@ -2750,6 +2751,39 @@ func test_tutorial_bubble_fades() -> void:
 	desk.queue_free()
 	GameState.new_game()
 	await get_tree().process_frame
+
+
+## Version retenue à tort : VERITAS commente selon la cote des sources, la
+## signature pose « version contestée », et le contrôle interne relit le rapport.
+func test_wrong_version_audit() -> void:
+	GameState.new_game()
+	var novak := CaseLibrary.get_case("40000")
+	for fact_id in ["f_decl_address", "f_reg_address"]:
+		GameState.note_fact("40000", fact_id)
+	check(GameState.retain_version("40000", "address", "f_decl_address") == "novak.address", "on retient la déclaration (cotée C)")
+	var question: Dictionary = CaseSheet.build(novak, GameState.get_case_state("40000")).filter(
+			func(q: Dictionary) -> bool: return q.id == "address")[0]
+	check(Veritas.sheet_comment(question).contains("C contre A"), "VERITAS signale l'écart de cote")
+	check(CaseSheet.wrong_versions(novak, GameState.get_case_state("40000")) == ["address"], "version fausse repérée")
+	var panel_script: GDScript = load("res://scenes/ui/windows/conclusion_panel.gd")
+	check("\n".join(panel_script.sheet_lines(novak, GameState.get_case_state("40000"))).contains("VERITAS >"),
+			"le rapport reprend le commentaire de VERITAS")
+	GameState.apply_decision("40000", "regularize")
+	check(GameState.flags.get("40000.version_contestee", false), "signature : version contestée")
+	var suspicion := GameState.get_indicator("suspicion")
+	for i in 3:
+		GameState.end_day()
+	check(GameState.messages.any(func(m: Dictionary) -> bool: return m.id.begins_with("event.audit_40000"))
+			and GameState.get_indicator("suspicion") >= suspicion + 3, "le contrôle interne relit le rapport")
+	# Bonne version : rien à redire.
+	GameState.new_game()
+	for fact_id in ["f_decl_address", "f_reg_address"]:
+		GameState.note_fact("40000", fact_id)
+	GameState.retain_version("40000", "address", "f_reg_address")
+	check(CaseSheet.wrong_versions(novak, GameState.get_case_state("40000")).is_empty(), "bonne version : rien de faux")
+	GameState.apply_decision("40000", "regularize")
+	check(not GameState.flags.get("40000.version_contestee", false), "bonne version : pas de relecture")
+	GameState.new_game()
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier
