@@ -479,6 +479,61 @@
 			]
 		}
 	],
+	"punch_clock": {
+		"id": "ribbon_51307",
+		"title": "Le ruban de la pointeuse CHR-4",
+		"intro": "Le ruban encreur d'octobre, changé le 31.10, garde l'empreinte de chaque pointage de l'atelier des chaudières. Les certificats d'ORLIK, eux, invoquent parfois une « panne de l'horloge ». Touchez les jours où le ruban dément un certificat.",
+		"rows": [
+			{
+				"id": "d02",
+				"label": "02.10 (jeudi)",
+				"punches": "44 pointages",
+				"certificate": "aucun"
+			},
+			{
+				"id": "d09",
+				"label": "09.10 (jeudi)",
+				"punches": "43 pointages, PETRAS absent",
+				"certificate": "PETRAS : « oubli de carte »"
+			},
+			{
+				"id": "d16",
+				"label": "16.10 (jeudi)",
+				"punches": "43 pointages, PETRAS absent",
+				"certificate": "PETRAS : « panne de l'horloge »"
+			},
+			{
+				"id": "d21",
+				"label": "21.10 (mardi)",
+				"punches": "42 pointages, SEDLAR absent",
+				"certificate": "SEDLAR : « panne de l'horloge »"
+			},
+			{
+				"id": "d23",
+				"label": "23.10 (jeudi)",
+				"punches": "44 pointages",
+				"certificate": "MIKULA : « oubli de carte »"
+			},
+			{
+				"id": "d30",
+				"label": "30.10 (jeudi)",
+				"punches": "43 pointages, PETRAS absent",
+				"certificate": "aucun (absence injustifiée)"
+			}
+		],
+		"answer": [
+			"d16",
+			"d21"
+		],
+		"establishes": "clock.status.october",
+		"advantage": {
+			"note_facts": [
+				"f_cert_reason",
+				"f_clock_ok"
+			],
+			"text": "Le 16 et le 21 octobre, la pointeuse a imprimé 43 et 42 pointages : elle marchait. Les « pannes » des certificats n'ont jamais eu lieu."
+		}
+	},
 	"decisions": [
 		{
 			"id": "arrest",

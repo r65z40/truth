@@ -399,6 +399,7 @@ l'exécutable.
 | Le dossier qui revient | événements `return_*` | `EventRules` | `fired_events` |
 | Dossiers confiés selon la confiance | clés d'événement `grant_documents`, `refuse_documents` | `GameState._apply_trust` | pièce marquée demandée / drapeau `refused.<dossier>.<pièce>` |
 | Tri du courrier (paquets des jours 4, 9, 16) | `data/mail_sorting.json` | `MailSorting`, écran `MailSortScreen` | drapeaux `mail.<lettre>.<verdict>` |
+| Pointeuse (mini-jeu, 51307) | bloc `punch_clock` du dossier | `PunchClockRules`, écran `PunchClockScreen` | contradiction établie |
 | Liens entre les pièces (débutant) | clés des éléments et questions | `CaseSheet.links` | aucun |
 
 Écrans posés sur le bureau, construits en code : `PhoneScreen`

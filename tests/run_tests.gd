@@ -123,6 +123,7 @@ func _run() -> void:
 		"test_trust_assignments",
 		"test_milice_54030",
 		"test_mail_sorting",
+		"test_punch_clock",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -3150,6 +3151,36 @@ func test_mail_sorting() -> void:
 	for batch in MailSorting.get_data().batches:
 		for letter in batch.letters:
 			check(translations.has(letter.text) and translations.has(letter.from), "lettre traduite : " + letter.id)
+	GameState.new_game()
+
+
+## La pointeuse (51307) : le ruban dément les « pannes » des certificats.
+func test_punch_clock() -> void:
+	var case_data := CaseLibrary.get_case("51307")
+	var block := PunchClockRules.get_punch_clock(case_data)
+	check(PunchClockRules.validate(case_data).is_empty(), "ruban du 51307 cohérent")
+	check(not PunchClockRules.grade(block, ["d16"]).correct and PunchClockRules.grade(block, ["d16"]).missing == 1, "un jour manquant")
+	check(PunchClockRules.grade(block, ["d16", "d21", "d09"]).wrong == 1, "un oubli de carte n'est pas une panne")
+	GameState.new_game()
+	GameState.assign_case("51307")
+	check(not GameState.apply_punch_clock("51307", ["d09"]).correct, "mauvaise sélection : rien d'établi")
+	var result := GameState.apply_punch_clock("51307", ["d21", "d16"])
+	check(result.correct and result.established == "clock.status.october", "le 16 et le 21 : la panne n'a jamais eu lieu")
+	check("clock.status.october" in GameState.get_case_state("51307").contradictions_found, "contradiction établie au dossier")
+	check("f_clock_ok" in GameState.get_case_state("51307").noted_facts, "relevé du service technique noté")
+	check(GameState.apply_punch_clock("51307", ["d21", "d16"]).established == "", "une seule fois")
+	GameState.new_game()
+	GameState.assign_case("51307")
+	var screen := PunchClockScreen.new()
+	get_tree().root.add_child(screen)
+	check(screen.open_case("51307") and screen.find_child("Rows", true, false).get_child_count() == 6, "six jours sur le ruban")
+	(screen.find_child("Row_d16", true, false) as Button).button_pressed = true
+	(screen.find_child("Row_d21", true, false) as Button).button_pressed = true
+	screen.check()
+	check("clock.status.october" in GameState.get_case_state("51307").contradictions_found, "vérifier depuis l'écran établit la contradiction")
+	screen.queue_free()
+	var translations := Localization.load_content_translations("en")
+	check(translations.has(block.intro) and translations.has(block.advantage.text), "pointeuse traduite")
 	GameState.new_game()
 
 

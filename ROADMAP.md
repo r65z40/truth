@@ -228,7 +228,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
   - [x] Comparer avec l'archive — registre modifié de SEDLAR (révélation d'acte 2) :
         dossier 53761, original du sous-sol B vs copie transmise ; la ligne du 21.10
         vers Halvek est un ajout postérieur (tampon coiffé) ; établit `register.altered`
-  - [x] Caviarder ; [x] radio étrangère ; [x] tri du courrier (08.11) ; [ ] pointeuse / l'heure juste
+  - [x] Caviarder ; [x] radio étrangère ; [x] tri du courrier ; [x] pointeuse (ruban CHR-4 du 51307, 08.11)
 
 ## Fait : acte 2 — L'Archive et le registre truqué (2026-10-26)
 
@@ -416,7 +416,8 @@ recommandations, et mets en place toutes tes idées ».
 - [x] Police IBM Plex Mono embarquée ; préréglage d'export Windows
 - [x] Suite (« continue ») : liens « Voir aussi » entre pièces, dossiers confiés selon la
       confiance, Milice alliée / hostile au 54030, tri du courrier (jours 4, 9, 16 : neuf
-      lettres, TRANSMETTRE / RETENIR / SIGNALER, quatre suites), notification compacte
+      lettres, TRANSMETTRE / RETENIR / SIGNALER, quatre suites), notification compacte,
+      POINTEUSE au 51307 (le ruban d'octobre dément les « pannes » des certificats)
 - [ ] Test de fen ; export sur une machine Windows (modèles d'export à installer)
 
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)

@@ -83,6 +83,7 @@ var phone_screen: PhoneScreen
 var mail_button: Button
 var mail_sort_screen: MailSortScreen
 var redaction_screen: RedactionScreen
+var punch_clock_screen: PunchClockScreen
 var _guide_bar_label: Label
 ## Jour où l'on a déjà prévenu que l'horloge marque 16h00 (une fois par jour).
 var _day_over_notice_day := -1
@@ -170,6 +171,10 @@ func _ready() -> void:
 	windows.dossiers.comparison_requested.connect(open_comparison)
 	windows.dossiers.timeline_requested.connect(open_timeline)
 	windows.dossiers.redaction_requested.connect(open_redaction)
+	windows.dossiers.punch_clock_requested.connect(open_punch_clock)
+	punch_clock_screen = PunchClockScreen.new()
+	add_child(punch_clock_screen)
+	punch_clock_screen.closed.connect(func() -> void: windows.dossiers.select_case(punch_clock_screen.case_id))
 	redaction_screen = RedactionScreen.new()
 	add_child(redaction_screen)
 	redaction_screen.closed.connect(func() -> void: windows.dossiers.select_case(redaction_screen.case_id))
@@ -712,6 +717,11 @@ func open_comparison(case_id: String) -> void:
 
 
 ## Ouvre le mini-jeu « frise chronologique » pour ce dossier (facultatif).
+func open_punch_clock(case_id: String) -> void:
+	if punch_clock_screen.open_case(case_id):
+		terminal.print_line(tr("Ruban de la pointeuse : dossier n° %s.") % case_id)
+
+
 func open_redaction(case_id: String) -> void:
 	if redaction_screen.open_case(case_id):
 		terminal.print_line(tr("Caviardage MIROIR : dossier n° %s.") % case_id)

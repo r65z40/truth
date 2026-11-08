@@ -42,6 +42,8 @@ signal field_requested(case_id: String)
 signal comparison_requested(case_id: String)
 ## Caviarder le projet MIROIR (acte 4).
 signal redaction_requested(case_id: String)
+## Lire le ruban de la pointeuse.
+signal punch_clock_requested(case_id: String)
 ## Le joueur ouvre le mini-jeu « frise chronologique » (facultatif).
 signal timeline_requested(case_id: String)
 ## Le joueur veut poser une pièce à côté, dans sa propre fenêtre.
@@ -115,6 +117,7 @@ var _doc_icon: TextureRect
 @onready var _compare_button: Button = %CompareButton
 @onready var _timeline_button: Button = %TimelineButton
 var _redact_button: Button
+var _punch_button: Button
 ## Liens visibles entre les pièces (niveau débutant), sous la ligne de source.
 var _links_row: HFlowContainer
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
@@ -164,8 +167,15 @@ func _ready() -> void:
 	_redact_button.visible = false
 	_redact_button.pressed.connect(func() -> void: redaction_requested.emit(current_case_id))
 	_timeline_button.add_sibling(_redact_button)
+	_punch_button = Button.new()
+	_punch_button.name = "PunchClockButton"
+	_punch_button.text = tr("POINTEUSE")
+	_punch_button.custom_minimum_size = Vector2(0, 48)
+	_punch_button.visible = false
+	_punch_button.pressed.connect(func() -> void: punch_clock_requested.emit(current_case_id))
+	_timeline_button.add_sibling(_punch_button)
 	# Actions secondaires en plus petit, pour que le pied de pièce tienne sur une ligne.
-	for button: Button in [_request_button, _consult_button, _field_button, _compare_button, _timeline_button, _redact_button]:
+	for button: Button in [_request_button, _consult_button, _field_button, _compare_button, _timeline_button, _redact_button, _punch_button]:
 		button.add_theme_font_size_override("font_size", 14)
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
@@ -822,6 +832,13 @@ func _refresh_actions(can_decide: bool) -> void:
 		var tdone: bool = timeline.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
 		_timeline_button.text = tr("FRISE : FAITE") if tdone else tr("FRISE")
 		_timeline_button.tooltip_text = timeline.get("title", "")
+	# Pointeuse : le ruban d'octobre contre les certificats (facultatif, sans heure).
+	var punch := PunchClockRules.get_punch_clock(CaseLibrary.get_case(current_case_id))
+	_punch_button.visible = not punch.is_empty() \
+			and EventRules.are_conditions_met(punch.get("conditions", {}), GameState.get_condition_state())
+	if _punch_button.visible:
+		var pdone: bool = punch.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
+		_punch_button.text = tr("POINTEUSE : FAIT") if pdone else tr("POINTEUSE")
 	# Caviarder (acte 4) : noircir des lignes du projet MIROIR avant de signer.
 	_redact_button.visible = not RedactionRules.get_redaction(CaseLibrary.get_case(current_case_id)).is_empty() \
 			and GameState.can_decide(current_case_id)

@@ -408,6 +408,11 @@ func _capture_new_mechanics() -> void:
 	desk.windows.dossiers.select_document("registry")
 	desk.windows.dossiers.note_fact("f_reg_address")
 	await _snap("58_liens_pieces")
+	GameState.assign_case("51307")
+	desk.open_punch_clock("51307")
+	(desk.punch_clock_screen.find_child("Row_d16", true, false) as Button).button_pressed = true
+	await _snap("59_pointeuse")
+	desk.punch_clock_screen.close()
 	desk.queue_free()
 	GameState.new_game()
 	var evening: Node = load("res://scenes/evening/evening_screen.tscn").instantiate()

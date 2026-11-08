@@ -319,6 +319,37 @@ func apply_timeline(case_id: String, order: Array) -> Dictionary:
 	return {"established": established, "notes": notes, "text": advantage.get("text", "")}
 
 
+## Pointeuse : l'agent désigne les jours où le ruban dément un certificat. Une
+## sélection juste établit la contradiction et note les éléments utiles.
+## Renvoie {correct, missing, wrong, established, notes, text}.
+func apply_punch_clock(case_id: String, selected: Array) -> Dictionary:
+	var case_data := CaseLibrary.get_case(case_id)
+	var block := PunchClockRules.get_punch_clock(case_data)
+	if block.is_empty():
+		return {}
+	var result := PunchClockRules.grade(block, selected)
+	result["established"] = ""
+	result["notes"] = []
+	result["text"] = ""
+	if not result.correct:
+		return result
+	var case_state := get_case_state(case_id)
+	var established: String = block.get("establishes", "")
+	if established == "" or established in case_state.contradictions_found:
+		return result
+	case_state.contradictions_found.append(established)
+	var advantage: Dictionary = block.get("advantage", {})
+	for fact_id in advantage.get("note_facts", []):
+		note_fact(case_id, fact_id)
+		result.notes.append(CaseLibrary.get_fact(case_data, fact_id).get("label", fact_id))
+	_merge_flags(advantage.get("set_flags", {}))
+	_apply_effects(advantage.get("effects", {}))
+	result.established = established
+	result.text = advantage.get("text", "")
+	state_changed.emit()
+	return result
+
+
 ## Fonction débloquée à ce stade de la partie (voir Features).
 func is_feature_unlocked(feature: String) -> bool:
 	return Features.is_unlocked(feature, get_condition_state())
