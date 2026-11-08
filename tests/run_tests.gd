@@ -124,6 +124,7 @@ func _run() -> void:
 		"test_milice_54030",
 		"test_mail_sorting",
 		"test_punch_clock",
+		"test_learning_curve",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -900,8 +901,8 @@ func test_end_day_without_decision() -> void:
 	check(GameState.messages[-1].date_label == "04.11.1986", "messages datés du jour")
 	check(days == [1], "signal day_started émis")
 	var next_ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
-	check(next_ids == ["51307_reminder", "assign_52044", "daily_bulletin_2"],
-			"le lendemain : rappel, dossier 52044 et bulletin : %s" % [next_ids])
+	check(next_ids == ["features_day_3", "51307_reminder", "assign_52044", "daily_bulletin_2"],
+			"le lendemain : habilitation, rappel, dossier 52044 et bulletin : %s" % [next_ids])
 	GameState.day_started.disconnect(on_day)
 
 
@@ -3184,6 +3185,22 @@ func test_punch_clock() -> void:
 	GameState.new_game()
 
 
+## Une nouveauté par journée, gros dossier livré en deux temps.
+func test_learning_curve() -> void:
+	GameState.new_game()
+	GameState.day_index = 1
+	check(GameState.is_feature_unlocked("request_document") and not GameState.is_feature_unlocked("consult_superior"), "jour 2 : DEMANDER, pas encore CONSULTER")
+	GameState.day_index = 2
+	check(GameState.is_feature_unlocked("consult_superior") and not GameState.is_feature_unlocked("terminal_advanced"), "jour 3 : CONSULTER")
+	GameState.day_index = 3
+	check(GameState.is_feature_unlocked("terminal_advanced"), "jour 4 : terminal complet")
+	var view := func(day: int) -> Array:
+		return CaseLibrary.filter_case(CaseLibrary.get_case("52310"), {"day_index": day, "flags": {}, "cases": {}, "indicators": {}}).documents.map(func(d): return d.id)
+	check(view.call(3).size() == 5 and not "poem_1979" in view.call(3), "52310, premier jour : cinq pièces")
+	check("poem_1979" in view.call(4) and "varga_letter" in view.call(4), "52310, lendemain : la bibliothèque et le courrier saisi")
+	GameState.new_game()
+
+
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier
 ## suivant après un rapport, VERITAS ouvert sur le dossier en cours.
 func test_fewer_clicks() -> void:
@@ -4646,7 +4663,7 @@ func test_time_in_desk() -> void:
 			"premier jour : ni DEMANDER ni CONSULTER")
 	desk.windows.dossiers.close()
 	GameState.end_day()
-	check(desk.get_node("%StartArchives").visible and desk.get_node("%StartPersonnel").visible, "deuxième jour : tout est débloqué")
+	check(desk.get_node("%StartArchives").visible and not desk.get_node("%StartPersonnel").visible, "deuxième jour : les archives, pas encore le dossier personnel")
 	desk.terminal.submit_command("dossiers")
 	var archives_link: Button = desk.windows.dossiers.find_child("ArchivesLink", true, false)
 	check(archives_link.visible, "deuxième jour : le classeur mène aux rapports transmis")
@@ -4660,9 +4677,13 @@ func test_time_in_desk() -> void:
 	dossiers_window.get_node("%RequestButton").pressed.emit()
 	check(dossiers_window.get_node("%RequestButton").text == "DEMANDE EN COURS" and dossiers_window.get_node("%RequestButton").disabled,
 			"la demande est en cours")
+	check(not dossiers_window.get_node("%ConsultButton").visible, "deuxième jour : pas encore CONSULTER (une nouveauté par jour)")
+	GameState.end_day()
+	check(desk.get_node("%StartPersonnel").visible, "troisième jour : le dossier personnel")
+	dossiers_window.select_case("40921")
 	dossiers_window.get_node("%ConsultButton").pressed.emit()
-	check(dossiers_window.get_node("%ConsultButton").text == "CONSULTÉ" and GameState.hours_used == 2, "consultation : 2 heures employées")
-	check(desk.get_node("%DateLabel").text.ends_with("10h00") and desk.get_node("%HoursLabel").text == "6 h restantes",
+	check(dossiers_window.get_node("%ConsultButton").text == "CONSULTÉ" and GameState.hours_used == 1, "consultation : 1 heure employée")
+	check(desk.get_node("%DateLabel").text.ends_with("09h00") and desk.get_node("%HoursLabel").text == "7 h restantes",
 			"l'horloge avance")
 	desk.queue_free()
 	await get_tree().process_frame

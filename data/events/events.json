@@ -24,7 +24,43 @@
 			"message": {
 				"from": "R. MAZUR, Directeur adjoint, Section 4",
 				"subject": "Vos habilitations",
-				"body": "Inspecteur,\n\nVotre période d'essai d'une journée est terminée. Vous disposez désormais de :\n\n- DEMANDER : une pièce complémentaire par dossier, transmise par le service concerné le lendemain (1 h de service).\n- CONSULTER : mon avis sur un dossier, une fois (1 h). N'en abusez pas.\n- ARCHIVES : les rapports que vous avez transmis.\n- DOSSIER PERSONNEL : votre évaluation par la Direction du personnel.\n\nVotre journée compte huit heures. Lire ne vous coûte rien ; agir, si.\n\nR. MAZUR"
+				"body": "Inspecteur,\n\nVotre période d'essai d'une journée est terminée. Vous disposez désormais de :\n\n- DEMANDER : une pièce complémentaire par dossier, transmise par le service concerné le lendemain (1 h de service).\n- ARCHIVES : les rapports que vous avez transmis.\n\nUne habilitation de plus chaque matin, cette semaine : on ne donne pas tout à un débutant le même jour.\n\nVotre journée compte huit heures. Lire ne vous coûte rien ; agir, si.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "features_day_3",
+			"conditions": {
+				"min_day": 2
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouvelle habilitation : CONSULTER",
+				"body": "Inspecteur,\n\nÀ partir d'aujourd'hui :\n\n- CONSULTER : mon avis sur un dossier, une fois (1 h). N'en abusez pas.\n- DOSSIER PERSONNEL (menu MINISTÈRE) : votre évaluation par la Direction du personnel.\n\nVotre poste est aussi relié au standard. Si le téléphone sonne, décrochez quand vous voulez : personne ne vous chronomètre. Mais ce qui ne décroche pas finit par se remarquer.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "features_day_4",
+			"conditions": {
+				"min_day": 3
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouvelle habilitation : terminal complet",
+				"body": "Inspecteur,\n\nVotre terminal reçoit aujourd'hui ses raccourcis complets : VERITAS (l'avis du système sur un dossier), IDENT (votre fiche d'agent) et EFFACER.\n\nRien ne vous oblige à demander l'avis de VERITAS. Ceux qui le demandent souvent finissent par penser comme lui. C'est ce qu'on attend d'eux.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "features_day_5",
+			"conditions": {
+				"min_day": 4
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouvelle tâche : contrôle du courrier",
+				"body": "Inspecteur,\n\nLa Section 4 contrôle aussi une partie du courrier civil. Certains jours, un paquet de lettres interceptées vous attendra (bouton TRI, en bas de l'écran).\n\nPour chaque lettre : TRANSMETTRE, RETENIR ou SIGNALER. Ce que vous ne triez pas part le soir tel quel. Personne ne vous dira ce qu'il fallait faire.\n\nR. MAZUR"
 			}
 		},
 		{
@@ -361,7 +397,7 @@
 			"message": {
 				"from": "R. MAZUR, Directeur adjoint, Section 4",
 				"subject": "Nouveau dossier prioritaire : n° 52310",
-				"body": "Inspecteur,\n\nLe Service de la censure (Section 7) nous transmet le dossier d'un poète, Teodor VARGA. Son recueil aurait servi à transmettre un message codé vers la zone frontalière.\n\nLa Section 7 attend une conclusion rapide. Elle attend aussi, je crois, une conclusion précise. Lisez tout, y compris ce qu'on ne vous demande pas de lire.\n\nR. MAZUR"
+				"body": "Inspecteur,\n\nLe Service de la censure (Section 7) nous transmet le dossier d'un poète, Teodor VARGA. Son recueil aurait servi à transmettre un message codé vers la zone frontalière.\n\nLa Section 7 attend une conclusion rapide. Elle attend aussi, je crois, une conclusion précise. Lisez tout, y compris ce qu'on ne vous demande pas de lire.\n\nLe dossier vous arrive en deux temps : les pièces de la Bibliothèque municipale et le courrier saisi suivront demain matin.\n\nR. MAZUR"
 			}
 		},
 		{

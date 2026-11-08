@@ -373,7 +373,10 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
       modifiables dans Paramètres (`Settings.difficulty`). Débutant = fiche d'enquête ;
       expérimenté = jeu d'origine (carnet libre, CONFRONTER, bulle pendant la lecture)
 - [x] Questions des 15 autres dossiers (pour que le niveau débutant couvre tout le jeu)
-- [ ] Une mécanique nouvelle par journée, gros dossiers livrés en deux temps
+- [x] Une mécanique nouvelle par journée (08.11) : jour 2 DEMANDER + archives, jour 3
+      CONSULTER + dossier personnel + téléphone, jour 4 terminal complet, jour 5 tri du
+      courrier, chacune annoncée par MAZUR ; le 52310 arrive en deux temps (5 pièces, puis
+      la bibliothèque et le courrier saisi le lendemain)
 - [x] Liens visibles entre les pièces (08.11) : « Voir aussi » sous la source, à partir des éléments notés (niveau débutant)
 
 ### Interface plus simple et fluide (demande de fen du 04.11)
@@ -417,7 +420,8 @@ recommandations, et mets en place toutes tes idées ».
 - [x] Suite (« continue ») : liens « Voir aussi » entre pièces, dossiers confiés selon la
       confiance, Milice alliée / hostile au 54030, tri du courrier (jours 4, 9, 16 : neuf
       lettres, TRANSMETTRE / RETENIR / SIGNALER, quatre suites), notification compacte,
-      POINTEUSE au 51307 (le ruban d'octobre dément les « pannes » des certificats)
+      POINTEUSE au 51307 (le ruban d'octobre dément les « pannes » des certificats),
+      une nouveauté par journée
 - [ ] Test de fen ; export sur une machine Windows (modèles d'export à installer)
 
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)
