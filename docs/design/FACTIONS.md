@@ -1,5 +1,7 @@
 # Système de factions (proposition)
 
+> État au 02.11 : socle implémenté (voir ROADMAP, « carrière et factions »). Le reste de ce document reste une proposition.
+
 Quatre factions du canon, aucune entièrement bonne ou mauvaise. Chacune agit selon
 ses intérêts, ce qu'elle sait et ce qu'elle peut. L'état d'une faction envers
 Vosk tient en un mot (**hostile, méfiante, neutre, favorable, alliée**), plus

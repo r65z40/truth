@@ -7,7 +7,8 @@
 		"53118.choir_cleared",
 		"53517.petras_cleared",
 		"adler.freed",
-		"54001.accident_established"
+		"54001.accident_established",
+		"53190.hruby_cleared"
 	],
 	"endings": [
 		{
@@ -20,6 +21,18 @@
 					"requires_flags": [
 						"act4.father_truth",
 						"kremer.protected"
+					],
+					"min_indicators": {
+						"spared": 3
+					}
+				},
+				{
+					"requires_flags": [
+						"act4.father_truth",
+						"vosk.father_proof_found"
+					],
+					"forbidden_flags": [
+						"kremer.arrested"
 					],
 					"min_indicators": {
 						"spared": 3
@@ -66,7 +79,10 @@
 					},
 					"max_indicators": {
 						"suspicion": 70
-					}
+					},
+					"forbidden_flags": [
+						"heure_juste.network_hit"
+					]
 				},
 				{
 					"requires_flags": [
@@ -78,7 +94,10 @@
 					},
 					"max_indicators": {
 						"suspicion": 70
-					}
+					},
+					"forbidden_flags": [
+						"heure_juste.network_hit"
+					]
 				}
 			],
 			"lines": [
@@ -98,6 +117,15 @@
 					],
 					"min_indicators": {
 						"loyalty": 70
+					}
+				},
+				{
+					"requires_flags": [
+						"act4.mirror_signed_clean",
+						"career.act3_promoted"
+					],
+					"min_indicators": {
+						"loyalty": 60
 					}
 				}
 			],
