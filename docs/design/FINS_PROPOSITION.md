@@ -36,6 +36,9 @@ Remarques :
   `milice.ally`, qu'on n'obtient qu'en acceptant le marché d'ORLIK au téléphone :
   c'est un choix, plus un simple classement. Le robot de partie montrait 140 parties
   sur 1 100 où le Miroir cachait une alliance choisie.
+- 08.11 : troisième voie vers La Correction, la salle 3 (dossier 60003) : la pendule
+  et le registre trouvés (`vosk.salle3_clock` + `vosk.salle3_register`), avec
+  `act4.father_truth`, sans `kremer.arrested`.
 - L'ordre place les fins « rares/méritées » avant les fins « par excès »
   (54100) et la fin par défaut (Le Silence) en dernier, conforme
   à l'esprit du canon (« Le Silence » = défaut).

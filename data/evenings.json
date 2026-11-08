@@ -4,13 +4,35 @@
 	"places": {
 		"_comment": "Lieux des soirées (piste 4, 08.11). Chaque action se passe dans un lieu : clé place de l'action, sinon celui de son kind (by_kind), sinon la cuisine. L'image vient de l'emplacement slot (data/images.json) ; absente, on garde le fond de la cuisine.",
 		"default": "kitchen",
-		"by_kind": {"radio": "kitchen", "work": "kitchen", "lena": "kitchen", "adler": "lodge", "visit": "landing", "civic": "courtyard"},
+		"by_kind": {
+			"radio": "kitchen",
+			"work": "kitchen",
+			"lena": "kitchen",
+			"adler": "lodge",
+			"visit": "landing",
+			"civic": "courtyard"
+		},
 		"list": {
-			"kitchen": {"label": "LA CUISINE", "slot": "evening_kitchen"},
-			"lodge": {"label": "LA LOGE DE M. ADLER", "slot": "evening_lodge"},
-			"booth": {"label": "LA CABINE DU HALL", "slot": "evening_booth"},
-			"landing": {"label": "LE PALIER", "slot": "evening_landing"},
-			"courtyard": {"label": "LA COUR DE L'IMMEUBLE", "slot": "evening_courtyard"}
+			"kitchen": {
+				"label": "LA CUISINE",
+				"slot": "evening_kitchen"
+			},
+			"lodge": {
+				"label": "LA LOGE DE M. ADLER",
+				"slot": "evening_lodge"
+			},
+			"booth": {
+				"label": "LA CABINE DU HALL",
+				"slot": "evening_booth"
+			},
+			"landing": {
+				"label": "LE PALIER",
+				"slot": "evening_landing"
+			},
+			"courtyard": {
+				"label": "LA COUR DE L'IMMEUBLE",
+				"slot": "evening_courtyard"
+			}
 		}
 	},
 	"overtime": {
@@ -1528,6 +1550,14 @@
 						]
 					},
 					"text": "Mme BRANDT a fait poser un second verrou. Ce soir, pour la première fois, sa porte reste fermée quand vous passez. Vous l'entendez taper à la machine très tard."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"brandt.threatened"
+						]
+					},
+					"text": "Sous votre porte, une chemise vide, sans nom. Le dossier 54100 a dû changer de couverture : l'ancienne était devenue trop mince."
 				}
 			]
 		},
@@ -1598,6 +1628,14 @@
 						]
 					},
 					"text": "Dans l'escalier, vous vous surprenez à murmurer les derniers vers de « Halina ». Vous vous taisez. Au palier du dessus, quelqu'un les termine à votre place."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"brandt.held_too"
+						]
+					},
+					"text": "Sous votre porte, une seule ligne tapée à la machine : « Eux aussi relisent mes notes. I. B. » Le papier est celui de la Section."
 				}
 			]
 		}

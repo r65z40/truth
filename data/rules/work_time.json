@@ -10,6 +10,7 @@
 		"verify_archive": 2,
 		"interrogate": 2,
 		"meet_informant": 2,
-		"search_home": 2
+		"search_home": 2,
+		"corridor_talk": 1
 	}
 }

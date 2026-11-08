@@ -37,6 +37,16 @@
 					"min_indicators": {
 						"spared": 3
 					}
+				},
+				{
+					"requires_flags": [
+						"act4.father_truth",
+						"vosk.salle3_clock",
+						"vosk.salle3_register"
+					],
+					"forbidden_flags": [
+						"kremer.arrested"
+					]
 				}
 			],
 			"lines": [

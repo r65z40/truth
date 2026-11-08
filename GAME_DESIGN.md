@@ -260,5 +260,9 @@ le refus est mémorisé (`career.refused_promotion`).
   au téléphone) ; soirées « profil bas » ; la lettre de dénonciation du jour 16
   parle de la radio seulement si on l'a écoutée ; répertoire des personnes croisées
   dans le menu MINISTÈRE (rôle révélé au fil des drapeaux, jamais avant).
+- 2026-11-08 (suite) : les soirées ont des lieux ; une quinzaine de choix oubliés
+  ont une suite visible ; deux scènes : BRANDT vous interroge dans le couloir
+  (votre sang-froid), et la salle 3 où l'horloge retardait en 1971 (troisième
+  voie vers La Correction).
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

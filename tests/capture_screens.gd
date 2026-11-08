@@ -432,6 +432,23 @@ func _capture_new_mechanics() -> void:
 	desk.people_screen.open()
 	await _snap("60_repertoire")
 	desk.people_screen.close()
+	# Piste 5 : BRANDT dans le couloir, puis la salle 3 à la lampe.
+	GameState.assign_case("54100")
+	GameState.flags["54100.consulted"] = true
+	desk.open_field("54100")
+	desk.field_screen.choose("o_father")
+	await _snap("62_couloir_brandt", 1.0)
+	desk.field_screen.get_node("%LeaveButton").pressed.emit()
+	desk.field_screen.get_node("%LeaveButton").pressed.emit()
+	desk.windows.dossiers.close()
+	GameState.day_index = 17
+	GameState.assign_case("60003")
+	desk.open_field("60003")
+	desk.field_screen.choose("clock")
+	await _snap("63_salle_3", 1.0)
+	desk.field_screen.get_node("%LeaveButton").pressed.emit()
+	desk.field_screen.get_node("%LeaveButton").pressed.emit()
+	desk.windows.dossiers.close()
 	desk.queue_free()
 	# Soirée avec « faire profil bas » (jour 5).
 	GameState.new_game()

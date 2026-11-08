@@ -249,6 +249,67 @@
 					"quote": "Il sait qui le tient"
 				}
 			]
+		},
+		{
+			"id": "corridor_note",
+			"type": "report",
+			"title": "Note personnelle : l'entretien du couloir",
+			"source": "Notes de l'inspecteur A. VOSK, hors procédure",
+			"reliability": "B",
+			"date": "1986-11-20",
+			"conditions": {
+				"requires_flags": [
+					"field.corridor_54100.started"
+				]
+			},
+			"veritas_remark": "Note privée de l'agent. Non versée.",
+			"body": "Ce que Mme BRANDT a dit, recopié le soir même :",
+			"facts": [
+				{
+					"id": "f_cor_hours",
+					"key": "brandt.watch_hours",
+					"value": "Elle connaît vos horaires et votre trajet",
+					"label": "BRANDT connaît vos horaires et votre trajet par le quai",
+					"conditions": {
+						"requires_flags": [
+							"field.corridor_54100.o_listen"
+						]
+					}
+				},
+				{
+					"id": "f_cor_booth",
+					"key": "brandt.watch_booth",
+					"value": "La cabine du hall est écoutée",
+					"label": "BRANDT sait ce que vous avez dit à Lena depuis la cabine du hall",
+					"conditions": {
+						"requires_flags": [
+							"brandt.caught_lying"
+						]
+					}
+				},
+				{
+					"id": "f_cor_salle3",
+					"key": "vosk.salle3",
+					"value": "La salle 3, où l'horloge retarde",
+					"label": "BRANDT : dans la salle 3, au deuxième, l'horloge retarde ; votre père l'avait mesurée",
+					"conditions": {
+						"requires_flags": [
+							"field.corridor_54100.o_father"
+						]
+					}
+				},
+				{
+					"id": "f_cor_held",
+					"key": "brandt.held",
+					"value": "BRANDT aussi est tenue",
+					"label": "BRANDT aussi a un dossier : « Nous sommes tous tenus »",
+					"conditions": {
+						"requires_flags": [
+							"brandt.held_too"
+						]
+					}
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -302,5 +363,6 @@
 			"brandt_i",
 			"vosk_pere"
 		]
-	}
+	},
+	"field_scene": "corridor_54100"
 }

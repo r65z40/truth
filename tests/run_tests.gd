@@ -180,6 +180,8 @@ func _run() -> void:
 		"test_people_directory",
 		"test_flag_followups",
 		"test_evening_places",
+		"test_field_corridor_brandt",
+		"test_field_room_60003",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -5121,4 +5123,65 @@ func test_evening_places() -> void:
 	screen.choose("adler_0")
 	check(screen.place == "lodge" and screen.get_node("%PlaceLabel").text.contains("ADLER"), "le résultat se lit dans la loge d'ADLER")
 	screen.queue_free()
+	GameState.new_game()
+
+
+## Piste 5 (08.11) : BRANDT vous interroge dans le couloir (54100). La tension
+## mesure votre sang-froid ; retourner la question demande de rester calme.
+func test_field_corridor_brandt() -> void:
+	GameState.new_game()
+	GameState.day_index = 13
+	GameState.assign_case("54100")
+	check(not GameState.can_start_field("54100"), "couloir : pas avant d'avoir consulté le 54100")
+	GameState.flags["54100.consulted"] = true
+	check(GameState.can_start_field("54100"), "couloir : ouvert après consultation")
+	var hours := GameState.hours_used
+	var scene := GameState.start_field("54100")
+	check(scene.id == "corridor_54100" and GameState.hours_used == hours + 1, "couloir : une heure de service")
+	var ids := func() -> Array: return GameState.get_field_options("corridor_54100").map(func(o: Dictionary) -> String: return o.id)
+	check("o_lena" in ids.call() and not "o_lena_lie" in ids.call() and not "o_threat" in ids.call(), "couloir : options selon vos soirées")
+	check("o_turn" in ids.call(), "calme (60) : on peut retourner la question")
+	GameState.field_choose("corridor_54100", "o_father")
+	check(GameState.field_composure("corridor_54100") == 50 and not "o_turn" in ids.call(), "parler du père vous ébranle : plus de riposte")
+	check(GameState.flags.get("brandt.hinted_salle3", false) and "f_cor_salle3" in GameState.get_case_state("54100").noted_facts, "BRANDT indique la salle 3")
+	GameState.field_choose("corridor_54100", "o_listen")
+	check("o_turn" in ids.call(), "en l'écoutant, vous reprenez votre calme")
+	GameState.field_choose("corridor_54100", "o_turn")
+	check(GameState.flags.get("brandt.held_too", false), "BRANDT aussi est tenue")
+	var docs: Array = GameState.get_case_view("54100").documents.map(func(d: Dictionary) -> String: return d.id)
+	check("corridor_note" in docs, "la note d'entretien rejoint le 54100")
+	GameState.new_game()
+	GameState.day_index = 13
+	GameState.assign_case("54100")
+	GameState.flags.merge({"54100.consulted": true, "lena.father_1971_told": true, "brandt.revealed": true})
+	GameState.start_field("54100")
+	var suspicion := GameState.get_indicator("suspicion")
+	check("o_lena_lie" in ids.call() and not "o_lena" in ids.call(), "après l'appel de Lena : le mensonge se voit")
+	GameState.field_choose("corridor_54100", "o_lena_lie")
+	check(GameState.get_indicator("suspicion") > suspicion and GameState.flags.get("brandt.caught_lying", false), "pris à mentir : suspicion")
+	var result := GameState.field_choose("corridor_54100", "o_threat")
+	check(result.finished and GameState.flags.get("brandt.threatened", false), "la menace clôt l'entretien")
+	GameState.new_game()
+
+
+## Piste 5 (08.11) : la salle d'audition vide (60003), troisième voie vers La Correction.
+func test_field_room_60003() -> void:
+	GameState.new_game()
+	GameState.day_index = 17
+	GameState.assign_case("60003")
+	check(GameState.can_start_field("60003"), "salle 3 : ouverte tant que le 60003 n'est pas signé")
+	var scene := GameState.start_field("60003")
+	check(FieldRules.has_darkness(scene) and scene.id == "room_60003", "salle 3 : à la lampe")
+	GameState.field_choose("room_60003", "clock")
+	GameState.field_choose("room_60003", "register")
+	check(GameState.flags.get("vosk.salle3_clock", false) and GameState.flags.get("vosk.salle3_register", false), "pendule et registre trouvés")
+	var docs: Array = GameState.get_case_view("60003").documents.map(func(d: Dictionary) -> String: return d.id)
+	check("salle3_report" in docs, "le procès-verbal de la salle 3 rejoint le 60003")
+	var flags := {"act4.father_truth": true, "vosk.salle3_clock": true, "vosk.salle3_register": true}
+	check(EndingRules.resolve({"flags": flags, "indicators": {"suspicion": 50}}).id == "fin_correction", "salle 3 + vérité du père : La Correction")
+	flags["kremer.arrested"] = true
+	check(EndingRules.resolve({"flags": flags, "indicators": {"suspicion": 50}}).id != "fin_correction", "pas de Correction si KREMER a été arrêté")
+	flags.erase("kremer.arrested")
+	flags.erase("vosk.salle3_register")
+	check(EndingRules.resolve({"flags": flags, "indicators": {"suspicion": 50}}).id != "fin_correction", "la pendule seule ne suffit pas")
 	GameState.new_game()

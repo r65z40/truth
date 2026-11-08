@@ -1,0 +1,17 @@
+{
+	"_note": "Traduction anglaise de data/field/room_60003.json : texte français -> texte anglais.",
+	"SALLE 3": "ROOM 3",
+	"VISITE  //  SALLE 3, DEUXIÈME ÉTAGE": "VISIT  //  ROOM 3, SECOND FLOOR",
+	"Vous éclairez : ": "You shine the light on: ",
+	"%d endroit(s) à examiner": "%d place(s) to examine",
+	"Salle 3, deuxième étage. On n'y interroge plus personne depuis que la Section a déménagé ses auditions au sous-sol. Le courant est coupé ; la clé était sur la porte.\n\nTrois endroits, peut-être quatre, avant que le gardien ne remonte. C'est ici que l'on amenait les gens, en mars 1971, les soirs où l'horloge retardait.": "Room 3, second floor. Nobody has been questioned here since the Section moved its interviews to the basement. The power is off; the key was in the door.\n\nThree places, perhaps four, before the caretaker comes back up. This is where people were brought in March 1971, on the evenings the clock ran slow.",
+	"La pendule murale": "The wall clock",
+	"Elle retarde de douze minutes sur votre montre. Sous le cadran, une plaque : « Réglée par ordre du cabinet. Ne pas toucher. » Sous la plaque, gratté dans le laiton : « A. V. 9.3.71 ». Votre père a ouvert cette pendule.": "It runs twelve minutes slow against your watch. Under the dial, a plate: \"Set by order of the Cabinet. Do not touch.\" Under the plate, scratched into the brass: \"A. V. 9.3.71\". Your father opened this clock.",
+	"Le registre des passages, dans le classeur": "The visitors' register, in the filing cabinet",
+	"Mars 1971. Les soirs du 2, du 9 et du 16, les heures de sortie notées ici ne collent pas avec celles du couloir : douze minutes d'écart, chaque fois. Douze minutes pendant lesquelles, sur le papier, personne n'était dans la salle. Les sorties sont toutes signées de la même main.": "March 1971. On the evenings of the 2nd, 9th and 16th, the exit times written here don't match the corridor's: twelve minutes apart, every time. Twelve minutes during which, on paper, nobody was in the room. The exits are all signed in the same hand.",
+	"La table vissée au sol": "The table bolted to the floor",
+	"Des initiales, des dates, gravées au canif par des mains qui attendaient. Parmi elles, en petites capitales appliquées : « 16.3 : L'HORLOGE MENT ».": "Initials, dates, carved with a penknife by hands that were waiting. Among them, in small careful capitals: \"16.3: THE CLOCK LIES\".",
+	"La vitre sans tain": "The one-way mirror",
+	"Derrière la vitre, la salle d'observation, vide. Une chaise tournée vers vous, un pied de caméra sans caméra. D'ici, on regardait. Vous vous demandez de quel côté de la vitre votre père s'est assis.": "Behind the glass, the observation room, empty. A chair turned towards you, a camera tripod without a camera. From there, they watched. You wonder which side of the glass your father sat on.",
+	"Vous refermez la salle 3. Dans le couloir, la pendule de la Section marque la même heure que votre montre. Celle de la salle, derrière la porte, continue de retarder pour personne.": "You lock Room 3 again. In the corridor, the Section clock shows the same time as your watch. The one in the room, behind the door, goes on running slow for nobody."
+}

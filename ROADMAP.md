@@ -151,7 +151,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Traces sur le bureau des nouvelles scènes (chemise du père, encre verte, carnet de Mira, notes du père, cahier « exploité »)
 - [ ] Images de l'atelier d'ADLER à livrer (`search_54030_atelier.webp`, `search_54030_arriere.webp`) ; décors dessinés en attendant
 - [x] Suites du cahier de L'HEURE JUSTE versé au dossier : opération CADRAN (acte 4), ateliers scellés le soir 17, lettre de la femme d'un cheminot au tri du jour 16
-- [ ] Autres idées gardées (doc du 27.10) : BRANDT qui vous interroge dans le couloir, la salle d'audition vide (MIROIR), l'escalier de l'immeuble, la filature, la table d'écoute
+- [x] BRANDT vous interroge dans le couloir (54100, 08.11) : rôles inversés, la tension mesure
+      votre sang-froid ; elle indique la salle 3
+- [x] La salle d'audition vide (salle 3, 60003, 08.11) : fouille à la lampe ; pendule + registre
+      = troisième voie vers La Correction (avec la vérité du père, sans KREMER arrêté)
+- [ ] Idées encore gardées : la filature (53517), la table d'écoute (nuit de la Centrale) ;
+      images à fournir
 - [ ] Repositionner finement les zones des autres scènes (51307, 52044, 52310, 53517) avec l'éditeur
 - [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
 - [ ] Décors 3D de la boulangerie n° 12 et de l'appartement 40

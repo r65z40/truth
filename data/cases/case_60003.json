@@ -181,6 +181,56 @@
 					"quote": "À réexaminer selon la rédaction du dossier 60003."
 				}
 			]
+		},
+		{
+			"id": "salle3_report",
+			"type": "report",
+			"title": "Procès-verbal de visite : salle 3",
+			"source": "Section 4, visite conduite par l'inspecteur A. VOSK",
+			"reliability": "B",
+			"date": "1986-12-03",
+			"conditions": {
+				"requires_flags": [
+					"field.room_60003.started"
+				]
+			},
+			"veritas_remark": "Constat matériel dans un local désaffecté. Le module ne relie pas ces éléments au dossier de 1971.",
+			"body": "Visite de la salle 3 (deuxième étage), désaffectée. Constatations :",
+			"facts": [
+				{
+					"id": "f_s3_clock",
+					"key": "vosk.salle3_clock",
+					"value": "La pendule retarde de 12 min, ouverte par A. V. le 9.3.71",
+					"label": "Salle 3 : la pendule retarde de douze minutes « par ordre du cabinet » ; votre père l'a ouverte le 9 mars 1971",
+					"conditions": {
+						"requires_flags": [
+							"vosk.salle3_clock"
+						]
+					}
+				},
+				{
+					"id": "f_s3_register",
+					"key": "vosk.salle3_register",
+					"value": "Douze minutes effacées les 2, 9 et 16 mars 1971",
+					"label": "Registre de la salle 3 : douze minutes d'écart les soirs du 2, du 9 et du 16 mars 1971",
+					"conditions": {
+						"requires_flags": [
+							"vosk.salle3_register"
+						]
+					}
+				},
+				{
+					"id": "f_s3_table",
+					"key": "vosk.salle3_table",
+					"value": "« 16.3 : L'HORLOGE MENT »",
+					"label": "Gravé dans la table de la salle 3 : « 16.3 : L'HORLOGE MENT »",
+					"conditions": {
+						"requires_flags": [
+							"field.room_60003.table"
+						]
+					}
+				}
+			]
 		}
 	],
 	"decisions": [
@@ -322,5 +372,6 @@
 		"from": "(aucun supérieur à consulter — ils attendent tous votre signature)",
 		"subject": "Dossier du père : il n'y a personne à qui demander",
 		"body": "Vous cherchez à qui poser la question. MAZUR n'est plus là. KREMER est au sous-sol, ou en fuite. ADLER s'est tu.\n\nIl ne reste que vous, la plume, et un dossier scellé depuis quinze ans qui porte votre nom.\n\nCelui-là, vous le signez seul."
-	}
+	},
+	"field_scene": "room_60003"
 }
