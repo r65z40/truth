@@ -35,7 +35,7 @@
 		},
 		{
 			"id": "kremer_call",
-			"conditions": {"min_day": 11, "requires_flags": ["kremer.contact"]},
+			"conditions": {"min_day": 11, "requires_flags": ["kremer.contact"], "forbidden_flags": ["kremer.arrested"]},
 			"caller": "Poste intérieur, sous-sol B",
 			"text": "« Pas de nom. Vous reconnaissez ma voix. Ce que vous cherchez sur votre père n'est pas dans les dossiers qu'on vous donne. Il est dans ceux qu'on ne vous donne pas. Ne me rappelez pas. »",
 			"answers": [

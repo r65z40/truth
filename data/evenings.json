@@ -1022,7 +1022,7 @@
 					"description": "Sur le palier, impossible de l'éviter.",
 					"conditions": {
 						"requires_flags": [
-							"brandt.revealed"
+							"54100.consulted"
 						]
 					},
 					"results": [

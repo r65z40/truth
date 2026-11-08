@@ -1,11 +1,11 @@
 {
 	"id": "54012",
 	"title": "Citoyen n° 54012",
-	"subject_name": "REIS, Tomas",
+	"subject_name": "REIS, Emil",
 	"summary": "Seul survivant posté près de la chaudière n° 2 lors de l'explosion. À l'hôpital, brûlé. Sa déposition, recueillie par la Milice, désigne un sabotage.",
 	"briefing": {
 		"objective": "Apprécier la valeur de la déposition du témoin REIS : a-t-il vraiment vu un sabotage, ou sa parole a-t-elle été recueillie quand il ne pouvait pas la donner ?",
-		"context": "Tomas REIS, chauffeur de nuit, a été projeté hors de l'atelier. La brigade du capitaine ORLIK a recueilli sa déposition à l'hôpital. Elle désigne la chaudière sabotée, et une silhouette près d'elle."
+		"context": "Emil REIS, chauffeur de nuit, a été projeté hors de l'atelier. La brigade du capitaine ORLIK a recueilli sa déposition à l'hôpital. Elle désigne la chaudière sabotée, et une silhouette près d'elle."
 	},
 	"questions": [
 		{
@@ -37,7 +37,7 @@
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Acte 3 : la peur. Le témoin dont la parole change selon qui l'a vu avant vous.",
-		"open": "Un seul homme a survécu près de la chaudière : Tomas REIS. Ouvrez sa déposition, dossier 54012.",
+		"open": "Un seul homme a survécu près de la chaudière : Emil REIS. Ouvrez sa déposition, dossier 54012.",
 		"read": "Lisez la déposition recueillie par la Milice, puis la fiche médicale de l'hôpital.",
 		"facts": "La déposition est claire et circonstanciée. La fiche médicale dit qu'au moment où elle a été recueillie, le témoin n'était pas conscient. Notez les deux.",
 		"notebook": "Confrontez l'heure de la déposition « lucide » et l'état du patient à cette heure-là.",
@@ -53,7 +53,7 @@
 			"reliability": "B",
 			"date": "1986-11-17",
 			"author": "Brigade du capitaine L. ORLIK",
-			"body": "Déposition de T. REIS, recueillie le 17.11 à 04 h 00, chambre 7.\n\n« J'étais près de la chaudière. J'ai vu une silhouette la manipuler juste avant. Une personne jeune, de l'atelier. Ça a sifflé, puis tout a sauté. C'était volontaire, j'en suis sûr. »\n\nLe témoin a confirmé et signé. La brigade tient la preuve de l'acte volontaire.",
+			"body": "Déposition de E. REIS, recueillie le 17.11 à 04 h 00, chambre 7.\n\n« J'étais près de la chaudière. J'ai vu une silhouette la manipuler juste avant. Une personne jeune, de l'atelier. Ça a sifflé, puis tout a sauté. C'était volontaire, j'en suis sûr. »\n\nLe témoin a confirmé et signé. La brigade tient la preuve de l'acte volontaire.",
 			"facts": [
 				{
 					"id": "f_depo_sabotage",
@@ -81,7 +81,7 @@
 		{
 			"id": "medical",
 			"type": "report",
-			"title": "Fiche médicale de T. REIS",
+			"title": "Fiche médicale de E. REIS",
 			"source": "Hôpital du District 9, service des grands brûlés",
 			"reliability": "A",
 			"date": "1986-11-17",
@@ -185,7 +185,7 @@
 		{
 			"id": "pv_chevet_reis",
 			"type": "report",
-			"title": "Procès-verbal d'audition au chevet de T. REIS",
+			"title": "Procès-verbal d'audition au chevet de E. REIS",
 			"source": "Section 4, audition conduite par l'inspecteur A. VOSK",
 			"reliability": "B",
 			"date": "1986-11-18",
@@ -195,7 +195,7 @@
 				]
 			},
 			"veritas_remark": "Audition d'un patient fébrile, après réveil. Valeur administrative limitée selon le système.",
-			"body": "Audition de Tomas REIS, hôpital n° 2, chambre 7, en présence de l'infirmière de garde. Déclarations recueillies :",
+			"body": "Audition de Emil REIS, hôpital n° 2, chambre 7, en présence de l'infirmière de garde. Déclarations recueillies :",
 			"facts": [
 				{
 					"id": "f_reis_valve",
@@ -401,7 +401,7 @@
 	},
 	"truth": {
 		"note": "Vérité objective de la simulation. Jamais affichée directement au joueur.",
-		"what_happened": "Tomas REIS, seul survivant près de la chaudière, a été admis inconscient à 02 h 40 et n'a repris connaissance qu'à 10 h 15. La brigade du capitaine ORLIK est entrée dans sa chambre à 03 h 50 et 04 h 30 et lui a fait signer une « déposition » décrivant un sabotage par une « silhouette jeune » — pour désigner Mira SEDLAR et couvrir les réquisitions détournées. Réveillé, REIS ne se souvient de rien et dit la vérité : la soupape sifflait depuis l'automne, personne n'est venu. Le témoignage oculaire du sabotage est une signature arrachée à un homme inconscient.",
+		"what_happened": "Emil REIS, seul survivant près de la chaudière, a été admis inconscient à 02 h 40 et n'a repris connaissance qu'à 10 h 15. La brigade du capitaine ORLIK est entrée dans sa chambre à 03 h 50 et 04 h 30 et lui a fait signer une « déposition » décrivant un sabotage par une « silhouette jeune » — pour désigner Mira SEDLAR et couvrir les réquisitions détournées. Réveillé, REIS ne se souvient de rien et dit la vérité : la soupape sifflait depuis l'automne, personne n'est venu. Le témoignage oculaire du sabotage est une signature arrachée à un homme inconscient.",
 		"involved": [
 			"54012",
 			"54001",

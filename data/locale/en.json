@@ -574,5 +574,7 @@
 	"Le ruban et les certificats ne disent pas la même chose.": "The ribbon and the certificates do not say the same thing.",
 	"Le ruban ne le confirme pas : %d jour(s) manquant(s), %d en trop.": "The ribbon does not confirm it: %d day(s) missing, %d too many.",
 	"Ruban de la pointeuse : dossier n° %s.": "Time clock ribbon: file no. %s.",
-	"%s  //  ruban : %s\ncertificat : %s": "%s  //  ribbon: %s\ncertificate: %s"
+	"%s  //  ruban : %s\ncertificat : %s": "%s  //  ribbon: %s\ncertificate: %s",
+	"Cliquez sur les passages soulignés : ils se rangent sous les questions.": "Click the underlined passages: they file themselves under the questions.",
+	"MINISTÈRE DE LA SÉCURITÉ NATIONALE\nCourrier interne  //  Section 4": "MINISTRY OF NATIONAL SECURITY\nInternal mail  //  Section 4"
 }

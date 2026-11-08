@@ -1,5 +1,5 @@
 {
-	"note": "Audition de T. REIS au chevet, hôpital n° 2, chambre 7 (dossier 54012). Interrogatoire sous tension : le sang-froid de REIS baisse quand on le pousse ; l'aveu sur la nuit ne vient que s'il est ébranlé sans être brisé (requires_composure). Le menacer fait intervenir l'infirmière : la scène s'arrête. Chaque choix pose field.audition_54012.<id> ; les éléments du procès-verbal pv_chevet_reis en dépendent.",
+	"note": "Audition de E. REIS au chevet, hôpital n° 2, chambre 7 (dossier 54012). Interrogatoire sous tension : le sang-froid de REIS baisse quand on le pousse ; l'aveu sur la nuit ne vient que s'il est ébranlé sans être brisé (requires_composure). Le menacer fait intervenir l'infirmière : la scène s'arrête. Chaque choix pose field.audition_54012.<id> ; les éléments du procès-verbal pv_chevet_reis en dépendent.",
 	"id": "audition_54012",
 	"case_id": "54012",
 	"type": "interrogation",
@@ -19,7 +19,7 @@
 		"54012.bedside_visited": true
 	},
 	"subject": {
-		"name": "T. REIS",
+		"name": "E. REIS",
 		"photo": {
 			"face": "long",
 			"hair": "short",
@@ -32,7 +32,7 @@
 		"start": 60,
 		"label": "Sang-froid de REIS"
 	},
-	"intro": "Chambre 7. Une ampoule nue, une perfusion qui goutte, l'odeur de la pommade sur les brûlures. Tomas REIS s'est redressé en vous voyant entrer ; le mouvement lui a coûté.\n\nL'infirmière reste sur le seuil. « Cinq minutes. Il n'a pas dormi depuis qu'ils sont venus la première fois. »",
+	"intro": "Chambre 7. Une ampoule nue, une perfusion qui goutte, l'odeur de la pommade sur les brûlures. Emil REIS s'est redressé en vous voyant entrer ; le mouvement lui a coûté.\n\nL'infirmière reste sur le seuil. « Cinq minutes. Il n'a pas dormi depuis qu'ils sont venus la première fois. »",
 	"present_default": "REIS regarde le papier sans le lire. « Je ne sais pas, inspecteur. Je ne sais plus ce qui est vrai, avec tout ce qu'on m'a fait signer. »",
 	"options": [
 		{

@@ -174,6 +174,7 @@ func _run() -> void:
 		"test_playthrough_bot",
 		"test_screen_fit",
 		"test_main_menu_short_screen",
+		"test_english_content_complete",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -4931,3 +4932,32 @@ func test_main_menu_short_screen() -> void:
 	check(desk.get_node("%DossiersButton") != null, "les icônes gardent leur nom unique")
 	desk.queue_free()
 	await get_tree().process_frame
+
+
+## Version anglaise complète : tout texte de contenu (au moins 25 caractères,
+## avec une espace) a sa traduction. Les notes de conception (note, _comment,
+## usage des médias) sont exclues. Un texte français modifié sans mettre à jour
+## sa traduction ressortirait ici.
+func test_english_content_complete() -> void:
+	Localization.set_locale("en")
+	var missing: Array = []
+	for path in Localization._json_files("res://data"):
+		if path.contains("/locale/"):
+			continue
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		_collect_untranslated(parsed, path, missing)
+	check(missing.is_empty(), "contenu entièrement traduit (%d manquant(s)) %s" % [missing.size(), str(missing.slice(0, 5))])
+	Localization.set_locale("fr")
+
+
+func _collect_untranslated(value: Variant, path: String, missing: Array) -> void:
+	if value is Dictionary:
+		for key in value:
+			if not (key.begins_with("_") or key.ends_with("note") or key == "usage"):
+				_collect_untranslated(value[key], path, missing)
+	elif value is Array:
+		for item in value:
+			_collect_untranslated(item, path, missing)
+	elif value is String and value.length() >= 25 and value.contains(" ") \
+			and not DataLoader.translations.has(value):
+		missing.append("%s : %s" % [path.get_file(), value.left(50)])

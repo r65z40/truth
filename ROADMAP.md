@@ -443,6 +443,17 @@ recommandations, et mets en place toutes tes idées ».
 - [ ] Export Android à faire par fen : modèles d'export Godot, SDK Android, clé de signature
 - [ ] Test sur un vrai téléphone (ressenti du toucher, lisibilité)
 
+## Fait : vérification de la traduction et du scénario (demande de fen du 08.11)
+
+- [x] Contenu anglais complet (nouveau test : tout texte de contenu a sa traduction) ;
+      2 textes d'interface ajoutés
+- [x] Anglais harmonisé : guillemets droits, Militia, Internal Review, Reports Bureau,
+      Petitions Bureau, Civilian mail
+- [x] Soirée « Rendre son salut à Mme BRANDT » (jour 13) inatteignable : condition corrigée
+- [x] KREMER n'appelle plus s'il a été arrêté
+- [x] Prénoms en double : REIS devient Emil, l'épouse KRAL Dana, le fils KOVAC Jiri,
+      la dactylo Ilona, la voyageuse du 53402 Livia BENDA
+
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)
 
 - [x] Les papiers de la pendule (`vosk.father_proof_found`) : pièce du 60003 et seconde
