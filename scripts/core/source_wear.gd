@@ -47,7 +47,8 @@ static func rules_for(case_id: String, document: Dictionary, state: Dictionary) 
 	for rule in get_data().get("rules", []):
 		if str(rule.get("caught_in", {}).get("case", "")) == case_id:
 			continue
-		if not str(document.get("source", "")).begins_with(rule.get("source_prefix", "\u0000")):
+		var prefix: String = rule.get("source_prefix", "")
+		if prefix == "" or not str(document.get("source", "")).begins_with(prefix):
 			continue
 		var ids: Array = rule.get("documents", [])
 		if not ids.is_empty() and not document.get("id", "") in ids:

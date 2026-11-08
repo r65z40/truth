@@ -448,7 +448,7 @@ func _refresh_header() -> void:
 func _build_phone() -> void:
 	phone_button = Button.new()
 	phone_button.name = "PhoneButton"
-	phone_button.theme_type_variation = &"AlertButton"
+	phone_button.theme_type_variation = &"EndDayButton"
 	phone_button.text = tr("DÉCROCHER")
 	phone_button.tooltip_text = tr("Le téléphone sonne. Personne ne vous presse.")
 	phone_button.custom_minimum_size = Vector2(0, 44)

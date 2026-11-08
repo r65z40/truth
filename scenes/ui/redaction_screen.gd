@@ -125,8 +125,10 @@ func _refresh() -> void:
 		var blacked: bool = line.id in redacted
 		button.text = RedactionRules.bar(line.text) if blacked else line.text
 		button.tooltip_text = line.text
-		button.toggle_mode = true
-		button.set_pressed_no_signal(blacked)
+		# Ligne noircie : bloc noir du thème (variation RedactedLine), comme un coup
+		# de feutre ; la barre ne transparaît qu'au survol.
+		button.theme_type_variation = &"RedactedLine" if blacked else &""
+		button.set_meta("redacted", blacked)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		button.custom_minimum_size = Vector2(0, 44)

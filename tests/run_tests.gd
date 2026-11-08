@@ -118,6 +118,7 @@ func _run() -> void:
 		"test_phone_calls",
 		"test_foreign_radio",
 		"test_redaction",
+		"test_embedded_font",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -3030,7 +3031,7 @@ func test_redaction() -> void:
 	screen.toggle("profile")
 	await get_tree().process_frame
 	var line_button: Button = screen.find_child("Line_profile", true, false)
-	check(line_button.button_pressed and line_button.text.begins_with("█"), "ligne noircie à l'écran")
+	check(line_button.get_meta("redacted") and line_button.text.begins_with("█"), "ligne noircie à l'écran")
 	screen.sign()
 	check(not GameState.can_decide("60001") and not screen.visible, "signer le caviardage conclut le dossier")
 	screen.queue_free()
@@ -3039,6 +3040,16 @@ func test_redaction() -> void:
 		for line in RedactionRules.get_redaction(CaseLibrary.get_case(case_id)).lines:
 			check(translations.has(line.text), "ligne traduite : %s/%s" % [case_id, line.id])
 	GameState.new_game()
+
+
+## Police embarquée : le jeu ne dépend plus des polices installées sur la machine.
+func test_embedded_font() -> void:
+	var theme: Theme = load("res://ui/theme/ministry_theme.tres")
+	var font := theme.default_font as FontVariation
+	check(font != null and font.base_font.resource_path == "res://assets/fonts/IBMPlexMono-Medium.woff2", "police par défaut : IBM Plex Mono embarquée")
+	check(not font.fallbacks.is_empty(), "polices du système en secours pour les signes absents")
+	check(FileAccess.file_exists("res://assets/fonts/OFL-IBM-Plex.txt"), "licence de la police jointe")
+	check(FileAccess.file_exists("res://export_presets.cfg"), "préréglage d'export présent")
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier

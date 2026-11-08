@@ -333,6 +333,7 @@ func _capture_all() -> void:
 	desk.comparison_screen.get_node("%CloseButton").pressed.emit()
 	await get_tree().process_frame
 	desk.queue_free()
+	await _capture_new_mechanics()
 	# Socle de traduction : l'interface bascule en anglais (contenu des dossiers en repli FR).
 	Localization.set_locale("en")
 	var menu_en: Node = load("res://scenes/main_menu/main_menu.tscn").instantiate()
@@ -369,6 +370,46 @@ func _capture_all() -> void:
 	await _snap("46_galerie_medias")
 	gallery.queue_free()
 	get_tree().quit()
+
+
+## Mécaniques du 08.11 : téléphone, dossier urgent, source usée, caviardage, radio.
+func _capture_new_mechanics() -> void:
+	GameState.new_game()
+	GameState.day_index = 2
+	var desk: Node = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	await _snap("52_telephone_sonne", 1.0)
+	desk.open_phone()
+	await _snap("52b_telephone_appel")
+	desk.phone_screen.choose("honest")
+	await _snap("52c_telephone_reponse")
+	desk.phone_screen.close()
+	GameState.day_index = 7
+	GameState.get_case_state("53118").contradictions_found = ["choir.curfew"]
+	GameState.assign_case("53402")
+	GameState.assign_case("53190")
+	desk.open_app("dossiers")
+	desk.windows.dossiers.select_case("53402")
+	await _snap("53_dossier_urgent")
+	desk.windows.dossiers.select_case("53190")
+	desk.windows.dossiers.select_document("signalement")
+	await _snap("54_source_usee")
+	GameState.assign_case("60001")
+	GameState.toggle_redaction("60001", "trip")
+	GameState.toggle_redaction("60001", "profile")
+	desk.open_redaction("60001")
+	await _snap("55_caviardage")
+	desk.redaction_screen.close()
+	desk.queue_free()
+	GameState.new_game()
+	var evening: Node = load("res://scenes/evening/evening_screen.tscn").instantiate()
+	get_tree().root.add_child(evening)
+	evening.open()
+	evening.ask_volume("radio_0")
+	await _snap("56_radio_volume")
+	evening.choose("radio_0", RadioRules.LOW)
+	await _snap("56b_radio_bas")
+	evening.queue_free()
 
 
 func _wait(seconds: float) -> void:
