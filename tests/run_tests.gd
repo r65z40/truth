@@ -182,6 +182,7 @@ func _run() -> void:
 		"test_evening_places",
 		"test_field_corridor_brandt",
 		"test_field_room_60003",
+		"test_confidential_archive",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -5184,4 +5185,42 @@ func test_field_room_60003() -> void:
 	flags.erase("kremer.arrested")
 	flags.erase("vosk.salle3_register")
 	check(EndingRules.resolve({"flags": flags, "indicators": {"suspicion": 50}}).id != "fin_correction", "la pendule seule ne suffit pas")
+	GameState.new_game()
+
+
+## Piste 7 (08.11) : l'archive confidentielle de la 2e classe, une par jour ;
+## sans le grade, une seule fois par KREMER s'il a été couvert.
+func test_confidential_archive() -> void:
+	check(Career.confidential_access(Career.Rank.INSPECTOR, {}, false) == "", "3e classe : pas d'archive confidentielle")
+	check(Career.confidential_access(Career.Rank.INSPECTOR_2ND, {}, false) == "rank", "2e classe : accès")
+	check(Career.confidential_access(Career.Rank.INSPECTOR_2ND, {}, true) == "", "une seule par jour")
+	check(Career.confidential_access(Career.Rank.INSPECTOR, {"kremer.protected": true}, false) == "kremer", "KREMER couvert : une porte")
+	check(Career.confidential_access(Career.Rank.INSPECTOR, {"kremer.protected": true, "kremer.archive_used": true}, false) == "", "la porte de KREMER ne sert qu'une fois")
+	var confidential := 0
+	for case_id in ["53402", "53517", "53118", "53760"]:
+		for document in CaseLibrary.get_case(case_id).documents:
+			if document.get("request", {}).get("confidential", false):
+				confidential += 1
+	check(confidential == 4, "une archive confidentielle par dossier de l'acte 2")
+	GameState.new_game()
+	GameState.day_index = 6
+	GameState.assign_case("53402")
+	GameState.assign_case("53517")
+	var ids := func(case_id: String) -> Array:
+		return GameState.get_requestable_documents(case_id).map(func(d: Dictionary) -> String: return d.id)
+	check(not "border_register" in ids.call("53402"), "3e classe : le registre de Brenec n'est pas demandable")
+	check(not GameState.request_document("53402", "border_register"), "3e classe : demande refusée")
+	GameState.player.rank = Career.Rank.INSPECTOR_2ND
+	check("border_register" in ids.call("53402"), "2e classe : le registre de Brenec est demandable")
+	var suspicion := GameState.get_indicator("suspicion")
+	check(GameState.request_document("53402", "border_register"), "2e classe : demande acceptée")
+	check(GameState.get_indicator("suspicion") == suspicion + 1, "une archive confidentielle laisse une trace")
+	check(not "milice_note" in ids.call("53517") and not GameState.request_document("53517", "milice_note"), "pas une deuxième le même jour")
+	GameState.end_day()
+	check("milice_note" in ids.call("53517"), "le lendemain, une autre")
+	GameState.new_game()
+	GameState.day_index = 6
+	GameState.assign_case("53760")
+	GameState.flags["kremer.protected"] = true
+	check(GameState.request_document("53760", "slip_1971") and GameState.flags.get("kremer.archive_used", false), "sans grade : par KREMER")
 	GameState.new_game()

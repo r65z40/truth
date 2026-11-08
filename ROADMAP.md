@@ -76,7 +76,10 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Calendrier en 20 journées de service, ellipses entre les actes
 - [x] Profil du joueur dans `data/campaign.json` (préparation des extensions)
 - [x] Écran de fin d'acte (archive des sujets), commission d'avancement, promotion en 2e classe acceptée ou déclinée
-- [ ] Acte 2 : action « demander une archive confidentielle » débloquée par la 2e classe
+- [x] Acte 2 : « demander une archive confidentielle » débloquée par la 2e classe (08.11) :
+      une par jour, suspicion +1 ; sans le grade, une fois par KREMER s'il a été couvert.
+      Une archive par dossier de l'acte 2 (registre de Brenec, fiche CHAUDRON, fiche de KOLB,
+      bordereau de 1971)
 
 ## En cours : accueil du joueur (demande de fen du 25.10)
 

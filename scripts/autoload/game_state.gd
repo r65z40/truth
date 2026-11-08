@@ -387,10 +387,15 @@ func request_document(case_id: String, document_id: String) -> bool:
 	if not document.has("request") or case_state.requested_documents.has(document_id) \
 			or not is_feature_unlocked("request_document"):
 		return false
+	var request: Dictionary = document.request
+	var access := confidential_access() if request.get("confidential", false) else ""
+	if request.get("confidential", false) and access == "":
+		return false
 	if not spend_time("request_document"):
 		return false
 	case_state.requested_documents[document_id] = day_index
-	var request: Dictionary = document.request
+	if access == "kremer":
+		_set_flag("kremer.archive_used", true)
 	_merge_flags(request.get("flags", {}))
 	_apply_effects(request.get("effects", {}))
 	state_changed.emit()
@@ -427,9 +432,22 @@ func get_requestable_documents(case_id: String) -> Array:
 		if flags.get(refused_flag(case_id, document.id), false):
 			continue
 		if document.has("request") and not case_state.requested_documents.has(document.id) \
-				and EventRules.are_conditions_met(document.get("conditions", {}), get_condition_state()):
+				and EventRules.are_conditions_met(document.get("conditions", {}), get_condition_state()) \
+				and (not document.request.get("confidential", false) or confidential_access() != ""):
 			result.append(document)
 	return result
+
+
+## Accès à une archive confidentielle aujourd'hui : "rank", "kremer" ou "" (Career).
+func confidential_access() -> String:
+	var used_today := false
+	for case_id in cases:
+		var case_data := CaseLibrary.get_case(case_id)
+		for document_id in cases[case_id].get("requested_documents", {}):
+			if int(cases[case_id].requested_documents[document_id]) == day_index \
+					and CaseLibrary.get_document(case_data, document_id).get("request", {}).get("confidential", false):
+				used_today = true
+	return Career.confidential_access(int(player.get("rank", 0)), flags, used_today)
 
 
 ## Consulte le supérieur sur un dossier (une fois par dossier) : message de conseil.

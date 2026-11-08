@@ -585,5 +585,7 @@
 	"AU MINISTÈRE": "AT THE MINISTRY",
 	"PROCHES ET VOISINS": "FAMILY AND NEIGHBOURS",
 	"SUJETS ET TÉMOINS": "SUBJECTS AND WITNESSES",
-	"dossier %s": "file %s"
+	"dossier %s": "file %s",
+	"ARCHIVE CONFIDENTIELLE (%d h)": "CONFIDENTIAL ARCHIVE (%d h)",
+	"Sans le grade, c'est KREMER qui sortira la pièce du sous-sol B : %s. Une seule fois.": "Without the rank, KREMER will bring the document up from basement B: %s. Just this once."
 }

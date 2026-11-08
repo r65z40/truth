@@ -433,6 +433,7 @@ l'exécutable.
 | Tri du courrier (paquets des jours 4, 9, 16) | `data/mail_sorting.json` | `MailSorting`, écran `MailSortScreen` | drapeaux `mail.<lettre>.<verdict>` |
 | Pointeuse (mini-jeu, 51307) | bloc `punch_clock` du dossier | `PunchClockRules`, écran `PunchClockScreen` | contradiction établie |
 | Liens entre les pièces (débutant) | clés des éléments et questions | `CaseSheet.links` | aucun |
+| Archive confidentielle (2e classe) | `"confidential": true` dans le bloc `request` d'une pièce | `Career.confidential_access` (grade, KREMER, une par jour) | `requested_documents` (jour de la demande), drapeau `kremer.archive_used` |
 | Répertoire des personnes (menu MINISTÈRE) | `data/people.json` (dossier, conditions, `updates` de rôle par drapeaux) | `PeopleDirectory`, écran `PeopleScreen` | aucun : déduit des dossiers ouverts, des drapeaux et des décisions |
 
 Écrans posés sur le bureau, construits en code : `PhoneScreen`

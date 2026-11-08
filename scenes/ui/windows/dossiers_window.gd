@@ -795,7 +795,8 @@ func _refresh_actions(can_decide: bool) -> void:
 		_request_button.text = tr("DEMANDE EN COURS")
 		_request_button.tooltip_text = tr("Réponse attendue demain : %s.") % pending[0]
 	else:
-		_request_button.text = tr("DEMANDER (%d h)") % WorkTime.cost("request_document")
+		var confidential: bool = not requestable.is_empty() and requestable[0].request.get("confidential", false)
+		_request_button.text = (tr("ARCHIVE CONFIDENTIELLE (%d h)") if confidential else tr("DEMANDER (%d h)")) % WorkTime.cost("request_document")
 		_request_button.tooltip_text = (tr("Demander une pièce complémentaire, livrée demain : %s.") % requestable[0].request.label) \
 				if not requestable.is_empty() else tr("Aucune pièce complémentaire à demander pour ce dossier.")
 	var consultation: Dictionary = CaseLibrary.get_case(current_case_id).get("consultation", {})
@@ -862,8 +863,12 @@ func request_next_document() -> void:
 	var requestable := GameState.get_requestable_documents(current_case_id)
 	if requestable.is_empty():
 		return
+	var via_kremer: bool = requestable[0].request.get("confidential", false) and GameState.confidential_access() == "kremer"
 	if GameState.request_document(current_case_id, requestable[0].id):
-		notify.emit(tr("Demande transmise : %s. Réponse demain.") % requestable[0].request.label)
+		if via_kremer:
+			notify.emit(tr("Sans le grade, c'est KREMER qui sortira la pièce du sous-sol B : %s. Une seule fois.") % requestable[0].request.label)
+		else:
+			notify.emit(tr("Demande transmise : %s. Réponse demain.") % requestable[0].request.label)
 	else:
 		notify.emit(tr("Plus assez de temps aujourd'hui pour cette demande."))
 	_refresh_all()
