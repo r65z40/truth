@@ -1800,6 +1800,163 @@
 				"subject": "Relecture du rapport n° 53190",
 				"body": "Inspecteur,\n\nLe registre de Saint-Roch et l'état civil concordaient : les cloches sonnaient le glas, et le citoyen KOLB briguait la place du bedeau. Votre rapport a retenu autre chose.\n\nLe Bureau des signalements continue de tenir KOLB pour fiable. C'est désormais en partie votre faute.\n\nContrôle interne, Section 4"
 			}
+		},
+		{
+			"id": "return_40000_regularized",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"40000.regularized"
+				],
+				"forbidden_flags": [
+					"novak.returned"
+				]
+			},
+			"effects": {},
+			"set_flags": [
+				"novak.returned"
+			],
+			"message": {
+				"from": "Ida NOVAK, guichet 3, Registre des résidences",
+				"subject": "Une carte de résidence",
+				"body": "Monsieur l'inspecteur,\n\nVous ne vous souvenez sans doute pas de moi : carte de résidence, rue des Tilleuls, votre tout premier dossier. Vous aviez vérifié au lieu de signer.\n\nJ'ai été embauchée au guichet du Registre le mois dernier. Je vois passer des fiches qu'on corrige le soir, après la fermeture. Je ne sais pas à qui le dire. Je vous le dis.\n\nIda NOVAK"
+			}
+		},
+		{
+			"id": "return_40000_dismissed",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"40000.dismissed_despite"
+				],
+				"forbidden_flags": [
+					"novak.returned"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": [
+				"novak.returned"
+			],
+			"message": {
+				"from": "Bureau des signalements, gare centrale de Velmira",
+				"subject": "Personne sans résidence, n° 40000",
+				"body": "Signalement de routine.\n\nLa citoyenne n° 40000, Ida NOVAK, dort depuis plusieurs nuits dans la salle d'attente de la gare centrale. Sa carte de résidence n'a pas été renouvelée (décision de votre service, dossier 40000).\n\nInterrogée, elle a cité votre matricule. Le Bureau demande s'il convient de l'éloigner du centre.\n\nLe préposé de garde"
+			}
+		},
+		{
+			"id": "return_51307_orlik_back",
+			"conditions": {
+				"min_day": 15,
+				"requires_flags": [
+					"51307.orlik_arrested"
+				],
+				"forbidden_flags": [
+					"orlik.returned"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": [
+				"orlik.returned"
+			],
+			"message": {
+				"from": "B. ORLIK, chef d'équipe, Centrale thermique n° 3",
+				"subject": "(sans objet)",
+				"body": "Libéré mardi. Ordre du Capitaine. Réintégré à mon poste, avec mes certificats.\n\nVous avez fait votre travail. Moi aussi, je ferai le mien.\n\nB. O."
+			}
+		},
+		{
+			"id": "return_52044_kovac_camp",
+			"conditions": {
+				"min_day": 13,
+				"requires_flags": [
+					"52044.baker_arrested"
+				],
+				"forbidden_flags": [
+					"kovac.returned"
+				]
+			},
+			"effects": {},
+			"set_flags": [
+				"kovac.returned"
+			],
+			"message": {
+				"from": "Courrier civil, centre de travail de Dravna (contrôlé)",
+				"subject": "Lettre d'une détenue",
+				"body": "Monsieur,\n\nOn nous laisse écrire une lettre par mois. J'ai choisi de vous écrire à vous, parce qu'ici on m'a dit votre nom.\n\nJe pétris encore. Pour trois cents détenues, avec la farine de cent. Les tickets des morts, je ne les ai jamais encaissés. Mais vous le savez peut-être, maintenant.\n\n[huit lignes caviardées par le contrôle]\n\nZora KOVAC"
+			}
+		},
+		{
+			"id": "return_52310_varga_anthology",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"52310.varga_arrested"
+				],
+				"forbidden_flags": [
+					"varga.returned"
+				]
+			},
+			"effects": {
+				"loyalty": 1
+			},
+			"set_flags": [
+				"varga.returned"
+			],
+			"message": {
+				"from": "Service de la censure, bureau des publications",
+				"subject": "Anthologie officielle 1987",
+				"body": "Inspecteur,\n\nPour information : le poème « Novembre » figurera dans l'Anthologie des poètes du peuple, édition 1987, sous la signature d'un auteur méritant. Le texte a été jugé irréprochable après correction de deux vers.\n\nLe recueil d'origine reste interdit. Son ancien auteur ne sera pas informé.\n\nLe chef de bureau"
+			}
+		},
+		{
+			"id": "return_52310_varga_poem",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"52310.poem_cleared"
+				],
+				"forbidden_flags": [
+					"varga.returned"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": [
+				"varga.returned"
+			],
+			"message": {
+				"from": "T. VARGA, correcteur, Imprimerie d'État n° 2",
+				"subject": "Un poème",
+				"body": "Inspecteur,\n\nVous avez lu mon poème comme un poème. C'est devenu rare.\n\nJ'en ai écrit un autre. Il ne sera jamais imprimé, je le sais. Je vous le recopie quand même, à la main :\n\n    « On a compté mes vers un par un,\n    on cherchait une frontière dans les marges.\n    Quelqu'un, une fois, n'a trouvé que la neige. »\n\nT. V."
+			}
+		},
+		{
+			"id": "return_53402_vrabec_card",
+			"conditions": {
+				"min_day": 16,
+				"requires_flags": [
+					"53402.line_cleared"
+				],
+				"forbidden_flags": [
+					"vrabec.returned"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": [
+				"vrabec.returned"
+			],
+			"message": {
+				"from": "M. VRABEC, aiguilleur, poste de Brenec",
+				"subject": "Une carte postale",
+				"body": "Inspecteur,\n\nUne carte est arrivée de l'autre côté. De mon fils, après cinq ans. Elle a mis trois mois et elle est passée par trois bureaux, mais elle est arrivée.\n\nJe sais que je ne devrais pas vous l'écrire. Je voulais que quelqu'un ici sache que le train de nuit transporte aussi ça.\n\nMarek VRABEC"
+			}
 		}
 	]
 }

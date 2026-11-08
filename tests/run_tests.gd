@@ -112,6 +112,7 @@ func _run() -> void:
 		"test_wrong_version_audit",
 		"test_quick_start",
 		"test_message_tone",
+		"test_returning_citizens",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2839,6 +2840,25 @@ func test_message_tone() -> void:
 	for rule in MessageTone.get_data().rules:
 		check(Localization.load_content_translations("en").has(rule.postscript), "post-scriptum traduit : " + rule.id)
 	GameState.new_game()
+
+
+## Le dossier qui revient : un citoyen jugé tôt réapparaît aux actes 3 et 4.
+func test_returning_citizens() -> void:
+	var ids := func(state: Dictionary) -> Array:
+		return EventRules.due_events(state).map(func(e): return e.id)
+	var early := {"day_index": 12, "flags": {"52044.baker_arrested": true}, "cases": {}, "fired_events": [], "indicators": {}}
+	check(not "return_52044_kovac_camp" in ids.call(early), "pas de retour avant l'acte 3")
+	early.day_index = 13
+	check("return_52044_kovac_camp" in ids.call(early), "boulangère arrêtée : sa lettre arrive du centre de travail")
+	var varga := {"day_index": 14, "flags": {"52310.poem_cleared": true}, "cases": {}, "fired_events": [], "indicators": {}}
+	var due: Array = ids.call(varga)
+	check("return_52310_varga_poem" in due and not "return_52310_varga_anthology" in due, "poème lu comme un poème : VARGA écrit, sans anthologie")
+	varga.fired_events = ["return_52310_varga_poem"]
+	check(not "return_52310_varga_poem" in ids.call(varga), "un retour n'arrive qu'une fois")
+	var translations := Localization.load_content_translations("en")
+	for event in EventRules.get_events():
+		if str(event.id).begins_with("return_"):
+			check(translations.has(event.message.body) and translations.has(event.message.from), "retour traduit : " + event.id)
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier
