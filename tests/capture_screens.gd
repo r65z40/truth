@@ -4,6 +4,9 @@ extends Node
 ##   xvfb-run -s "-screen 0 1280x720x24" godot --path . res://tests/capture_screens.tscn -- <dossier_sortie> [langue]
 ## Les images sont écrites dans <dossier_sortie> (par défaut user://screenshots).
 ## La langue (fr, en) est facultative : par défaut, celle des paramètres.
+## Taille facultative (3e argument, ex. 1200x540) : simule un écran de téléphone
+## ou de tablette (taille logique, après mise à l'échelle). Lancer xvfb avec un
+## écran au moins aussi grand.
 
 var _out_dir := "user://screenshots"
 
@@ -12,8 +15,14 @@ func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if not args.is_empty():
 		_out_dir = args[0]
-	if args.size() > 1:
+	if args.size() > 1 and args[1] != "-":
 		Localization.set_locale(args[1])
+	if args.size() > 2:
+		var parts: PackedStringArray = args[2].split("x")
+		Settings.fullscreen = false
+		Settings.window_size = Vector2i(int(parts[0]), int(parts[1]))
+		DisplayServer.window_set_size(Settings.window_size)
+		get_window().size = Settings.window_size
 	DirAccess.make_dir_recursive_absolute(_out_dir)
 	_capture_all.call_deferred()
 

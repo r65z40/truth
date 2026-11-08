@@ -295,6 +295,17 @@ jamais, même à court d'heures. Le calendrier (`data/calendar.json`) liste les
 20 journées de service et les actes ; `FictionalCalendar.days_since_previous`
 sert aux ellipses (« N jours plus tard »).
 
+## Téléphone et tablette
+
+`ScreenFit` (pur) calcule l'agrandissement d'après la taille et la densité de
+l'écran (160 ppp = 1, sans descendre sous 600 points de haut) ;
+`Settings.device_factor()` l'applique sur mobile, multiplié par « Taille de
+l'interface ». Sous 680 points de haut (`ScreenFit.is_short`), le menu principal
+retire son accroche et le bureau resserre ses icônes, qui défilent
+(`IconsScroll`). Captures à taille téléphone :
+`tests/capture_screens.tscn -- <dossier> - 1333x600`. Préréglage « Android »
+dans `export_presets.cfg` (paysage, arm64, aucune permission).
+
 ## Équilibre et robot de partie
 
 Toute variation d'indicateur passe par `GameState._apply_effects`, qui applique

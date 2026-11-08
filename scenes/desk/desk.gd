@@ -167,6 +167,9 @@ func _ready() -> void:
 	coach.dismissed.connect(_on_coach_dismissed)
 	_build_guide_bar()
 	_build_phone()
+	_scroll_icons()
+	resized.connect(fit_to_screen)
+	fit_to_screen.call_deferred()
 	windows.dossiers.field_requested.connect(open_field)
 	windows.dossiers.comparison_requested.connect(open_comparison)
 	windows.dossiers.timeline_requested.connect(open_timeline)
@@ -506,6 +509,33 @@ func _refresh_phone() -> void:
 	if ringing and not phone_button.visible:
 		Sound.play("phone_ring")
 	phone_button.visible = ringing
+
+
+## Les icônes du bureau défilent si l'écran est trop court : sans cela, leur
+## hauteur poussait la barre des tâches hors de l'écran.
+func _scroll_icons() -> void:
+	var icons := get_node("Main/Body/Icons") as MarginContainer
+	var list := icons.get_node("List") as Control
+	var scroll := ScrollContainer.new()
+	scroll.name = "IconsScroll"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	scroll.mouse_filter = Control.MOUSE_FILTER_PASS
+	# Hauteur plancher : la zone de travail garde de quoi poser une fenêtre.
+	scroll.custom_minimum_size.y = 300.0
+	icons.add_child(scroll)
+	# reparent garde le propriétaire : les noms uniques (%DossiersButton...) restent valides.
+	list.reparent(scroll, false)
+
+
+## Écran court (téléphone à l'horizontale, ~600 points de haut) : les icônes du
+## bureau se resserrent pour que la barre des tâches (FIN DE SERVICE) reste visible.
+func fit_to_screen() -> void:
+	var short := ScreenFit.is_short(size)
+	var list := get_node("Main/Body/Icons/IconsScroll/List") as VBoxContainer
+	list.add_theme_constant_override("separation", 0 if short else 6)
+	for icon in list.get_children():
+		(icon as Control).custom_minimum_size.y = 72.0 if short else 86.0
 
 
 ## Bandeau d'aide permanent, posé en haut du bureau pendant l'apprentissage.

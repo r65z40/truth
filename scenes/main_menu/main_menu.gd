@@ -38,7 +38,22 @@ func _ready() -> void:
 	%DifficultyPanel.hide()
 	_build_start_act_row()
 	_error_label.text = ""
+	resized.connect(fit_to_screen)
+	fit_to_screen()
 	refresh()
+
+
+## Écran court (téléphone à l'horizontale) : on retire l'accroche et la ligne
+## du haut, on resserre les boutons, pour que tout tienne sans rogner le titre.
+func fit_to_screen() -> void:
+	var short := ScreenFit.is_short(size)
+	for node_name in ["Overline", "Pitch", "Gap"]:
+		var node := get_node_or_null("Center/Column/" + node_name) as Control
+		if node:
+			node.visible = not short
+	$Center/Column.add_theme_constant_override("separation", 6 if short else 12)
+	for button in [%NewGameButton, _continue_button, %SettingsButton, %GalleryButton, _quit_button]:
+		(button as Control).custom_minimum_size.y = 48 if short else 54
 
 
 ## Départ rapide, proposé une fois une fin découverte : commencer à l'acte 2, 3 ou 4.

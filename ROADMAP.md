@@ -434,7 +434,14 @@ recommandations, et mets en place toutes tes idées ».
 - [x] Équilibre : la suspicion saturait à 100 dès qu'on ne suivait pas VERITAS ;
       L'HEURE JUSTE et LE SILENCE : 2 parties sur 1 100. Hausses de suspicion à 60 %
       (`data/rules/balance.json`) : chaque fin est obtenue par plusieurs profils
-- [ ] Version mobile : écran portrait, gros boutons, préréglage Android
+- [x] Mobile : agrandissement automatique selon la densité de l'écran (`ScreenFit`,
+      jamais moins de 600 points de haut, un bouton de 44 points ≈ 80 pixels sur
+      téléphone) ; menu principal et bureau resserrés sur écran court (icônes
+      défilantes, barre des tâches toujours visible) ; préréglage d'export Android
+- [x] Choix : le jeu reste à l'horizontale sur téléphone (bureau, pièces côte à
+      côte) ; le portrait demanderait une autre interface complète
+- [ ] Export Android à faire par fen : modèles d'export Godot, SDK Android, clé de signature
+- [ ] Test sur un vrai téléphone (ressenti du toucher, lisibilité)
 
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)
 

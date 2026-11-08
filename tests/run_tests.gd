@@ -172,6 +172,8 @@ func _run() -> void:
 		"test_endings_discovered_counter",
 		"test_balance",
 		"test_playthrough_bot",
+		"test_screen_fit",
+		"test_main_menu_short_screen",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -4666,7 +4668,7 @@ func test_time_in_desk() -> void:
 	await get_tree().process_frame
 	check(not desk.get_node("%StartArchives").visible and not desk.get_node("%StartPersonnel").visible,
 			"premier jour : ni Archives ni Dossier personnel")
-	check(desk.get_node("Main/Body/Icons/List").get_child_count() == 5, "bureau : cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal)")
+	check(desk.get_node("Main/Body/Icons/IconsScroll/List").get_child_count() == 5, "bureau : cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal)")
 	desk.terminal.submit_command("dossiers")
 	desk.windows.dossiers.select_case("40921")
 	check(not desk.windows.dossiers.get_node("%RequestButton").visible and not desk.windows.dossiers.get_node("%ConsultButton").visible,
@@ -4885,3 +4887,47 @@ func test_playthrough_bot() -> void:
 	check(first.ending == second.ending and first.indicators == second.indicators and first.log.decisions == second.log.decisions,
 			"même graine, même partie")
 	Balance.override_percent = 100
+
+
+## Téléphone et tablette : agrandissement selon la densité, sans descendre sous
+## 600 points de haut ; un écran d'ordinateur reste à 1.
+func test_screen_fit() -> void:
+	var phone := ScreenFit.factor_for(Vector2i(2400, 1080), 400)
+	check(phone == 1.8, "téléphone 2400 × 1080 à 400 ppp : facteur 1,8 (%.2f)" % phone)
+	check(is_equal_approx(ScreenFit.logical_size(Vector2i(2400, 1080), phone).y, 600.0), "téléphone : 600 points de haut")
+	check(ScreenFit.factor_for(Vector2i(1080, 2400), 400) == phone, "tenu à la verticale : même facteur (petit côté)")
+	var tablet := ScreenFit.factor_for(Vector2i(1920, 1200), 240)
+	check(tablet == 1.5, "tablette 1920 × 1200 à 240 ppp : facteur 1,5 (%.2f)" % tablet)
+	check(ScreenFit.factor_for(Vector2i(1280, 720), 96) == 1.0, "écran peu dense : pas de réduction")
+	check(ScreenFit.factor_for(Vector2i(0, 0), 400) == 1.0, "écran inconnu : facteur 1")
+	check(44.0 * phone >= 78.0, "un bouton de 44 points fait au moins 78 pixels sur téléphone")
+	check(Settings.device_factor() == 1.0, "ordinateur : aucun agrandissement automatique")
+	check(ScreenFit.is_short(Vector2(1333, 600)) and not ScreenFit.is_short(Vector2(1280, 720)), "600 points = écran court")
+
+
+func test_main_menu_short_screen() -> void:
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	menu.size = Vector2(1333, 600)
+	menu.fit_to_screen()
+	check(not menu.get_node("Center/Column/Pitch").visible, "écran court : l'accroche est retirée")
+	check(menu.get_node("%NewGameButton").custom_minimum_size.y >= 44, "boutons toujours >= 44 px")
+	menu.size = Vector2(1280, 720)
+	menu.fit_to_screen()
+	check(menu.get_node("Center/Column/Pitch").visible, "écran normal : l'accroche revient")
+	menu.queue_free()
+	await get_tree().process_frame
+	# Bureau sur écran court : la barre des tâches (FIN DE SERVICE) reste dans l'écran.
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	desk.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	desk.size = Vector2(1333, 600)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var taskbar: Control = desk.get_node("Main/Taskbar")
+	check(taskbar.get_global_rect().end.y <= desk.get_global_rect().end.y + 1.0 and taskbar.global_position.y > 0,
+			"écran court : la barre des tâches reste visible (%s)" % str(taskbar.get_global_rect()))
+	check(desk.get_node("%DossiersButton") != null, "les icônes gardent leur nom unique")
+	desk.queue_free()
+	await get_tree().process_frame
