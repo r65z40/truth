@@ -392,9 +392,7 @@ func request_document(case_id: String, document_id: String) -> bool:
 	case_state.requested_documents[document_id] = day_index
 	var request: Dictionary = document.request
 	_merge_flags(request.get("flags", {}))
-	for indicator in request.get("effects", {}):
-		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(request.effects[indicator]),
-				INDICATOR_MIN, INDICATOR_MAX)
+	_apply_effects(request.get("effects", {}))
 	state_changed.emit()
 	return true
 
@@ -512,9 +510,7 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	if result.is_empty():
 		push_error("GameState: décision inconnue %s pour le dossier %s" % [decision_id, case_id])
 		return {}
-	for indicator in result.effects:
-		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(result.effects[indicator]),
-				INDICATOR_MIN, INDICATOR_MAX)
+	_apply_effects(result.effects)
 	case_state.status = result.status_after
 	case_state.decision = decision_id
 	_merge_flags(result.flags)
@@ -764,9 +760,11 @@ func lose_evening() -> String:
 	return overtime.get("text", "")
 
 
+## Applique des effets {indicateur: écart} ; les hausses passent par le réglage
+## d'équilibre (data/rules/balance.json, voir Balance).
 func _apply_effects(effects: Dictionary) -> void:
 	for indicator in effects:
-		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(effects[indicator]),
+		indicators[indicator] = clampi(indicators.get(indicator, 0) + Balance.scaled(indicator, int(effects[indicator])),
 				INDICATOR_MIN, INDICATOR_MAX)
 
 
@@ -823,9 +821,7 @@ func complete_act_review(accept: bool) -> String:
 	elif accept:
 		player["rank"] = Career.target_rank(rules, int(player.get("rank", 0)))
 		_set_flag(prefix + "_promoted", true)
-		for indicator in rules.get("effects", {}):
-			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(rules.effects[indicator]),
-					INDICATOR_MIN, INDICATOR_MAX)
+		_apply_effects(rules.get("effects", {}))
 		if review.evaluation.bought:
 			_set_flag("career.promotion_bought", true)
 		text = rules.accepted
@@ -1023,9 +1019,7 @@ func end_day() -> Array:
 		for case_id in event.get("assign_cases", []):
 			assign_case(case_id)
 		_apply_trust(event)
-		for indicator in event.get("effects", {}):
-			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(event.effects[indicator]),
-					INDICATOR_MIN, INDICATOR_MAX)
+		_apply_effects(event.get("effects", {}))
 		_merge_flags(event.get("set_flags", {}))
 		if event.has("message"):
 			var message: Dictionary = event.message.duplicate()

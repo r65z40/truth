@@ -73,6 +73,7 @@ scenes/
 ui/theme/ministry_theme.tres  thème global (couleurs, polices, styles)
 ui/shaders/crt.gdshader
 tests/                        tests automatiques et captures d'écran
+tests/tools/playthrough_*     robot de partie : joue des centaines de campagnes et écrit un rapport
 ```
 
 ## Autoloads (ordre de chargement)
@@ -293,6 +294,19 @@ chaque action est dans le JSON, la logique dans `WorkTime` (pur), l'état dans
 jamais, même à court d'heures. Le calendrier (`data/calendar.json`) liste les
 20 journées de service et les actes ; `FictionalCalendar.days_since_previous`
 sert aux ellipses (« N jours plus tard »).
+
+## Équilibre et robot de partie
+
+Toute variation d'indicateur passe par `GameState._apply_effects`, qui applique
+`Balance.scaled` : les hausses sont ramenées au pourcentage de
+`data/rules/balance.json` (suspicion : 60 %), les baisses restent entières. Les
+tests de règles neutralisent ce réglage (`Balance.override_percent = 100`).
+
+`tests/tools/playthrough_bot.gd` joue une campagne entière par l'API de
+GameState (appels, tri, enquête, mini-jeux, terrain, décisions, soirées, revues
+d'acte) selon un profil et une graine. `tests/tools/playthrough_report.tscn`
+en lance des centaines et écrit `playthrough.md`, `playthrough.json` et
+`runs.json` (données brutes pour tester d'autres seuils de fin hors du jeu).
 
 ## Soirées (`data/evenings.json`)
 

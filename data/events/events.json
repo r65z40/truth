@@ -1849,9 +1849,9 @@
 				]
 			},
 			"effects": {},
-			"set_flags": [
-				"novak.returned"
-			],
+			"set_flags": {
+				"novak.returned": true
+			},
 			"message": {
 				"from": "Ida NOVAK, guichet 3, Registre des résidences",
 				"subject": "Une carte de résidence",
@@ -1872,9 +1872,9 @@
 			"effects": {
 				"suspicion": 1
 			},
-			"set_flags": [
-				"novak.returned"
-			],
+			"set_flags": {
+				"novak.returned": true
+			},
 			"message": {
 				"from": "Bureau des signalements, gare centrale de Velmira",
 				"subject": "Personne sans résidence, n° 40000",
@@ -1895,9 +1895,9 @@
 			"effects": {
 				"suspicion": 2
 			},
-			"set_flags": [
-				"orlik.returned"
-			],
+			"set_flags": {
+				"orlik.returned": true
+			},
 			"message": {
 				"from": "B. ORLIK, chef d'équipe, Centrale thermique n° 3",
 				"subject": "(sans objet)",
@@ -1916,9 +1916,9 @@
 				]
 			},
 			"effects": {},
-			"set_flags": [
-				"kovac.returned"
-			],
+			"set_flags": {
+				"kovac.returned": true
+			},
 			"message": {
 				"from": "Courrier civil, centre de travail de Dravna (contrôlé)",
 				"subject": "Lettre d'une détenue",
@@ -1939,9 +1939,9 @@
 			"effects": {
 				"loyalty": 1
 			},
-			"set_flags": [
-				"varga.returned"
-			],
+			"set_flags": {
+				"varga.returned": true
+			},
 			"message": {
 				"from": "Service de la censure, bureau des publications",
 				"subject": "Anthologie officielle 1987",
@@ -1962,9 +1962,9 @@
 			"effects": {
 				"suspicion": 1
 			},
-			"set_flags": [
-				"varga.returned"
-			],
+			"set_flags": {
+				"varga.returned": true
+			},
 			"message": {
 				"from": "T. VARGA, correcteur, Imprimerie d'État n° 2",
 				"subject": "Un poème",
@@ -1985,9 +1985,9 @@
 			"effects": {
 				"suspicion": 2
 			},
-			"set_flags": [
-				"vrabec.returned"
-			],
+			"set_flags": {
+				"vrabec.returned": true
+			},
 			"message": {
 				"from": "M. VRABEC, aiguilleur, poste de Brenec",
 				"subject": "Une carte postale",

@@ -170,15 +170,22 @@ func _run() -> void:
 		"test_endings",
 		"test_end_of_game_in_desk",
 		"test_endings_discovered_counter",
+		"test_balance",
+		"test_playthrough_bot",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
+	# Les tests de règles vérifient les valeurs écrites dans les données : le
+	# réglage d'équilibre (Balance) est neutralisé, sauf dans test_balance et
+	# test_playthrough_bot qui le rétablissent.
+	Balance.override_percent = 100
 	for test_name in tests:
 		_current = test_name
 		GameState.new_game()
 		await call(test_name)
 	SaveManager.delete_save(TEST_SAVE_PATH)
 	SaveManager.save_path = SaveManager.DEFAULT_PATH
+	Balance.override_percent = -1
 	GameState.new_game()
 	print("")
 	print("RÉSULTAT : %d vérification(s) réussie(s), %d échec(s)." % [_passed, _failed])
@@ -824,6 +831,9 @@ func test_events_file_is_valid() -> void:
 					"%s : message complet" % event.id)
 		for indicator in event.get("effects", {}):
 			check(GameState.INITIAL_INDICATORS.has(indicator), "%s : indicateur connu %s" % [event.id, indicator])
+		# set_flags est un dictionnaire {drapeau: valeur} (une liste plantait end_day).
+		if event.has("set_flags"):
+			check(event.set_flags is Dictionary, "%s : set_flags est un dictionnaire" % event.id)
 
 
 func test_event_conditions() -> void:
@@ -4839,3 +4849,39 @@ func test_act3_returns() -> void:
 			"pas d'atelier scellé si ADLER est libre (issues exclusives)")
 	check("54001_sedlar_mother_returns" not in ids.call({}, 12),
 			"aucun retour sans la condamnation correspondante")
+
+
+## Réglage d'équilibre : les hausses de suspicion sont ramenées au pourcentage
+## de data/rules/balance.json ; les baisses et les autres indicateurs restent entiers.
+func test_balance() -> void:
+	Balance.override_percent = -1
+	var percent := Balance.gain_percent("suspicion")
+	check(percent > 0 and percent <= 100, "réglage de la suspicion lu : %d %%" % percent)
+	check(Balance.scaled("suspicion", -5) == -5, "une baisse n'est pas réduite")
+	check(Balance.scaled("loyalty", 7) == 7, "les autres indicateurs ne sont pas réglés")
+	check(Balance.scaled("suspicion", 1) == 1, "une hausse de 1 reste une hausse")
+	check(Balance.scaled("suspicion", 10) == roundi(10 * percent / 100.0), "une hausse de 10 devient %d" % roundi(10 * percent / 100.0))
+	GameState.new_game()
+	var before := GameState.get_indicator("suspicion")
+	GameState._apply_effects({"suspicion": 10, "loyalty": -3})
+	check(GameState.get_indicator("suspicion") == before + Balance.scaled("suspicion", 10), "GameState applique le réglage")
+	check(GameState.get_indicator("loyalty") == GameState.INITIAL_INDICATORS.loyalty - 3, "baisse de loyauté entière")
+	Balance.override_percent = 100
+
+
+## Robot de partie (tests/tools/playthrough_bot.gd) : quelques campagnes complètes
+## jouées au hasard aboutissent à une fin, sans anomalie, et de façon reproductible.
+func test_playthrough_bot() -> void:
+	Balance.override_percent = -1
+	var bot_script: GDScript = load("res://tests/tools/playthrough_bot.gd")
+	var profiles := [{}, {"decide": "veritas", "careful": true}, {"decide": "contrarian", "investigate": 0.9, "overtime": true}]
+	for i in profiles.size():
+		var result: Dictionary = bot_script.new(100 + i, profiles[i]).play()
+		check(result.ending != "", "partie %d : une fin est atteinte (%s)" % [i, result.ending])
+		check(result.days == FictionalCalendar.service_days().size(), "partie %d : les %d journées sont jouées" % [i, result.days])
+		check(result.log.problems.is_empty(), "partie %d : aucune anomalie %s" % [i, str(result.log.problems)])
+	var first: Dictionary = bot_script.new(7, {}).play()
+	var second: Dictionary = bot_script.new(7, {}).play()
+	check(first.ending == second.ending and first.indicators == second.indicators and first.log.decisions == second.log.decisions,
+			"même graine, même partie")
+	Balance.override_percent = 100

@@ -424,6 +424,18 @@ recommandations, et mets en place toutes tes idées ».
       une nouveauté par journée
 - [ ] Test de fen ; export sur une machine Windows (modèles d'export à installer)
 
+## Fait : robot de partie et équilibre (demande de fen du 08.11, « A puis D »)
+
+- [x] Robot qui joue des campagnes complètes par l'API de GameState
+      (`tests/tools/playthrough_bot.gd`), 11 profils de joueurs, déterministe
+- [x] Rapport : `tests/tools/playthrough_report.tscn -- <dossier> [parties] [pourcentage]`
+      (fins par profil, fins manquées de peu, sources de suspicion, contenu jamais vu)
+- [x] Bug trouvé : 7 événements « retour » avaient set_flags en liste (plantage en fin de journée)
+- [x] Équilibre : la suspicion saturait à 100 dès qu'on ne suivait pas VERITAS ;
+      L'HEURE JUSTE et LE SILENCE : 2 parties sur 1 100. Hausses de suspicion à 60 %
+      (`data/rules/balance.json`) : chaque fin est obtenue par plusieurs profils
+- [ ] Version mobile : écran portrait, gros boutons, préréglage Android
+
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)
 
 - [x] Les papiers de la pendule (`vosk.father_proof_found`) : pièce du 60003 et seconde

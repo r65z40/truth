@@ -59,6 +59,11 @@ conforme », « attention de la hiérarchie : surveillance renforcée ») et ajo
 observations selon les drapeaux (note au dossier, relations avec la Milice).
 Paliers et textes : `data/assessment.json`. Décision de fen du 2026-10-24.
 
+Réglage d'équilibre (`data/rules/balance.json`) : seules 60 % de chaque hausse de
+suspicion écrite dans les données s'appliquent (les baisses restent entières).
+Mesuré le 08.11 avec le robot de partie : sans ce réglage, tout joueur qui ne suit
+pas VERITAS finissait à 100 de suspicion et deux fins étaient hors d'atteinte.
+
 Chaque indicateur doit produire des effets observables (ton des messages,
 dossiers confiés, promotions, enquêtes internes). Pas de variable décorative.
 
