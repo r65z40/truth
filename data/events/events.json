@@ -2066,6 +2066,28 @@
 				"subject": "Communication des registres hospitaliers",
 				"body": "Inspecteur,\n\nÀ compter de ce jour, les registres de l'Hôpital du District 9 ne sont plus communiqués à votre poste. Les demandes en cours ou à venir seront classées sans suite.\n\nCette mesure ne vous vise pas personnellement. Elle s'applique aux agents dont le dossier est en cours de revue.\n\nContrôle interne"
 			}
+		},
+		{
+			"id": "54030_orlik_collects",
+			"conditions": {
+				"min_day": 13,
+				"requires_flags": [
+					"milice.ally",
+					"adler.freed"
+				]
+			},
+			"effects": {
+				"influence": 1,
+				"suspicion": 2
+			},
+			"set_flags": {
+				"milice.favor_owed": true
+			},
+			"message": {
+				"from": "Capitaine L. ORLIK, Milice du District 9",
+				"subject": "ADLER",
+				"body": "Inspecteur,\n\nLe vieux est rentré chez lui hier soir, comme convenu. Il ne sait pas qui remercier ; moi, je sais qui créditer.\n\nUn service rendu en appelle un autre. Je vous ferai signe.\n\nL. ORLIK"
+			}
 		}
 	]
 }

@@ -445,7 +445,7 @@ recommandations, et mets en place toutes tes idées ».
 - [x] Effets observables des indicateurs : ton des messages ; dossiers confiés selon la
       confiance (loyal : fiche CHAUDRON jointe d'office au 53517 ; soupçonné : registre des
       visites du 54012 refusé), clés d'événement `grant_documents` / `refuse_documents` (08.11)
-- [ ] Utiliser les drapeaux `milice.ally` / `milice.enemy` dans un troisième dossier
+- [x] Milice alliée / hostile dans un troisième dossier (54030, 08.11) : marché d'ORLIK ou note de surveillance, dette notée si ADLER est libéré
 - [x] Lecteur de musique (demande de fen du 25.10) : autoload `Music`, fondus enchaînés,
       volume dans Paramètres, morceau choisi par `data/music.json` (moment, acte, drapeaux, indicateurs)
 - [ ] Morceaux fournis par fen (.ogg dans `assets/music/`, liste dans son README)

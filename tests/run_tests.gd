@@ -121,6 +121,7 @@ func _run() -> void:
 		"test_embedded_font",
 		"test_document_links",
 		"test_trust_assignments",
+		"test_milice_54030",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -3098,6 +3099,19 @@ func test_trust_assignments() -> void:
 	check(not GameState.request_document("54012", "visits"), "la demande est refusée")
 	check(GameState.messages.any(func(m): return str(m.id).begins_with("event.distrust_54012_visits")), "le Contrôle interne prévient")
 	GameState.new_game()
+
+
+## Troisième dossier où pèse la Milice (54030) : alliée, elle propose un marché ; hostile, elle surveille.
+func test_milice_54030() -> void:
+	var ids := func(flags: Dictionary) -> Array:
+		var view := CaseLibrary.filter_case(CaseLibrary.get_case("54030"), {"day_index": 12, "flags": flags, "cases": {}, "indicators": {}})
+		return view.documents.map(func(d): return d.id)
+	check(not "orlik_offer" in ids.call({}) and not "milice_watch" in ids.call({}), "Milice neutre : ni marché ni surveillance")
+	check("orlik_offer" in ids.call({"milice.ally": true}), "Milice alliée : ORLIK propose de ramener ADLER")
+	check("milice_watch" in ids.call({"milice.hostile": true}), "Milice hostile : note de surveillance sur le palier de VOSK")
+	var due := EventRules.due_events({"day_index": 13, "flags": {"milice.ally": true, "adler.freed": true}, "cases": {}, "fired_events": [], "indicators": {}})
+	check(due.any(func(e): return e.id == "54030_orlik_collects"), "ADLER libéré avec la Milice alliée : ORLIK note la dette")
+	check(CaseLibrary.validate_case(CaseLibrary.get_case("54030")).is_empty(), "le dossier 54030 reste valide")
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier
