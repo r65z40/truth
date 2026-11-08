@@ -166,6 +166,12 @@ func _play_day() -> void:
 		if GameState.can_decide(case_id):
 			_investigate(case_id)
 			_credit("enquête %s" % case_id)
+		elif GameState.can_start_field(case_id) and _chance("field", 0.6):
+			# Une scène peut s'ouvrir sur un dossier refermé (le couloir de BRANDT, 54100).
+			var scene := GameState.get_field_scene(case_id)
+			if _can_spend(scene.get("time_action", "interrogate")):
+				_play_field(case_id, scene)
+				_credit("terrain %s" % case_id)
 	for case_id in case_ids:
 		if not GameState.can_decide(case_id):
 			continue

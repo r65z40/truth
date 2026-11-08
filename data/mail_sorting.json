@@ -166,7 +166,7 @@
 				{
 					"id": "commission_delegate",
 					"from": "Délégué de la commission internationale, hôtel Central",
-					"to": "Bureau de la commission, Genève",
+					"to": "Bureau de la commission, Orsenne",
 					"text": "On ne nous montre que des façades fraîchement repeintes. Les archives sont « en cours de classement ». Les gens sourient trop longtemps. Je demande l'autorisation de rester une semaine de plus.",
 					"outcomes": {
 						"transmit": {

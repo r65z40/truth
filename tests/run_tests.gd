@@ -183,6 +183,7 @@ func _run() -> void:
 		"test_field_corridor_brandt",
 		"test_field_room_60003",
 		"test_confidential_archive",
+		"test_varga_lease_route",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -5224,3 +5225,15 @@ func test_confidential_archive() -> void:
 	GameState.flags["kremer.protected"] = true
 	check(GameState.request_document("53760", "slip_1971") and GameState.flags.get("kremer.archive_used", false), "sans grade : par KREMER")
 	GameState.new_game()
+
+
+## Le robot ne voit jamais l'issue « bail » du 52310 : il établit toujours la
+## cicatrice d'abord (deux pièces de départ). Elle reste atteignable pour qui
+## trouve le bail dans la perquisition sans avoir confronté les photos.
+func test_varga_lease_route() -> void:
+	var case_data := CaseLibrary.get_case("52310")
+	var lease_only := {"contradictions_found": ["apt40.occupant"]}
+	check(DecisionRules.resolve(case_data, lease_only, "identity_error").response_id == "identity_proved_lease", "52310 : le bail seul prouve l'erreur d'identité")
+	var both := {"contradictions_found": ["varga.mark", "apt40.occupant"]}
+	check(DecisionRules.resolve(case_data, both, "identity_error").response_id == "identity_proved", "52310 : la cicatrice passe avant le bail")
+	check(not case_data.responses.get("identity_proved_lease", {}).is_empty(), "52310 : la réponse « bail » est écrite")

@@ -15,8 +15,14 @@ extends RefCounted
 const EVENINGS_PATH := "res://data/evenings.json"
 
 
+## Fichier lu une fois : ne pas modifier ce qui est renvoyé.
+static var _data := {}
+
+
 static func get_data() -> Dictionary:
-	return DataLoader.load_json(EVENINGS_PATH)
+	if _data.is_empty():
+		_data = DataLoader.load_json(EVENINGS_PATH)
+	return _data
 
 
 ## Soirée prévue pour ce jour, ou {} s'il n'y en a pas.
