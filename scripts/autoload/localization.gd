@@ -87,6 +87,7 @@ func _reset_data_caches() -> void:
 	MessageTone._data = {}
 	SourceWear._data = {}
 	CallRules._data = {}
+	RadioRules._data = {}
 
 
 func _register_ui_translation(code: String) -> void:

@@ -544,5 +544,10 @@
 	"RACCROCHER": "HANG UP",
 	"DÉCROCHER": "ANSWER",
 	"Le téléphone sonne. Personne ne vous presse.": "The phone is ringing. Nobody is rushing you.",
-	"Appel : %s.": "Call: %s."
+	"Appel : %s.": "Call: %s.",
+	"Le poste grésille. Radio Aldria est là, sous le brouillage. À quel volume ?": "The set crackles. Radio Aldria is there, under the jamming. What volume?",
+	"Volume au plus bas, la couverture sur le poste": "Volume right down, blanket over the set",
+	"On n'entend que le début du bulletin. Personne n'entend rien.": "You only hear the start of the bulletin. Nobody hears a thing.",
+	"Monter le son pour tout entendre": "Turn it up to hear everything",
+	"Le bulletin entier. Les murs de l'immeuble sont minces.": "The whole bulletin. The building's walls are thin."
 }

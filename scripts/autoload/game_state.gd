@@ -636,7 +636,10 @@ func get_evening_actions() -> Array:
 
 ## Passe la soirée à l'action donnée. Renvoie {text, effects, set_flags},
 ## ou {} si l'action n'est pas proposée ce soir.
-func choose_evening_action(action_id: String) -> Dictionary:
+## volume (radio seulement) : RadioRules.LOW (début du bulletin, sans risque) ou
+## RadioRules.LOUD (tout le bulletin, les voisins entendent) ; "" = bulletin complet
+## sans compter (utilisé par le départ rapide).
+func choose_evening_action(action_id: String, volume := "") -> Dictionary:
 	if not has_evening_pending() or is_overtime_today():
 		return {}
 	var evening := get_evening()
@@ -647,7 +650,13 @@ func choose_evening_action(action_id: String) -> Dictionary:
 	var result := EveningRules.resolve(action, get_condition_state())
 	_apply_effects(result.effects)
 	_merge_flags(result.set_flags)
-	evenings[str(day_index)] = {"action": action_id, "kind": action.get("kind", "")}
+	if not RadioRules.is_radio(action):
+		volume = ""
+	evenings[str(day_index)] = {"action": action_id, "kind": action.get("kind", ""), "volume": volume}
+	if volume == RadioRules.LOW:
+		result["text"] = RadioRules.muffle(result.text)
+	elif volume == RadioRules.LOUD:
+		_merge_flags(RadioRules.flags_at(RadioRules.loud_count(evenings)))
 	state_changed.emit()
 	return result
 
@@ -659,7 +668,7 @@ func lose_evening() -> String:
 	var overtime: Dictionary = EveningRules.get_data().get("overtime", {})
 	_merge_flags(get_evening().get("set_flags", {}))
 	_merge_flags(overtime.get("set_flags", {}))
-	evenings[str(day_index)] = {"action": "", "kind": ""}
+	evenings[str(day_index)] = {"action": "", "kind": "", "volume": ""}
 	state_changed.emit()
 	return overtime.get("text", "")
 

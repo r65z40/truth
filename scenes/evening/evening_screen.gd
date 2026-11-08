@@ -36,6 +36,7 @@ func open() -> bool:
 		_show_continue()
 	else:
 		_intro_label.text = GameState.get_evening_intro()
+		_choice_label.text = tr("Une seule chose, ce soir :")
 		_choice_label.show()
 		for action: Dictionary in GameState.get_evening_actions():
 			_add_action(action)
@@ -43,9 +44,33 @@ func open() -> bool:
 	return true
 
 
+## Radio étrangère : avant d'écouter, on choisit le volume (risque assumé).
+func ask_volume(action_id: String) -> void:
+	_clear_actions()
+	_choice_label.text = tr("Le poste grésille. Radio Aldria est là, sous le brouillage. À quel volume ?")
+	var options := [
+		[RadioRules.LOW, tr("Volume au plus bas, la couverture sur le poste"), tr("On n'entend que le début du bulletin. Personne n'entend rien.")],
+		[RadioRules.LOUD, tr("Monter le son pour tout entendre"), tr("Le bulletin entier. Les murs de l'immeuble sont minces.")],
+	]
+	for option in options:
+		var button := Button.new()
+		button.name = "Volume_" + option[0]
+		button.text = option[1]
+		button.custom_minimum_size = Vector2(0, 48)
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.set_meta("action_id", action_id)
+		button.pressed.connect(choose.bind(action_id, option[0]))
+		_actions_box.add_child(button)
+		var description := Label.new()
+		description.text = option[2]
+		description.theme_type_variation = &"MutedLabel"
+		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_actions_box.add_child(description)
+
+
 ## Choisit une action (aussi utilisé par les tests et la capture d'écran).
-func choose(action_id: String) -> void:
-	var result := GameState.choose_evening_action(action_id)
+func choose(action_id: String, volume := "") -> void:
+	var result := GameState.choose_evening_action(action_id, volume)
 	if result.is_empty():
 		return
 	_clear_actions()
@@ -67,7 +92,10 @@ func _add_action(action: Dictionary) -> void:
 	button.custom_minimum_size = Vector2(0, 48)
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.set_meta("action_id", action.id)
-	button.pressed.connect(choose.bind(action.id))
+	if RadioRules.is_radio(action):
+		button.pressed.connect(ask_volume.bind(action.id))
+	else:
+		button.pressed.connect(choose.bind(action.id))
 	_actions_box.add_child(button)
 	var description := Label.new()
 	description.text = action.get("description", "")

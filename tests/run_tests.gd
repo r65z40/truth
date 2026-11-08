@@ -116,6 +116,7 @@ func _run() -> void:
 		"test_urgent_case",
 		"test_source_wear",
 		"test_phone_calls",
+		"test_foreign_radio",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2953,6 +2954,39 @@ func test_phone_calls() -> void:
 	var translations := Localization.load_content_translations("en")
 	for call in CallRules.get_data().calls:
 		check(translations.has(call.text) and translations.has(call.caller), "appel traduit : " + call.id)
+	GameState.new_game()
+
+
+## Radio étrangère le soir : volume bas sans risque, volume haut entendu des voisins.
+func test_foreign_radio() -> void:
+	check(RadioRules.muffle("Première phrase. Seconde phrase.").begins_with("Première phrase. …"), "volume bas : la première phrase, puis le brouillage")
+	GameState.new_game()
+	var low := GameState.choose_evening_action("radio_0", RadioRules.LOW)
+	check(low.text.contains("brouillage") and GameState.flags.get("radio.power_deal_heard", false), "volume bas : bulletin tronqué, mais l'essentiel est entendu")
+	check(RadioRules.loud_count(GameState.evenings) == 0, "volume bas : personne n'entend")
+	GameState.new_game()
+	for day in 3:
+		GameState.day_index = day
+		var radio_id := "radio_%d" % day
+		var loud := GameState.choose_evening_action(radio_id, RadioRules.LOUD)
+		check(not loud.is_empty() and not loud.text.contains("Vous n'osez pas"), "volume haut, soir %d : bulletin entier" % day)
+	check(RadioRules.loud_count(GameState.evenings) == 3 and GameState.flags.get("radio.neighbours_heard", false), "deux soirs forts : les voisins ont entendu")
+	check(not GameState.flags.get("radio.reported", false), "pas encore de signalement")
+	check(RadioRules.flags_at(4).has("radio.reported"), "quatre soirs forts : signalement au Bureau")
+	var old_save := {"save_version": 8, "state": {"evenings": {"0": {"action": "radio_0", "kind": "radio"}}}}
+	var migrated: Dictionary = SaveManager._migrate(old_save)
+	check(int(migrated.save_version) == SaveManager.SAVE_VERSION and migrated.state.evenings["0"].volume == "", "sauvegarde v8 : soirées sans volume")
+	var screen: Control = load("res://scenes/evening/evening_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	GameState.new_game()
+	screen.open()
+	screen.ask_volume("radio_0")
+	check(screen.find_child("Volume_low", true, false) != null and screen.find_child("Volume_loud", true, false) != null, "l'écran du soir propose les deux volumes")
+	screen.choose("radio_0", RadioRules.LOUD)
+	check(RadioRules.loud_count(GameState.evenings) == 1, "le choix passe par GameState")
+	screen.queue_free()
+	var translations := Localization.load_content_translations("en")
+	check(translations.has(RadioRules.get_data().muffled_suffix), "brouillage traduit")
 	GameState.new_game()
 
 

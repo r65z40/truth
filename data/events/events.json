@@ -1987,6 +1987,43 @@
 				"subject": "Accusé de réception : rapport 53402",
 				"body": "Le rapport n° 53402 a été reçu à l'heure dite. La Direction de la ligne en prend acte et le signale à votre hiérarchie.\n\nLe train de nuit circulera selon l'horaire."
 			}
+		},
+		{
+			"id": "radio_neighbours_heard",
+			"conditions": {
+				"min_day": 1,
+				"requires_flags": [
+					"radio.neighbours_heard"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"message": {
+				"from": "Comité d'immeuble, bloc 7, District 2",
+				"subject": "Bruit après vingt-deux heures",
+				"body": "Au locataire du deuxième étage, porte gauche.\n\nPlusieurs résidents signalent un poste de radio entendu depuis le palier, tard le soir, sur une longueur d'onde « qui n'est pas la nôtre ».\n\nLe comité rappelle que les murs sont minces et que les oreilles sont nombreuses. Il n'a, pour l'instant, rien transmis.\n\nLe responsable d'escalier"
+			}
+		},
+		{
+			"id": "radio_reported",
+			"conditions": {
+				"min_day": 1,
+				"requires_flags": [
+					"radio.reported"
+				]
+			},
+			"effects": {
+				"suspicion": 4
+			},
+			"set_flags": {
+				"player.flagged": true
+			},
+			"message": {
+				"from": "Bureau des signalements, District 2",
+				"subject": "Signalement reçu vous concernant",
+				"body": "Inspecteur,\n\nLe Bureau a reçu un signalement visant un poste de radio réglé sur l'étranger, entendu depuis le palier du bloc 7, deuxième étage. L'auteur du signalement est, d'après l'adresse, votre plus proche voisin.\n\nLe signalement est versé à votre dossier personnel. Par courtoisie entre services, aucune suite immédiate.\n\nLe préposé"
+			}
 		}
 	]
 }
