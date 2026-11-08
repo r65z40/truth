@@ -422,7 +422,25 @@ func _capture_new_mechanics() -> void:
 	(desk.punch_clock_screen.find_child("Row_d16", true, false) as Button).button_pressed = true
 	await _snap("59_pointeuse")
 	desk.punch_clock_screen.close()
+	# Répertoire des personnes : quelques dossiers ouverts, un signé.
+	GameState.day_index = 13
+	for case_id in ["40000", "40921", "51307", "53760", "54030"]:
+		GameState.assign_case(case_id)
+		GameState.mark_document_viewed(case_id, "x")
+	GameState.get_case_state("40000").decision = CaseLibrary.get_case("40000").decisions[0].id
+	GameState.flags["brandt.revealed"] = true
+	desk.people_screen.open()
+	await _snap("60_repertoire")
+	desk.people_screen.close()
 	desk.queue_free()
+	# Soirée avec « faire profil bas » (jour 5).
+	GameState.new_game()
+	GameState.day_index = 5
+	var civic: Node = load("res://scenes/evening/evening_screen.tscn").instantiate()
+	get_tree().root.add_child(civic)
+	civic.open()
+	await _snap("61_soiree_profil_bas")
+	civic.queue_free()
 	GameState.new_game()
 	var evening: Node = load("res://scenes/evening/evening_screen.tscn").instantiate()
 	get_tree().root.add_child(evening)

@@ -576,5 +576,14 @@
 	"Ruban de la pointeuse : dossier n° %s.": "Time clock ribbon: file no. %s.",
 	"%s  //  ruban : %s\ncertificat : %s": "%s  //  ribbon: %s\ncertificate: %s",
 	"Cliquez sur les passages soulignés : ils se rangent sous les questions.": "Click the underlined passages: they file themselves under the questions.",
-	"MINISTÈRE DE LA SÉCURITÉ NATIONALE\nCourrier interne  //  Section 4": "MINISTRY OF NATIONAL SECURITY\nInternal mail  //  Section 4"
+	"MINISTÈRE DE LA SÉCURITÉ NATIONALE\nCourrier interne  //  Section 4": "MINISTRY OF NATIONAL SECURITY\nInternal mail  //  Section 4",
+	"Répertoire": "Directory",
+	"RÉPERTOIRE": "DIRECTORY",
+	"Personnes croisées": "People you have met",
+	"Une fiche s'ajoute à chaque dossier ouvert. Le rôle suit ce que vous savez, pas plus.": "A card is added for each file you open. The role follows what you know, no more.",
+	"Aucune fiche pour l'instant.": "No cards yet.",
+	"AU MINISTÈRE": "AT THE MINISTRY",
+	"PROCHES ET VOISINS": "FAMILY AND NEIGHBOURS",
+	"SUJETS ET TÉMOINS": "SUBJECTS AND WITNESSES",
+	"dossier %s": "file %s"
 }

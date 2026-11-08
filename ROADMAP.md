@@ -454,6 +454,16 @@ recommandations, et mets en place toutes tes idées ».
 - [x] Prénoms en double : REIS devient Emil, l'épouse KRAL Dana, le fils KOVAC Jiri,
       la dactylo Ilona, la voyageuse du 53402 Livia BENDA
 
+## Fait : les 4 points à améliorer (demande de fen du 08.11)
+
+- [x] La fin de la Milice passe avant le Miroir parfait (elle exige `milice.ally`,
+      donc le marché d'ORLIK accepté au téléphone)
+- [x] Soirée « faire profil bas » les jours 5, 8, 11, 14, 17 (suspicion -3, loyauté +1)
+- [x] Lettre du jour 16 : la dénonciation « radio » seulement si la radio a été écoutée,
+      sinon une version « lumière allumée » ; nouvelle condition `max_count`
+- [x] Répertoire des personnes dans le menu MINISTÈRE (`data/people.json`,
+      `PeopleDirectory`, écran `PeopleScreen`) : une fiche par dossier ouvert
+
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)
 
 - [x] Les papiers de la pendule (`vosk.father_proof_found`) : pièce du 60003 et seconde

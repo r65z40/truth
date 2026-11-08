@@ -439,6 +439,21 @@
 					}
 				},
 				{
+					"id": "civic_5",
+					"kind": "civic",
+					"label": "Assister à la réunion du comité d'immeuble",
+					"description": "Ordre du jour : le chauffage, les poubelles, la vigilance.",
+					"results": [
+						{
+							"text": "Deux heures sur une chaise pliante. Vous votez comme tout le monde, vous applaudissez au bon moment. Le responsable d'escalier note votre présence d'un petit trait satisfait."
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
+					}
+				},
+				{
 					"id": "work_5",
 					"kind": "work",
 					"label": "Relire le dossier de l'archive",
@@ -642,6 +657,21 @@
 					],
 					"set_flags": {
 						"radio.conformite_heard": true
+					}
+				},
+				{
+					"id": "civic_8",
+					"kind": "civic",
+					"label": "Pousser la brouette de la collecte de ferraille",
+					"description": "Le quartier ramasse les métaux pour la Centrale n° 3.",
+					"results": [
+						{
+							"text": "Vous poussez une brouette de vieux radiateurs jusqu'au dépôt. Une voisine vous montre du doigt à son fils : « Tu vois ? Même les gens du ministère. »"
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
 					}
 				},
 				{
@@ -874,6 +904,21 @@
 					}
 				},
 				{
+					"id": "civic_11",
+					"kind": "civic",
+					"label": "Signer le registre de condoléances de la Centrale",
+					"description": "Dans le hall du bloc, un registre pour les « héros du travail » de la Centrale.",
+					"results": [
+						{
+							"text": "Vous signez sous trente autres noms, avec la même formule : « Gloire à leur sacrifice. » Personne n'a écrit « accident ». Vous non plus."
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
+					}
+				},
+				{
 					"id": "work_11",
 					"kind": "work",
 					"label": "Compter les fenêtres",
@@ -1079,6 +1124,21 @@
 					}
 				},
 				{
+					"id": "civic_14",
+					"kind": "civic",
+					"label": "Écouter le discours du Directeur, porte ouverte",
+					"description": "La radio d'État diffuse le discours ; sur le palier, on laisse les portes ouvertes.",
+					"results": [
+						{
+							"text": "Vous laissez la porte ouverte, le volume assez fort pour que le palier entende. Quarante minutes sur la vigilance et l'ordre des archives. En face, le voisin ferme doucement la sienne."
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
+					}
+				},
+				{
 					"id": "radio_14",
 					"kind": "radio",
 					"label": "Écouter la radio d'Aldria",
@@ -1263,6 +1323,21 @@
 					},
 					"set_flags": {
 						"vosk.read_own_dossier": true
+					}
+				},
+				{
+					"id": "civic_17",
+					"kind": "civic",
+					"label": "Répéter le défilé du 8 décembre",
+					"description": "Le ministère fournit les pancartes.",
+					"results": [
+						{
+							"text": "Trois heures à piétiner sur la place, une pancarte « LA MÉMOIRE EST UN DEVOIR » sur l'épaule. Le chef de cortège vous félicite pour votre ponctualité. Personne ne vous demande ce que vous pensez de la mémoire."
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
 					}
 				},
 				{

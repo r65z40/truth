@@ -47,6 +47,11 @@ static func are_conditions_met(conditions: Dictionary, state: Dictionary) -> boo
 	for kind in required:
 		if int(current.get(kind, 0)) < int(required[kind]):
 			return false
+	# max_count : au plus N soirées de ce type (0 = jamais).
+	var limits: Dictionary = conditions.get("max_count", {})
+	for kind in limits:
+		if int(current.get(kind, 0)) > int(limits[kind]):
+			return false
 	return true
 
 

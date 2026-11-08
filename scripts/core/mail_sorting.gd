@@ -34,10 +34,14 @@ static func verdict_of(letter_id: String, flags: Dictionary) -> String:
 	return ""
 
 
-## Lettres du jour pas encore triées.
-static func pending(day: int, flags: Dictionary) -> Array:
+## Lettres du jour pas encore triées. state (facultatif) : état des conditions
+## (GameState.get_condition_state) ; une lettre dont les conditions ne sont pas
+## remplies n'est pas dans le paquet (ex. la dénonciation qui parle de radio
+## seulement si l'agent l'a écoutée).
+static func pending(day: int, flags: Dictionary, state: Dictionary = {}) -> Array:
 	return batch_for_day(day).get("letters", []).filter(func(letter: Dictionary) -> bool:
-		return verdict_of(letter.id, flags) == "")
+		return verdict_of(letter.id, flags) == "" \
+				and (state.is_empty() or EveningRules.are_conditions_met(letter.get("conditions", {}), state)))
 
 
 static func get_letter(letter_id: String) -> Dictionary:

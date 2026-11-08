@@ -1,0 +1,41 @@
+{
+	"_comment": "Répertoire des personnes (menu MINISTÈRE). Une fiche apparaît quand son dossier a été ouvert (au moins une pièce lue) et que ses conditions (même grammaire que les événements) sont réunies ; sans dossier, seules les conditions comptent. « updates » : la dernière ligne dont les drapeaux sont posés remplace le rôle (pas de révélation avant l'heure). Le statut tamponné vient de la décision déjà signée (FateRules).",
+	"people": [
+		{"id": "mazur", "name": "R. MAZUR", "group": "ministry", "role": "Directeur adjoint de la Section 4, votre supérieur direct.",
+			"updates": [
+				{"requires_flags": ["mazur.arrested_fate"], "role": "Ancien directeur adjoint. Relevé de ses fonctions, à la disposition du contrôle interne."},
+				{"requires_flags": ["mazur.fled"], "role": "Ancien directeur adjoint. Parti dans la nuit, bureau vide. « 05 h 05. Quai 2. Juste. »"}
+			]},
+		{"id": "brandt", "name": "I. BRANDT", "group": "ministry", "role": "Inspectrice du poste voisin, votre voisine de couloir. Affable, toujours une tasse de côté.",
+			"conditions": {"min_day": 13},
+			"updates": [
+				{"requires_flags": ["brandt.revealed"], "role": "Inspectrice du poste voisin. Contrôleuse interne chargée de votre dossier, le 54100."}
+			]},
+		{"id": "kremer", "name": "H. KREMER", "group": "ministry", "case": "53760", "role": "Archiviste du sous-sol B, accusé de « vol de papier ».",
+			"updates": [
+				{"requires_flags": ["kremer.protected"], "role": "Archiviste du sous-sol B. Vous l'avez couvert."},
+				{"requires_flags": ["kremer.arrested"], "role": "Ancien archiviste du sous-sol B. Arrêté."}
+			]},
+		{"id": "orlik", "name": "Bohdan ORLIK", "group": "subjects", "case": "51307", "role": "Chef d'équipe à la Centrale thermique n° 3, membre du Parti. Son frère est capitaine de la Milice.",
+			"updates": [
+				{"requires_flags": ["milice.ally"], "role": "Chef d'équipe à la Centrale n° 3. Vous avez accepté le marché des ORLIK."},
+				{"requires_flags": ["milice.hostile"], "role": "Chef d'équipe à la Centrale n° 3. Les ORLIK et la Milice vous tiennent pour un ennemi."}
+			]},
+		{"id": "lena", "name": "Lena VOSK", "group": "family", "role": "Votre sœur, stagiaire à l'hôpital n° 2."},
+		{"id": "father", "name": "A. VOSK", "group": "family", "case": "60003", "role": "Votre père, horloger agréé. Disparu en mars 1971."},
+		{"id": "adler", "name": "Viktor ADLER", "group": "family", "case": "54030", "role": "Réparateur d'horloges, votre voisin du bloc 7. Arrêté dans la rafle des horlogers.",
+			"updates": [
+				{"requires_flags": ["adler.freed"], "role": "Réparateur d'horloges, votre voisin du bloc 7. Rentré chez lui."}
+			]},
+		{"id": "novak", "name": "Ida NOVAK", "group": "subjects", "case": "40000", "role": "Renouvellement de carte de résidence."},
+		{"id": "sedlar", "name": "Anton SEDLAR", "group": "subjects", "case": "40921", "role": "Signalé par le Bureau des transports : présence au travail et déplacements."},
+		{"id": "kovac", "name": "Zora KOVAC", "group": "subjects", "case": "52044", "role": "Gérante de la Boulangerie d'État n° 12."},
+		{"id": "varga", "name": "Teodor VARGA", "group": "subjects", "case": "52310", "role": "Poète, « Les Saisons de Velmira »."},
+		{"id": "till", "name": "Ewa TILL", "group": "subjects", "case": "53118", "role": "Chef de chœur de la paroisse Sainte-Agathe."},
+		{"id": "kolb", "name": "I. KOLB", "group": "subjects", "case": "53118", "role": "Déclarant. Auteur du signalement de la chorale."},
+		{"id": "hruby", "name": "Tomas HRUBY", "group": "subjects", "case": "53190", "role": "Bedeau de la paroisse Saint-Roch."},
+		{"id": "vrabec", "name": "Marek VRABEC", "group": "subjects", "case": "53402", "role": "Aiguilleur du poste de Brenec, ligne Velmira–Halvek."},
+		{"id": "petras", "name": "Vaclav PETRAS", "group": "subjects", "case": "53517", "role": "Ouvrier de la Centrale thermique n° 3."},
+		{"id": "reis", "name": "Emil REIS", "group": "subjects", "case": "54012", "role": "Seul survivant près de la chaudière n° 2. Brûlé, à l'hôpital."}
+	]
+}

@@ -84,6 +84,7 @@ var mail_button: Button
 var mail_sort_screen: MailSortScreen
 var redaction_screen: RedactionScreen
 var punch_clock_screen: PunchClockScreen
+var people_screen: PeopleScreen
 var _guide_bar_label: Label
 ## Jour où l'on a déjà prévenu que l'horloge marque 16h00 (une fois par jour).
 var _day_over_notice_day := -1
@@ -132,6 +133,10 @@ func _ready() -> void:
 	_refresh_sound_button()
 	_start_button.toggled.connect(_start_menu.set_visible)
 	%StartPersonnel.pressed.connect(terminal.submit_command.bind("PROFIL"))
+	# Répertoire des personnes croisées, rempli au fil des dossiers ouverts.
+	people_screen = PeopleScreen.new()
+	add_child(people_screen)
+	%StartPeople.pressed.connect(people_screen.open)
 	%StartTerminal.pressed.connect(open_app.bind("terminal"))
 	%StartSettings.pressed.connect(open_app.bind("settings"))
 	for item: Button in _start_menu.find_children("*", "Button", true, false):

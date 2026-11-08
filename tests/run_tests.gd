@@ -175,6 +175,9 @@ func _run() -> void:
 		"test_screen_fit",
 		"test_main_menu_short_screen",
 		"test_english_content_complete",
+		"test_civic_evenings",
+		"test_radio_denunciation_letter",
+		"test_people_directory",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
@@ -4502,8 +4505,11 @@ func test_scenario_flags_reachable() -> void:
 	check(EndingRules.resolve({"flags": milice, "indicators": {}}).id != "fin_milice",
 			"allié puis brouillé avec la Milice : plus de fin de la Milice")
 	var loyal := {"milice.ally": true, "milice.favor_owed": true, "act4.mirror_signed_clean": true}
-	check(EndingRules.resolve({"flags": loyal, "indicators": {"loyalty": 80}}).id == "fin_miroir",
-			"MIROIR signé sans réserve : le Miroir parfait prime sur la Milice")
+	check(EndingRules.resolve({"flags": loyal, "indicators": {"loyalty": 80}}).id == "fin_milice",
+			"allié choisi de la Milice : sa fin prime sur le Miroir parfait (08.11)")
+	var classed_only := {"milice.favor_owed": true, "act4.mirror_signed_clean": true}
+	check(EndingRules.resolve({"flags": classed_only, "indicators": {"loyalty": 80}}).id == "fin_miroir",
+			"ORLIK seulement classé, sans alliance acceptée : le Miroir parfait")
 	var notes := FileAccess.get_file_as_string("res://data/events/events.json")
 	check(not notes.contains("aux archives lundi"), "les notes de KREMER ne datent plus son départ")
 	check(not FileAccess.get_file_as_string("res://data/cases/case_53118.json").contains("soir de la Sainte-Agathe"),
@@ -4961,3 +4967,97 @@ func _collect_untranslated(value: Variant, path: String, missing: Array) -> void
 	elif value is String and value.length() >= 25 and value.contains(" ") \
 			and not DataLoader.translations.has(value):
 		missing.append("%s : %s" % [path.get_file(), value.left(50)])
+
+
+## Soirées « faire profil bas » (08.11) : une par soirée des jours 5, 8, 11, 14
+## et 17, qui baisse la suspicion.
+func test_civic_evenings() -> void:
+	var civic_days: Array = []
+	for evening in EveningRules.get_data().get("evenings", []):
+		for action in evening.actions:
+			if action.get("kind", "") == "civic":
+				civic_days.append(int(evening.day))
+				check(int(action.get("effects", {}).get("suspicion", 0)) < 0, "profil bas : la suspicion baisse (%s)" % action.id)
+	check(civic_days == [5, 8, 11, 14, 17], "profil bas proposé les soirs 5, 8, 11, 14, 17 : %s" % str(civic_days))
+	GameState.new_game()
+	GameState.day_index = 5
+	GameState.indicators["suspicion"] = 30
+	check("civic_5" in GameState.get_evening_actions().map(func(a: Dictionary) -> String: return a.id), "soir 5 : profil bas disponible")
+	GameState.choose_evening_action("civic_5")
+	check(GameState.get_indicator("suspicion") < 30, "profil bas choisi : suspicion en baisse")
+	check(EveningRules.counts(GameState.evenings).get("civic", 0) == 1, "profil bas compté comme soirée « civic »")
+	GameState.new_game()
+
+
+## La lettre de dénonciation du jour 16 dépend de la radio (08.11) : la version
+## « radio » seulement si le joueur l'a écoutée, sinon la version « lumière ».
+func test_radio_denunciation_letter() -> void:
+	var state := {"flags": {}, "evening_counts": {}}
+	check(EveningRules.are_conditions_met({"max_count": {"radio": 0}}, state), "max_count : zéro radio accepté")
+	state.evening_counts = {"radio": 1}
+	check(not EveningRules.are_conditions_met({"max_count": {"radio": 0}}, state), "max_count : une radio de trop")
+	check(EveningRules.are_conditions_met({"min_count": {"radio": 1}, "max_count": {"radio": 2}}, state), "min_count et max_count ensemble")
+	GameState.new_game()
+	GameState.day_index = 16
+	var ids: Array = GameState.get_pending_letters().map(func(l: Dictionary) -> String: return l.id)
+	check("self_denunciation_quiet" in ids and not "self_denunciation" in ids, "sans radio : la lettre sur la lumière allumée")
+	check(ids.size() == 3, "jour 16 : toujours trois lettres")
+	GameState.evenings["3"] = {"action": "radio_3", "kind": "radio", "volume": ""}
+	ids = GameState.get_pending_letters().map(func(l: Dictionary) -> String: return l.id)
+	check("self_denunciation" in ids and not "self_denunciation_quiet" in ids, "radio écoutée : la lettre sur la radio")
+	GameState.evenings.clear()
+	check(GameState.sort_letter("self_denunciation_quiet", "hold") and GameState.flags.get("mail.self_denunciation_held", false),
+			"retenir la version sans radio pose le même drapeau")
+	GameState.new_game()
+
+
+## Répertoire des personnes (08.11) : une fiche par dossier ouvert, rôle mis à
+## jour par les drapeaux, statut issu de la décision signée.
+func test_people_directory() -> void:
+	for person in PeopleDirectory.all_people():
+		check(person.get("group", "") in PeopleDirectory.GROUPS, "répertoire : groupe connu (%s)" % person.id)
+		var case_id: String = person.get("case", "")
+		check(case_id == "" or not CaseLibrary.get_case(case_id).is_empty(), "répertoire : dossier existant (%s)" % person.id)
+	var state := {"day_index": 0, "flags": {}, "cases": {}, "indicators": {}, "fired_events": []}
+	var ids := func(s: Dictionary) -> Array:
+		return PeopleDirectory.visible_entries(s).map(func(e: Dictionary) -> String: return e.id)
+	check(ids.call(state) == ["mazur", "lena"], "au départ : MAZUR et Lena seulement (%s)" % str(ids.call(state)))
+	state.cases["40921"] = {"viewed_documents": [], "decision": ""}
+	check(not "sedlar" in ids.call(state), "dossier attribué mais pas ouvert : pas de fiche")
+	state.cases["40921"].viewed_documents = ["doc"]
+	check("sedlar" in ids.call(state), "dossier ouvert : fiche ajoutée")
+	state.cases["53760"] = {"viewed_documents": ["doc"], "decision": ""}
+	var kremer: Dictionary = PeopleDirectory.visible_entries(state).filter(func(e: Dictionary) -> bool: return e.id == "kremer")[0]
+	check(kremer.role.contains("accusé") and kremer.stamp == "", "KREMER : rôle de départ, sans statut")
+	state.flags["kremer.arrested"] = true
+	kremer = PeopleDirectory.visible_entries(state).filter(func(e: Dictionary) -> bool: return e.id == "kremer")[0]
+	check(kremer.role.contains("Arrêté"), "KREMER : rôle mis à jour par le drapeau")
+	state.day_index = 13
+	var brandt: Dictionary = PeopleDirectory.visible_entries(state).filter(func(e: Dictionary) -> bool: return e.id == "brandt")[0]
+	check(not brandt.role.contains("54100"), "BRANDT : pas de révélation avant l'heure")
+	state.flags["brandt.revealed"] = true
+	brandt = PeopleDirectory.visible_entries(state).filter(func(e: Dictionary) -> bool: return e.id == "brandt")[0]
+	check(brandt.role.contains("54100"), "BRANDT : révélée")
+	GameState.new_game()
+	var decision: Dictionary = CaseLibrary.get_case("40000").decisions[0]
+	GameState.cases["40000"] = GameState._new_case_state()
+	GameState.cases["40000"].viewed_documents = ["x"]
+	GameState.cases["40000"].decision = decision.id
+	var novak: Dictionary = PeopleDirectory.visible_entries(GameState.get_condition_state()).filter(func(e: Dictionary) -> bool: return e.id == "novak")[0]
+	check(novak.stamp != "", "dossier signé : statut tamponné (%s)" % novak.stamp)
+	var screen := PeopleScreen.new()
+	get_tree().root.add_child(screen)
+	screen.open()
+	check(screen.visible and screen.find_child("Person_novak", true, false) != null and screen.find_child("Person_mazur", true, false) != null,
+			"l'écran du répertoire liste les fiches")
+	screen.close()
+	check(not screen.visible, "le répertoire se ferme")
+	screen.queue_free()
+	var desk: Node = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	var item := desk.find_child("StartPeople", true, false) as Button
+	check(item != null and item.custom_minimum_size.y >= 44, "menu MINISTÈRE : entrée Répertoire (44 px)")
+	item.pressed.emit()
+	check(desk.people_screen.visible, "l'entrée ouvre le répertoire")
+	desk.queue_free()
+	GameState.new_game()

@@ -549,7 +549,7 @@ func toggle_redaction(case_id: String, line_id: String) -> Array:
 
 ## Lettres interceptées du jour, pas encore triées.
 func get_pending_letters() -> Array:
-	return MailSorting.pending(day_index, flags)
+	return MailSorting.pending(day_index, flags, get_condition_state())
 
 
 ## Trie une lettre du jour ; faux si elle n'est pas en attente ou le verdict inconnu.

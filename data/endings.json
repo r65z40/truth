@@ -107,35 +107,6 @@
 			]
 		},
 		{
-			"id": "fin_miroir",
-			"title": "LE MIROIR PARFAIT",
-			"stamp": "IRRÉPROCHABLE",
-			"rules": [
-				{
-					"requires_flags": [
-						"act4.mirror_signed_clean"
-					],
-					"min_indicators": {
-						"loyalty": 70
-					}
-				},
-				{
-					"requires_flags": [
-						"act4.mirror_signed_clean",
-						"career.act3_promoted"
-					],
-					"min_indicators": {
-						"loyalty": 60
-					}
-				}
-			],
-			"lines": [
-				"Vous avez tout signé. SEDLAR, la Centrale, et jusqu'au dossier de votre propre père — réécrit d'une main qui n'a pas tremblé. « Émigré de son plein gré. » Classé.",
-				"Le Ministère vous cite en exemple. Grade supérieur, bureau au premier étage, une plaque à votre nom. Sur le papier, vous êtes parfait : pas une contradiction, pas un remords, pas un vide.",
-				"Pas un vide, sauf un. Mais celui-là, vous l'avez signé vous-même, et personne ne viendra jamais le rouvrir."
-			]
-		},
-		{
 			"id": "fin_milice",
 			"title": "L'ALLIÉ DE LA MILICE",
 			"stamp": "PROMU",
@@ -163,6 +134,35 @@
 				"Vous avez choisi le camp qui ne perd jamais : celui qui a les clés, les voitures et la mémoire longue. Un capitaine vous doit son silence, et vous lui devez le vôtre.",
 				"On vous monte. Bureau plus grand, dossiers plus lourds, moins de questions. Vous signez vite, et bien.",
 				"Simplement, il existe maintenant, quelque part, un dossier à votre nom aussi. On ne vous l'a jamais dit. On n'en a pas besoin : vous le savez."
+			]
+		},
+		{
+			"id": "fin_miroir",
+			"title": "LE MIROIR PARFAIT",
+			"stamp": "IRRÉPROCHABLE",
+			"rules": [
+				{
+					"requires_flags": [
+						"act4.mirror_signed_clean"
+					],
+					"min_indicators": {
+						"loyalty": 70
+					}
+				},
+				{
+					"requires_flags": [
+						"act4.mirror_signed_clean",
+						"career.act3_promoted"
+					],
+					"min_indicators": {
+						"loyalty": 60
+					}
+				}
+			],
+			"lines": [
+				"Vous avez tout signé. SEDLAR, la Centrale, et jusqu'au dossier de votre propre père — réécrit d'une main qui n'a pas tremblé. « Émigré de son plein gré. » Classé.",
+				"Le Ministère vous cite en exemple. Grade supérieur, bureau au premier étage, une plaque à votre nom. Sur le papier, vous êtes parfait : pas une contradiction, pas un remords, pas un vide.",
+				"Pas un vide, sauf un. Mais celui-là, vous l'avez signé vous-même, et personne ne viendra jamais le rouvrir."
 			]
 		},
 		{

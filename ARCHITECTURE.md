@@ -326,7 +326,10 @@ Une soirée par jour (champ `day`), avec `intro`, `set_flags` et 2 ou 3
 set_flags, followups}. `results` est une liste de variantes : la première dont
 les conditions sont remplies est affichée (la dernière, sans condition, sert de
 défaut). Les conditions sont celles des événements, plus `min_count`
-(`{"radio": 2}` : nombre de soirées passées à ce `kind`). Logique dans
+(`{"radio": 2}` : au moins deux soirées passées à ce `kind`) et `max_count`
+(`{"radio": 0}` : au plus). Les mêmes conditions servent aux lettres du tri du
+courrier (`MailSorting.pending`). Kinds : lena, radio, civic (profil bas), adler,
+visit, work. Logique dans
 `EveningRules`, état dans `GameState.evenings`, écran
 `scenes/evening/evening_screen.tscn` ouvert par le bureau avant le jour suivant.
 `echoes` (facultatif) : liste de {conditions, text} ajoutés à l'introduction du
@@ -426,7 +429,9 @@ l'exécutable.
 | Tri du courrier (paquets des jours 4, 9, 16) | `data/mail_sorting.json` | `MailSorting`, écran `MailSortScreen` | drapeaux `mail.<lettre>.<verdict>` |
 | Pointeuse (mini-jeu, 51307) | bloc `punch_clock` du dossier | `PunchClockRules`, écran `PunchClockScreen` | contradiction établie |
 | Liens entre les pièces (débutant) | clés des éléments et questions | `CaseSheet.links` | aucun |
+| Répertoire des personnes (menu MINISTÈRE) | `data/people.json` (dossier, conditions, `updates` de rôle par drapeaux) | `PeopleDirectory`, écran `PeopleScreen` | aucun : déduit des dossiers ouverts, des drapeaux et des décisions |
 
 Écrans posés sur le bureau, construits en code : `PhoneScreen`
 (`scenes/ui/phone_screen.gd`), `RedactionScreen` (`scenes/ui/redaction_screen.gd`)
-et `MailSortScreen` (`scenes/ui/mail_sort_screen.gd`).
+`MailSortScreen` (`scenes/ui/mail_sort_screen.gd`) et `PeopleScreen`
+(`scenes/ui/people_screen.gd`).

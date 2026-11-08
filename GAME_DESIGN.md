@@ -191,6 +191,10 @@ supplémentaires fait perdre la soirée. Fils de l'acte 1 :
   montre qu'il pourrait aussi dénoncer ses voisins.
 - **Visites** selon les décisions : Vera SEDLAR après l'arrestation de son
   mari, Irena BENES après celle de « VARGA ».
+- **Faire profil bas** (jours 5, 8, 11, 14, 17) : réunion du comité d'immeuble,
+  collecte de ferraille, registre de condoléances, discours du Directeur porte
+  ouverte, répétition du défilé. Suspicion -3, loyauté +1 : un moyen de se
+  racheter, au prix d'une soirée sans Lena ni radio.
 
 ## Le terrain (0.6)
 
@@ -252,5 +256,9 @@ le refus est mémorisé (`career.refused_promotion`).
   Puis : tri du courrier intercepté (transmettre, retenir, signaler ; aucune
   bonne réponse affichée, un signalement peut aussi sauver quelqu'un), pièces
   jointes d'office ou refusées selon la confiance, liens « Voir aussi ».
+- 2026-11-08 : la fin de la Milice passe avant le Miroir parfait (alliance choisie
+  au téléphone) ; soirées « profil bas » ; la lettre de dénonciation du jour 16
+  parle de la radio seulement si on l'a écoutée ; répertoire des personnes croisées
+  dans le menu MINISTÈRE (rôle révélé au fil des drapeaux, jamais avant).
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

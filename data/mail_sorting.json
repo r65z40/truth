@@ -1,5 +1,5 @@
 {
-	"_comment": "Tri du courrier : certains jours, un paquet de lettres interceptées attend l'agent (bouton TRI dans la barre des tâches). Pour chaque lettre : transmit (laisser passer), hold (retenir, la lettre n'arrive jamais), report (signaler l'expéditeur). Un paquet non trié le soir part tel quel (issue transmit). Drapeau posé : « mail.<lettre>.<verdict> ». Voir scripts/core/mail_sorting.gd.",
+	"_comment": "Tri du courrier : certains jours, un paquet de lettres interceptées attend l'agent (bouton TRI dans la barre des tâches). Pour chaque lettre : transmit (laisser passer), hold (retenir, la lettre n'arrive jamais), report (signaler l'expéditeur). Un paquet non trié le soir part tel quel (issue transmit). Drapeau posé : « mail.<lettre>.<verdict> ». Voir scripts/core/mail_sorting.gd. Une lettre peut porter des conditions (celles des soirées : min_count / max_count par type de soirée, drapeaux, jour) : elle n'apparaît que si elles sont remplies.",
 	"verdicts": {
 		"transmit": "TRANSMETTRE",
 		"hold": "RETENIR",
@@ -220,6 +220,49 @@
 							"flags": {
 								"player.flagged": true
 							}
+						}
+					},
+					"conditions": {
+						"min_count": {
+							"radio": 1
+						}
+					}
+				},
+				{
+					"id": "self_denunciation_quiet",
+					"from": "Un résident du bloc 7, District 2",
+					"to": "Bureau des signalements, District 2",
+					"text": "Je signale que le locataire du deuxième étage, porte gauche, employé au ministère, rentre tard et ne salue personne. On voit de la lumière chez lui jusqu'à trois heures du matin. Un homme qui n'a rien à cacher dort la nuit. Je ne signe pas : il travaille chez vous.",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 4
+							},
+							"flags": {
+								"player.flagged": true
+							}
+						},
+						"hold": {
+							"effects": {
+								"suspicion": 1
+							},
+							"flags": {
+								"mail.self_denunciation_held": true
+							}
+						},
+						"report": {
+							"effects": {
+								"suspicion": 4,
+								"loyalty": 1
+							},
+							"flags": {
+								"player.flagged": true
+							}
+						}
+					},
+					"conditions": {
+						"max_count": {
+							"radio": 0
 						}
 					}
 				},

@@ -269,6 +269,15 @@ theme_type_variation = &"StartItem"
 text = "Dossier personnel"
 alignment = 0
 
+[node name="StartPeople" type="Button" parent="StartMenu/List"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"StartItem"
+text = "Répertoire"
+alignment = 0
+
 [node name="StartTerminal" type="Button" parent="StartMenu/List"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
