@@ -316,7 +316,7 @@ caviarder) via le système de décisions existant — données pures, sans moteu
       `get_ending()` / `finish_game()`, `desk._end_game()` → menu). Tests `test_endings`
       et `test_end_of_game_in_desk`. Ordre et seuils validés par fen le 27.10.
       Conception : `docs/design/FINS_PROPOSITION.md`.
-- [ ] Facultatif (proposé à fen) : compteur « fins découvertes X/7 » au menu principal,
+- [x] Compteur « fins découvertes X/7 » au menu principal (fait), relevé de carrière à la fin,
       pour inciter à rejouer. À faire si fen le valide.
 
 ## Fait : audit de cohérence du scénario (demande de fen du 28.10)

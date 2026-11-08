@@ -4360,6 +4360,10 @@ func test_endings_discovered_counter() -> void:
 	GameState.finish_game("fin_correction")
 	check("fin_correction" in Settings.endings_discovered, "finish_game consigne la fin atteinte au menu")
 	check(GameState.flags.get("game.ending") == "fin_correction", "la fin est aussi notée dans l'état de la partie")
+	GameState.apply_decision("40000", "regularize")
+	var career: Dictionary = GameState.get_ending().career
+	check(career.signed == 1 and career.rank == GameState.get_rank_title(), "relevé de carrière : grade et rapports signés")
+	check(EndingScreen.career_text(career).contains("Rapports signés : 1"), "le relevé s'affiche en clair à la fin")
 	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
 	get_tree().root.add_child(menu)
 	await get_tree().process_frame

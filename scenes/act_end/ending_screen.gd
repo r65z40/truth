@@ -31,6 +31,13 @@ func open(result: Dictionary) -> void:
 	for child in _subjects_box.get_children():
 		_subjects_box.remove_child(child)
 		child.queue_free()
+	var career: Dictionary = result.get("career", {})
+	if not career.is_empty():
+		var record := Label.new()
+		record.name = "CareerRecord"
+		record.text = career_text(career)
+		record.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_subjects_box.add_child(record)
 	for subject: Dictionary in result.get("subjects", []):
 		var heading := Label.new()
 		heading.text = tr("%s  //  dossier %s  //  %s") % [subject.name, subject.case_id, subject.stamp]
@@ -44,6 +51,17 @@ func open(result: Dictionary) -> void:
 			_subjects_box.add_child(fate)
 	show()
 	_continue_button.grab_focus()
+
+
+## Relevé de carrière en clair (voir GameState.career_record()).
+static func career_text(career: Dictionary) -> String:
+	var lines: PackedStringArray = [
+		UiText.of("Grade final : %s, après %d jours de service.") % [career.get("rank", ""), int(career.get("days", 0))],
+		UiText.of("Rapports signés : %d, dont %d conformes à l'avis de VERITAS.") % [int(career.get("signed", 0)), int(career.get("veritas_agreed", 0))],
+	]
+	if int(career.get("contested", 0)) > 0:
+		lines.append(UiText.of("Rapports relus par le contrôle interne : %d.") % int(career.contested))
+	return "\n".join(lines)
 
 
 func _on_continue() -> void:

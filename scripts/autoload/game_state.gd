@@ -713,7 +713,22 @@ func get_ending() -> Dictionary:
 			continue
 		subjects.append({"case_id": case_id, "name": fate.subject_name,
 				"stamp": fate.stamp, "line": fate.line})
-	return {"ending": ending, "subjects": subjects}
+	return {"ending": ending, "subjects": subjects, "career": career_record()}
+
+
+## Relevé de carrière pour la fin de partie : grade, rapports signés, accord
+## avec VERITAS, rapports contestés par le contrôle interne.
+func career_record() -> Dictionary:
+	var agreed := 0
+	for entry in decisions:
+		if entry.get("veritas_agreed", false):
+			agreed += 1
+	var contested := 0
+	for key in flags:
+		if str(key).ends_with(".version_contestee") and flags[key]:
+			contested += 1
+	return {"rank": get_rank_title(), "days": day_index + 1, "signed": decisions.size(),
+			"veritas_agreed": agreed, "contested": contested}
 
 
 ## Consigne la fin atteinte (partie terminée) ; sans effet si l'identifiant est vide.
