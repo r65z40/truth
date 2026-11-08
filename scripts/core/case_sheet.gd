@@ -95,6 +95,45 @@ static func build(case_data: Dictionary, case_state: Dictionary) -> Array:
 	return sheet
 
 
+## Liens visibles entre les pièces : pour chaque élément noté dans cette pièce,
+## les autres pièces visibles qui parlent du même sujet (même clé, rattachée à une
+## question). On ne montre un lien qu'à partir de ce que l'agent a déjà relevé :
+## le jeu indique où regarder, jamais qui ment.
+## Renvoie [{document_id, title, question}] sans doublon, dans l'ordre des pièces.
+static func links(case_data: Dictionary, case_state: Dictionary, document_id: String) -> Array:
+	var keys := {}
+	for fact_id in case_state.get("noted_facts", []):
+		var fact := CaseLibrary.get_fact(case_data, fact_id)
+		if fact.get("document_id", "") == document_id and fact.get("key", "") != "":
+			keys[fact.key] = true
+	var result := []
+	var seen := {}
+	for document in case_data.get("documents", []):
+		if document.get("id", "") == document_id:
+			continue
+		for fact in document.get("facts", []):
+			var key: String = fact.get("key", "")
+			if not keys.has(key):
+				continue
+			var question := _question_for_key(case_data, key)
+			if question.is_empty():
+				continue
+			var tag := "%s|%s" % [document.id, question.id]
+			if seen.has(tag):
+				continue
+			seen[tag] = true
+			result.append({"document_id": document.id, "title": document.get("title", ""),
+					"question": question.get("text", "")})
+	return result
+
+
+static func _question_for_key(case_data: Dictionary, key: String) -> Dictionary:
+	for question in case_data.get("questions", []):
+		if key in question.get("keys", []):
+			return question
+	return {}
+
+
 ## Questions où l'agent a retenu une version que les données savent fausse.
 static func wrong_versions(case_data: Dictionary, case_state: Dictionary) -> Array:
 	var wrong := []

@@ -374,7 +374,7 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
       expérimenté = jeu d'origine (carnet libre, CONFRONTER, bulle pendant la lecture)
 - [x] Questions des 15 autres dossiers (pour que le niveau débutant couvre tout le jeu)
 - [ ] Une mécanique nouvelle par journée, gros dossiers livrés en deux temps
-- [ ] Liens visibles entre les pièces
+- [x] Liens visibles entre les pièces (08.11) : « Voir aussi » sous la source, à partir des éléments notés (niveau débutant)
 
 ### Interface plus simple et fluide (demande de fen du 04.11)
 

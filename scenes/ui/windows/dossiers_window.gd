@@ -115,6 +115,8 @@ var _doc_icon: TextureRect
 @onready var _compare_button: Button = %CompareButton
 @onready var _timeline_button: Button = %TimelineButton
 var _redact_button: Button
+## Liens visibles entre les pièces (niveau débutant), sous la ligne de source.
+var _links_row: HFlowContainer
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
 @onready var _file_button: Button = %FileButton
 @onready var _filed_toggle: Button = %FiledToggle
@@ -149,6 +151,12 @@ func _ready() -> void:
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
 	_compare_button.pressed.connect(func() -> void: comparison_requested.emit(current_case_id))
 	_timeline_button.pressed.connect(func() -> void: timeline_requested.emit(current_case_id))
+	_links_row = HFlowContainer.new()
+	_links_row.name = "LinksRow"
+	_links_row.add_theme_constant_override("h_separation", 8)
+	_links_row.add_theme_constant_override("v_separation", 6)
+	_links_row.visible = false
+	_doc_meta.add_sibling(_links_row)
 	_redact_button = Button.new()
 	_redact_button.name = "RedactButton"
 	_redact_button.text = tr("CAVIARDER")
@@ -668,9 +676,39 @@ static func tr_static(text: String) -> String:
 	return TranslationServer.translate(text)
 
 
+## Pièces liées à la pièce ouverte (même sujet que ce que l'agent y a noté).
+func _refresh_links() -> void:
+	for child in _links_row.get_children():
+		_links_row.remove_child(child)
+		child.queue_free()
+	if current_case_id == "" or current_document_id == "" or not _sheet_mode():
+		_links_row.visible = false
+		return
+	var links := CaseSheet.links(GameState.get_case_view(current_case_id),
+			GameState.get_case_state(current_case_id), current_document_id)
+	_links_row.visible = not links.is_empty()
+	if links.is_empty():
+		return
+	var title := Label.new()
+	title.theme_type_variation = &"DocumentLabel"
+	title.text = tr("Voir aussi :")
+	_links_row.add_child(title)
+	for link in links:
+		var button := Button.new()
+		button.name = "Link_" + str(link.document_id)
+		button.text = "↔ " + str(link.title)
+		button.tooltip_text = tr("Même sujet : %s") % link.question
+		button.custom_minimum_size = Vector2(0, 44)
+		button.focus_mode = Control.FOCUS_NONE
+		button.add_theme_font_size_override("font_size", 14)
+		button.pressed.connect(select_document.bind(str(link.document_id)))
+		_links_row.add_child(button)
+
+
 func _refresh_all() -> void:
 	if current_case_id == "":
 		return
+	_refresh_links()
 	var case_data := GameState.get_case_view(current_case_id)
 	var case_state := GameState.get_case_state(current_case_id)
 	var status_text: String = tr(STATUS_LABELS.get(case_state.status, "?"))

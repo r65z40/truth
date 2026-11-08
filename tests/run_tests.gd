@@ -119,6 +119,7 @@ func _run() -> void:
 		"test_foreign_radio",
 		"test_redaction",
 		"test_embedded_font",
+		"test_document_links",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -3050,6 +3051,28 @@ func test_embedded_font() -> void:
 	check(not font.fallbacks.is_empty(), "polices du système en secours pour les signes absents")
 	check(FileAccess.file_exists("res://assets/fonts/OFL-IBM-Plex.txt"), "licence de la police jointe")
 	check(FileAccess.file_exists("res://export_presets.cfg"), "préréglage d'export présent")
+
+
+## Liens visibles entre les pièces : à partir de ce que l'agent a noté, sans révéler qui ment.
+func test_document_links() -> void:
+	var case_data := CaseLibrary.get_case("40000")
+	check(CaseSheet.links(case_data, {"noted_facts": []}, "registry").is_empty(), "rien de noté : aucun lien")
+	var links := CaseSheet.links(case_data, {"noted_facts": ["f_reg_address"]}, "registry")
+	check(links.size() == 1 and links[0].document_id == "declaration", "adresse notée au registre : la déclaration parle du même sujet")
+	check(links[0].question != "", "le lien dit de quelle question il s'agit")
+	GameState.new_game()
+	var window: DossiersWindow = load("res://scenes/ui/windows/dossiers_window.tscn").instantiate()
+	get_tree().root.add_child(window)
+	window.select_case("40000")
+	window.select_document("registry")
+	window.note_fact("f_reg_address")
+	var row: Control = window.find_child("LinksRow", true, false)
+	check(row.visible == window._sheet_mode(), "la rangée de liens n'apparaît qu'au niveau débutant")
+	if row.visible:
+		(row.find_child("Link_declaration", true, false) as Button).pressed.emit()
+		check(window.current_document_id == "declaration", "toucher le lien ouvre l'autre pièce")
+	window.queue_free()
+	GameState.new_game()
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier

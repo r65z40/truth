@@ -557,5 +557,7 @@
 	"%d ligne(s) noircie(s) sur %d.": "%d of %d line(s) blacked out.",
 	"CAVIARDER": "REDACT",
 	"CAVIARDER (%d)": "REDACT (%d)",
-	"Caviardage MIROIR : dossier n° %s.": "MIRROR redaction: file no. %s."
+	"Caviardage MIROIR : dossier n° %s.": "MIRROR redaction: file no. %s.",
+	"Voir aussi :": "See also:",
+	"Même sujet : %s": "Same subject: %s"
 }
