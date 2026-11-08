@@ -7,6 +7,28 @@
 		"objective": "Aucun : ce dossier porte votre nom. Vous n'êtes pas habilité à l'instruire ni à le conclure. Vous pouvez seulement le lire.",
 		"context": "Dans la liste des dossiers du jour, un numéro de plus : 54100, au nom d'A. VOSK. Le vôtre. Il est déjà ouvert, et quelqu'un le remplit à mesure."
 	},
+	"questions": [
+		{
+			"id": "subject",
+			"text": "Que vous reproche-t-on ?",
+			"keys": [
+				"vosk.subject",
+				"vosk.suspicion_word",
+				"vosk.assessment",
+				"vosk.procedure",
+				"brandt.role"
+			],
+			"main": true
+		},
+		{
+			"id": "father",
+			"text": "Que dit le dossier de votre père ?",
+			"keys": [
+				"vosk.father",
+				"vosk.recruited"
+			]
+		}
+	],
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Acte 3 : le joueur devient le sujet. Dossier en lecture seule, révélation de BRANDT.",
@@ -129,6 +151,54 @@
 					"value": "I. BRANDT, la contrôleuse",
 					"label": "Votre voisine de couloir, I. BRANDT, est la contrôleuse interne chargée de vous (et le « B. » du 53760)",
 					"quote": "I. BRANDT, inspectrice, poste voisin de la Section 4."
+				}
+			]
+		},
+		{
+			"id": "bribe_annex",
+			"type": "report",
+			"title": "Annexe : un carnet de rationnement",
+			"source": "Contrôle interne, poste voisin",
+			"reliability": "B",
+			"date": "1986-11-20",
+			"conditions": {
+				"requires_flags": [
+					"player.bribed"
+				]
+			},
+			"veritas_remark": "Pièce conservée par le contrôle interne pour usage ultérieur.",
+			"body": "Après la clôture du dossier 52044, l'agent a reçu à l'accueil un carnet de rationnement complet, établi au nom de SIMKO Pavol, décédé le 29 août 1986. Le carnet n'a été ni restitué ni signalé.\n\nRecommandation : ne rien en dire. Conserver la pièce. Elle pourra servir.",
+			"facts": [
+				{
+					"id": "f_bribe_kept",
+					"key": "vosk.bribe",
+					"value": "Carnet d'un mort, gardé sans le signaler",
+					"label": "Le contrôle interne sait que vous avez gardé le carnet d'un mort, et le garde en réserve",
+					"quote": "Conserver la pièce. Elle pourra servir."
+				}
+			]
+		},
+		{
+			"id": "halm_annex",
+			"type": "report",
+			"title": "Annexe du cabinet HALM",
+			"source": "Cabinet du Directeur HALM",
+			"reliability": "A",
+			"date": "1986-11-20",
+			"conditions": {
+				"requires_flags": [
+					"halm.grudge"
+				]
+			},
+			"veritas_remark": "Annexe d'un service de direction, fiabilité A.",
+			"body": "L'agent a classé le dossier 53402 (VRABEC, Brenec) contre l'instruction écrite du Directeur, en pleine application du décret 86-31.\n\nDemande du cabinet : relecture systématique de ses conclusions, et mention de ce classement à toute commission d'avancement.",
+			"facts": [
+				{
+					"id": "f_halm_grudge",
+					"key": "vosk.halm",
+					"value": "HALM relit tout",
+					"label": "Depuis Brenec, le cabinet HALM relit toutes vos conclusions et le signalera à l'avancement",
+					"quote": "relecture systématique de ses conclusions"
 				}
 			]
 		}

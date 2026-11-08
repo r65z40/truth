@@ -7,6 +7,27 @@
 		"objective": "Rédiger la version définitive du dossier scellé de 1971 : celui de votre père. C'est le dernier document de MIROIR, et le vôtre.",
 		"context": "Pour devenir inattaquable, MIROIR doit refermer le dossier par lequel tout a commencé : l'inspection de 1971 : votre père, horloger, avait découvert qui réglait les horloges, et il a disparu. HALM vous confie sa réécriture. On ne recrute pas le fils par hasard."
 	},
+	"questions": [
+		{
+			"id": "order",
+			"text": "Que vous ordonne-t-on d'écrire ?",
+			"keys": [
+				"miroir.order",
+				"miroir.deal",
+				"miroir.erase"
+			],
+			"main": true
+		},
+		{
+			"id": "father",
+			"text": "Qu'est-il arrivé à votre père ?",
+			"keys": [
+				"vosk.father_truth",
+				"vosk.father_fate"
+			],
+			"main": true
+		}
+	],
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Acte 4 : le choix final. Le fils réécrit le dossier du père. Nourrit les fins (dont La Correction).",
@@ -110,6 +131,54 @@
 					"value": "La pendule attend depuis 1971",
 					"label": "La pendule que le père avait laissée chez ADLER attend, non réclamée, depuis mars 1971",
 					"quote": "On ne l'a jamais revu."
+				}
+			]
+		},
+		{
+			"id": "father_papers",
+			"type": "letter",
+			"title": "Les papiers de la pendule",
+			"source": "Double fond de la pendule VOSK, atelier d'ADLER (hors procédure)",
+			"reliability": "B",
+			"date": "1971-03-27",
+			"conditions": {
+				"requires_flags": [
+					"vosk.father_proof_found"
+				]
+			},
+			"veritas_remark": "Pièce non versée, d'origine privée. Le module ne la reconnaît pas.",
+			"body": "Copie de la main d'A. VOSK, datée du 27 mars 1971, roulée dans le double fond de sa pendule :\n\n« Relevés de réglage, salle 3 et couloir B du ministère, soirs du 2, du 9 et du 16 mars : moins douze minutes, chaque fois un soir d'interpellation. L'ordre de réglage porte un visa du cabinet. J'en ai remis le double à l'inspecteur KREMER le 18. On est venu ce matin me demander la clé de l'atelier. Si je ne reviens pas, je n'ai pas émigré. »",
+			"facts": [
+				{
+					"id": "f_pap_proof",
+					"key": "vosk.father_proof",
+					"value": "« Si je ne reviens pas, je n'ai pas émigré »",
+					"label": "Les papiers de votre père, de sa main : les relevés truqués, le visa du cabinet, et « je n'ai pas émigré »",
+					"quote": "Si je ne reviens pas, je n'ai pas émigré."
+				}
+			]
+		},
+		{
+			"id": "lena_note",
+			"type": "report",
+			"title": "Fiche jointe : L. VOSK, hôpital n° 2",
+			"source": "Cabinet du Directeur HALM",
+			"reliability": "A",
+			"date": "1986-12-05",
+			"conditions": {
+				"requires_flags": [
+					"act4.lena_threatened"
+				]
+			},
+			"veritas_remark": "Pièce jointe par le cabinet. Sans incidence sur la rédaction, selon le module.",
+			"body": "Affectation : L. VOSK, étudiante en médecine, hôpital n° 2, service des urgences. Sur recommandation de l'agent A. VOSK (6.11.1986).\n\nMention au crayon, de la main du cabinet : « À réexaminer selon la rédaction du dossier 60003. »",
+			"facts": [
+				{
+					"id": "f_lena_hostage",
+					"key": "miroir.lena",
+					"value": "L'affectation de Lena dépend de votre rédaction",
+					"label": "La fiche de votre sœur est jointe au dossier de votre père, « à réexaminer selon la rédaction »",
+					"quote": "À réexaminer selon la rédaction du dossier 60003."
 				}
 			]
 		}

@@ -14,6 +14,10 @@ const DOCUMENT_CASCADE := Vector2(32, 32)
 ## s'affiche plus d'elle-même (le joueur a pris la main) ; seul le repère
 ## clignotant subsiste. L'aide reste réactivable/désactivable dans les paramètres.
 const TUTORIAL_BUBBLE_UNTIL_CONCLUDED := 2
+## Applications ouvertes en plein écran dans la zone de travail.
+## Largeur en dessous de laquelle un bouton de la barre des tâches n'affiche que l'icône.
+const TASK_LABEL_MIN_WIDTH := 150.0
+const FULLSCREEN_APPS: Array[String] = ["dossiers", "messages", "archives", "personnel", "veritas", "news"]
 
 @onready var terminal: Terminal = %TerminalWindow.get_node("%Terminal")
 @onready var windows: Dictionary = {
@@ -87,8 +91,6 @@ const TOOLTIPS := {
 	"MessagesButton": "Lire le courrier interne et les réponses de la hiérarchie.",
 	"NewsButton": "Le journal du matin, La Voix de Velmira. Le lire ne coûte pas d'heures.",
 	"VeritasButton": "VERITAS, le système d'analyse : il recommande une conclusion pour un dossier.",
-	"ArchivesButton": "Voir les rapports que vous avez transmis.",
-	"PersonnelButton": "Votre évaluation par la Direction du personnel.",
 	"TerminalButton": "Le terminal du ministère, pour les commandes tapées au clavier.",
 	"StartButton": "Menu du ministère : identité, terminal, paramètres, sauvegarde.",
 	"EndDayButton": "Terminer la journée : la suite de vos décisions arrive le lendemain.",
@@ -108,10 +110,13 @@ func _ready() -> void:
 	terminal.end_day_requested.connect(request_end_day)
 	%DossiersButton.pressed.connect(terminal.submit_command.bind("DOSSIERS"))
 	_messages_button.pressed.connect(terminal.submit_command.bind("MESSAGES"))
-	%ArchivesButton.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
-	%PersonnelButton.pressed.connect(terminal.submit_command.bind("PROFIL"))
+	# Bureau réduit à l'essentiel : Archives et Personnel sont dans le menu
+	# MINISTÈRE (et les archives aussi dans le classeur des dossiers).
+	%StartArchives.pressed.connect(terminal.submit_command.bind("ARCHIVES"))
+	windows.dossiers.archives_requested.connect(terminal.submit_command.bind("ARCHIVES"))
 	%TerminalButton.pressed.connect(open_app.bind("terminal"))
-	%VeritasButton.pressed.connect(open_app.bind("veritas"))
+	%VeritasButton.pressed.connect(open_veritas_app)
+	windows.messages.case_requested.connect(open_case)
 	%NewsButton.pressed.connect(open_news)
 	%SaveButton.pressed.connect(terminal.submit_command.bind("SAUVER"))
 	%MenuButton.pressed.connect(terminal.submit_command.bind("MENU"))
@@ -125,17 +130,29 @@ func _ready() -> void:
 	%StartSettings.pressed.connect(open_app.bind("settings"))
 	for item: Button in _start_menu.find_children("*", "Button", true, false):
 		item.pressed.connect(close_start_menu)
+	# Les applications du travail s'ouvrent en plein écran, comme les scènes de
+	# terrain ; seuls le terminal, les paramètres et les pièces « à côté » flottent.
+	for app_name in FULLSCREEN_APPS:
+		windows[app_name].fullscreen = true
 	for window: MinistryWindow in windows.values():
 		window.hide()
 		window.closed.connect(_on_window_closed)
 		window.notify.connect(show_toast)
 	window_manager.windows_changed.connect(_refresh_taskbar)
 	_task_buttons.get_parent().resized.connect(func() -> void:
+		var width := _task_button_width()
 		for button: Button in _task_buttons.get_children():
-			button.custom_minimum_size.x = _task_button_width())
+			button.custom_minimum_size.x = width
+			button.text = button.tooltip_text if width >= TASK_LABEL_MIN_WIDTH or button.icon == null else "")
 	for button_name in TOOLTIPS:
 		(get_node("%" + button_name) as Control).tooltip_text = tr(TOOLTIPS[button_name])
 	_toast.hide()
+	_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_toast.grow_horizontal = Control.GROW_DIRECTION_END
+	_toast.grow_vertical = Control.GROW_DIRECTION_END
+	_toast.custom_minimum_size.x = 520.0
 	_day_transition.hide()
 	coach.target_provider = coach_target
 	coach.dismissed.connect(_on_coach_dismissed)
@@ -285,6 +302,7 @@ func _refresh_sound_button() -> void:
 func show_toast(text: String, duration := 1.8) -> void:
 	Sound.play("notification")
 	_toast_label.text = text
+	_place_toast.call_deferred()
 	_toast.show()
 	_toast.modulate.a = 1.0
 	if _toast_tween:
@@ -293,6 +311,16 @@ func show_toast(text: String, duration := 1.8) -> void:
 	_toast_tween.tween_interval(duration)
 	_toast_tween.tween_property(_toast, "modulate:a", 0.0, 0.5)
 	_toast_tween.tween_callback(_toast.hide)
+
+
+## La notification se pose en haut, juste sous le bandeau d'aide (sur la barre de
+## titre des fenêtres) : elle ne cache ni le texte des pièces ni les boutons.
+func _place_toast() -> void:
+	_toast.reset_size()
+	var top := 12.0
+	if _guide_bar and _guide_bar.visible:
+		top += _guide_bar.get_global_rect().end.y - global_position.y
+	_toast.position = Vector2((size.x - _toast.size.x) / 2.0, top)
 
 
 func _boot_terminal() -> void:
@@ -396,9 +424,8 @@ func _refresh_header() -> void:
 	%DossiersButton.tooltip_text = "%s\n%s" % [tr(TOOLTIPS.DossiersButton),
 			tr("%d dossier(s) à traiter.") % pending if pending > 0 else tr("Aucun dossier en attente.")]
 	%NewsButton.badge = 0 if news_read_day == GameState.day_index else 1
-	%ArchivesButton.visible = GameState.is_feature_unlocked("archives")
-	%PersonnelButton.visible = GameState.is_feature_unlocked("personnel")
-	%StartPersonnel.visible = %PersonnelButton.visible
+	%StartArchives.visible = GameState.is_feature_unlocked("archives")
+	%StartPersonnel.visible = GameState.is_feature_unlocked("personnel")
 	terminal.set_advanced_visible(GameState.is_feature_unlocked("terminal_advanced"))
 	_refresh_objective()
 
@@ -415,9 +442,12 @@ func _build_guide_bar() -> void:
 	pad.add_theme_constant_override("margin_top", 6)
 	pad.add_theme_constant_override("margin_bottom", 6)
 	_guide_bar.add_child(pad)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 6)
+	pad.add_child(column)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 12)
-	pad.add_child(row)
+	column.add_child(row)
 	var tag := Label.new()
 	tag.text = tr("▸ À FAIRE")
 	tag.theme_type_variation = &"HeaderLabel"
@@ -431,28 +461,34 @@ func _build_guide_bar() -> void:
 	main.add_child(_guide_bar)
 	main.move_child(_guide_bar, 0)
 	_guide_bar.visible = false
+	# Une seule aide à l'écran : le mot de MAZUR se range sous le bandeau, au lieu
+	# d'une bulle posée sur le contenu (le cadre clignotant montre où cliquer).
+	coach.dock = column
 
 
 ## Met à jour l'aide : le bandeau, la bulle et l'icône signalée clignotent doucement.
 func _refresh_objective() -> void:
 	var guide_state := GameState.get_condition_state()
 	guide_state["hours_used"] = GameState.hours_used
+	guide_state["sheet_mode"] = Settings.is_beginner()
 	current_step = Guidance.next_step(guide_state, GameState.messages)
 	# Toute la première journée reste guidée, jusqu'au bouton FIN DE SERVICE
 	# compris ; ensuite, l'aide s'efface après deux dossiers conclus.
 	var in_tutorial: bool = Settings.guidance \
 			and (GameState.concluded_case_count() < TUTORIAL_BUBBLE_UNTIL_CONCLUDED or GameState.day_index == 0)
+	var coach_shown: bool = in_tutorial and current_step.get("bubble", true) \
+			and _step_key(current_step) != _coach_dismissed_step
 	# Bandeau permanent : la prochaine étape en clair, toujours visible au début.
 	if _guide_bar:
 		_guide_bar.visible = in_tutorial
-		var hint: String = current_step.get("hint", "")
+		# Le mot de MAZUR, sous le bandeau, remplace l'indication courte.
+		var hint: String = "" if coach_shown else current_step.get("hint", "")
 		_guide_bar_label.text = current_step.get("text", "") \
 				+ ("   —   " + hint if hint != "" else "")
 	# La bulle détaillée s'estompe une fois le joueur rodé ou s'il la ferme ; le
 	# repère clignotant sur l'icône reste tant que l'aide est activée.
 	# Une étape peut s'en tenir au bandeau (bubble = false) : une seule aide à l'écran.
-	coach.visible = in_tutorial and current_step.get("bubble", true) \
-			and _step_key(current_step) != _coach_dismissed_step
+	coach.visible = coach_shown
 	if _pulse_tween:
 		_pulse_tween.kill()
 	for button: Control in _target_buttons.values():
@@ -504,15 +540,18 @@ func _refresh_taskbar() -> void:
 	for child in _task_buttons.get_children():
 		child.queue_free()
 	var focused := window_manager.get_focused()
+	var width := _task_button_width()
 	for window in window_manager.get_open_windows():
 		var button := Button.new()
 		button.name = "Task_" + window.name
-		button.text = window.short_title()
+		# Peu de place : l'icône seule plutôt qu'un nom coupé (« Dossie… »).
+		button.text = window.short_title() if width >= TASK_LABEL_MIN_WIDTH or window.app_icon == "" else ""
+		button.tooltip_text = window.short_title()
 		button.icon = PixelIcons.get_icon(window.app_icon, 2) if window.app_icon != "" else null
 		button.theme_type_variation = &"TaskButton"
 		button.toggle_mode = true
 		button.button_pressed = window == focused
-		button.custom_minimum_size = Vector2(_task_button_width(), 44)
+		button.custom_minimum_size = Vector2(width, 44)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.clip_text = true
 		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -567,6 +606,14 @@ func open_news() -> void:
 
 
 ## Lance VERITAS sur un dossier (depuis le formulaire de conclusion).
+## Icône VERITAS : le programme s'ouvre directement sur le dossier en cours.
+func open_veritas_app() -> void:
+	open_app("veritas")
+	var case_id: String = windows.dossiers.current_case_id
+	if windows.veritas.current_case_id == "" and case_id in VeritasWindow.pending_case_ids():
+		windows.veritas.select_case(case_id)
+
+
 func open_veritas(case_id: String) -> void:
 	open_app("veritas")
 	windows.veritas.run_analysis(case_id)

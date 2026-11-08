@@ -368,10 +368,55 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
 - [x] Écran allégé en mode fiche : en-tête du dossier sur une ligne (objet en tête
       de la fiche, contexte replié), fiche en colonne à droite, plus de bulle de
       MAZUR pendant la lecture des pièces (le bandeau suffit)
-- [x] Aide à l'enquête désactivée : carnet libre et CONFRONTER, comme avant
-- [ ] Test de fen dans Godot, puis questions des 15 autres dossiers
+- [x] Test de fen (04.11) : validé
+- [x] Niveaux de difficulté (demande de fen du 04.11) : choisis à « Nouvelle partie »,
+      modifiables dans Paramètres (`Settings.difficulty`). Débutant = fiche d'enquête ;
+      expérimenté = jeu d'origine (carnet libre, CONFRONTER, bulle pendant la lecture)
+- [x] Questions des 15 autres dossiers (pour que le niveau débutant couvre tout le jeu)
 - [ ] Une mécanique nouvelle par journée, gros dossiers livrés en deux temps
-- [ ] Liens visibles entre les pièces, bureau à 4 icônes
+- [ ] Liens visibles entre les pièces
+
+### Interface plus simple et fluide (demande de fen du 04.11)
+
+Proposition : https://claude.ai/artifact/Dua5iU65YykqvSUREUESug. fen : « plein
+écran pour tout le monde, garde le terminal pour le moment ».
+
+- [x] Une seule aide à l'écran : le mot de MAZUR rangé sous le bandeau « À FAIRE »
+      (plus de bulle sur le contenu), notifications en haut, tampon du verdict sur
+      la carte de la fiche
+- [x] Dossiers, Courrier, Archives, Personnel, VERITAS et Journal en plein écran,
+      bouton « ← RETOUR » ; terminal, paramètres et pièces « à côté » flottent
+- [x] Bureau à cinq icônes (Archives et Personnel dans le menu MINISTÈRE, archives
+      aussi depuis le classeur) ; barre des tâches en icônes quand la place manque
+- [x] Moins de clics : plis lus repliés, OUVRIR LE DOSSIER depuis un pli, DOSSIER
+      SUIVANT, VERITAS ouvert sur le dossier en cours
+- [x] COMPARER compact (une ligne par trait) ; pied du dossier qui passe à la ligne ;
+      pièce en 16 px à côté de la fiche
+- [ ] Test de fen
+
+## Fait : fils d'histoire raccordés (demande de fen du 02.11)
+
+- [x] Les papiers de la pendule (`vosk.father_proof_found`) : pièce du 60003 et seconde
+      voie vers La Correction (sans KREMER, si le sous-sol B n'a pas été scellé)
+- [x] Le piston de Lena (`lena.leverage`) : menace de HALM au jour 16, fiche de Lena
+      jointe au 60003, mutation à Brenec si l'on rétablit la vérité du père
+- [x] Brenec classé (`halm.defied`) : le cabinet HALM relit tout, annexe au 54100
+- [x] Le carnet SIMKO (`player.bribed`) : DRAZEK révèle qu'il vient d'un mort, annexe au 54100
+- [x] Le cahier de L'HEURE JUSTE versé au dossier : opération CADRAN (dix arrestations),
+      la fin L'Heure juste se ferme
+- [x] Le second signalement de KOLB : nouveau dossier 53190 (le bedeau de Saint-Roch),
+      relance, glas manquant, radiation de KOLB ; épargner HRUBY compte pour La Correction
+
+## Fait : carrière et factions (demande de fen du 02.11)
+
+- [x] Cinq factions (direction, Section 7, Milice, L'Heure juste, familles) dont l'attitude
+      (hostile → alliée) est déduite des drapeaux (`data/factions.json`, `FactionRules`) :
+      pas de changement de sauvegarde
+- [x] Conditions d'événement `faction_at_least` / `faction_at_most`, six courriers de faction
+      (perquisition, faveur de la Milice, courrier ouvert, avertissement, remerciements, mise à l'écart)
+- [x] Rubrique « RELATIONS » dans le dossier personnel
+- [x] Commissions de fin d'actes 2 et 3 (un grade à la fois, exigences de faction, effets sur
+      les indicateurs) ; le rôle dans MIROIR dépend du grade, seconde voie vers la fin Miroir
 
 ## Prochaine itération
 
@@ -403,6 +448,6 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
 ## Plus tard
 
 - [ ] Réseaux d'informateurs, fiabilité des sources, interrogatoires
-- [ ] Promotions et carrière, factions, simulation politique
+- [ ] Simulation politique (promotions et factions : faites le 02.11)
 - [ ] Interface LLM optionnelle pour VERITAS (formulation seulement, via serveur)
 - [ ] Adaptation mobile complète

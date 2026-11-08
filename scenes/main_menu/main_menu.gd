@@ -24,11 +24,15 @@ func _ready() -> void:
 	_quit_button.pressed.connect(func() -> void: get_tree().quit())
 	%ConfirmYesButton.pressed.connect(start_new_game)
 	%ConfirmNoButton.pressed.connect(_confirm_panel.hide)
+	%BeginnerButton.pressed.connect(choose_difficulty.bind(Settings.DIFFICULTY_BEGINNER))
+	%ExpertButton.pressed.connect(choose_difficulty.bind(Settings.DIFFICULTY_EXPERT))
+	%DifficultyCancelButton.pressed.connect(%DifficultyPanel.hide)
 	# Les plateformes mobiles et le web ne permettent pas de quitter l'application soi-même.
 	_quit_button.visible = not (OS.has_feature("mobile") or OS.has_feature("web"))
 	_settings_window.hide()
 	_settings_layer.hide()
 	_confirm_panel.hide()
+	%DifficultyPanel.hide()
 	_error_label.text = ""
 	refresh()
 
@@ -76,7 +80,16 @@ func continue_game() -> void:
 	get_tree().change_scene_to_file(DESK_SCENE)
 
 
+## NOUVELLE PARTIE : on choisit d'abord le niveau de difficulté.
 func _on_new_game_pressed() -> void:
+	%DifficultyPanel.show()
+
+
+## Niveau choisi : il est enregistré dans les paramètres (modifiable ensuite),
+## puis la partie commence.
+func choose_difficulty(level: String) -> void:
+	Settings.set_difficulty(level)
+	%DifficultyPanel.hide()
 	# Une nouvelle partie n'efface la sauvegarde qu'au prochain enregistrement,
 	# mais on prévient quand même le joueur.
 	if SaveManager.has_save():

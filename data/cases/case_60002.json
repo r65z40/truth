@@ -7,6 +7,26 @@
 		"objective": "Rédiger le rapport officiel de l'explosion de la Centrale n° 3 et désigner la cause qui entrera dans l'Histoire.",
 		"context": "Le bulletin a déjà nommé un sabotage ; MIROIR veut maintenant le rapport de fond qui le confirme. VERITAS a préparé un coupable. Vous savez ce qui a vraiment fait sauter la chaudière."
 	},
+	"questions": [
+		{
+			"id": "order",
+			"text": "Que vous ordonne-t-on d'écrire ?",
+			"keys": [
+				"miroir.order",
+				"miroir.erase"
+			],
+			"main": true
+		},
+		{
+			"id": "cause",
+			"text": "Quelle cause entrera dans l'Histoire ?",
+			"keys": [
+				"centrale.official",
+				"veritas.zero"
+			],
+			"main": true
+		}
+	],
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Acte 4 : rédaction. Choisir le coupable officiel de l'explosion.",

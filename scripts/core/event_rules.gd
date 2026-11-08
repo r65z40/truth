@@ -13,6 +13,9 @@ extends RefCounted
 ## - undecided_cases  : dossiers attribués et encore sans décision.
 ## - min_indicators   : {indicateur: seuil} — chaque indicateur doit être >= seuil.
 ## - max_indicators   : {indicateur: seuil} — chaque indicateur doit être <= seuil.
+## - faction_at_least : {faction: palier} — l'attitude de la faction est au moins ce
+##                      palier (hostile < méfiante < neutre < favorable < alliée).
+## - faction_at_most  : {faction: palier} — au plus ce palier (FactionRules).
 ## Les seuils d'indicateurs servent à la réaction de la hiérarchie au profil de
 ## l'agent (surveillance, contrôle interne, agent courtisé) : déterministe, sans
 ## hasard, à partir des indicateurs déjà tenus par la partie.
@@ -59,4 +62,8 @@ static func are_conditions_met(conditions: Dictionary, state: Dictionary) -> boo
 	for indicator in conditions.get("max_indicators", {}):
 		if int(indicators.get(indicator, 0)) > int(conditions.max_indicators[indicator]):
 			return false
+	if conditions.has("faction_at_least") and not FactionRules.at_least(conditions.faction_at_least, flags):
+		return false
+	if conditions.has("faction_at_most") and not FactionRules.at_most(conditions.faction_at_most, flags):
+		return false
 	return true

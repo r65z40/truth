@@ -97,20 +97,6 @@ text = "VERITAS"
 script = ExtResource("15_icon")
 icon_name = "veritas"
 
-[node name="ArchivesButton" type="Button" parent="Main/Body/Icons/List"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Archives"
-script = ExtResource("15_icon")
-icon_name = "archives"
-
-[node name="PersonnelButton" type="Button" parent="Main/Body/Icons/List"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Personnel"
-script = ExtResource("15_icon")
-icon_name = "personnel"
-
 [node name="TerminalButton" type="Button" parent="Main/Body/Icons/List"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -264,6 +250,15 @@ theme_type_variation = &"TitleLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TitleStamp"
+
+[node name="StartArchives" type="Button" parent="StartMenu/List"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"StartItem"
+text = "Archives (rapports transmis)"
+alignment = 0
 
 [node name="StartPersonnel" type="Button" parent="StartMenu/List"]
 unique_name_in_owner = true

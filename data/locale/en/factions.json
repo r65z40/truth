@@ -1,0 +1,13 @@
+{
+	"_note": "Traduction anglaise de data/factions.json : texte français -> texte anglais.",
+	"hostile": "hostile",
+	"méfiante": "wary",
+	"neutre": "neutral",
+	"favorable": "favourable",
+	"alliée": "allied",
+	"La Direction (cabinet HALM)": "The Directorate (HALM's office)",
+	"La Section 7 (censure)": "Section 7 (censorship)",
+	"La Milice du District 9": "The District 9 Militia",
+	"L'HEURE JUSTE": "THE TRUE HOUR",
+	"Les familles et les voisins": "Families and neighbours"
+}

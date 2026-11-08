@@ -154,6 +154,19 @@ layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 text = "JEU"
 
+[node name="DifficultyRow" type="HBoxContainer" parent="Layout/Scroll/Content/Options"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Layout/Scroll/Content/Options/DifficultyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Difficulté"
+
+[node name="DifficultyOption" type="OptionButton" parent="Layout/Scroll/Content/Options/DifficultyRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+
 [node name="GuidanceRow" type="HBoxContainer" parent="Layout/Scroll/Content/Options"]
 layout_mode = 2
 

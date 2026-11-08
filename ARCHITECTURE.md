@@ -114,8 +114,12 @@ tout couper. Guide pour ajouter des médias : `docs/MEDIAS.md`.
   `MinistryWindow.open()` > `WindowManager` la place (première fois) et la passe
   au premier plan. Plusieurs fenêtres restent ouvertes ; `Desk.get_open_app()`
   renvoie celle du premier plan. La barre des tâches a un bouton par fenêtre
-  ouverte (ressortir, passer devant, réduire). Sous 900 px de large, chaque
-  fenêtre occupe toute la zone de travail.
+  ouverte (ressortir, passer devant, réduire), l'icône seule si la place manque.
+  Les applications de `Desk.FULLSCREEN_APPS` (dossiers, courrier, archives,
+  personnel, VERITAS, journal) ont `MinistryWindow.fullscreen` : elles occupent
+  toute la zone de travail, ne se déplacent pas, et « ← RETOUR » les ferme. Le
+  terminal, les paramètres et les pièces « à côté » restent flottants. Sous
+  900 px de large, chaque fenêtre occupe toute la zone de travail.
 - **Terminal** (fenêtre facultative) : saisie ou bouton > `TerminalCommands.parse()`
   > signal `app_requested` > `Desk.open_app()`.
 - **Lecture d'une pièce** : `DossiersWindow.select_document()` > affichage BBCode >
@@ -164,8 +168,10 @@ des valeurs différentes forment un conflit (« deux versions ») :
 `GameState.retain_version()` confronte la paire (même règle que le carnet, prix
 compris) et mémorise le choix dans `case_state.sheet_choices` (sauvegarde v8).
 Une clé ne peut appartenir qu'à une question (`CaseSheet.validate`). Les éléments
-sans question vont dans « autres notes ». Avec l'aide à l'enquête coupée, la
-fenêtre revient au carnet libre et à CONFRONTER.
+sans question vont dans « autres notes ». Au niveau expérimenté
+(`Settings.difficulty`, choisi à « Nouvelle partie » et dans Paramètres), la
+fenêtre revient au carnet libre et à CONFRONTER ; le bureau passe `sheet_mode` à
+`Guidance.next_step()`. Le niveau est un paramètre, pas une donnée de partie.
 
 ## Accompagnement du joueur
 
@@ -184,8 +190,10 @@ affiche ces notifications brèves (toast). Les sauvegardes contiennent un résum
 - **Bulle d'aide** (`scenes/ui/coach/`) : `Guidance.next_step()` renvoie aussi
   `part` (endroit dans la fenêtre : `case`, `tab:<pièce>`, `facts`, `notebook`,
   `conclusion`), `case_id` et `coach` (texte). Le bureau résout le contrôle
-  visé (`coach_target()`, `MinistryWindow.get_guide_target()`) ; la bulle le
-  suit à chaque image et ne bloque jamais les clics. Un dossier peut préciser
+  visé (`coach_target()`, `MinistryWindow.get_guide_target()`) ; un cadre
+  clignotant le suit à chaque image et ne bloque jamais les clics. Le texte de
+  MAZUR est rangé dans le bandeau « À FAIRE » (`CoachOverlay.dock`) : il ne
+  recouvre jamais le contenu. Les notifications se posent en haut, sous le bandeau. Un dossier peut préciser
   ses conseils dans un bloc `"guide"` (le 40921 sert de tutoriel).
 - **Fonctions débloquées** (`data/rules/features.json`, `Features`) : le premier
   jour n'affiche ni DEMANDER, ni CONSULTER, ni Archives, ni Dossier personnel ;

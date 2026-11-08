@@ -1,0 +1,124 @@
+{
+	"note": "Factions (docs/design/FACTIONS.md). L'attitude d'une faction envers l'agent se déduit des drapeaux déjà posés : somme des poids, puis palier. Rien n'est sauvegardé en plus : on recalcule à partir de la partie. Lue par le dossier personnel, les conditions d'événements (faction_at_least / faction_at_most) et la commission d'avancement.",
+	"levels": [
+		{
+			"id": "hostile",
+			"below": -3,
+			"label": "hostile"
+		},
+		{
+			"id": "mefiante",
+			"below": -1,
+			"label": "méfiante"
+		},
+		{
+			"id": "neutre",
+			"below": 2,
+			"label": "neutre"
+		},
+		{
+			"id": "favorable",
+			"below": 4,
+			"label": "favorable"
+		},
+		{
+			"id": "alliee",
+			"below": 1000,
+			"label": "alliée"
+		}
+	],
+	"factions": [
+		{
+			"id": "direction",
+			"name": "La Direction (cabinet HALM)",
+			"weights": {
+				"player.courted": 2,
+				"53118.choir_arrested": 1,
+				"53402.vrabec_arrested": 2,
+				"54001.scapegoat": 1,
+				"act4.mirror_cooperated": 2,
+				"act4.mirror_signed_clean": 2,
+				"halm.defied": -2,
+				"halm.grudge": -1,
+				"ministry.embarrassed": -2,
+				"player.noticed_by_halm": -1,
+				"53118.choir_cleared": -1,
+				"54001.accident_established": -1,
+				"act2.alteration_reported": -1,
+				"act4.mirror_resisted": -3,
+				"act4.mirror_refused": -2
+			}
+		},
+		{
+			"id": "section7",
+			"name": "La Section 7 (censure)",
+			"weights": {
+				"52310.varga_arrested": 2,
+				"54012.testimony_upheld": 1,
+				"53190.hruby_arrested": 1,
+				"section7.hostile": -3,
+				"section7.noticed_search": -2,
+				"52310.identity_questioned": -1,
+				"54012.testimony_discredited": -1
+			}
+		},
+		{
+			"id": "milice",
+			"name": "La Milice du District 9",
+			"weights": {
+				"milice.favor_owed": 2,
+				"milice.ally": 1,
+				"54001.orlik_protected": 2,
+				"53517.petras_arrested": 1,
+				"54012.false_witness": 1,
+				"milice.hostile": -3,
+				"milice.enemy": -1,
+				"orlik.captain_hostile": -2,
+				"51307.orlik_arrested": -1,
+				"milice.noticed_player": -1,
+				"52044.drazek_exposed": -1
+			}
+		},
+		{
+			"id": "heure_juste",
+			"name": "L'HEURE JUSTE",
+			"weights": {
+				"kremer.protected": 2,
+				"adler.freed": 2,
+				"53402.line_cleared": 1,
+				"mazur.fled": 1,
+				"vosk.father_proof_found": 1,
+				"heure_juste.network_hit": -6,
+				"kremer.arrested": -2,
+				"adler.arrested": -2,
+				"adler.reported_radio": -1
+			}
+		},
+		{
+			"id": "familles",
+			"name": "Les familles et les voisins",
+			"weights": {
+				"40921.closed_unchecked": 1,
+				"40921.closed_despite_evidence": 1,
+				"52044.drazek_exposed": 1,
+				"53118.choir_cleared": 2,
+				"53517.petras_cleared": 1,
+				"54001.accident_established": 2,
+				"53190.hruby_cleared": 1,
+				"adler.freed": 1,
+				"54012.testimony_discredited": 1,
+				"40921.sedlar_arrested": -1,
+				"52044.innocent_condemned": -2,
+				"52310.innocent_condemned": -1,
+				"53118.innocents_condemned": -2,
+				"53517.innocent_condemned": -2,
+				"54001.sedlar_daughter_condemned": -2,
+				"53190.innocent_condemned": -1,
+				"40921.family_humiliated": -1,
+				"52044.family_humiliated": -1,
+				"52310.family_humiliated": -1,
+				"53517.family_humiliated": -1
+			}
+		}
+	]
+}

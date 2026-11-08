@@ -7,6 +7,33 @@
 		"objective": "Apprécier la valeur de la déposition du témoin REIS : a-t-il vraiment vu un sabotage, ou sa parole a-t-elle été recueillie quand il ne pouvait pas la donner ?",
 		"context": "Tomas REIS, chauffeur de nuit, a été projeté hors de l'atelier. La brigade du capitaine ORLIK a recueilli sa déposition à l'hôpital. Elle désigne la chaudière sabotée, et une silhouette près d'elle."
 	},
+	"questions": [
+		{
+			"id": "account",
+			"text": "Qu'a vu REIS ?",
+			"keys": [
+				"temoin.account",
+				"temoin.weight"
+			],
+			"main": true
+		},
+		{
+			"id": "lucidity",
+			"text": "REIS était-il en état de témoigner ?",
+			"keys": [
+				"temoin.lucidity",
+				"temoin.visitors"
+			],
+			"main": true
+		},
+		{
+			"id": "target",
+			"text": "Qui sa déposition désigne-t-elle ?",
+			"keys": [
+				"temoin.target"
+			]
+		}
+	],
 	"priority": "exceptionnelle",
 	"guide": {
 		"note": "Acte 3 : la peur. Le témoin dont la parole change selon qui l'a vu avant vous.",

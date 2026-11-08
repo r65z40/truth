@@ -6,6 +6,10 @@ extends Control
 ## target_provider renvoie le contrôle à signaler (ou null) ; il est appelé à
 ## chaque image, pour suivre les fenêtres et les sélections de l'interface.
 ## Couleurs : types de thème "CoachBubble" et "CoachHighlight".
+##
+## Bulle « amarrée » (dock) : le bureau range la bulle dans le bandeau « À FAIRE »,
+## en haut de l'écran. Elle ne recouvre alors plus jamais le contenu : seul le
+## cadre clignotant signale l'endroit où cliquer.
 
 ## Émis quand le joueur ferme la bulle avec la croix : le bureau masque l'astuce
 ## de l'étape en cours (elle réapparaît à l'étape suivante).
@@ -20,7 +24,14 @@ var text := "":
 	set(value):
 		text = value
 		if is_node_ready():
-			_text_label.text = value
+			_refresh_text()
+
+## Conteneur où ranger la bulle (bandeau d'aide), ou null : bulle flottante.
+var dock: Container:
+	set(value):
+		dock = value
+		if is_node_ready():
+			_apply_dock()
 
 var _target_rect := Rect2()
 var _has_target := false
@@ -33,8 +44,48 @@ var _time := 0.0
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_text_label.text = text
+	_refresh_text()
 	_close_button.pressed.connect(func() -> void: dismissed.emit())
+	_apply_dock()
+
+
+func _apply_dock() -> void:
+	if dock == null or _bubble.get_parent() == dock:
+		return
+	_bubble.get_parent().remove_child(_bubble)
+	dock.add_child(_bubble)
+	_bubble.position = Vector2.ZERO
+	_bubble.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Une seule ligne, sur le fond du bandeau : « R. MAZUR : conseil   ✕ ».
+	_bubble.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	var row := _close_button.get_parent()
+	_text_label.get_parent().remove_child(_text_label)
+	row.add_child(_text_label)
+	row.move_child(_text_label, 0)
+	_text_label.custom_minimum_size = Vector2.ZERO
+	_text_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_text_label.theme_type_variation = &"MutedLabel"
+	_text_label.add_theme_font_size_override("font_size", 15)
+	row.get_child(1).visible = false # « R. MAZUR, votre supérieur : »
+	_refresh_text()
+
+
+func _refresh_text() -> void:
+	_text_label.text = (tr("R. MAZUR : ") + text) if is_docked() else text
+
+
+## Bouton de fermeture de la bulle (elle peut vivre hors de ce nœud, dans le bandeau).
+func close_button() -> Button:
+	return _close_button
+
+
+func is_docked() -> bool:
+	return dock != null and _bubble.get_parent() == dock
+
+
+## La bulle est-elle affichée (dans le bandeau ou près de la cible) ?
+func is_bubble_shown() -> bool:
+	return _bubble.visible
 
 
 ## Contrôle actuellement signalé, ou null.
@@ -51,10 +102,14 @@ func _process(delta: float) -> void:
 	_time += delta
 	var target := current_target()
 	_has_target = target != null and visible and text != ""
-	_bubble.visible = _has_target
+	if is_docked():
+		_bubble.visible = visible and text != ""
+	else:
+		_bubble.visible = _has_target
 	if _has_target:
 		_target_rect = Rect2(target.global_position - global_position, target.size * target.get_global_transform().get_scale())
-		_place_bubble()
+		if not is_docked():
+			_place_bubble()
 	queue_redraw()
 
 
@@ -101,6 +156,8 @@ func _draw() -> void:
 	var frame := _target_rect.grow(4.0 + 3.0 * pulse)
 	draw_rect(frame.grow(4.0), get_theme_color("glow", "CoachHighlight"))
 	draw_rect(frame, get_theme_color("frame", "CoachHighlight"), false, 3.0)
+	if is_docked():
+		return
 	# Trait de la bulle vers la cible.
 	var bubble_rect := Rect2(_bubble.position, _bubble.size)
 	var from := bubble_rect.get_center()

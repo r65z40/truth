@@ -26,7 +26,8 @@ const MEMO_MESSAGE_ID := "memento_agent"
 
 
 ## state : {cases, flags, day_index} (GameState.get_condition_state()), plus
-## hours_used (heures de service employées aujourd'hui, 0 par défaut).
+## hours_used (heures de service employées aujourd'hui, 0 par défaut) et
+## sheet_mode (niveau débutant : fiche d'enquête ; vrai par défaut).
 ## messages : GameState.messages
 static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 	for message in messages:
@@ -63,7 +64,7 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 			return _case_step(case_id, _step(UiText.of("Ouvrir le dossier n° %s (%s).") % [case_id, view.get("subject_name", "?")],
 					UiText.of("Cliquez sur DOSSIERS, puis sur le dossier."), "dossiers", "case",
 					guide.get("open", UiText.of("Un dossier vous attend : n° %s, %s. Ouvrez-le.") % [case_id, view.get("subject_name", "?")])))
-		var sheet_case := CaseSheet.has_sheet(view)
+		var sheet_case: bool = state.get("sheet_mode", true) and CaseSheet.has_sheet(view)
 		if viewed < total:
 			var read_step := _step(UiText.of("Lire toutes les pièces du dossier n° %s (%d/%d).") % [case_id, viewed, total],
 					UiText.of("Les pièces marquées « à lire » restent à consulter."), "dossiers",
@@ -72,6 +73,10 @@ static func next_step(state: Dictionary, messages: Array) -> Dictionary:
 			# Avec la fiche, le bandeau et la mention « à lire » suffisent.
 			read_step["bubble"] = not sheet_case
 			return _case_step(case_id, read_step)
+		if case_state.get("noted_facts", []).size() < MIN_NOTED_FACTS and sheet_case:
+			return _case_step(case_id, _step(UiText.of("Noter les éléments importants du dossier n° %s sur la fiche.") % case_id,
+					UiText.of("Cliquez sur les passages soulignés : ils se rangent sous les questions."), "dossiers", "facts",
+					guide.get("facts", UiText.of("Cliquez sur les passages soulignés des pièces : chacun se range sous la bonne question de la fiche, à droite."))))
 		if case_state.get("noted_facts", []).size() < MIN_NOTED_FACTS:
 			return _case_step(case_id, _step(UiText.of("Noter les éléments importants du dossier n° %s dans votre carnet.") % case_id,
 					UiText.of("Cliquez sur les passages soulignés du texte (ou « + NOTER »)."), "dossiers", "facts",

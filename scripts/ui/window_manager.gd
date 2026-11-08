@@ -150,6 +150,10 @@ func _on_window_hidden(window: MinistryWindow) -> void:
 func _place(window: MinistryWindow) -> void:
 	var start := Vector2(window.offset_left, window.offset_top)
 	var end := Vector2(window.offset_right, window.offset_bottom)
+	if window.fullscreen:
+		window.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		window.fit_to_parent()
+		return
 	var anchored := window.anchor_right > window.anchor_left
 	var rect_size := size - start + end if anchored else window.size
 	window.set_anchors_preset(Control.PRESET_TOP_LEFT)
@@ -165,14 +169,14 @@ func _on_window_resized(window: MinistryWindow) -> void:
 
 
 func _refit(window: MinistryWindow) -> void:
-	if compact or window.is_maximized:
+	if compact or window.is_maximized or window.fullscreen:
 		window.fit_to_parent()
 	else:
 		window.clamp_to_parent()
 
 
 func _apply_compact(window: MinistryWindow) -> void:
-	if compact or window.is_maximized:
+	if compact or window.is_maximized or window.fullscreen:
 		window.fit_to_parent()
 
 
