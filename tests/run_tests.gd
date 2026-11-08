@@ -111,6 +111,7 @@ func _run() -> void:
 		"test_fewer_clicks",
 		"test_wrong_version_audit",
 		"test_quick_start",
+		"test_message_tone",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2814,6 +2815,29 @@ func test_quick_start() -> void:
 	check(menu.start_act == 3, "on choisit l'acte 3")
 	menu.queue_free()
 	Settings.endings_discovered = original
+	GameState.new_game()
+
+
+## Le ton du courrier suit les indicateurs : post-scriptum selon l'état caché.
+func test_message_tone() -> void:
+	GameState.new_game()
+	var state := GameState.get_condition_state()
+	check(MessageTone.postscript("R. MAZUR, chef de section", state) == "", "état neutre : pas de post-scriptum")
+	GameState.indicators["suspicion"] = 65
+	state = GameState.get_condition_state()
+	check(MessageTone.postscript("R. MAZUR, chef de section", state).begins_with("P.-S. Je relis"), "soupçon élevé : MAZUR se méfie")
+	check(MessageTone.postscript("Service du courrier", state) == "", "un autre expéditeur n'a pas de post-scriptum")
+	GameState.receive_message({"id": "test.tone", "from": "R. MAZUR", "subject": "Test", "body": "Corps."}, false)
+	var received: Dictionary = GameState.messages[GameState.messages.size() - 1]
+	check(received.get("postscript", "") != "", "le pli reçu garde son post-scriptum")
+	var restored := GameState.to_dict()
+	GameState.from_dict(restored)
+	check(GameState.messages[GameState.messages.size() - 1].get("postscript", "") == received.postscript, "post-scriptum sauvegardé")
+	GameState.indicators["suspicion"] = 0
+	GameState.flags["milice.hostile"] = true
+	check(MessageTone.postscript("Capitaine L. ORLIK", GameState.get_condition_state()).contains("où vous habitez"), "Milice hostile : menace")
+	for rule in MessageTone.get_data().rules:
+		check(Localization.load_content_translations("en").has(rule.postscript), "post-scriptum traduit : " + rule.id)
 	GameState.new_game()
 
 

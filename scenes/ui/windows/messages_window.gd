@@ -121,7 +121,10 @@ func select_message(message_id: String) -> void:
 		_message_header.text = tr("DE : %s\nÀ : %s, Section 4\nDATE : %s") % [Localization.text(message.from),
 				GameState.player.name, message.date_label]
 		_message_subject.text = tr("OBJET : %s") % Localization.text(message.subject)
-		_message_body.text = Localization.text(message.body).replace("[", "[lb]")
+		var body := Localization.text(message.body)
+		if message.get("postscript", "") != "":
+			body += "\n\n" + Localization.text(message.postscript)
+		_message_body.text = body.replace("[", "[lb]")
 		GameState.mark_message_read(message_id)
 		_refresh_list()
 		return

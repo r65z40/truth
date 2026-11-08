@@ -791,6 +791,12 @@ func finish_game(ending_id: String) -> void:
 
 func receive_message(message: Dictionary, notify := true) -> void:
 	var entry := message.duplicate()
+	# Le ton du pli suit l'état caché de la partie : un post-scriptum facultatif
+	# (clé optionnelle : les anciennes sauvegardes restent lisibles telles quelles).
+	if not entry.has("postscript"):
+		var postscript := MessageTone.postscript(str(entry.get("from", "")), get_condition_state())
+		if postscript != "":
+			entry["postscript"] = postscript
 	entry["read"] = false
 	entry["deleted"] = false
 	messages.append(entry)
