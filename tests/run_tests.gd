@@ -114,6 +114,7 @@ func _run() -> void:
 		"test_message_tone",
 		"test_returning_citizens",
 		"test_urgent_case",
+		"test_source_wear",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2890,6 +2891,26 @@ func test_urgent_case() -> void:
 	check(GameState.flags.get("53402.rendu_en_retard", false) and GameState.get_indicator("suspicion") >= suspicion + 3, "laissé ouvert le soir : en retard, soupçon")
 	check(GameState.messages.any(func(m): return str(m.id).begins_with("event.deadline_53402_late")), "le lendemain matin, MAZUR : rapport hors délai")
 	GameState.new_game()
+
+
+## Sources qui s'usent : un informateur pris en défaut perd un cran de cote ensuite.
+func test_source_wear() -> void:
+	check(SourceWear.downgrade("C", 1) == "D" and SourceWear.downgrade("D", 2) == "D" and SourceWear.downgrade("A", 2) == "C", "échelle A > B > C > D")
+	var state := {"day_index": 9, "flags": {}, "cases": {"53118": {"contradictions_found": []}}, "fired_events": []}
+	var signal_53190: Dictionary = CaseLibrary.get_document(CaseLibrary.filter_case(CaseLibrary.get_case("53190"), state), "signalement")
+	check(signal_53190.reliability == "C", "source jamais prise en défaut : cote d'origine")
+	state.cases["53118"]["contradictions_found"] = ["choir.curfew"]
+	var view := CaseLibrary.filter_case(CaseLibrary.get_case("53190"), state)
+	signal_53190 = CaseLibrary.get_document(view, "signalement")
+	check(signal_53190.reliability == "D" and signal_53190.veritas_remark.contains("53118"), "signalement démenti au 53118 : cote D au 53190, VERITAS le dit")
+	check(CaseLibrary.get_document(view, "burials").reliability == "A", "les autres pièces gardent leur cote")
+	check(DocumentWindow.describe_source(signal_53190).contains("était C"), "la fiche de la pièce montre l'ancienne cote")
+	var own := CaseLibrary.get_document(CaseLibrary.filter_case(CaseLibrary.get_case("53118"), state), "signalement")
+	check(own.reliability == "C", "pas d'usure dans le dossier où la source est prise")
+	check(CaseLibrary.get_document(CaseLibrary.get_case("53190"), "signalement").reliability == "C", "le dossier source n'est pas modifié")
+	var translations := Localization.load_content_translations("en")
+	for rule in SourceWear.get_data().rules:
+		check(translations.has(rule.remark), "usure traduite : " + rule.id)
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier

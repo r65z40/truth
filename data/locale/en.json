@@ -538,5 +538,6 @@
 	"- %s : %s": "- %s: %s",
 	"À RENDRE AVANT %s": "DUE BEFORE %s",
 	"HORS DÉLAI": "PAST DEADLINE",
-	"RENDU À L'HEURE": "DELIVERED ON TIME"
+	"RENDU À L'HEURE": "DELIVERED ON TIME",
+	" (abaissée, était %s)": " (lowered, was %s)"
 }

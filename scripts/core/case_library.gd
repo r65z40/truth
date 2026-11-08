@@ -56,7 +56,8 @@ static func filter_case(case_data: Dictionary, state: Dictionary) -> Dictionary:
 			shown["facts"] = facts.filter(func(fact: Dictionary) -> bool:
 				return EventRules.are_conditions_met(fact.get("conditions", {}), state))
 		documents.append(shown)
-	view["documents"] = documents
+	# Sources prises en défaut ailleurs : cote abaissée (data/sources.json).
+	view["documents"] = SourceWear.apply(str(case_data.get("id", "")), documents, state)
 	return view
 
 
