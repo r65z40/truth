@@ -78,3 +78,18 @@ static func evaluate(rules: Dictionary, state: Dictionary) -> Dictionary:
 ## de l'acte (on ne saute pas de grade si l'on a décliné une promotion).
 static func target_rank(rules: Dictionary, current_rank: int) -> int:
 	return mini(int(rules.get("to_rank", current_rank + 1)), current_rank + 1)
+
+
+## Archive confidentielle (piste 7, 08.11) : une par jour, à partir de la
+## 2e classe. Un agent resté en 3e classe peut passer une fois par KREMER s'il
+## l'a couvert. Renvoie "rank", "kremer" ou "" (pas d'accès).
+## used_today : une archive confidentielle a déjà été demandée aujourd'hui.
+static func confidential_access(rank: int, flags: Dictionary, used_today: bool) -> String:
+	if used_today:
+		return ""
+	if rank >= Rank.INSPECTOR_2ND:
+		return "rank"
+	if flags.get("kremer.protected") == true and flags.get("kremer.archive_used") != true:
+		return "kremer"
+	return ""
+

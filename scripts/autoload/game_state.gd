@@ -319,6 +319,37 @@ func apply_timeline(case_id: String, order: Array) -> Dictionary:
 	return {"established": established, "notes": notes, "text": advantage.get("text", "")}
 
 
+## Pointeuse : l'agent désigne les jours où le ruban dément un certificat. Une
+## sélection juste établit la contradiction et note les éléments utiles.
+## Renvoie {correct, missing, wrong, established, notes, text}.
+func apply_punch_clock(case_id: String, selected: Array) -> Dictionary:
+	var case_data := CaseLibrary.get_case(case_id)
+	var block := PunchClockRules.get_punch_clock(case_data)
+	if block.is_empty():
+		return {}
+	var result := PunchClockRules.grade(block, selected)
+	result["established"] = ""
+	result["notes"] = []
+	result["text"] = ""
+	if not result.correct:
+		return result
+	var case_state := get_case_state(case_id)
+	var established: String = block.get("establishes", "")
+	if established == "" or established in case_state.contradictions_found:
+		return result
+	case_state.contradictions_found.append(established)
+	var advantage: Dictionary = block.get("advantage", {})
+	for fact_id in advantage.get("note_facts", []):
+		note_fact(case_id, fact_id)
+		result.notes.append(CaseLibrary.get_fact(case_data, fact_id).get("label", fact_id))
+	_merge_flags(advantage.get("set_flags", {}))
+	_apply_effects(advantage.get("effects", {}))
+	result.established = established
+	result.text = advantage.get("text", "")
+	state_changed.emit()
+	return result
+
+
 ## Fonction débloquée à ce stade de la partie (voir Features).
 func is_feature_unlocked(feature: String) -> bool:
 	return Features.is_unlocked(feature, get_condition_state())
@@ -351,19 +382,46 @@ func is_overtime_today() -> bool:
 func request_document(case_id: String, document_id: String) -> bool:
 	var document := CaseLibrary.get_document(CaseLibrary.get_case(case_id), document_id)
 	var case_state := get_case_state(case_id)
+	if flags.get(refused_flag(case_id, document_id), false):
+		return false
 	if not document.has("request") or case_state.requested_documents.has(document_id) \
 			or not is_feature_unlocked("request_document"):
+		return false
+	var request: Dictionary = document.request
+	var access := confidential_access() if request.get("confidential", false) else ""
+	if request.get("confidential", false) and access == "":
 		return false
 	if not spend_time("request_document"):
 		return false
 	case_state.requested_documents[document_id] = day_index
-	var request: Dictionary = document.request
+	if access == "kremer":
+		_set_flag("kremer.archive_used", true)
 	_merge_flags(request.get("flags", {}))
-	for indicator in request.get("effects", {}):
-		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(request.effects[indicator]),
-				INDICATOR_MIN, INDICATOR_MAX)
+	_apply_effects(request.get("effects", {}))
 	state_changed.emit()
 	return true
+
+
+## Dossiers confiés selon la confiance de la hiérarchie (événements) :
+## - "grant_documents" : [{case, document}] une pièce « sur demande » est jointe
+##   d'office, sans heure de service ni effet de la demande (ses drapeaux, oui) ;
+## - "refuse_documents" : [{case, document}] la pièce ne peut plus être demandée.
+func _apply_trust(event: Dictionary) -> void:
+	for grant in event.get("grant_documents", []):
+		var document := CaseLibrary.get_document(CaseLibrary.get_case(grant.case), grant.document)
+		if not cases.has(grant.case) or not document.has("request"):
+			continue
+		var case_state := get_case_state(grant.case)
+		if not case_state.requested_documents.has(grant.document):
+			case_state.requested_documents[grant.document] = day_index - 1
+			_merge_flags(document.request.get("flags", {}))
+	for refusal in event.get("refuse_documents", []):
+		_set_flag(refused_flag(refusal.case, refusal.document), true)
+
+
+## Drapeau d'une pièce que la hiérarchie refuse de communiquer.
+static func refused_flag(case_id: String, document_id: String) -> String:
+	return "refused.%s.%s" % [case_id, document_id]
 
 
 ## Pièces que l'agent peut encore demander pour ce dossier.
@@ -371,10 +429,25 @@ func get_requestable_documents(case_id: String) -> Array:
 	var case_state := get_case_state(case_id)
 	var result := []
 	for document in CaseLibrary.get_case(case_id).get("documents", []):
+		if flags.get(refused_flag(case_id, document.id), false):
+			continue
 		if document.has("request") and not case_state.requested_documents.has(document.id) \
-				and EventRules.are_conditions_met(document.get("conditions", {}), get_condition_state()):
+				and EventRules.are_conditions_met(document.get("conditions", {}), get_condition_state()) \
+				and (not document.request.get("confidential", false) or confidential_access() != ""):
 			result.append(document)
 	return result
+
+
+## Accès à une archive confidentielle aujourd'hui : "rank", "kremer" ou "" (Career).
+func confidential_access() -> String:
+	var used_today := false
+	for case_id in cases:
+		var case_data := CaseLibrary.get_case(case_id)
+		for document_id in cases[case_id].get("requested_documents", {}):
+			if int(cases[case_id].requested_documents[document_id]) == day_index \
+					and CaseLibrary.get_document(case_data, document_id).get("request", {}).get("confidential", false):
+				used_today = true
+	return Career.confidential_access(int(player.get("rank", 0)), flags, used_today)
 
 
 ## Consulte le supérieur sur un dossier (une fois par dossier) : message de conseil.
@@ -439,6 +512,11 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 		push_warning("GameState: le dossier %s a déjà fait l'objet d'une décision." % case_id)
 		return {}
 	var case_state := get_case_state(case_id)
+	# Dossier urgent : l'échéance se juge sur l'heure de la signature.
+	var case_data := CaseLibrary.get_case(case_id)
+	if DeadlineRules.has_deadline(case_data) and not _deadline_settled(case_id):
+		var sign_hours := WorkTime.cost("sign_conclusion") if WorkTime.check(hours_used, "sign_conclusion").ok else 0
+		_apply_deadline(case_id, DeadlineRules.is_on_time(case_data, day_index, hours_used, sign_hours))
 	# Signer reste toujours possible ; l'heure n'est comptée que s'il en reste.
 	if WorkTime.check(hours_used, "sign_conclusion").ok:
 		hours_used += WorkTime.cost("sign_conclusion")
@@ -450,12 +528,13 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	if result.is_empty():
 		push_error("GameState: décision inconnue %s pour le dossier %s" % [decision_id, case_id])
 		return {}
-	for indicator in result.effects:
-		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(result.effects[indicator]),
-				INDICATOR_MIN, INDICATOR_MAX)
+	_apply_effects(result.effects)
 	case_state.status = result.status_after
 	case_state.decision = decision_id
 	_merge_flags(result.flags)
+	# Une version retenue que les pièces démentent : le rapport pourra être contesté.
+	if not CaseSheet.wrong_versions(get_case_view(case_id), case_state).is_empty():
+		_set_flag("%s.version_contestee" % case_id, true)
 	# On garde la trace de l'accord avec VERITAS : le système s'en souviendra.
 	decisions.append({"case_id": case_id, "decision_id": decision_id, "day_index": day_index,
 			"outcome": result.response_id, "veritas_agreed": advice.get("decision_id", "") == decision_id})
@@ -468,6 +547,83 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	state_changed.emit()
 	decision_applied.emit(case_id, decision_id, message_id)
 	return result
+
+
+# --- Caviarder (acte 4, MIROIR) ---------------------------------------------
+
+## Noircit ou rend lisible une ligne du projet MIROIR (gratuit, tant que le
+## dossier n'est pas signé). Renvoie les lignes noircies.
+func toggle_redaction(case_id: String, line_id: String) -> Array:
+	if not can_decide(case_id):
+		return get_case_state(case_id).get("redacted_lines", [])
+	var case_state := get_case_state(case_id)
+	case_state["redacted_lines"] = RedactionRules.toggle(CaseLibrary.get_case(case_id),
+			case_state.get("redacted_lines", []), line_id)
+	state_changed.emit()
+	return case_state.redacted_lines
+
+
+# --- Tri du courrier ---------------------------------------------------------
+
+## Lettres interceptées du jour, pas encore triées.
+func get_pending_letters() -> Array:
+	return MailSorting.pending(day_index, flags, get_condition_state())
+
+
+## Trie une lettre du jour ; faux si elle n'est pas en attente ou le verdict inconnu.
+func sort_letter(letter_id: String, verdict: String) -> bool:
+	if not get_pending_letters().any(func(letter: Dictionary) -> bool: return letter.id == letter_id):
+		return false
+	var result := MailSorting.resolve(MailSorting.get_letter(letter_id), verdict)
+	if result.is_empty():
+		return false
+	_apply_effects(result.effects)
+	_merge_flags(result.flags)
+	state_changed.emit()
+	return true
+
+
+# --- Téléphone --------------------------------------------------------------
+
+## Appel en attente (le téléphone sonne), ou {}.
+func get_pending_call() -> Dictionary:
+	return CallRules.pending(get_condition_state())
+
+
+## Répond à l'appel en cours ; renvoie la réplique de l'interlocuteur ("" si refusé).
+func answer_call(call_id: String, answer_id: String) -> String:
+	var call := get_pending_call()
+	if call.get("id", "") != call_id:
+		return ""
+	var result := CallRules.answer(call, answer_id)
+	if result.is_empty():
+		return ""
+	_apply_effects(result.effects)
+	_merge_flags(result.flags)
+	state_changed.emit()
+	return result.reply
+
+
+## État de l'échéance d'un dossier : "none", "pending", "late", "met" (rendu à temps).
+func deadline_status(case_id: String) -> String:
+	var case_data := CaseLibrary.get_case(case_id)
+	if not DeadlineRules.has_deadline(case_data):
+		return "none"
+	if flags.get(DeadlineRules.ON_TIME_FLAG % case_id, false):
+		return "met"
+	if flags.get(DeadlineRules.LATE_FLAG % case_id, false):
+		return "late"
+	return DeadlineRules.status(case_data, day_index, hours_used, WorkTime.cost("sign_conclusion"))
+
+
+func _deadline_settled(case_id: String) -> bool:
+	return flags.get(DeadlineRules.ON_TIME_FLAG % case_id, false) or flags.get(DeadlineRules.LATE_FLAG % case_id, false)
+
+
+func _apply_deadline(case_id: String, on_time: bool) -> void:
+	var result := DeadlineRules.outcome(CaseLibrary.get_case(case_id), case_id, on_time)
+	_apply_effects(result.effects)
+	_merge_flags(result.flags)
 
 
 # --- Terrain : interrogatoires et perquisitions ------------------------------
@@ -585,7 +741,10 @@ func get_evening_actions() -> Array:
 
 ## Passe la soirée à l'action donnée. Renvoie {text, effects, set_flags},
 ## ou {} si l'action n'est pas proposée ce soir.
-func choose_evening_action(action_id: String) -> Dictionary:
+## volume (radio seulement) : RadioRules.LOW (début du bulletin, sans risque) ou
+## RadioRules.LOUD (tout le bulletin, les voisins entendent) ; "" = bulletin complet
+## sans compter (utilisé par le départ rapide).
+func choose_evening_action(action_id: String, volume := "") -> Dictionary:
 	if not has_evening_pending() or is_overtime_today():
 		return {}
 	var evening := get_evening()
@@ -596,7 +755,13 @@ func choose_evening_action(action_id: String) -> Dictionary:
 	var result := EveningRules.resolve(action, get_condition_state())
 	_apply_effects(result.effects)
 	_merge_flags(result.set_flags)
-	evenings[str(day_index)] = {"action": action_id, "kind": action.get("kind", "")}
+	if not RadioRules.is_radio(action):
+		volume = ""
+	evenings[str(day_index)] = {"action": action_id, "kind": action.get("kind", ""), "volume": volume}
+	if volume == RadioRules.LOW:
+		result["text"] = RadioRules.muffle(result.text)
+	elif volume == RadioRules.LOUD:
+		_merge_flags(RadioRules.flags_at(RadioRules.loud_count(evenings)))
 	state_changed.emit()
 	return result
 
@@ -608,14 +773,16 @@ func lose_evening() -> String:
 	var overtime: Dictionary = EveningRules.get_data().get("overtime", {})
 	_merge_flags(get_evening().get("set_flags", {}))
 	_merge_flags(overtime.get("set_flags", {}))
-	evenings[str(day_index)] = {"action": "", "kind": ""}
+	evenings[str(day_index)] = {"action": "", "kind": "", "volume": ""}
 	state_changed.emit()
 	return overtime.get("text", "")
 
 
+## Applique des effets {indicateur: écart} ; les hausses passent par le réglage
+## d'équilibre (data/rules/balance.json, voir Balance).
 func _apply_effects(effects: Dictionary) -> void:
 	for indicator in effects:
-		indicators[indicator] = clampi(indicators.get(indicator, 0) + int(effects[indicator]),
+		indicators[indicator] = clampi(indicators.get(indicator, 0) + Balance.scaled(indicator, int(effects[indicator])),
 				INDICATOR_MIN, INDICATOR_MAX)
 
 
@@ -672,9 +839,7 @@ func complete_act_review(accept: bool) -> String:
 	elif accept:
 		player["rank"] = Career.target_rank(rules, int(player.get("rank", 0)))
 		_set_flag(prefix + "_promoted", true)
-		for indicator in rules.get("effects", {}):
-			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(rules.effects[indicator]),
-					INDICATOR_MIN, INDICATOR_MAX)
+		_apply_effects(rules.get("effects", {}))
 		if review.evaluation.bought:
 			_set_flag("career.promotion_bought", true)
 		text = rules.accepted
@@ -684,6 +849,51 @@ func complete_act_review(accept: bool) -> String:
 		text = rules.refused
 	state_changed.emit()
 	return text
+
+
+# --- Départ rapide -----------------------------------------------------------
+
+## Départ rapide (menu, une fois une fin découverte) : nouvelle partie qui
+## commence au premier jour de l'acte voulu. Les jours d'avant passent seuls :
+## chaque dossier est conclu selon l'avis de VERITAS (sinon la première décision),
+## les commissions d'acte acceptent la promotion offerte, chaque soirée prend
+## la première action proposée.
+## Déterministe : deux départs rapides au même acte donnent le même état.
+func new_game_at_act(act_number: int) -> void:
+	new_game()
+	var first_day := -1
+	for act in FictionalCalendar._data().get("acts", []):
+		if int(act.number) == act_number:
+			first_day = int(act.first_day)
+	if first_day <= 0:
+		return
+	while day_index < first_day:
+		for case_id in cases.keys():
+			if can_decide(case_id):
+				_auto_decide(case_id)
+		if has_act_review_pending():
+			complete_act_review(true)
+		if has_evening_pending():
+			var actions := get_evening_actions()
+			if actions.is_empty():
+				lose_evening()
+			else:
+				choose_evening_action(actions[0].id)
+		end_day()
+	for message in messages:
+		message.read = true
+	_set_flag("game.quick_start", true)
+	state_changed.emit()
+
+
+func _auto_decide(case_id: String) -> void:
+	var view := get_case_view(case_id)
+	var advice := Veritas.recommendation(view, get_case_state(case_id), flags)
+	var choice: String = advice.get("decision_id", "")
+	if choice == "" and not view.get("decisions", []).is_empty():
+		choice = view.decisions[0].id
+	if choice != "":
+		apply_decision(case_id, choice)
 
 
 # --- Fin de partie -----------------------------------------------------------
@@ -710,7 +920,22 @@ func get_ending() -> Dictionary:
 			continue
 		subjects.append({"case_id": case_id, "name": fate.subject_name,
 				"stamp": fate.stamp, "line": fate.line})
-	return {"ending": ending, "subjects": subjects}
+	return {"ending": ending, "subjects": subjects, "career": career_record()}
+
+
+## Relevé de carrière pour la fin de partie : grade, rapports signés, accord
+## avec VERITAS, rapports contestés par le contrôle interne.
+func career_record() -> Dictionary:
+	var agreed := 0
+	for entry in decisions:
+		if entry.get("veritas_agreed", false):
+			agreed += 1
+	var contested := 0
+	for key in flags:
+		if str(key).ends_with(".version_contestee") and flags[key]:
+			contested += 1
+	return {"rank": get_rank_title(), "days": day_index + 1, "signed": decisions.size(),
+			"veritas_agreed": agreed, "contested": contested}
 
 
 ## Consigne la fin atteinte (partie terminée) ; sans effet si l'identifiant est vide.
@@ -728,6 +953,12 @@ func finish_game(ending_id: String) -> void:
 
 func receive_message(message: Dictionary, notify := true) -> void:
 	var entry := message.duplicate()
+	# Le ton du pli suit l'état caché de la partie : un post-scriptum facultatif
+	# (clé optionnelle : les anciennes sauvegardes restent lisibles telles quelles).
+	if not entry.has("postscript"):
+		var postscript := MessageTone.postscript(str(entry.get("from", "")), get_condition_state())
+		if postscript != "":
+			entry["postscript"] = postscript
 	entry["read"] = false
 	entry["deleted"] = false
 	messages.append(entry)
@@ -782,15 +1013,31 @@ func get_unread_count() -> int:
 ## Termine la journée : passe au jour suivant et applique les événements dus.
 ## Renvoie la liste des événements déclenchés.
 func end_day() -> Array:
+	# Courrier non trié : les lettres partent telles quelles.
+	for letter in get_pending_letters():
+		var passed := MailSorting.resolve(letter, MailSorting.DEFAULT_VERDICT)
+		_apply_effects(passed.effects)
+		_merge_flags(passed.flags)
+	# Le téléphone a sonné sans réponse : appel manqué.
+	var unanswered := get_pending_call()
+	if not unanswered.is_empty():
+		var missed := CallRules.missed(unanswered)
+		_apply_effects(missed.effects)
+		_merge_flags(missed.flags)
+	# Un dossier urgent laissé ouvert à la fin de son jour d'échéance est en retard.
+	for case_id in cases:
+		if can_decide(case_id) and not _deadline_settled(case_id):
+			var case_data := CaseLibrary.get_case(case_id)
+			if DeadlineRules.has_deadline(case_data) and int(case_data.deadline.get("day", 0)) <= day_index:
+				_apply_deadline(case_id, false)
 	day_index += 1
 	hours_used = 0
 	var fired := EventRules.due_events(get_condition_state())
 	for event in fired:
 		for case_id in event.get("assign_cases", []):
 			assign_case(case_id)
-		for indicator in event.get("effects", {}):
-			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(event.effects[indicator]),
-					INDICATOR_MIN, INDICATOR_MAX)
+		_apply_trust(event)
+		_apply_effects(event.get("effects", {}))
 		_merge_flags(event.get("set_flags", {}))
 		if event.has("message"):
 			var message: Dictionary = event.message.duplicate()
@@ -891,4 +1138,5 @@ func from_dict(data: Dictionary) -> void:
 func _new_case_state() -> Dictionary:
 	return {"status": CASE_OPEN, "viewed_documents": [], "noted_facts": [],
 			"contradictions_found": [], "contradictions_noticed": [], "decision": "",
-			"requested_documents": {}, "consulted": false, "filed": false, "sheet_choices": {}}
+			"requested_documents": {}, "consulted": false, "filed": false, "sheet_choices": {},
+			"redacted_lines": []}

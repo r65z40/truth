@@ -40,6 +40,10 @@ const TUTORIAL_UNTIL_CONCLUDED := 2
 signal field_requested(case_id: String)
 ## Le joueur ouvre le mini-jeu « comparer deux pièces » (facultatif).
 signal comparison_requested(case_id: String)
+## Caviarder le projet MIROIR (acte 4).
+signal redaction_requested(case_id: String)
+## Lire le ruban de la pointeuse.
+signal punch_clock_requested(case_id: String)
 ## Le joueur ouvre le mini-jeu « frise chronologique » (facultatif).
 signal timeline_requested(case_id: String)
 ## Le joueur veut poser une pièce à côté, dans sa propre fenêtre.
@@ -50,6 +54,8 @@ signal veritas_requested(case_id: String)
 signal archives_requested
 
 var current_case_id := ""
+## Fil rouge : élément de la fiche dont on montre le passage d'origine ("" : aucun).
+var focused_fact_id := ""
 var _archives_link: Button
 var _next_case_button: Button
 var current_document_id := ""
@@ -110,6 +116,10 @@ var _doc_icon: TextureRect
 @onready var _field_button: Button = %FieldButton
 @onready var _compare_button: Button = %CompareButton
 @onready var _timeline_button: Button = %TimelineButton
+var _redact_button: Button
+var _punch_button: Button
+## Liens visibles entre les pièces (niveau débutant), sous la ligne de source.
+var _links_row: HFlowContainer
 @onready var _conclusion_panel: PanelContainer = %ConclusionPanel
 @onready var _file_button: Button = %FileButton
 @onready var _filed_toggle: Button = %FiledToggle
@@ -144,8 +154,28 @@ func _ready() -> void:
 	_field_button.pressed.connect(func() -> void: field_requested.emit(current_case_id))
 	_compare_button.pressed.connect(func() -> void: comparison_requested.emit(current_case_id))
 	_timeline_button.pressed.connect(func() -> void: timeline_requested.emit(current_case_id))
+	_links_row = HFlowContainer.new()
+	_links_row.name = "LinksRow"
+	_links_row.add_theme_constant_override("h_separation", 8)
+	_links_row.add_theme_constant_override("v_separation", 6)
+	_links_row.visible = false
+	_doc_meta.add_sibling(_links_row)
+	_redact_button = Button.new()
+	_redact_button.name = "RedactButton"
+	_redact_button.text = tr("CAVIARDER")
+	_redact_button.custom_minimum_size = Vector2(0, 48)
+	_redact_button.visible = false
+	_redact_button.pressed.connect(func() -> void: redaction_requested.emit(current_case_id))
+	_timeline_button.add_sibling(_redact_button)
+	_punch_button = Button.new()
+	_punch_button.name = "PunchClockButton"
+	_punch_button.text = tr("POINTEUSE")
+	_punch_button.custom_minimum_size = Vector2(0, 48)
+	_punch_button.visible = false
+	_punch_button.pressed.connect(func() -> void: punch_clock_requested.emit(current_case_id))
+	_timeline_button.add_sibling(_punch_button)
 	# Actions secondaires en plus petit, pour que le pied de pièce tienne sur une ligne.
-	for button: Button in [_request_button, _consult_button, _field_button, _compare_button, _timeline_button]:
+	for button: Button in [_request_button, _consult_button, _field_button, _compare_button, _timeline_button, _redact_button, _punch_button]:
 		button.add_theme_font_size_override("font_size", 14)
 	_conclusion_panel.submitted.connect(_on_conclusion_submitted)
 	_conclusion_panel.cancelled.connect(close_conclusion)
@@ -195,6 +225,7 @@ func select_case(case_id: String) -> void:
 	var case_data := GameState.get_case_view(case_id)
 	if case_data.is_empty():
 		return
+	focused_fact_id = ""
 	# Un dossier classé ouvert depuis les archives : la liste passe sur les classés.
 	if GameState.is_case_filed(case_id) != showing_filed:
 		showing_filed = GameState.is_case_filed(case_id)
@@ -321,6 +352,9 @@ func select_document(document_id: String) -> void:
 		return
 	if document_id != current_document_id:
 		Sound.play("paper")
+		var focused := CaseLibrary.get_fact(case_data, focused_fact_id)
+		if focused.get("document_id", "") != document_id:
+			focused_fact_id = ""
 	current_document_id = document_id
 	for tab: Button in _document_tabs.get_children():
 		tab.set_pressed_no_signal(tab.get_meta("document_id") == document_id)
@@ -618,7 +652,10 @@ class PassageMarker:
 		for span in spans:
 			out += DossiersWindow._escape(text.substr(cursor, span[0] - cursor))
 			var inner := DossiersWindow._escape(text.substr(span[0], span[1] - span[0]))
-			if span[2] in _style.get("noted", []):
+			if span[2] == _style.get("focus", ""):
+				# Fil rouge : le passage d'où vient une réponse de la fiche.
+				out += "[url=fact:%s][bgcolor=#%s][b]▸ %s[/b][/bgcolor][/url]" % [span[2], _style.highlight, inner]
+			elif span[2] in _style.get("noted", []):
 				out += "[url=fact:%s][bgcolor=#%s]%s[/bgcolor][/url]" % [span[2], _style.highlight, inner]
 			else:
 				out += "[url=fact:%s][color=#%s][u]%s[/u][/color][/url]" % [span[2], _style.link, inner]
@@ -633,15 +670,62 @@ static func format_iso_date(iso: String) -> String:
 	return "%s.%s.%s" % [bits[2], bits[1], bits[0]]
 
 
+## Mention d'échéance d'un dossier urgent, ajoutée à l'en-tête (vide sinon).
+static func deadline_text(case_id: String) -> String:
+	match GameState.deadline_status(case_id):
+		"pending":
+			return "  |  " + tr_static("À RENDRE AVANT %s") % DeadlineRules.hour_text(CaseLibrary.get_case(case_id))
+		"late":
+			return "  |  " + tr_static("HORS DÉLAI")
+		"met":
+			return "  |  " + tr_static("RENDU À L'HEURE")
+	return ""
+
+
+static func tr_static(text: String) -> String:
+	return TranslationServer.translate(text)
+
+
+## Pièces liées à la pièce ouverte (même sujet que ce que l'agent y a noté).
+func _refresh_links() -> void:
+	for child in _links_row.get_children():
+		_links_row.remove_child(child)
+		child.queue_free()
+	if current_case_id == "" or current_document_id == "" or not _sheet_mode():
+		_links_row.visible = false
+		return
+	var links := CaseSheet.links(GameState.get_case_view(current_case_id),
+			GameState.get_case_state(current_case_id), current_document_id)
+	_links_row.visible = not links.is_empty()
+	if links.is_empty():
+		return
+	var title := Label.new()
+	title.theme_type_variation = &"DocumentLabel"
+	title.text = tr("Voir aussi :")
+	_links_row.add_child(title)
+	for link in links:
+		var button := Button.new()
+		button.name = "Link_" + str(link.document_id)
+		button.text = "↔ " + str(link.title)
+		button.tooltip_text = tr("Même sujet : %s") % link.question
+		button.custom_minimum_size = Vector2(0, 44)
+		button.focus_mode = Control.FOCUS_NONE
+		button.add_theme_font_size_override("font_size", 14)
+		button.pressed.connect(select_document.bind(str(link.document_id)))
+		_links_row.add_child(button)
+
+
 func _refresh_all() -> void:
 	if current_case_id == "":
 		return
+	_refresh_links()
 	var case_data := GameState.get_case_view(current_case_id)
 	var case_state := GameState.get_case_state(current_case_id)
 	var status_text: String = tr(STATUS_LABELS.get(case_state.status, "?"))
 	if case_state.decision != "":
 		status_text += "  //  " + CaseLibrary.get_decision(case_data, case_state.decision).get("label", "").to_upper()
 	_case_header.text = tr("DOSSIER N° %s  |  %s  |  %s") % [current_case_id, case_data.subject_name, status_text]
+	_case_header.text += deadline_text(current_case_id)
 	_progress_label.text = progress_text(case_data, case_state)
 	# Pendant l'apprentissage, on masque le compteur d'avancement : le bandeau
 	# « À FAIRE » dit déjà quoi faire, et l'en-tête reste épuré.
@@ -711,7 +795,8 @@ func _refresh_actions(can_decide: bool) -> void:
 		_request_button.text = tr("DEMANDE EN COURS")
 		_request_button.tooltip_text = tr("Réponse attendue demain : %s.") % pending[0]
 	else:
-		_request_button.text = tr("DEMANDER (%d h)") % WorkTime.cost("request_document")
+		var confidential: bool = not requestable.is_empty() and requestable[0].request.get("confidential", false)
+		_request_button.text = (tr("ARCHIVE CONFIDENTIELLE (%d h)") if confidential else tr("DEMANDER (%d h)")) % WorkTime.cost("request_document")
 		_request_button.tooltip_text = (tr("Demander une pièce complémentaire, livrée demain : %s.") % requestable[0].request.label) \
 				if not requestable.is_empty() else tr("Aucune pièce complémentaire à demander pour ce dossier.")
 	var consultation: Dictionary = CaseLibrary.get_case(current_case_id).get("consultation", {})
@@ -748,6 +833,19 @@ func _refresh_actions(can_decide: bool) -> void:
 		var tdone: bool = timeline.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
 		_timeline_button.text = tr("FRISE : FAITE") if tdone else tr("FRISE")
 		_timeline_button.tooltip_text = timeline.get("title", "")
+	# Pointeuse : le ruban d'octobre contre les certificats (facultatif, sans heure).
+	var punch := PunchClockRules.get_punch_clock(CaseLibrary.get_case(current_case_id))
+	_punch_button.visible = not punch.is_empty() \
+			and EventRules.are_conditions_met(punch.get("conditions", {}), GameState.get_condition_state())
+	if _punch_button.visible:
+		var pdone: bool = punch.get("establishes", "") in GameState.get_case_state(current_case_id).contradictions_found
+		_punch_button.text = tr("POINTEUSE : FAIT") if pdone else tr("POINTEUSE")
+	# Caviarder (acte 4) : noircir des lignes du projet MIROIR avant de signer.
+	_redact_button.visible = not RedactionRules.get_redaction(CaseLibrary.get_case(current_case_id)).is_empty() \
+			and GameState.can_decide(current_case_id)
+	if _redact_button.visible:
+		var count: int = GameState.get_case_state(current_case_id).get("redacted_lines", []).size()
+		_redact_button.text = tr("CAVIARDER (%d)") % count if count > 0 else tr("CAVIARDER")
 
 
 ## Libellés des pièces demandées aujourd'hui, pas encore arrivées.
@@ -765,8 +863,12 @@ func request_next_document() -> void:
 	var requestable := GameState.get_requestable_documents(current_case_id)
 	if requestable.is_empty():
 		return
+	var via_kremer: bool = requestable[0].request.get("confidential", false) and GameState.confidential_access() == "kremer"
 	if GameState.request_document(current_case_id, requestable[0].id):
-		notify.emit(tr("Demande transmise : %s. Réponse demain.") % requestable[0].request.label)
+		if via_kremer:
+			notify.emit(tr("Sans le grade, c'est KREMER qui sortira la pièce du sous-sol B : %s. Une seule fois.") % requestable[0].request.label)
+		else:
+			notify.emit(tr("Demande transmise : %s. Réponse demain.") % requestable[0].request.label)
 	else:
 		notify.emit(tr("Plus assez de temps aujourd'hui pour cette demande."))
 	_refresh_all()
@@ -783,7 +885,9 @@ func consult_superior() -> void:
 func _refresh_facts(case_data: Dictionary) -> void:
 	var document := CaseLibrary.get_document(case_data, current_document_id)
 	var noted: Array = GameState.get_case_state(current_case_id).noted_facts
-	_doc_body.text = render_document_bbcode(document, passage_style(_doc_body, noted))
+	var style := passage_style(_doc_body, noted)
+	style["focus"] = focused_fact_id
+	_doc_body.text = render_document_bbcode(document, style)
 	DocumentWindow.fill_facts(_facts_list, %FactsTitle, document, noted, note_fact)
 	_facts_panel.visible = not document.get("facts", []).is_empty() and not _conclusion_panel.visible
 
@@ -1176,7 +1280,7 @@ func _make_question_card(question: Dictionary, can_decide: bool) -> Control:
 			box.add_child(button)
 		else:
 			var prefix := tr("RETENU : ") if question.retained == answer.fact_id else "• "
-			box.add_child(_make_answer_label("%s%s  (%s)" % [prefix, answer.label, source]))
+			box.add_child(_make_answer_link(answer.fact_id, "%s%s  (%s)" % [prefix, answer.label, source]))
 	if question.state == CaseSheet.TO_PROVE and can_decide:
 		var price: Dictionary = GameState.contradiction_prove_state(current_case_id, question.key).price
 		var prove := Button.new()
@@ -1201,6 +1305,43 @@ func _stamp(label: Label) -> void:
 		var tween := label.create_tween().set_parallel()
 		tween.tween_property(label, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 		tween.tween_property(label, "modulate:a", 1.0, 0.12), CONNECT_ONE_SHOT)
+
+
+## Réponse de la fiche : un clic ouvre la pièce d'où elle vient, passage marqué.
+func _make_answer_link(fact_id: String, text: String) -> Button:
+	var button := Button.new()
+	button.name = "Answer_" + fact_id
+	button.text = text
+	button.flat = true
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	button.custom_minimum_size = Vector2(0, 44)
+	button.focus_mode = Control.FOCUS_NONE
+	button.tooltip_text = tr("Voir le passage dans la pièce.")
+	button.add_theme_font_size_override("font_size", 14)
+	button.pressed.connect(show_fact_source.bind(fact_id))
+	return button
+
+
+## Fil rouge : ouvre la pièce d'un élément et fait défiler jusqu'à son passage.
+func show_fact_source(fact_id: String) -> void:
+	var fact := CaseLibrary.get_fact(GameState.get_case_view(current_case_id), fact_id)
+	if fact.is_empty():
+		return
+	focused_fact_id = fact_id
+	select_document(fact.document_id)
+	_refresh_all()
+	_scroll_to_quote.call_deferred(fact.get("quote", ""))
+
+
+func _scroll_to_quote(quote: String) -> void:
+	if quote == "":
+		return
+	var at := _doc_body.get_parsed_text().find(quote)
+	if at < 0:
+		return
+	var line := _doc_body.get_character_line(at)
+	_doc_scroll.scroll_vertical = maxi(int(_doc_body.get_line_offset(line)) - 40, 0)
 
 
 func _make_answer_label(text: String) -> Label:

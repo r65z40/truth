@@ -1,0 +1,6 @@
+{
+	"note": "Réglage d'équilibre. gain_percent : part de chaque HAUSSE d'indicateur réellement appliquée (100 = la valeur écrite dans les données). Les baisses ne sont pas touchées. Mesuré avec le robot de partie (tests/tools/playthrough_report.tscn) : à 100 %, la suspicion atteignait 100 chez presque tout joueur qui ne suit pas VERITAS, et L'HEURE JUSTE comme LE SILENCE restaient hors d'atteinte. À 60 %, chaque fin est obtenue par plusieurs styles de jeu.",
+	"gain_percent": {
+		"suspicion": 60
+	}
+}

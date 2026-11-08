@@ -1,0 +1,37 @@
+{
+	"_comment": "Sources qui s'usent : une source prise en défaut (contradiction établie par l'agent dans caught_in.case) perd un cran de cote dans les dossiers suivants. Voir scripts/core/source_wear.gd.",
+	"rules": [
+		{
+			"id": "kolb_choir",
+			"source_prefix": "Bureau des signalements, District 2",
+			"documents": [
+				"signalement"
+			],
+			"caught_in": {
+				"case": "53118",
+				"contradictions_any": [
+					"choir.curfew",
+					"choir.list",
+					"choir.source"
+				]
+			},
+			"remark": "Cote abaissée : signalement de la même source démenti au dossier 53118 (chorale de Saint-Roch)."
+		},
+		{
+			"id": "milice_witness",
+			"source_prefix": "Milice du District 9",
+			"documents": [
+				"signalement"
+			],
+			"caught_in": {
+				"case": "54012",
+				"contradictions_any": [
+					"temoin.account",
+					"temoin.lucidity",
+					"temoin.target"
+				]
+			},
+			"remark": "Cote abaissée : déposition recueillie par la Milice démentie au dossier 54012 (témoin REIS)."
+		}
+	]
+}

@@ -18,7 +18,9 @@ signal game_loaded
 ## 6 : contradictions repérées mais pas encore prouvées (contradictions_noticed).
 ## 7 : dossiers classés (filed) et plis mis à la corbeille (deleted).
 ## 8 : fiche d'enquête, versions retenues par question (sheet_choices).
-const SAVE_VERSION := 8
+## 9 : radio étrangère, volume de chaque soirée (evenings[jour].volume) ;
+##     caviardage MIROIR, lignes noircies de chaque dossier (redacted_lines).
+const SAVE_VERSION := 9
 const DEFAULT_PATH := "user://savegame.json"
 
 ## Fichier utilisé quand aucun chemin n'est précisé (les tests le redirigent).
@@ -141,5 +143,13 @@ func _migrate(payload: Dictionary) -> Dictionary:
 		for case_state in payload.state.get("cases", {}).values():
 			case_state["sheet_choices"] = case_state.get("sheet_choices", {})
 		version = 8
+	if version == 8:
+		# v9 : la radio a un volume ; les soirées passées comptent comme « sans volume ».
+		for evening in payload.state.get("evenings", {}).values():
+			if evening is Dictionary:
+				evening["volume"] = evening.get("volume", "")
+		for case_state in payload.state.get("cases", {}).values():
+			case_state["redacted_lines"] = case_state.get("redacted_lines", [])
+		version = 9
 	payload.save_version = version
 	return payload

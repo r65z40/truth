@@ -1,0 +1,99 @@
+{
+	"note": "Salle 3, la salle d'audition vide (dossier 60003, piste 5 du 08.11). Fouille à la lampe (darkness). La pendule et le registre réunis donnent une autre preuve du trucage de 1971 : vosk.salle3_clock + vosk.salle3_register (troisième voie vers La Correction, avec act4.father_truth, sans KREMER arrêté). spot : fractions de l'image, à peaufiner avec l'éditeur de zones (F2).",
+	"id": "room_60003",
+	"case_id": "60003",
+	"type": "search",
+	"button": "SALLE 3",
+	"image": "res://assets/field/lieu_ministere_interrogatoire_vide.webp",
+	"title": "VISITE  //  SALLE 3, DEUXIÈME ÉTAGE",
+	"time_action": "search_home",
+	"turns": 3,
+	"available_when": [
+		{
+			"undecided_cases": [
+				"60003"
+			]
+		}
+	],
+	"start_flags": {
+		"vosk.salle3_visited": true
+	},
+	"darkness": {
+		"radius": 0.12,
+		"start": [
+			0.5,
+			0.6
+		]
+	},
+	"art": "",
+	"verb": "Vous éclairez : ",
+	"turns_label": "%d endroit(s) à examiner",
+	"intro": "Salle 3, deuxième étage. On n'y interroge plus personne depuis que la Section a déménagé ses auditions au sous-sol. Le courant est coupé ; la clé était sur la porte.\n\nTrois endroits, peut-être quatre, avant que le gardien ne remonte. C'est ici que l'on amenait les gens, en mars 1971, les soirs où l'horloge retardait.",
+	"options": [
+		{
+			"id": "clock",
+			"label": "La pendule murale",
+			"spot": [
+				0.33,
+				0.18,
+				0.07,
+				0.11
+			],
+			"text": "Elle retarde de douze minutes sur votre montre. Sous le cadran, une plaque : « Réglée par ordre du cabinet. Ne pas toucher. » Sous la plaque, gratté dans le laiton : « A. V. 9.3.71 ». Votre père a ouvert cette pendule.",
+			"note": [
+				"f_s3_clock"
+			],
+			"set_flags": {
+				"vosk.salle3_clock": true
+			}
+		},
+		{
+			"id": "register",
+			"label": "Le registre des passages, dans le classeur",
+			"spot": [
+				0.62,
+				0.31,
+				0.1,
+				0.37
+			],
+			"text": "Mars 1971. Les soirs du 2, du 9 et du 16, les heures de sortie notées ici ne collent pas avec celles du couloir : douze minutes d'écart, chaque fois. Douze minutes pendant lesquelles, sur le papier, personne n'était dans la salle. Les sorties sont toutes signées de la même main.",
+			"note": [
+				"f_s3_register"
+			],
+			"set_flags": {
+				"vosk.salle3_register": true
+			}
+		},
+		{
+			"id": "table",
+			"label": "La table vissée au sol",
+			"spot": [
+				0.34,
+				0.54,
+				0.31,
+				0.09
+			],
+			"text": "Des initiales, des dates, gravées au canif par des mains qui attendaient. Parmi elles, en petites capitales appliquées : « 16.3 : L'HORLOGE MENT ».",
+			"note": [
+				"f_s3_table"
+			]
+		},
+		{
+			"id": "window",
+			"label": "La vitre sans tain",
+			"spot": [
+				0.78,
+				0.04,
+				0.22,
+				0.5
+			],
+			"text": "Derrière la vitre, la salle d'observation, vide. Une chaise tournée vers vous, un pied de caméra sans caméra. D'ici, on regardait. Vous vous demandez de quel côté de la vitre votre père s'est assis."
+		}
+	],
+	"outro": "Vous refermez la salle 3. Dans le couloir, la pendule de la Section marque la même heure que votre montre. Celle de la salle, derrière la porte, continue de retarder pour personne.",
+	"ambience": {
+		"drift": 0.5,
+		"dust": 1.0,
+		"grain": 0.7
+	}
+}

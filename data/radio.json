@@ -1,0 +1,8 @@
+{
+	"_comment": "Radio étrangère, le soir : capter Radio Aldria comporte un risque. Volume bas : on n'entend que le début du bulletin (les drapeaux de l'émission sont posés quand même). Volume haut : tout le bulletin, mais les voisins entendent ; à chaque palier de soirées « fortes », un drapeau est posé (les événements data/events/events.json en tirent les suites). Voir scripts/core/radio_rules.gd.",
+	"muffled_suffix": "… La suite se perd dans le brouillage. Vous n'osez pas monter le son.",
+	"loud_thresholds": [
+		{"count": 2, "flag": "radio.neighbours_heard"},
+		{"count": 4, "flag": "radio.reported"}
+	]
+}

@@ -9,6 +9,11 @@
 		"intro_clock": {"file": "res://assets/images/intro_horloge.png", "size": "1280 x 600", "usage": "introduction, page 4 (huit heures) ; absent : dessin"},
 		"intro_signature": {"file": "res://assets/images/intro_signature.png", "size": "1280 x 600", "usage": "introduction, page 5 (la signature) ; absent : dessin"},
 		"evening_background": {"file": "res://assets/field/lieu_vieprivee_cuisine.webp", "size": "1920 x 1080", "usage": "fond des soirées, derrière le texte (assombri)"},
+		"evening_kitchen": {"file": "res://assets/field/lieu_vieprivee_cuisine.webp", "size": "1920 x 1080", "usage": "soirée : la cuisine (radio, travail, lettres de Lena)"},
+		"evening_lodge": {"file": "res://assets/images/soir_loge_adler.webp", "size": "1920 x 1080", "usage": "soirée : la loge de M. ADLER au rez-de-chaussée ; absent : la cuisine"},
+		"evening_booth": {"file": "res://assets/images/soir_cabine_hall.webp", "size": "1920 x 1080", "usage": "soirée : la cabine téléphonique du hall (appels à Lena) ; absent : la cuisine"},
+		"evening_landing": {"file": "res://assets/field/lieu_immeuble_escalier.webp", "size": "1920 x 1080", "usage": "soirée : le palier et l'escalier (visites, BRANDT)"},
+		"evening_courtyard": {"file": "res://assets/field/lieu_cour_interieure.webp", "size": "1920 x 1080", "usage": "soirée : la cour de l'immeuble (faire profil bas)"},
 		"act_review_background": {"file": "res://assets/images/fin_acte.png", "size": "1920 x 1080", "usage": "fond de l'écran de fin d'acte (assombri)"}
 	}
 }

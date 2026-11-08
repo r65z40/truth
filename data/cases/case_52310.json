@@ -286,6 +286,9 @@
 			"source": "Exemplaire de la Bibliothèque municipale, fonds retiré",
 			"reliability": "B",
 			"date": "1979-02-01",
+			"conditions": {
+				"min_day": 4
+			},
 			"veritas_remark": "Édition retirée du catalogue. Document non pris en compte par l'analyse.",
 			"body": "NOVEMBRE\n\nHauts murs de brique où la pluie se repose,\nAttends encore, le train n'est pas parti.\nLe quai respire et le givre compose\nIci, pour toi, le pays de nos nuits.\nNe pleure pas : tes deux mains sont gardées,\nAu fond de moi, comme on garde l'été.\n\n[Dédicace en tête du recueil : « Pour H. »]",
 			"facts": [
@@ -311,6 +314,9 @@
 			"source": "Courrier saisi au domicile",
 			"reliability": "C",
 			"date": "1986-11-01",
+			"conditions": {
+				"min_day": 4
+			},
 			"veritas_remark": "Lettre du sujet, ton émotionnel. Aucune valeur probante.",
 			"body": "Messieurs,\n\nJe n'ai pas demandé de nouvelle édition et personne ne m'a montré d'épreuves. Je ne reconnais pas la page 41.\n\nJ'ai écrit ce livre pour ma femme, l'année après sa mort. Il n'y a pas de train pour Halvek dans mes poèmes. Il n'y a qu'un nom.\n\nT. VARGA\n\n[Écriture tremblée. Le papier porte l'en-tête d'un appartement du quai des Tanneurs.]",
 			"facts": [

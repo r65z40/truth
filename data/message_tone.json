@@ -1,0 +1,13 @@
+{
+	"_comment": "Ton du courrier : un post-scriptum ajouté aux plis d'un expéditeur selon les indicateurs cachés (mêmes conditions que les événements : min_indicators, max_indicators, requires_flags, forbidden_flags). La première règle qui convient l'emporte ; un pli n'a qu'un post-scriptum. Affichage seul : rien ici ne change l'état du jeu.",
+	"rules": [
+		{"id": "mazur_suspicious", "from_prefix": "R. MAZUR", "conditions": {"min_indicators": {"suspicion": 60}}, "postscript": "P.-S. Je relis désormais chacun de vos rapports avant transmission. Ne le prenez pas personnellement."},
+		{"id": "mazur_wary", "from_prefix": "R. MAZUR", "conditions": {"min_indicators": {"suspicion": 40}}, "postscript": "P.-S. On me pose des questions sur vous, à l'étage. J'y réponds pour l'instant."},
+		{"id": "mazur_proud", "from_prefix": "R. MAZUR", "conditions": {"min_indicators": {"loyalty": 70}}, "postscript": "P.-S. La Direction a remarqué votre zèle. Moi aussi. Ce n'est pas tout à fait la même chose."},
+		{"id": "mazur_cold", "from_prefix": "R. MAZUR", "conditions": {"max_indicators": {"loyalty": 30}}, "postscript": "P.-S. Vos rapports sont exacts. Ils manquent de conviction. Certains lecteurs y sont sensibles."},
+		{"id": "mazur_weight", "from_prefix": "R. MAZUR", "conditions": {"min_indicators": {"influence": 40}}, "postscript": "P.-S. Votre nom circule. C'est une protection, tant que ce n'est pas une cible."},
+		{"id": "milice_friendly", "from_prefix": "Capitaine L. ORLIK", "conditions": {"requires_flags": ["milice.ally"]}, "postscript": "P.-S. La Milice du District 9 n'oublie pas ses amis."},
+		{"id": "milice_hostile", "from_prefix": "Capitaine L. ORLIK", "conditions": {"requires_flags": ["milice.hostile"]}, "postscript": "P.-S. Nous savons où vous habitez. C'est notre métier."},
+		{"id": "control_pressure", "from_prefix": "Contrôle interne", "conditions": {"min_indicators": {"suspicion": 50}}, "postscript": "P.-S. Votre dossier personnel a été demandé par le cabinet du Directeur."}
+	]
+}

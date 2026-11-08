@@ -45,10 +45,14 @@ func setup(new_case_id: String, new_document_id: String) -> void:
 
 ## Ligne d'origine d'une pièce : source, fiabilité, date.
 static func describe_source(document: Dictionary) -> String:
+	var reliability := UiText.of(DossiersWindow.RELIABILITY_LABELS.get(document.get("reliability", ""), document.get("reliability", "?")))
+	# Source prise en défaut ailleurs (SourceWear) : on montre l'ancienne cote.
+	if document.get("reliability_before", "") != "":
+		reliability += UiText.of(" (abaissée, était %s)") % document.reliability_before
 	return UiText.of("Source : %s
 Fiabilité : %s     Date : %s") % [
 		document.get("source", "?"),
-		UiText.of(DossiersWindow.RELIABILITY_LABELS.get(document.get("reliability", ""), document.get("reliability", "?"))),
+		reliability,
 		DossiersWindow.format_iso_date(document.get("date", "")),
 	]
 

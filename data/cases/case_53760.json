@@ -331,6 +331,35 @@
 					"quote": "KREMER falsifie ou soustrait des archives pour en contester les conclusions."
 				}
 			]
+		},
+		{
+			"id": "slip_1971",
+			"type": "letter",
+			"title": "Bordereau de sortie, 18 mars 1971",
+			"source": "Archives centrales, registre confidentiel des sorties",
+			"reliability": "A",
+			"date": "1971-03-18",
+			"request": {
+				"label": "Bordereau confidentiel de sortie, mars 1971",
+				"confidential": true,
+				"flags": {
+					"53760.slip_1971_requested": true
+				},
+				"effects": {
+					"suspicion": 1
+				}
+			},
+			"veritas_remark": "Pièce confidentielle ancienne. Le module ne la relie à aucun dossier ouvert.",
+			"body": "Bordereau n° 71-0318. Pièce reçue : rapport de réglage des horloges, salle 3 et couloir B, remis par A. VOSK, horloger agréé. Destinataire : H. KREMER, Section 2. Visa : cabinet.\n\nDestination : pilon. Le mot « pilon » est barré à la main ; en marge, à l'encre verte : « gardé ».",
+			"facts": [
+				{
+					"id": "f_sl_father",
+					"key": "confidential.53760.slip",
+					"value": "Le rapport du père remis à KREMER, gardé",
+					"label": "Bordereau de 1971 : le rapport de votre père a été remis à KREMER, et KREMER l'a gardé au lieu de le détruire",
+					"quote": "à l'encre verte : « gardé »"
+				}
+			]
 		}
 	],
 	"decisions": [

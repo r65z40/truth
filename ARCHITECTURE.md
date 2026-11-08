@@ -73,6 +73,7 @@ scenes/
 ui/theme/ministry_theme.tres  thème global (couleurs, polices, styles)
 ui/shaders/crt.gdshader
 tests/                        tests automatiques et captures d'écran
+tests/tools/playthrough_*     robot de partie : joue des centaines de campagnes et écrit un rapport
 ```
 
 ## Autoloads (ordre de chargement)
@@ -294,6 +295,30 @@ jamais, même à court d'heures. Le calendrier (`data/calendar.json`) liste les
 20 journées de service et les actes ; `FictionalCalendar.days_since_previous`
 sert aux ellipses (« N jours plus tard »).
 
+## Téléphone et tablette
+
+`ScreenFit` (pur) calcule l'agrandissement d'après la taille et la densité de
+l'écran (160 ppp = 1, sans descendre sous 600 points de haut) ;
+`Settings.device_factor()` l'applique sur mobile, multiplié par « Taille de
+l'interface ». Sous 680 points de haut (`ScreenFit.is_short`), le menu principal
+retire son accroche et le bureau resserre ses icônes, qui défilent
+(`IconsScroll`). Captures à taille téléphone :
+`tests/capture_screens.tscn -- <dossier> - 1333x600`. Préréglage « Android »
+dans `export_presets.cfg` (paysage, arm64, aucune permission).
+
+## Équilibre et robot de partie
+
+Toute variation d'indicateur passe par `GameState._apply_effects`, qui applique
+`Balance.scaled` : les hausses sont ramenées au pourcentage de
+`data/rules/balance.json` (suspicion : 60 %), les baisses restent entières. Les
+tests de règles neutralisent ce réglage (`Balance.override_percent = 100`).
+
+`tests/tools/playthrough_bot.gd` joue une campagne entière par l'API de
+GameState (appels, tri, enquête, mini-jeux, terrain, décisions, soirées, revues
+d'acte) selon un profil et une graine. `tests/tools/playthrough_report.tscn`
+en lance des centaines et écrit `playthrough.md`, `playthrough.json` et
+`runs.json` (données brutes pour tester d'autres seuils de fin hors du jeu).
+
 ## Soirées (`data/evenings.json`)
 
 Une soirée par jour (champ `day`), avec `intro`, `set_flags` et 2 ou 3
@@ -301,7 +326,14 @@ Une soirée par jour (champ `day`), avec `intro`, `set_flags` et 2 ou 3
 set_flags, followups}. `results` est une liste de variantes : la première dont
 les conditions sont remplies est affichée (la dernière, sans condition, sert de
 défaut). Les conditions sont celles des événements, plus `min_count`
-(`{"radio": 2}` : nombre de soirées passées à ce `kind`). Logique dans
+(`{"radio": 2}` : au moins deux soirées passées à ce `kind`) et `max_count`
+(`{"radio": 0}` : au plus). Les mêmes conditions servent aux lettres du tri du
+courrier (`MailSorting.pending`). Kinds : lena, radio, civic (profil bas), adler,
+visit, work.
+Lieux (`places`) : chaque action se passe dans un lieu (clé `place`, sinon
+`places.by_kind[kind]`, sinon `places.default`) ; un lieu a un `label` et un
+emplacement d'image `slot` (`data/images.json`). `EveningRules.place_of` /
+`place_info` ; l'écran montre le lieu au survol d'une action et pendant le résultat. Logique dans
 `EveningRules`, état dans `GameState.evenings`, écran
 `scenes/evening/evening_screen.tscn` ouvert par le bureau avant le jour suivant.
 `echoes` (facultatif) : liste de {conditions, text} ajoutés à l'introduction du
@@ -354,7 +386,10 @@ personnage (`docs/design/EXTENSIONS_PERSONNAGES.md`).
 Fichier `user://savegame.json` :
 `{save_version, game_version, saved_at, state}`. Pour changer le format :
 incrémenter `SAVE_VERSION` et ajouter une étape dans `SaveManager._migrate()`.
-Un chargement en échec ne modifie pas l'état courant. Version actuelle : 5
+Un chargement en échec ne modifie pas l'état courant. Version actuelle : 9
+(v9 : volume de la radio de chaque soirée, lignes caviardées de chaque dossier ;
+v8 : versions retenues de la fiche ; v7 : dossiers classés, plis jetés ; v6 :
+contradictions repérées). Plus ancien : v5
 (v5 : mémoire institutionnelle `ministry_record` ; v4 : heures de service, pièces
 demandées, consultation, soirées, scènes de terrain).
 Emplacement de `user://` sous Windows : `%APPDATA%\Godot\app_userdata\Ministry of Truth\`.
@@ -369,12 +404,39 @@ option d'agrandissement de l'interface, bouton Quitter masqué sur mobile/web.
 
 Fond `#0b0d0c`, anthracite `#1b1f1e`, phosphore `#3ce07a`, beige document
 `#d8ccad`, encre `#2a241c`, rouge alerte `#8e1f1f`, blanc cassé `#e8e4d8`.
-Police : monospace système (SystemFont avec repli). Variations de thème :
+Police : IBM Plex Mono embarquée (`assets/fonts/`, licence SIL OFL 1.1), avec les
+monospaces du système en secours pour les signes absents. Variations de thème :
 `TerminalPanel`, `TerminalText`, `DocumentPanel`, `DocumentLabel`, `DocumentText`,
 `DocumentTab`, `WindowFrame`, `TitleBar`, `TopBar`, `HeaderLabel`, `MutedLabel`,
-`StampLabel`, `AlertButton`.
+`StampLabel`, `AlertButton`, `RedactedLine` (ligne caviardée : bloc noir).
 
 ## Export
 
-Les fichiers `.json` de `data/` doivent être inclus dans l'export : à vérifier
-lors de la création du premier preset (filtre « fichiers non-ressources » : `*.json`).
+`export_presets.cfg` : préréglage « Windows » (x86_64, pck intégré à l'exécutable,
+sortie `build/windows/MinistryOfTruth.exe`). Filtre d'inclusion `data/*.json,
+assets/fonts/*.txt` ; `tests/` et `docs/` sont exclus. Il faut les modèles
+d'export de Godot 4.7.2 (Éditeur > Gérer les modèles d'export) pour produire
+l'exécutable.
+
+## Mécaniques du 08.11 (logique pure dans `scripts/core/`)
+
+| Mécanique | Données | Logique | État |
+|---|---|---|---|
+| Ton du courrier (post-scriptum selon les indicateurs) | `data/message_tone.json` | `MessageTone` | clé `postscript` du pli |
+| Dossier urgent (à rendre avant midi, en heures de service) | bloc `deadline` du dossier | `DeadlineRules` | drapeaux `<dossier>.rendu_a_temps` / `.rendu_en_retard` |
+| Sources qui s'usent | `data/sources.json` | `SourceWear` (appliqué dans `CaseLibrary.filter_case`) | aucun : déduit des contradictions établies |
+| Téléphone (appels courts, sans chronomètre) | `data/calls.json` | `CallRules` | drapeaux `call.<id>.<réponse>` / `.missed` |
+| Radio étrangère (volume bas ou fort) | `data/radio.json` | `RadioRules` | `evenings[jour].volume` (sauvegarde v9) |
+| Caviarder (acte 4) | bloc `redaction` du dossier | `RedactionRules` ; conditions `redacted:a+b`, `redacted_any` | `redacted_lines` du dossier (v9) |
+| Le dossier qui revient | événements `return_*` | `EventRules` | `fired_events` |
+| Dossiers confiés selon la confiance | clés d'événement `grant_documents`, `refuse_documents` | `GameState._apply_trust` | pièce marquée demandée / drapeau `refused.<dossier>.<pièce>` |
+| Tri du courrier (paquets des jours 4, 9, 16) | `data/mail_sorting.json` | `MailSorting`, écran `MailSortScreen` | drapeaux `mail.<lettre>.<verdict>` |
+| Pointeuse (mini-jeu, 51307) | bloc `punch_clock` du dossier | `PunchClockRules`, écran `PunchClockScreen` | contradiction établie |
+| Liens entre les pièces (débutant) | clés des éléments et questions | `CaseSheet.links` | aucun |
+| Archive confidentielle (2e classe) | `"confidential": true` dans le bloc `request` d'une pièce | `Career.confidential_access` (grade, KREMER, une par jour) | `requested_documents` (jour de la demande), drapeau `kremer.archive_used` |
+| Répertoire des personnes (menu MINISTÈRE) | `data/people.json` (dossier, conditions, `updates` de rôle par drapeaux) | `PeopleDirectory`, écran `PeopleScreen` | aucun : déduit des dossiers ouverts, des drapeaux et des décisions |
+
+Écrans posés sur le bureau, construits en code : `PhoneScreen`
+(`scenes/ui/phone_screen.gd`), `RedactionScreen` (`scenes/ui/redaction_screen.gd`)
+`MailSortScreen` (`scenes/ui/mail_sort_screen.gd`) et `PeopleScreen`
+(`scenes/ui/people_screen.gd`).

@@ -295,6 +295,35 @@
 					}
 				}
 			]
+		},
+		{
+			"id": "milice_note",
+			"type": "report",
+			"title": "Fiche confidentielle : informateur CHAUDRON",
+			"source": "Milice du district 2 (archive confidentielle)",
+			"reliability": "A",
+			"date": "1986-11-06",
+			"request": {
+				"label": "Fiche de l'informateur CHAUDRON à la Milice",
+				"confidential": true,
+				"flags": {
+					"53517.chaudron_file_requested": true
+				},
+				"effects": {
+					"suspicion": 1
+				}
+			},
+			"veritas_remark": "Archive confidentielle de la Milice, fiabilité A.",
+			"body": "Informateur CHAUDRON. Chef d'équipe, Centrale thermique n° 3. Recruté en 1983 par le capitaine du district, son frère. Signalements fiables « quand ils ne le concernent pas ». À ménager.\n\nDernier signalement : PETRAS, V., même équipe.",
+			"facts": [
+				{
+					"id": "f_ch_identity",
+					"key": "confidential.53517.chaudron",
+					"value": "CHAUDRON est un chef d'équipe de la Centrale, frère du capitaine",
+					"label": "Fiche de la Milice : CHAUDRON est un chef d'équipe de la Centrale n° 3, frère du capitaine du district",
+					"quote": "Recruté en 1983 par le capitaine du district, son frère"
+				}
+			]
 		}
 	],
 	"decisions": [

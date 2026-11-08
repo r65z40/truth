@@ -109,6 +109,22 @@ func _run() -> void:
 		"test_tutorial_bubble_fades",
 		"test_coach_bubble_can_be_closed",
 		"test_fewer_clicks",
+		"test_wrong_version_audit",
+		"test_quick_start",
+		"test_message_tone",
+		"test_returning_citizens",
+		"test_urgent_case",
+		"test_source_wear",
+		"test_phone_calls",
+		"test_foreign_radio",
+		"test_redaction",
+		"test_embedded_font",
+		"test_document_links",
+		"test_trust_assignments",
+		"test_milice_54030",
+		"test_mail_sorting",
+		"test_punch_clock",
+		"test_learning_curve",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -154,15 +170,34 @@ func _run() -> void:
 		"test_endings",
 		"test_end_of_game_in_desk",
 		"test_endings_discovered_counter",
+		"test_balance",
+		"test_playthrough_bot",
+		"test_screen_fit",
+		"test_main_menu_short_screen",
+		"test_english_content_complete",
+		"test_civic_evenings",
+		"test_radio_denunciation_letter",
+		"test_people_directory",
+		"test_flag_followups",
+		"test_evening_places",
+		"test_field_corridor_brandt",
+		"test_field_room_60003",
+		"test_confidential_archive",
+		"test_varga_lease_route",
 	]
 	# Ne jamais toucher à la vraie sauvegarde du joueur.
 	SaveManager.save_path = TEST_SAVE_PATH
+	# Les tests de règles vérifient les valeurs écrites dans les données : le
+	# réglage d'équilibre (Balance) est neutralisé, sauf dans test_balance et
+	# test_playthrough_bot qui le rétablissent.
+	Balance.override_percent = 100
 	for test_name in tests:
 		_current = test_name
 		GameState.new_game()
 		await call(test_name)
 	SaveManager.delete_save(TEST_SAVE_PATH)
 	SaveManager.save_path = SaveManager.DEFAULT_PATH
+	Balance.override_percent = -1
 	GameState.new_game()
 	print("")
 	print("RÉSULTAT : %d vérification(s) réussie(s), %d échec(s)." % [_passed, _failed])
@@ -245,7 +280,7 @@ func test_case_sheet_rules() -> void:
 	check(sheet[0].state == CaseSheet.SETTLED and sheet[0].retained == "f_reg_address" and CaseSheet.pending_conflict(sheet).is_empty(),
 			"question tranchée")
 	var lines: PackedStringArray = load("res://scenes/ui/windows/conclusion_panel.gd").sheet_lines(novak, state)
-	check(lines.size() == 1 and lines[0].contains("version retenue") and lines[0].contains("District 7"), "le rapport reprend la fiche : %s" % [lines])
+	check(lines.size() == 2 and lines[1].contains("VERITAS") and lines[0].contains("version retenue") and lines[0].contains("District 7"), "le rapport reprend la fiche : %s" % [lines])
 	# Deux valeurs identiques sous une même question ne font pas deux versions.
 	GameState.note_fact("40921", "f_identity_card")
 	GameState.note_fact("40921", "f_log_card")
@@ -317,6 +352,15 @@ func test_case_sheet_window() -> void:
 			"les notifications se posent en haut, sous le bandeau, sans bloquer les clics")
 	desk._refresh_objective()
 	check(desk.current_step.text.begins_with("Rédiger"), "ensuite : rédiger la conclusion")
+	# Fil rouge : une réponse de la fiche ramène à son passage, marqué dans la pièce.
+	dossiers.select_document("registry")
+	var answer: Button = dossiers._sheet_questions.find_child("Answer_f_decl_address", true, false)
+	check(answer != null, "chaque réponse de la fiche est un lien")
+	answer.pressed.emit()
+	check(dossiers.current_document_id == "declaration" and dossiers.focused_fact_id == "f_decl_address"
+			and dossiers.get_node("%DocBody").text.contains("[b]▸ "), "le lien ouvre la pièce d'origine, passage marqué")
+	dossiers.select_document("registry")
+	check(dossiers.focused_fact_id == "", "changer de pièce efface le marquage")
 	dossiers.open_conclusion()
 	check(dossiers.get_node("%ConclusionPanel").get_node("%ConclusionSummary").get_parsed_text().contains("version retenue"),
 			"le rapport de conclusion reprend la fiche")
@@ -799,6 +843,9 @@ func test_events_file_is_valid() -> void:
 					"%s : message complet" % event.id)
 		for indicator in event.get("effects", {}):
 			check(GameState.INITIAL_INDICATORS.has(indicator), "%s : indicateur connu %s" % [event.id, indicator])
+		# set_flags est un dictionnaire {drapeau: valeur} (une liste plantait end_day).
+		if event.has("set_flags"):
+			check(event.set_flags is Dictionary, "%s : set_flags est un dictionnaire" % event.id)
 
 
 func test_event_conditions() -> void:
@@ -876,8 +923,8 @@ func test_end_day_without_decision() -> void:
 	check(GameState.messages[-1].date_label == "04.11.1986", "messages datés du jour")
 	check(days == [1], "signal day_started émis")
 	var next_ids := GameState.end_day().map(func(e: Dictionary) -> String: return e.id)
-	check(next_ids == ["51307_reminder", "assign_52044", "daily_bulletin_2"],
-			"le lendemain : rappel, dossier 52044 et bulletin : %s" % [next_ids])
+	check(next_ids == ["features_day_3", "51307_reminder", "assign_52044", "daily_bulletin_2"],
+			"le lendemain : habilitation, rappel, dossier 52044 et bulletin : %s" % [next_ids])
 	GameState.day_started.disconnect(on_day)
 
 
@@ -2743,6 +2790,439 @@ func test_tutorial_bubble_fades() -> void:
 	await get_tree().process_frame
 
 
+## Version retenue à tort : VERITAS commente selon la cote des sources, la
+## signature pose « version contestée », et le contrôle interne relit le rapport.
+func test_wrong_version_audit() -> void:
+	GameState.new_game()
+	var novak := CaseLibrary.get_case("40000")
+	for fact_id in ["f_decl_address", "f_reg_address"]:
+		GameState.note_fact("40000", fact_id)
+	check(GameState.retain_version("40000", "address", "f_decl_address") == "novak.address", "on retient la déclaration (cotée C)")
+	var question: Dictionary = CaseSheet.build(novak, GameState.get_case_state("40000")).filter(
+			func(q: Dictionary) -> bool: return q.id == "address")[0]
+	check(Veritas.sheet_comment(question).contains("C contre A"), "VERITAS signale l'écart de cote")
+	check(CaseSheet.wrong_versions(novak, GameState.get_case_state("40000")) == ["address"], "version fausse repérée")
+	var panel_script: GDScript = load("res://scenes/ui/windows/conclusion_panel.gd")
+	check("\n".join(panel_script.sheet_lines(novak, GameState.get_case_state("40000"))).contains("VERITAS >"),
+			"le rapport reprend le commentaire de VERITAS")
+	GameState.apply_decision("40000", "regularize")
+	check(GameState.flags.get("40000.version_contestee", false), "signature : version contestée")
+	var suspicion := GameState.get_indicator("suspicion")
+	for i in 3:
+		GameState.end_day()
+	check(GameState.messages.any(func(m: Dictionary) -> bool: return m.id.begins_with("event.audit_40000"))
+			and GameState.get_indicator("suspicion") >= suspicion + 3, "le contrôle interne relit le rapport")
+	# Bonne version : rien à redire.
+	GameState.new_game()
+	for fact_id in ["f_decl_address", "f_reg_address"]:
+		GameState.note_fact("40000", fact_id)
+	GameState.retain_version("40000", "address", "f_reg_address")
+	check(CaseSheet.wrong_versions(novak, GameState.get_case_state("40000")).is_empty(), "bonne version : rien de faux")
+	GameState.apply_decision("40000", "regularize")
+	check(not GameState.flags.get("40000.version_contestee", false), "bonne version : pas de relecture")
+	GameState.new_game()
+
+
+## Départ rapide : une nouvelle partie qui commence à l'acte voulu, les jours
+## d'avant conclus selon VERITAS ; proposé au menu une fois une fin découverte.
+func test_quick_start() -> void:
+	GameState.new_game_at_act(3)
+	check(GameState.day_index == 10 and FictionalCalendar.act_for_day(GameState.day_index).number == 3, "départ rapide : premier jour de l'acte 3")
+	check(not GameState.can_decide("40921") and not GameState.can_decide("51307"), "les dossiers d'avant sont conclus")
+	check(GameState.flags.get("act1.reviewed", false) and GameState.flags.get("act2.reviewed", false), "les commissions d'acte sont passées")
+	check(GameState.get_unread_count() == 0 and GameState.flags.get("game.quick_start", false), "courrier lu, départ rapide noté")
+	var day := GameState.day_index
+	var first_flags := GameState.flags.duplicate(true)
+	GameState.new_game_at_act(3)
+	check(GameState.day_index == day and GameState.flags == first_flags, "départ rapide déterministe")
+	var original: Array = Settings.endings_discovered.duplicate()
+	Settings.endings_discovered = []
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	menu._on_new_game_pressed()
+	check(not menu.find_child("StartActRow", true, false).visible, "aucune fin connue : pas de départ rapide")
+	Settings.endings_discovered = ["fin_silence"]
+	menu._on_new_game_pressed()
+	var option: OptionButton = menu.find_child("StartActOption", true, false)
+	check(menu.find_child("StartActRow", true, false).visible and option.item_count == 4, "une fin connue : départ rapide aux actes 1 à 4")
+	option.item_selected.emit(2)
+	check(menu.start_act == 3, "on choisit l'acte 3")
+	menu.queue_free()
+	Settings.endings_discovered = original
+	GameState.new_game()
+
+
+## Le ton du courrier suit les indicateurs : post-scriptum selon l'état caché.
+func test_message_tone() -> void:
+	GameState.new_game()
+	var state := GameState.get_condition_state()
+	check(MessageTone.postscript("R. MAZUR, chef de section", state) == "", "état neutre : pas de post-scriptum")
+	GameState.indicators["suspicion"] = 65
+	state = GameState.get_condition_state()
+	check(MessageTone.postscript("R. MAZUR, chef de section", state).begins_with("P.-S. Je relis"), "soupçon élevé : MAZUR se méfie")
+	check(MessageTone.postscript("Service du courrier", state) == "", "un autre expéditeur n'a pas de post-scriptum")
+	GameState.receive_message({"id": "test.tone", "from": "R. MAZUR", "subject": "Test", "body": "Corps."}, false)
+	var received: Dictionary = GameState.messages[GameState.messages.size() - 1]
+	check(received.get("postscript", "") != "", "le pli reçu garde son post-scriptum")
+	var restored := GameState.to_dict()
+	GameState.from_dict(restored)
+	check(GameState.messages[GameState.messages.size() - 1].get("postscript", "") == received.postscript, "post-scriptum sauvegardé")
+	GameState.indicators["suspicion"] = 0
+	GameState.flags["milice.hostile"] = true
+	check(MessageTone.postscript("Capitaine L. ORLIK", GameState.get_condition_state()).contains("où vous habitez"), "Milice hostile : menace")
+	for rule in MessageTone.get_data().rules:
+		check(Localization.load_content_translations("en").has(rule.postscript), "post-scriptum traduit : " + rule.id)
+	GameState.new_game()
+
+
+## Le dossier qui revient : un citoyen jugé tôt réapparaît aux actes 3 et 4.
+func test_returning_citizens() -> void:
+	var ids := func(state: Dictionary) -> Array:
+		return EventRules.due_events(state).map(func(e): return e.id)
+	var early := {"day_index": 12, "flags": {"52044.baker_arrested": true}, "cases": {}, "fired_events": [], "indicators": {}}
+	check(not "return_52044_kovac_camp" in ids.call(early), "pas de retour avant l'acte 3")
+	early.day_index = 13
+	check("return_52044_kovac_camp" in ids.call(early), "boulangère arrêtée : sa lettre arrive du centre de travail")
+	var varga := {"day_index": 14, "flags": {"52310.poem_cleared": true}, "cases": {}, "fired_events": [], "indicators": {}}
+	var due: Array = ids.call(varga)
+	check("return_52310_varga_poem" in due and not "return_52310_varga_anthology" in due, "poème lu comme un poème : VARGA écrit, sans anthologie")
+	varga.fired_events = ["return_52310_varga_poem"]
+	check(not "return_52310_varga_poem" in ids.call(varga), "un retour n'arrive qu'une fois")
+	var translations := Localization.load_content_translations("en")
+	for event in EventRules.get_events():
+		if str(event.id).begins_with("return_"):
+			check(translations.has(event.message.body) and translations.has(event.message.from), "retour traduit : " + event.id)
+
+
+## Dossier urgent : à rendre avant midi, en heures de service (pas en temps réel).
+func test_urgent_case() -> void:
+	var case_data := CaseLibrary.get_case("53402")
+	check(DeadlineRules.has_deadline(case_data) and DeadlineRules.limit_hours(case_data) == 4, "53402 : à rendre avant midi (4 heures de service)")
+	check(DeadlineRules.is_on_time(case_data, 7, 3, 1), "signer à 11h00 : à temps")
+	check(not DeadlineRules.is_on_time(case_data, 7, 4, 1), "signer à 12h00 : trop tard (la signature prend une heure)")
+	check(not DeadlineRules.is_on_time(case_data, 8, 0, 1), "le lendemain : trop tard")
+	check(not DeadlineRules.has_deadline(CaseLibrary.get_case("51307")), "un dossier ordinaire n'a pas d'échéance")
+	GameState.new_game()
+	GameState.day_index = 7
+	GameState.assign_case("53402")
+	check(GameState.deadline_status("53402") == "pending", "dossier attribué : échéance en cours")
+	check(DossiersWindow.deadline_text("53402").contains("12h00"), "l'en-tête affiche l'heure limite")
+	var loyalty := GameState.get_indicator("loyalty")
+	GameState.apply_decision("53402", "reassign")
+	check(GameState.deadline_status("53402") == "met" and GameState.flags.get("53402.rendu_a_temps", false), "signé à 08h00 : rendu à l'heure")
+	check(GameState.get_indicator("loyalty") >= loyalty + 2, "rendre à temps : loyauté")
+	GameState.new_game()
+	GameState.day_index = 7
+	GameState.assign_case("53402")
+	GameState.hours_used = 5
+	check(GameState.deadline_status("53402") == "late", "13h00 : hors délai")
+	GameState.hours_used = 0
+	var suspicion := GameState.get_indicator("suspicion")
+	GameState.end_day()
+	check(GameState.flags.get("53402.rendu_en_retard", false) and GameState.get_indicator("suspicion") >= suspicion + 3, "laissé ouvert le soir : en retard, soupçon")
+	check(GameState.messages.any(func(m): return str(m.id).begins_with("event.deadline_53402_late")), "le lendemain matin, MAZUR : rapport hors délai")
+	GameState.new_game()
+
+
+## Sources qui s'usent : un informateur pris en défaut perd un cran de cote ensuite.
+func test_source_wear() -> void:
+	check(SourceWear.downgrade("C", 1) == "D" and SourceWear.downgrade("D", 2) == "D" and SourceWear.downgrade("A", 2) == "C", "échelle A > B > C > D")
+	var state := {"day_index": 9, "flags": {}, "cases": {"53118": {"contradictions_found": []}}, "fired_events": []}
+	var signal_53190: Dictionary = CaseLibrary.get_document(CaseLibrary.filter_case(CaseLibrary.get_case("53190"), state), "signalement")
+	check(signal_53190.reliability == "C", "source jamais prise en défaut : cote d'origine")
+	state.cases["53118"]["contradictions_found"] = ["choir.curfew"]
+	var view := CaseLibrary.filter_case(CaseLibrary.get_case("53190"), state)
+	signal_53190 = CaseLibrary.get_document(view, "signalement")
+	check(signal_53190.reliability == "D" and signal_53190.veritas_remark.contains("53118"), "signalement démenti au 53118 : cote D au 53190, VERITAS le dit")
+	check(CaseLibrary.get_document(view, "burials").reliability == "A", "les autres pièces gardent leur cote")
+	check(DocumentWindow.describe_source(signal_53190).contains("était C"), "la fiche de la pièce montre l'ancienne cote")
+	var own := CaseLibrary.get_document(CaseLibrary.filter_case(CaseLibrary.get_case("53118"), state), "signalement")
+	check(own.reliability == "C", "pas d'usure dans le dossier où la source est prise")
+	check(CaseLibrary.get_document(CaseLibrary.get_case("53190"), "signalement").reliability == "C", "le dossier source n'est pas modifié")
+	var translations := Localization.load_content_translations("en")
+	for rule in SourceWear.get_data().rules:
+		check(translations.has(rule.remark), "usure traduite : " + rule.id)
+
+
+## Le téléphone : appels courts, deux ou trois réponses, sans chronomètre.
+func test_phone_calls() -> void:
+	for call in CallRules.get_data().calls:
+		var count: int = call.answers.size()
+		check(count >= 2 and count <= 3, "appel %s : deux ou trois réponses" % call.id)
+	GameState.new_game()
+	check(GameState.get_pending_call().is_empty(), "premier jour : le téléphone ne sonne pas")
+	GameState.day_index = 2
+	check(GameState.get_pending_call().get("id", "") == "mazur_welcome", "jour 2 : MAZUR appelle")
+	check(GameState.answer_call("mazur_welcome", "inconnue") == "", "réponse inconnue refusée")
+	var suspicion := GameState.get_indicator("suspicion")
+	var reply := GameState.answer_call("mazur_welcome", "honest")
+	check(reply.contains("Pas sur cette ligne") and GameState.get_indicator("suspicion") == suspicion + 1, "répondre franchement : réplique et soupçon")
+	check(GameState.flags.get("call.mazur_welcome.honest", false) and GameState.get_pending_call().is_empty(), "appel pris : le téléphone se tait")
+	GameState.day_index = 14
+	GameState.indicators["suspicion"] = 40
+	check(GameState.get_pending_call().get("id", "") == "control_line_check", "soupçonné : le Contrôle interne vérifie la ligne")
+	GameState.end_day()
+	check(GameState.flags.get("call.control_line_check.missed", false) and GameState.get_indicator("suspicion") >= 42, "appel non pris le soir : manqué, et ça se remarque")
+	var saved := GameState.to_dict()
+	GameState.from_dict(saved)
+	check(GameState.flags.get("call.mazur_welcome.honest", false), "réponses au téléphone sauvegardées (drapeaux)")
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	GameState.new_game()
+	GameState.day_index = 2
+	get_tree().root.add_child(desk)
+	await get_tree().process_frame
+	check(desk.phone_button.visible, "le bouton DÉCROCHER apparaît quand ça sonne")
+	desk.open_phone()
+	check(desk.phone_screen.visible and desk.phone_screen.find_child("Answers", true, false).get_child_count() == 2, "l'écran d'appel montre les réponses")
+	desk.phone_screen.choose("fine")
+	check(desk.phone_screen.find_child("ReplyLabel", true, false).visible and desk.phone_screen.find_child("HangUpButton", true, false).visible, "réplique affichée, on raccroche quand on veut")
+	desk.phone_screen.close()
+	await get_tree().process_frame
+	check(not desk.phone_button.visible, "après l'appel, le bouton disparaît")
+	desk.queue_free()
+	var translations := Localization.load_content_translations("en")
+	for call in CallRules.get_data().calls:
+		check(translations.has(call.text) and translations.has(call.caller), "appel traduit : " + call.id)
+	GameState.new_game()
+
+
+## Radio étrangère le soir : volume bas sans risque, volume haut entendu des voisins.
+func test_foreign_radio() -> void:
+	check(RadioRules.muffle("Première phrase. Seconde phrase.").begins_with("Première phrase. …"), "volume bas : la première phrase, puis le brouillage")
+	GameState.new_game()
+	var low := GameState.choose_evening_action("radio_0", RadioRules.LOW)
+	check(low.text.contains("brouillage") and GameState.flags.get("radio.power_deal_heard", false), "volume bas : bulletin tronqué, mais l'essentiel est entendu")
+	check(RadioRules.loud_count(GameState.evenings) == 0, "volume bas : personne n'entend")
+	GameState.new_game()
+	for day in 3:
+		GameState.day_index = day
+		var radio_id := "radio_%d" % day
+		var loud := GameState.choose_evening_action(radio_id, RadioRules.LOUD)
+		check(not loud.is_empty() and not loud.text.contains("Vous n'osez pas"), "volume haut, soir %d : bulletin entier" % day)
+	check(RadioRules.loud_count(GameState.evenings) == 3 and GameState.flags.get("radio.neighbours_heard", false), "deux soirs forts : les voisins ont entendu")
+	check(not GameState.flags.get("radio.reported", false), "pas encore de signalement")
+	check(RadioRules.flags_at(4).has("radio.reported"), "quatre soirs forts : signalement au Bureau")
+	var old_save := {"save_version": 8, "state": {"evenings": {"0": {"action": "radio_0", "kind": "radio"}}}}
+	var migrated: Dictionary = SaveManager._migrate(old_save)
+	check(int(migrated.save_version) == SaveManager.SAVE_VERSION and migrated.state.evenings["0"].volume == "", "sauvegarde v8 : soirées sans volume")
+	var screen: Control = load("res://scenes/evening/evening_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	GameState.new_game()
+	screen.open()
+	screen.ask_volume("radio_0")
+	check(screen.find_child("Volume_low", true, false) != null and screen.find_child("Volume_loud", true, false) != null, "l'écran du soir propose les deux volumes")
+	screen.choose("radio_0", RadioRules.LOUD)
+	check(RadioRules.loud_count(GameState.evenings) == 1, "le choix passe par GameState")
+	screen.queue_free()
+	var translations := Localization.load_content_translations("en")
+	check(translations.has(RadioRules.get_data().muffled_suffix), "brouillage traduit")
+	GameState.new_game()
+
+
+## Caviarder (acte 4) : noircir le projet MIROIR ligne par ligne ; ce qui reste lisible compte.
+func test_redaction() -> void:
+	for case_id in ["60001", "60002"]:
+		var case_data := CaseLibrary.get_case(case_id)
+		var redaction := RedactionRules.get_redaction(case_data)
+		var body: String = CaseLibrary.get_document(case_data, redaction.document).body
+		for line in redaction.lines:
+			check(body.contains(line.text), "%s : la ligne %s figure dans le projet" % [case_id, line.id])
+	check(RedactionRules.is_condition_met("redacted:a+b", ["b", "a"]) and not RedactionRules.is_condition_met("redacted:a+b", ["a"]), "condition : toutes les lignes citées")
+	GameState.new_game()
+	GameState.assign_case("60001")
+	GameState.toggle_redaction("60001", "trip")
+	GameState.toggle_redaction("60001", "inconnue")
+	check(GameState.get_case_state("60001").redacted_lines == ["trip"], "une ligne noircie, l'inconnue ignorée")
+	GameState.toggle_redaction("60001", "trip")
+	check(GameState.get_case_state("60001").redacted_lines.is_empty(), "toucher encore : la ligne redevient lisible")
+	GameState.toggle_redaction("60001", "trip")
+	var result := GameState.apply_decision("60001", "redact")
+	check(result.response_id == "redacted_partial" and GameState.flags.get("act4.sedlar_still_accused", false), "caviardage partiel : SEDLAR reste accusé")
+	check(GameState.flags.get("act4.sedlar_redacted", false), "les fins voient toujours un dossier caviardé")
+	GameState.toggle_redaction("60001", "cover")
+	check(not "cover" in GameState.get_case_state("60001").redacted_lines, "dossier signé : plus de caviardage")
+	GameState.new_game()
+	GameState.assign_case("60002")
+	for line_id in ["ruda", "allegations", "probability"]:
+		GameState.toggle_redaction("60002", line_id)
+	result = GameState.apply_decision("60002", "redact")
+	check(result.response_id == "redacted" and not GameState.flags.get("act4.centrale_half_blamed", false), "tout noirci : rapport vidé de sa cause")
+	var saved := GameState.to_dict()
+	GameState.from_dict(saved)
+	check(GameState.get_case_state("60002").redacted_lines.size() == 3, "lignes noircies sauvegardées")
+	GameState.new_game()
+	GameState.assign_case("60001")
+	var screen := RedactionScreen.new()
+	get_tree().root.add_child(screen)
+	check(screen.open_case("60001") and screen.find_child("Lines", true, false).get_child_count() == 5, "l'écran montre les cinq lignes du projet")
+	screen.toggle("profile")
+	await get_tree().process_frame
+	var line_button: Button = screen.find_child("Line_profile", true, false)
+	check(line_button.get_meta("redacted") and line_button.text.begins_with("█"), "ligne noircie à l'écran")
+	screen.sign()
+	check(not GameState.can_decide("60001") and not screen.visible, "signer le caviardage conclut le dossier")
+	screen.queue_free()
+	var translations := Localization.load_content_translations("en")
+	for case_id in ["60001", "60002"]:
+		for line in RedactionRules.get_redaction(CaseLibrary.get_case(case_id)).lines:
+			check(translations.has(line.text), "ligne traduite : %s/%s" % [case_id, line.id])
+	GameState.new_game()
+
+
+## Police embarquée : le jeu ne dépend plus des polices installées sur la machine.
+func test_embedded_font() -> void:
+	var theme: Theme = load("res://ui/theme/ministry_theme.tres")
+	var font := theme.default_font as FontVariation
+	check(font != null and font.base_font.resource_path == "res://assets/fonts/IBMPlexMono-Medium.woff2", "police par défaut : IBM Plex Mono embarquée")
+	check(not font.fallbacks.is_empty(), "polices du système en secours pour les signes absents")
+	check(FileAccess.file_exists("res://assets/fonts/OFL-IBM-Plex.txt"), "licence de la police jointe")
+	check(FileAccess.file_exists("res://export_presets.cfg"), "préréglage d'export présent")
+
+
+## Liens visibles entre les pièces : à partir de ce que l'agent a noté, sans révéler qui ment.
+func test_document_links() -> void:
+	var case_data := CaseLibrary.get_case("40000")
+	check(CaseSheet.links(case_data, {"noted_facts": []}, "registry").is_empty(), "rien de noté : aucun lien")
+	var links := CaseSheet.links(case_data, {"noted_facts": ["f_reg_address"]}, "registry")
+	check(links.size() == 1 and links[0].document_id == "declaration", "adresse notée au registre : la déclaration parle du même sujet")
+	check(links[0].question != "", "le lien dit de quelle question il s'agit")
+	GameState.new_game()
+	var window: DossiersWindow = load("res://scenes/ui/windows/dossiers_window.tscn").instantiate()
+	get_tree().root.add_child(window)
+	window.select_case("40000")
+	window.select_document("registry")
+	window.note_fact("f_reg_address")
+	var row: Control = window.find_child("LinksRow", true, false)
+	check(row.visible == window._sheet_mode(), "la rangée de liens n'apparaît qu'au niveau débutant")
+	if row.visible:
+		(row.find_child("Link_declaration", true, false) as Button).pressed.emit()
+		check(window.current_document_id == "declaration", "toucher le lien ouvre l'autre pièce")
+	window.queue_free()
+	GameState.new_game()
+
+
+## Dossiers confiés selon la confiance : pièce jointe d'office, ou refusée.
+func test_trust_assignments() -> void:
+	GameState.new_game()
+	GameState.day_index = 7
+	GameState.indicators["loyalty"] = 65
+	GameState.end_day()
+	check(GameState.cases.has("53517") and CaseLibrary.get_document(GameState.get_case_view("53517"), "informer_file").size() > 0, "loyal : la fiche de l'informateur est jointe d'office au 53517")
+	check(GameState.flags.get("53517.informer_checked", false) and GameState.hours_used == 0, "sans heure de service, drapeaux de la demande posés")
+	GameState.new_game()
+	GameState.day_index = 7
+	GameState.indicators["loyalty"] = 40
+	GameState.end_day()
+	check(CaseLibrary.get_document(GameState.get_case_view("53517"), "informer_file").is_empty(), "loyauté ordinaire : il faut la demander")
+	GameState.new_game()
+	GameState.day_index = 10
+	GameState.indicators["suspicion"] = 60
+	GameState.end_day()
+	check(GameState.cases.has("54012"), "54012 attribué")
+	check(not GameState.get_requestable_documents("54012").any(func(d): return d.id == "visits"), "soupçonné : le registre des visites n'est plus communiqué")
+	check(not GameState.request_document("54012", "visits"), "la demande est refusée")
+	check(GameState.messages.any(func(m): return str(m.id).begins_with("event.distrust_54012_visits")), "le Contrôle interne prévient")
+	GameState.new_game()
+
+
+## Troisième dossier où pèse la Milice (54030) : alliée, elle propose un marché ; hostile, elle surveille.
+func test_milice_54030() -> void:
+	var ids := func(flags: Dictionary) -> Array:
+		var view := CaseLibrary.filter_case(CaseLibrary.get_case("54030"), {"day_index": 12, "flags": flags, "cases": {}, "indicators": {}})
+		return view.documents.map(func(d): return d.id)
+	check(not "orlik_offer" in ids.call({}) and not "milice_watch" in ids.call({}), "Milice neutre : ni marché ni surveillance")
+	check("orlik_offer" in ids.call({"milice.ally": true}), "Milice alliée : ORLIK propose de ramener ADLER")
+	check("milice_watch" in ids.call({"milice.hostile": true}), "Milice hostile : note de surveillance sur le palier de VOSK")
+	var due := EventRules.due_events({"day_index": 13, "flags": {"milice.ally": true, "adler.freed": true}, "cases": {}, "fired_events": [], "indicators": {}})
+	check(due.any(func(e): return e.id == "54030_orlik_collects"), "ADLER libéré avec la Milice alliée : ORLIK note la dette")
+	check(CaseLibrary.validate_case(CaseLibrary.get_case("54030")).is_empty(), "le dossier 54030 reste valide")
+
+
+## Tri du courrier : TRANSMETTRE, RETENIR ou SIGNALER ; non trié = parti tel quel.
+func test_mail_sorting() -> void:
+	for batch in MailSorting.get_data().batches:
+		for letter in batch.letters:
+			for verdict in MailSorting.VERDICTS:
+				check(letter.outcomes.has(verdict), "lettre %s : issue « %s »" % [letter.id, verdict])
+	GameState.new_game()
+	check(GameState.get_pending_letters().is_empty(), "premier jour : rien à trier")
+	GameState.day_index = 4
+	check(GameState.get_pending_letters().size() == 3, "jour 4 : trois lettres interceptées")
+	var loyalty := GameState.get_indicator("loyalty")
+	check(GameState.sort_letter("aldria_cousin", "report") and GameState.flags.get("mail.vesely_reported", false), "signaler le cousin d'Aldria")
+	check(GameState.get_indicator("loyalty") == loyalty + 2, "signaler : loyauté")
+	check(not GameState.sort_letter("aldria_cousin", "hold"), "une lettre ne se trie qu'une fois")
+	check(not GameState.sort_letter("adler_card", "brûler"), "verdict inconnu refusé")
+	GameState.end_day()
+	check(GameState.flags.get("mail.adler_card.transmit", false) and GameState.flags.get("heure_juste.letter_passed", false), "non triée le soir : la carte d'ADLER part telle quelle")
+	check(GameState.get_pending_letters().is_empty(), "le lendemain, plus rien à trier")
+	var later := {"day_index": 11, "flags": {"centrale.worker_reported": true}, "cases": {}, "fired_events": [], "indicators": {}}
+	check(EventRules.due_events(later).any(func(e): return e.id == "mail_kral_transferred"), "signaler le chauffeur l'a éloigné de la chaufferie")
+	GameState.new_game()
+	GameState.day_index = 4
+	var screen := MailSortScreen.new()
+	get_tree().root.add_child(screen)
+	check(screen.open() and screen.letter_id == "soldier_mother", "l'écran ouvre la première lettre")
+	screen.choose("hold")
+	check(screen.letter_id == "aldria_cousin" and GameState.flags.get("mail.soldier_mother.hold", false), "retenue, lettre suivante")
+	screen.choose("transmit")
+	screen.choose("transmit")
+	check(screen.letter_id == "" and not screen.find_child("Verdicts", true, false).visible, "paquet trié")
+	screen.queue_free()
+	var translations := Localization.load_content_translations("en")
+	for batch in MailSorting.get_data().batches:
+		for letter in batch.letters:
+			check(translations.has(letter.text) and translations.has(letter.from), "lettre traduite : " + letter.id)
+	GameState.new_game()
+
+
+## La pointeuse (51307) : le ruban dément les « pannes » des certificats.
+func test_punch_clock() -> void:
+	var case_data := CaseLibrary.get_case("51307")
+	var block := PunchClockRules.get_punch_clock(case_data)
+	check(PunchClockRules.validate(case_data).is_empty(), "ruban du 51307 cohérent")
+	check(not PunchClockRules.grade(block, ["d16"]).correct and PunchClockRules.grade(block, ["d16"]).missing == 1, "un jour manquant")
+	check(PunchClockRules.grade(block, ["d16", "d21", "d09"]).wrong == 1, "un oubli de carte n'est pas une panne")
+	GameState.new_game()
+	GameState.assign_case("51307")
+	check(not GameState.apply_punch_clock("51307", ["d09"]).correct, "mauvaise sélection : rien d'établi")
+	var result := GameState.apply_punch_clock("51307", ["d21", "d16"])
+	check(result.correct and result.established == "clock.status.october", "le 16 et le 21 : la panne n'a jamais eu lieu")
+	check("clock.status.october" in GameState.get_case_state("51307").contradictions_found, "contradiction établie au dossier")
+	check("f_clock_ok" in GameState.get_case_state("51307").noted_facts, "relevé du service technique noté")
+	check(GameState.apply_punch_clock("51307", ["d21", "d16"]).established == "", "une seule fois")
+	GameState.new_game()
+	GameState.assign_case("51307")
+	var screen := PunchClockScreen.new()
+	get_tree().root.add_child(screen)
+	check(screen.open_case("51307") and screen.find_child("Rows", true, false).get_child_count() == 6, "six jours sur le ruban")
+	(screen.find_child("Row_d16", true, false) as Button).button_pressed = true
+	(screen.find_child("Row_d21", true, false) as Button).button_pressed = true
+	screen.check()
+	check("clock.status.october" in GameState.get_case_state("51307").contradictions_found, "vérifier depuis l'écran établit la contradiction")
+	screen.queue_free()
+	var translations := Localization.load_content_translations("en")
+	check(translations.has(block.intro) and translations.has(block.advantage.text), "pointeuse traduite")
+	GameState.new_game()
+
+
+## Une nouveauté par journée, gros dossier livré en deux temps.
+func test_learning_curve() -> void:
+	GameState.new_game()
+	GameState.day_index = 1
+	check(GameState.is_feature_unlocked("request_document") and not GameState.is_feature_unlocked("consult_superior"), "jour 2 : DEMANDER, pas encore CONSULTER")
+	GameState.day_index = 2
+	check(GameState.is_feature_unlocked("consult_superior") and not GameState.is_feature_unlocked("terminal_advanced"), "jour 3 : CONSULTER")
+	GameState.day_index = 3
+	check(GameState.is_feature_unlocked("terminal_advanced"), "jour 4 : terminal complet")
+	var view := func(day: int) -> Array:
+		return CaseLibrary.filter_case(CaseLibrary.get_case("52310"), {"day_index": day, "flags": {}, "cases": {}, "indicators": {}}).documents.map(func(d): return d.id)
+	check(view.call(3).size() == 5 and not "poem_1979" in view.call(3), "52310, premier jour : cinq pièces")
+	check("poem_1979" in view.call(4) and "varga_letter" in view.call(4), "52310, lendemain : la bibliothèque et le courrier saisi")
+	GameState.new_game()
+
+
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier
 ## suivant après un rapport, VERITAS ouvert sur le dossier en cours.
 func test_fewer_clicks() -> void:
@@ -3963,6 +4443,13 @@ func test_desk_traces() -> void:
 	desk.refresh_traces()
 	await get_tree().process_frame
 	check(desk.get_node("Wallpaper/Traces").get_child_count() == 1, "le bureau affiche les papiers du jour")
+	var wallpaper: DesktopWallpaper = desk.get_node("Wallpaper")
+	check(wallpaper.act == 1 and wallpaper.plate.contains(GameState.get_rank_title()), "plaque au grade de l'agent, acte 1")
+	GameState.day_index = 13
+	GameState.indicators["suspicion"] = 80
+	desk.refresh_traces()
+	check(wallpaper.act == FictionalCalendar.act_for_day(13).number and wallpaper.suspicion == 80,
+			"le décor suit l'acte et la méfiance")
 	desk.queue_free()
 	GameState.new_game()
 	await get_tree().process_frame
@@ -4024,8 +4511,11 @@ func test_scenario_flags_reachable() -> void:
 	check(EndingRules.resolve({"flags": milice, "indicators": {}}).id != "fin_milice",
 			"allié puis brouillé avec la Milice : plus de fin de la Milice")
 	var loyal := {"milice.ally": true, "milice.favor_owed": true, "act4.mirror_signed_clean": true}
-	check(EndingRules.resolve({"flags": loyal, "indicators": {"loyalty": 80}}).id == "fin_miroir",
-			"MIROIR signé sans réserve : le Miroir parfait prime sur la Milice")
+	check(EndingRules.resolve({"flags": loyal, "indicators": {"loyalty": 80}}).id == "fin_milice",
+			"allié choisi de la Milice : sa fin prime sur le Miroir parfait (08.11)")
+	var classed_only := {"milice.favor_owed": true, "act4.mirror_signed_clean": true}
+	check(EndingRules.resolve({"flags": classed_only, "indicators": {"loyalty": 80}}).id == "fin_miroir",
+			"ORLIK seulement classé, sans alliance acceptée : le Miroir parfait")
 	var notes := FileAccess.get_file_as_string("res://data/events/events.json")
 	check(not notes.contains("aux archives lundi"), "les notes de KREMER ne datent plus son départ")
 	check(not FileAccess.get_file_as_string("res://data/cases/case_53118.json").contains("soir de la Sainte-Agathe"),
@@ -4191,14 +4681,14 @@ func test_time_in_desk() -> void:
 	await get_tree().process_frame
 	check(not desk.get_node("%StartArchives").visible and not desk.get_node("%StartPersonnel").visible,
 			"premier jour : ni Archives ni Dossier personnel")
-	check(desk.get_node("Main/Body/Icons/List").get_child_count() == 5, "bureau : cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal)")
+	check(desk.get_node("Main/Body/Icons/IconsScroll/List").get_child_count() == 5, "bureau : cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal)")
 	desk.terminal.submit_command("dossiers")
 	desk.windows.dossiers.select_case("40921")
 	check(not desk.windows.dossiers.get_node("%RequestButton").visible and not desk.windows.dossiers.get_node("%ConsultButton").visible,
 			"premier jour : ni DEMANDER ni CONSULTER")
 	desk.windows.dossiers.close()
 	GameState.end_day()
-	check(desk.get_node("%StartArchives").visible and desk.get_node("%StartPersonnel").visible, "deuxième jour : tout est débloqué")
+	check(desk.get_node("%StartArchives").visible and not desk.get_node("%StartPersonnel").visible, "deuxième jour : les archives, pas encore le dossier personnel")
 	desk.terminal.submit_command("dossiers")
 	var archives_link: Button = desk.windows.dossiers.find_child("ArchivesLink", true, false)
 	check(archives_link.visible, "deuxième jour : le classeur mène aux rapports transmis")
@@ -4212,9 +4702,13 @@ func test_time_in_desk() -> void:
 	dossiers_window.get_node("%RequestButton").pressed.emit()
 	check(dossiers_window.get_node("%RequestButton").text == "DEMANDE EN COURS" and dossiers_window.get_node("%RequestButton").disabled,
 			"la demande est en cours")
+	check(not dossiers_window.get_node("%ConsultButton").visible, "deuxième jour : pas encore CONSULTER (une nouveauté par jour)")
+	GameState.end_day()
+	check(desk.get_node("%StartPersonnel").visible, "troisième jour : le dossier personnel")
+	dossiers_window.select_case("40921")
 	dossiers_window.get_node("%ConsultButton").pressed.emit()
-	check(dossiers_window.get_node("%ConsultButton").text == "CONSULTÉ" and GameState.hours_used == 2, "consultation : 2 heures employées")
-	check(desk.get_node("%DateLabel").text.ends_with("10h00") and desk.get_node("%HoursLabel").text == "6 h restantes",
+	check(dossiers_window.get_node("%ConsultButton").text == "CONSULTÉ" and GameState.hours_used == 1, "consultation : 1 heure employée")
+	check(desk.get_node("%DateLabel").text.ends_with("09h00") and desk.get_node("%HoursLabel").text == "7 h restantes",
 			"l'horloge avance")
 	desk.queue_free()
 	await get_tree().process_frame
@@ -4310,6 +4804,10 @@ func test_endings_discovered_counter() -> void:
 	GameState.finish_game("fin_correction")
 	check("fin_correction" in Settings.endings_discovered, "finish_game consigne la fin atteinte au menu")
 	check(GameState.flags.get("game.ending") == "fin_correction", "la fin est aussi notée dans l'état de la partie")
+	GameState.apply_decision("40000", "regularize")
+	var career: Dictionary = GameState.get_ending().career
+	check(career.signed == 1 and career.rank == GameState.get_rank_title(), "relevé de carrière : grade et rapports signés")
+	check(EndingScreen.career_text(career).contains("Rapports signés : 1"), "le relevé s'affiche en clair à la fin")
 	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
 	get_tree().root.add_child(menu)
 	await get_tree().process_frame
@@ -4366,3 +4864,376 @@ func test_act3_returns() -> void:
 			"pas d'atelier scellé si ADLER est libre (issues exclusives)")
 	check("54001_sedlar_mother_returns" not in ids.call({}, 12),
 			"aucun retour sans la condamnation correspondante")
+
+
+## Réglage d'équilibre : les hausses de suspicion sont ramenées au pourcentage
+## de data/rules/balance.json ; les baisses et les autres indicateurs restent entiers.
+func test_balance() -> void:
+	Balance.override_percent = -1
+	var percent := Balance.gain_percent("suspicion")
+	check(percent > 0 and percent <= 100, "réglage de la suspicion lu : %d %%" % percent)
+	check(Balance.scaled("suspicion", -5) == -5, "une baisse n'est pas réduite")
+	check(Balance.scaled("loyalty", 7) == 7, "les autres indicateurs ne sont pas réglés")
+	check(Balance.scaled("suspicion", 1) == 1, "une hausse de 1 reste une hausse")
+	check(Balance.scaled("suspicion", 10) == roundi(10 * percent / 100.0), "une hausse de 10 devient %d" % roundi(10 * percent / 100.0))
+	GameState.new_game()
+	var before := GameState.get_indicator("suspicion")
+	GameState._apply_effects({"suspicion": 10, "loyalty": -3})
+	check(GameState.get_indicator("suspicion") == before + Balance.scaled("suspicion", 10), "GameState applique le réglage")
+	check(GameState.get_indicator("loyalty") == GameState.INITIAL_INDICATORS.loyalty - 3, "baisse de loyauté entière")
+	Balance.override_percent = 100
+
+
+## Robot de partie (tests/tools/playthrough_bot.gd) : quelques campagnes complètes
+## jouées au hasard aboutissent à une fin, sans anomalie, et de façon reproductible.
+func test_playthrough_bot() -> void:
+	Balance.override_percent = -1
+	var bot_script: GDScript = load("res://tests/tools/playthrough_bot.gd")
+	var profiles := [{}, {"decide": "veritas", "careful": true}, {"decide": "contrarian", "investigate": 0.9, "overtime": true}]
+	for i in profiles.size():
+		var result: Dictionary = bot_script.new(100 + i, profiles[i]).play()
+		check(result.ending != "", "partie %d : une fin est atteinte (%s)" % [i, result.ending])
+		check(result.days == FictionalCalendar.service_days().size(), "partie %d : les %d journées sont jouées" % [i, result.days])
+		check(result.log.problems.is_empty(), "partie %d : aucune anomalie %s" % [i, str(result.log.problems)])
+	var first: Dictionary = bot_script.new(7, {}).play()
+	var second: Dictionary = bot_script.new(7, {}).play()
+	check(first.ending == second.ending and first.indicators == second.indicators and first.log.decisions == second.log.decisions,
+			"même graine, même partie")
+	Balance.override_percent = 100
+
+
+## Téléphone et tablette : agrandissement selon la densité, sans descendre sous
+## 600 points de haut ; un écran d'ordinateur reste à 1.
+func test_screen_fit() -> void:
+	var phone := ScreenFit.factor_for(Vector2i(2400, 1080), 400)
+	check(phone == 1.8, "téléphone 2400 × 1080 à 400 ppp : facteur 1,8 (%.2f)" % phone)
+	check(is_equal_approx(ScreenFit.logical_size(Vector2i(2400, 1080), phone).y, 600.0), "téléphone : 600 points de haut")
+	check(ScreenFit.factor_for(Vector2i(1080, 2400), 400) == phone, "tenu à la verticale : même facteur (petit côté)")
+	var tablet := ScreenFit.factor_for(Vector2i(1920, 1200), 240)
+	check(tablet == 1.5, "tablette 1920 × 1200 à 240 ppp : facteur 1,5 (%.2f)" % tablet)
+	check(ScreenFit.factor_for(Vector2i(1280, 720), 96) == 1.0, "écran peu dense : pas de réduction")
+	check(ScreenFit.factor_for(Vector2i(0, 0), 400) == 1.0, "écran inconnu : facteur 1")
+	check(44.0 * phone >= 78.0, "un bouton de 44 points fait au moins 78 pixels sur téléphone")
+	check(Settings.device_factor() == 1.0, "ordinateur : aucun agrandissement automatique")
+	check(ScreenFit.is_short(Vector2(1333, 600)) and not ScreenFit.is_short(Vector2(1280, 720)), "600 points = écran court")
+
+
+func test_main_menu_short_screen() -> void:
+	var menu: Control = load("res://scenes/main_menu/main_menu.tscn").instantiate()
+	get_tree().root.add_child(menu)
+	await get_tree().process_frame
+	menu.size = Vector2(1333, 600)
+	menu.fit_to_screen()
+	check(not menu.get_node("Center/Column/Pitch").visible, "écran court : l'accroche est retirée")
+	check(menu.get_node("%NewGameButton").custom_minimum_size.y >= 44, "boutons toujours >= 44 px")
+	menu.size = Vector2(1280, 720)
+	menu.fit_to_screen()
+	check(menu.get_node("Center/Column/Pitch").visible, "écran normal : l'accroche revient")
+	menu.queue_free()
+	await get_tree().process_frame
+	# Bureau sur écran court : la barre des tâches (FIN DE SERVICE) reste dans l'écran.
+	var desk: Control = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	desk.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	desk.size = Vector2(1333, 600)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var taskbar: Control = desk.get_node("Main/Taskbar")
+	check(taskbar.get_global_rect().end.y <= desk.get_global_rect().end.y + 1.0 and taskbar.global_position.y > 0,
+			"écran court : la barre des tâches reste visible (%s)" % str(taskbar.get_global_rect()))
+	check(desk.get_node("%DossiersButton") != null, "les icônes gardent leur nom unique")
+	desk.queue_free()
+	await get_tree().process_frame
+
+
+## Version anglaise complète : tout texte de contenu (au moins 25 caractères,
+## avec une espace) a sa traduction. Les notes de conception (note, _comment,
+## usage des médias) sont exclues. Un texte français modifié sans mettre à jour
+## sa traduction ressortirait ici.
+func test_english_content_complete() -> void:
+	Localization.set_locale("en")
+	var missing: Array = []
+	for path in Localization._json_files("res://data"):
+		if path.contains("/locale/"):
+			continue
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		_collect_untranslated(parsed, path, missing)
+	check(missing.is_empty(), "contenu entièrement traduit (%d manquant(s)) %s" % [missing.size(), str(missing.slice(0, 5))])
+	Localization.set_locale("fr")
+
+
+func _collect_untranslated(value: Variant, path: String, missing: Array) -> void:
+	if value is Dictionary:
+		for key in value:
+			if not (key.begins_with("_") or key.ends_with("note") or key == "usage"):
+				_collect_untranslated(value[key], path, missing)
+	elif value is Array:
+		for item in value:
+			_collect_untranslated(item, path, missing)
+	elif value is String and value.length() >= 25 and value.contains(" ") \
+			and not DataLoader.translations.has(value):
+		missing.append("%s : %s" % [path.get_file(), value.left(50)])
+
+
+## Soirées « faire profil bas » (08.11) : une par soirée des jours 5, 8, 11, 14
+## et 17, qui baisse la suspicion.
+func test_civic_evenings() -> void:
+	var civic_days: Array = []
+	for evening in EveningRules.get_data().get("evenings", []):
+		for action in evening.actions:
+			if action.get("kind", "") == "civic":
+				civic_days.append(int(evening.day))
+				check(int(action.get("effects", {}).get("suspicion", 0)) < 0, "profil bas : la suspicion baisse (%s)" % action.id)
+	check(civic_days == [5, 8, 11, 14, 17], "profil bas proposé les soirs 5, 8, 11, 14, 17 : %s" % str(civic_days))
+	GameState.new_game()
+	GameState.day_index = 5
+	GameState.indicators["suspicion"] = 30
+	check("civic_5" in GameState.get_evening_actions().map(func(a: Dictionary) -> String: return a.id), "soir 5 : profil bas disponible")
+	GameState.choose_evening_action("civic_5")
+	check(GameState.get_indicator("suspicion") < 30, "profil bas choisi : suspicion en baisse")
+	check(EveningRules.counts(GameState.evenings).get("civic", 0) == 1, "profil bas compté comme soirée « civic »")
+	GameState.new_game()
+
+
+## La lettre de dénonciation du jour 16 dépend de la radio (08.11) : la version
+## « radio » seulement si le joueur l'a écoutée, sinon la version « lumière ».
+func test_radio_denunciation_letter() -> void:
+	var state := {"flags": {}, "evening_counts": {}}
+	check(EveningRules.are_conditions_met({"max_count": {"radio": 0}}, state), "max_count : zéro radio accepté")
+	state.evening_counts = {"radio": 1}
+	check(not EveningRules.are_conditions_met({"max_count": {"radio": 0}}, state), "max_count : une radio de trop")
+	check(EveningRules.are_conditions_met({"min_count": {"radio": 1}, "max_count": {"radio": 2}}, state), "min_count et max_count ensemble")
+	GameState.new_game()
+	GameState.day_index = 16
+	var ids: Array = GameState.get_pending_letters().map(func(l: Dictionary) -> String: return l.id)
+	check("self_denunciation_quiet" in ids and not "self_denunciation" in ids, "sans radio : la lettre sur la lumière allumée")
+	check(ids.size() == 3, "jour 16 : toujours trois lettres")
+	GameState.evenings["3"] = {"action": "radio_3", "kind": "radio", "volume": ""}
+	ids = GameState.get_pending_letters().map(func(l: Dictionary) -> String: return l.id)
+	check("self_denunciation" in ids and not "self_denunciation_quiet" in ids, "radio écoutée : la lettre sur la radio")
+	GameState.evenings.clear()
+	check(GameState.sort_letter("self_denunciation_quiet", "hold") and GameState.flags.get("mail.self_denunciation_held", false),
+			"retenir la version sans radio pose le même drapeau")
+	GameState.new_game()
+
+
+## Répertoire des personnes (08.11) : une fiche par dossier ouvert, rôle mis à
+## jour par les drapeaux, statut issu de la décision signée.
+func test_people_directory() -> void:
+	for person in PeopleDirectory.all_people():
+		check(person.get("group", "") in PeopleDirectory.GROUPS, "répertoire : groupe connu (%s)" % person.id)
+		var case_id: String = person.get("case", "")
+		check(case_id == "" or not CaseLibrary.get_case(case_id).is_empty(), "répertoire : dossier existant (%s)" % person.id)
+	var state := {"day_index": 0, "flags": {}, "cases": {}, "indicators": {}, "fired_events": []}
+	var ids := func(s: Dictionary) -> Array:
+		return PeopleDirectory.visible_entries(s).map(func(e: Dictionary) -> String: return e.id)
+	check(ids.call(state) == ["mazur", "lena"], "au départ : MAZUR et Lena seulement (%s)" % str(ids.call(state)))
+	state.cases["40921"] = {"viewed_documents": [], "decision": ""}
+	check(not "sedlar" in ids.call(state), "dossier attribué mais pas ouvert : pas de fiche")
+	state.cases["40921"].viewed_documents = ["doc"]
+	check("sedlar" in ids.call(state), "dossier ouvert : fiche ajoutée")
+	state.cases["53760"] = {"viewed_documents": ["doc"], "decision": ""}
+	var kremer: Dictionary = PeopleDirectory.visible_entries(state).filter(func(e: Dictionary) -> bool: return e.id == "kremer")[0]
+	check(kremer.role.contains("accusé") and kremer.stamp == "", "KREMER : rôle de départ, sans statut")
+	state.flags["kremer.arrested"] = true
+	kremer = PeopleDirectory.visible_entries(state).filter(func(e: Dictionary) -> bool: return e.id == "kremer")[0]
+	check(kremer.role.contains("Arrêté"), "KREMER : rôle mis à jour par le drapeau")
+	state.day_index = 13
+	var brandt: Dictionary = PeopleDirectory.visible_entries(state).filter(func(e: Dictionary) -> bool: return e.id == "brandt")[0]
+	check(not brandt.role.contains("54100"), "BRANDT : pas de révélation avant l'heure")
+	state.flags["brandt.revealed"] = true
+	brandt = PeopleDirectory.visible_entries(state).filter(func(e: Dictionary) -> bool: return e.id == "brandt")[0]
+	check(brandt.role.contains("54100"), "BRANDT : révélée")
+	GameState.new_game()
+	var decision: Dictionary = CaseLibrary.get_case("40000").decisions[0]
+	GameState.cases["40000"] = GameState._new_case_state()
+	GameState.cases["40000"].viewed_documents = ["x"]
+	GameState.cases["40000"].decision = decision.id
+	var novak: Dictionary = PeopleDirectory.visible_entries(GameState.get_condition_state()).filter(func(e: Dictionary) -> bool: return e.id == "novak")[0]
+	check(novak.stamp != "", "dossier signé : statut tamponné (%s)" % novak.stamp)
+	var screen := PeopleScreen.new()
+	get_tree().root.add_child(screen)
+	screen.open()
+	check(screen.visible and screen.find_child("Person_novak", true, false) != null and screen.find_child("Person_mazur", true, false) != null,
+			"l'écran du répertoire liste les fiches")
+	screen.close()
+	check(not screen.visible, "le répertoire se ferme")
+	screen.queue_free()
+	var desk: Node = load("res://scenes/desk/desk.tscn").instantiate()
+	get_tree().root.add_child(desk)
+	var item := desk.find_child("StartPeople", true, false) as Button
+	check(item != null and item.custom_minimum_size.y >= 44, "menu MINISTÈRE : entrée Répertoire (44 px)")
+	item.pressed.emit()
+	check(desk.people_screen.visible, "l'entrée ouvre le répertoire")
+	desk.queue_free()
+	GameState.new_game()
+
+
+## Piste 6 (08.11) : des drapeaux autrefois sans suite ont maintenant un écho
+## visible (soir, bureau, courrier, dossier 54100).
+func test_flag_followups() -> void:
+	var echoes := {3: "lena.left_early", 5: "adler.mail_reported", 6: "radio.halvek_heard",
+			11: "lena.warned_papers", 14: "adler.kolar_known", 15: "lena.father_1971_told",
+			17: "heure_juste.network_hit", 18: "brandt.confronted_landing", 19: "radio.varga_again"}
+	for day in echoes:
+		var evening := EveningRules.evening_for_day(day)
+		var without := EveningRules.intro_text(evening, {"day_index": day, "flags": {}})
+		var with_flag := EveningRules.intro_text(evening, {"day_index": day, "flags": {echoes[day]: true}})
+		check(with_flag.length() > without.length(), "soir %d : écho de %s" % [day, echoes[day]])
+	var traces := {"lena_photo": [4, "lena.dinner"], "pocket_watch": [7, "heure_juste.letter_passed"], "typist_gone": [18, "mail.typist_reported"]}
+	for id in traces:
+		var state := {"day_index": traces[id][0], "flags": {traces[id][1]: true}, "indicators": {}}
+		check(DeskTraces.visible_traces(state).any(func(t: Dictionary) -> bool: return t.id == id), "trace sur le bureau : " + id)
+		state.flags = {}
+		check(not DeskTraces.visible_traces(state).any(func(t: Dictionary) -> bool: return t.id == id), "pas de trace sans drapeau : " + id)
+	GameState.new_game()
+	GameState.day_index = 16
+	check(not GameState.get_pending_letters().any(func(l: Dictionary) -> bool: return l.id == "cadran_wife"), "sans CADRAN : pas de lettre de Ruzena")
+	GameState.flags["heure_juste.network_hit"] = true
+	check(GameState.get_pending_letters().any(func(l: Dictionary) -> bool: return l.id == "cadran_wife"), "après CADRAN : la lettre de la femme du cheminot")
+	check(GameState.sort_letter("cadran_wife", "report") and GameState.flags.get("mail.cadran_wife_reported", false), "la lettre CADRAN se trie")
+	GameState.new_game()
+	var state := GameState.get_condition_state()
+	var case_54100 := CaseLibrary.get_case("54100")
+	var ids := func(s: Dictionary) -> Array:
+		return CaseLibrary.filter_case(case_54100, s).documents.map(func(d: Dictionary) -> String: return d.id)
+	check(not "brandt_landing_note" in ids.call(state), "54100 : pas de note de voisinage sans salut")
+	GameState.flags["brandt.greeted"] = true
+	GameState.flags["brandt.confronted_landing"] = true
+	state = GameState.get_condition_state()
+	check("brandt_landing_note" in ids.call(state) and "brandt_confront_note" in ids.call(state), "54100 : les notes de BRANDT suivent vos soirées")
+	GameState.new_game()
+
+
+## Piste 4 (08.11) : chaque action du soir se passe dans un lieu, montré en fond.
+func test_evening_places() -> void:
+	var data := EveningRules.get_data()
+	for evening in data.evenings:
+		for action in evening.actions:
+			var place := EveningRules.place_of(action, data)
+			check(not EveningRules.place_info(place, data).is_empty(), "lieu connu pour %s (%s)" % [action.id, place])
+	check(EveningRules.place_of({"kind": "adler"}) == "lodge", "ADLER : sa loge")
+	check(EveningRules.place_of({"kind": "civic"}) == "courtyard", "profil bas : la cour")
+	check(EveningRules.place_of({"kind": "lena", "place": "booth"}) == "booth", "un appel : la cabine du hall")
+	check(EveningRules.place_of({"kind": "inconnu"}) == "kitchen", "par défaut : la cuisine")
+	check(EveningRules.place_of(EveningRules.get_action(EveningRules.evening_for_day(1), "lena_call")) == "booth", "lena_call se passe dans la cabine")
+	GameState.new_game()
+	var screen: Node = load("res://scenes/evening/evening_screen.tscn").instantiate()
+	get_tree().root.add_child(screen)
+	screen.open()
+	check(screen.place == "kitchen" and screen.get_node("%PlaceLabel").text.contains("CUISINE"), "le soir commence à la cuisine")
+	screen.choose("adler_0")
+	check(screen.place == "lodge" and screen.get_node("%PlaceLabel").text.contains("ADLER"), "le résultat se lit dans la loge d'ADLER")
+	screen.queue_free()
+	GameState.new_game()
+
+
+## Piste 5 (08.11) : BRANDT vous interroge dans le couloir (54100). La tension
+## mesure votre sang-froid ; retourner la question demande de rester calme.
+func test_field_corridor_brandt() -> void:
+	GameState.new_game()
+	GameState.day_index = 13
+	GameState.assign_case("54100")
+	check(not GameState.can_start_field("54100"), "couloir : pas avant d'avoir consulté le 54100")
+	GameState.flags["54100.consulted"] = true
+	check(GameState.can_start_field("54100"), "couloir : ouvert après consultation")
+	var hours := GameState.hours_used
+	var scene := GameState.start_field("54100")
+	check(scene.id == "corridor_54100" and GameState.hours_used == hours + 1, "couloir : une heure de service")
+	var ids := func() -> Array: return GameState.get_field_options("corridor_54100").map(func(o: Dictionary) -> String: return o.id)
+	check("o_lena" in ids.call() and not "o_lena_lie" in ids.call() and not "o_threat" in ids.call(), "couloir : options selon vos soirées")
+	check("o_turn" in ids.call(), "calme (60) : on peut retourner la question")
+	GameState.field_choose("corridor_54100", "o_father")
+	check(GameState.field_composure("corridor_54100") == 50 and not "o_turn" in ids.call(), "parler du père vous ébranle : plus de riposte")
+	check(GameState.flags.get("brandt.hinted_salle3", false) and "f_cor_salle3" in GameState.get_case_state("54100").noted_facts, "BRANDT indique la salle 3")
+	GameState.field_choose("corridor_54100", "o_listen")
+	check("o_turn" in ids.call(), "en l'écoutant, vous reprenez votre calme")
+	GameState.field_choose("corridor_54100", "o_turn")
+	check(GameState.flags.get("brandt.held_too", false), "BRANDT aussi est tenue")
+	var docs: Array = GameState.get_case_view("54100").documents.map(func(d: Dictionary) -> String: return d.id)
+	check("corridor_note" in docs, "la note d'entretien rejoint le 54100")
+	GameState.new_game()
+	GameState.day_index = 13
+	GameState.assign_case("54100")
+	GameState.flags.merge({"54100.consulted": true, "lena.father_1971_told": true, "brandt.revealed": true})
+	GameState.start_field("54100")
+	var suspicion := GameState.get_indicator("suspicion")
+	check("o_lena_lie" in ids.call() and not "o_lena" in ids.call(), "après l'appel de Lena : le mensonge se voit")
+	GameState.field_choose("corridor_54100", "o_lena_lie")
+	check(GameState.get_indicator("suspicion") > suspicion and GameState.flags.get("brandt.caught_lying", false), "pris à mentir : suspicion")
+	var result := GameState.field_choose("corridor_54100", "o_threat")
+	check(result.finished and GameState.flags.get("brandt.threatened", false), "la menace clôt l'entretien")
+	GameState.new_game()
+
+
+## Piste 5 (08.11) : la salle d'audition vide (60003), troisième voie vers La Correction.
+func test_field_room_60003() -> void:
+	GameState.new_game()
+	GameState.day_index = 17
+	GameState.assign_case("60003")
+	check(GameState.can_start_field("60003"), "salle 3 : ouverte tant que le 60003 n'est pas signé")
+	var scene := GameState.start_field("60003")
+	check(FieldRules.has_darkness(scene) and scene.id == "room_60003", "salle 3 : à la lampe")
+	GameState.field_choose("room_60003", "clock")
+	GameState.field_choose("room_60003", "register")
+	check(GameState.flags.get("vosk.salle3_clock", false) and GameState.flags.get("vosk.salle3_register", false), "pendule et registre trouvés")
+	var docs: Array = GameState.get_case_view("60003").documents.map(func(d: Dictionary) -> String: return d.id)
+	check("salle3_report" in docs, "le procès-verbal de la salle 3 rejoint le 60003")
+	var flags := {"act4.father_truth": true, "vosk.salle3_clock": true, "vosk.salle3_register": true}
+	check(EndingRules.resolve({"flags": flags, "indicators": {"suspicion": 50}}).id == "fin_correction", "salle 3 + vérité du père : La Correction")
+	flags["kremer.arrested"] = true
+	check(EndingRules.resolve({"flags": flags, "indicators": {"suspicion": 50}}).id != "fin_correction", "pas de Correction si KREMER a été arrêté")
+	flags.erase("kremer.arrested")
+	flags.erase("vosk.salle3_register")
+	check(EndingRules.resolve({"flags": flags, "indicators": {"suspicion": 50}}).id != "fin_correction", "la pendule seule ne suffit pas")
+	GameState.new_game()
+
+
+## Piste 7 (08.11) : l'archive confidentielle de la 2e classe, une par jour ;
+## sans le grade, une seule fois par KREMER s'il a été couvert.
+func test_confidential_archive() -> void:
+	check(Career.confidential_access(Career.Rank.INSPECTOR, {}, false) == "", "3e classe : pas d'archive confidentielle")
+	check(Career.confidential_access(Career.Rank.INSPECTOR_2ND, {}, false) == "rank", "2e classe : accès")
+	check(Career.confidential_access(Career.Rank.INSPECTOR_2ND, {}, true) == "", "une seule par jour")
+	check(Career.confidential_access(Career.Rank.INSPECTOR, {"kremer.protected": true}, false) == "kremer", "KREMER couvert : une porte")
+	check(Career.confidential_access(Career.Rank.INSPECTOR, {"kremer.protected": true, "kremer.archive_used": true}, false) == "", "la porte de KREMER ne sert qu'une fois")
+	var confidential := 0
+	for case_id in ["53402", "53517", "53118", "53760"]:
+		for document in CaseLibrary.get_case(case_id).documents:
+			if document.get("request", {}).get("confidential", false):
+				confidential += 1
+	check(confidential == 4, "une archive confidentielle par dossier de l'acte 2")
+	GameState.new_game()
+	GameState.day_index = 6
+	GameState.assign_case("53402")
+	GameState.assign_case("53517")
+	var ids := func(case_id: String) -> Array:
+		return GameState.get_requestable_documents(case_id).map(func(d: Dictionary) -> String: return d.id)
+	check(not "border_register" in ids.call("53402"), "3e classe : le registre de Brenec n'est pas demandable")
+	check(not GameState.request_document("53402", "border_register"), "3e classe : demande refusée")
+	GameState.player.rank = Career.Rank.INSPECTOR_2ND
+	check("border_register" in ids.call("53402"), "2e classe : le registre de Brenec est demandable")
+	var suspicion := GameState.get_indicator("suspicion")
+	check(GameState.request_document("53402", "border_register"), "2e classe : demande acceptée")
+	check(GameState.get_indicator("suspicion") == suspicion + 1, "une archive confidentielle laisse une trace")
+	check(not "milice_note" in ids.call("53517") and not GameState.request_document("53517", "milice_note"), "pas une deuxième le même jour")
+	GameState.end_day()
+	check("milice_note" in ids.call("53517"), "le lendemain, une autre")
+	GameState.new_game()
+	GameState.day_index = 6
+	GameState.assign_case("53760")
+	GameState.flags["kremer.protected"] = true
+	check(GameState.request_document("53760", "slip_1971") and GameState.flags.get("kremer.archive_used", false), "sans grade : par KREMER")
+	GameState.new_game()
+
+
+## Le robot ne voit jamais l'issue « bail » du 52310 : il établit toujours la
+## cicatrice d'abord (deux pièces de départ). Elle reste atteignable pour qui
+## trouve le bail dans la perquisition sans avoir confronté les photos.
+func test_varga_lease_route() -> void:
+	var case_data := CaseLibrary.get_case("52310")
+	var lease_only := {"contradictions_found": ["apt40.occupant"]}
+	check(DecisionRules.resolve(case_data, lease_only, "identity_error").response_id == "identity_proved_lease", "52310 : le bail seul prouve l'erreur d'identité")
+	var both := {"contradictions_found": ["varga.mark", "apt40.occupant"]}
+	check(DecisionRules.resolve(case_data, both, "identity_error").response_id == "identity_proved", "52310 : la cicatrice passe avant le bail")
+	check(not case_data.responses.get("identity_proved_lease", {}).is_empty(), "52310 : la réponse « bail » est écrite")

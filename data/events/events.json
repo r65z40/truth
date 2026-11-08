@@ -24,7 +24,43 @@
 			"message": {
 				"from": "R. MAZUR, Directeur adjoint, Section 4",
 				"subject": "Vos habilitations",
-				"body": "Inspecteur,\n\nVotre période d'essai d'une journée est terminée. Vous disposez désormais de :\n\n- DEMANDER : une pièce complémentaire par dossier, transmise par le service concerné le lendemain (1 h de service).\n- CONSULTER : mon avis sur un dossier, une fois (1 h). N'en abusez pas.\n- ARCHIVES : les rapports que vous avez transmis.\n- DOSSIER PERSONNEL : votre évaluation par la Direction du personnel.\n\nVotre journée compte huit heures. Lire ne vous coûte rien ; agir, si.\n\nR. MAZUR"
+				"body": "Inspecteur,\n\nVotre période d'essai d'une journée est terminée. Vous disposez désormais de :\n\n- DEMANDER : une pièce complémentaire par dossier, transmise par le service concerné le lendemain (1 h de service).\n- ARCHIVES : les rapports que vous avez transmis.\n\nUne habilitation de plus chaque matin, cette semaine : on ne donne pas tout à un débutant le même jour.\n\nVotre journée compte huit heures. Lire ne vous coûte rien ; agir, si.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "features_day_3",
+			"conditions": {
+				"min_day": 2
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouvelle habilitation : CONSULTER",
+				"body": "Inspecteur,\n\nÀ partir d'aujourd'hui :\n\n- CONSULTER : mon avis sur un dossier, une fois (1 h). N'en abusez pas.\n- DOSSIER PERSONNEL (menu MINISTÈRE) : votre évaluation par la Direction du personnel.\n\nVotre poste est aussi relié au standard. Si le téléphone sonne, décrochez quand vous voulez : personne ne vous chronomètre. Mais ce qui ne décroche pas finit par se remarquer.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "features_day_4",
+			"conditions": {
+				"min_day": 3
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouvelle habilitation : terminal complet",
+				"body": "Inspecteur,\n\nVotre terminal reçoit aujourd'hui ses raccourcis complets : VERITAS (l'avis du système sur un dossier), IDENT (votre fiche d'agent) et EFFACER.\n\nRien ne vous oblige à demander l'avis de VERITAS. Ceux qui le demandent souvent finissent par penser comme lui. C'est ce qu'on attend d'eux.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "features_day_5",
+			"conditions": {
+				"min_day": 4
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Nouvelle tâche : contrôle du courrier",
+				"body": "Inspecteur,\n\nLa Section 4 contrôle aussi une partie du courrier civil. Certains jours, un paquet de lettres interceptées vous attendra (bouton TRI, en bas de l'écran).\n\nPour chaque lettre : TRANSMETTRE, RETENIR ou SIGNALER. Ce que vous ne triez pas part le soir tel quel. Personne ne vous dira ce qu'il fallait faire.\n\nR. MAZUR"
 			}
 		},
 		{
@@ -361,7 +397,7 @@
 			"message": {
 				"from": "R. MAZUR, Directeur adjoint, Section 4",
 				"subject": "Nouveau dossier prioritaire : n° 52310",
-				"body": "Inspecteur,\n\nLe Service de la censure (Section 7) nous transmet le dossier d'un poète, Teodor VARGA. Son recueil aurait servi à transmettre un message codé vers la zone frontalière.\n\nLa Section 7 attend une conclusion rapide. Elle attend aussi, je crois, une conclusion précise. Lisez tout, y compris ce qu'on ne vous demande pas de lire.\n\nR. MAZUR"
+				"body": "Inspecteur,\n\nLe Service de la censure (Section 7) nous transmet le dossier d'un poète, Teodor VARGA. Son recueil aurait servi à transmettre un message codé vers la zone frontalière.\n\nLa Section 7 attend une conclusion rapide. Elle attend aussi, je crois, une conclusion précise. Lisez tout, y compris ce qu'on ne vous demande pas de lire.\n\nLe dossier vous arrive en deux temps : les pièces de la Bibliothèque municipale et le courrier saisi suivront demain matin.\n\nR. MAZUR"
 			}
 		},
 		{
@@ -723,7 +759,7 @@
 			"message": {
 				"from": "R. MAZUR, Directeur adjoint, Section 4",
 				"subject": "Nouveau dossier prioritaire : n° 53402",
-				"body": "Inspecteur,\n\nLa Direction de la ligne Velmira–Halvek signale des retards nocturnes anormaux au poste de Brenec, à trois kilomètres de la frontière. L'aiguilleur s'appelle VRABEC.\n\nLe dossier 53402 vous est attribué. Depuis le décret 86-31, le mot « frontière » n'a plus le même poids. VERITAS l'a déjà raccordé. Lisez la ligne avant de lire le raccordement.\n\nR. MAZUR"
+				"body": "Inspecteur,\n\nLa Direction de la ligne Velmira–Halvek signale des retards nocturnes anormaux au poste de Brenec, à trois kilomètres de la frontière. L'aiguilleur s'appelle VRABEC.\n\nLe dossier 53402 vous est attribué. Depuis le décret 86-31, le mot « frontière » n'a plus le même poids. VERITAS l'a déjà raccordé. Lisez la ligne avant de lire le raccordement.\n\nLa Direction de la ligne attend votre rapport aujourd'hui, avant midi. Chaque heure de service compte : choisissez ce que vous vérifiez.\n\nR. MAZUR"
 			}
 		},
 		{
@@ -1561,8 +1597,8 @@
 			"effects": {},
 			"message": {
 				"from": "Courrier civil, transmis par le Bureau des requêtes",
-				"subject": "Un mot de T. REIS",
-				"body": "Inspecteur,\n\nOn m'avait dicté ce que je devais dire, et j'ai signé parce que j'avais peur. Vous n'avez pas retenu ma déposition. La personne que j'accusais est rentrée chez elle hier.\n\nJe ne dors toujours pas, mais pour une autre raison maintenant. Merci.\n\nT. REIS"
+				"subject": "Un mot de E. REIS",
+				"body": "Inspecteur,\n\nOn m'avait dicté ce que je devais dire, et j'ai signé parce que j'avais peur. Vous n'avez pas retenu ma déposition. La personne que j'accusais est rentrée chez elle hier.\n\nJe ne dors toujours pas, mais pour une autre raison maintenant. Merci.\n\nE. REIS"
 			}
 		},
 		{
@@ -1719,6 +1755,436 @@
 				"from": "Direction, Section 4 (cabinet du Directeur HALM)",
 				"subject": "Dossiers prioritaires",
 				"body": "Inspecteur,\n\nLe Directeur HALM a décidé que les dossiers prioritaires ne vous seraient plus confiés sans visa préalable de son cabinet.\n\nIl ne s'agit pas d'une sanction. Il s'agit d'une précaution.\n\nLe cabinet du Directeur HALM"
+			}
+		},
+		{
+			"id": "audit_40000",
+			"conditions": {
+				"min_day": 2,
+				"requires_flags": [
+					"40000.version_contestee"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"40000.audit_recu": true
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Relecture du rapport n° 40000",
+				"body": "Inspecteur,\n\nLe contrôle interne relit au hasard les premiers rapports de chaque agent. Dans le dossier 40000, vous avez retenu l'adresse déclarée par la citoyenne NOVAK. Le registre des résidences, coté A, disait autre chose, et le registre avait raison : la citoyenne a déménagé en septembre.\n\nUne erreur de forme sur un dossier sans enjeu. Elle est notée.\n\nContrôle interne, Section 4"
+			}
+		},
+		{
+			"id": "audit_40921",
+			"conditions": {
+				"min_day": 3,
+				"requires_flags": [
+					"40921.version_contestee"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"40921.audit_recu": true
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Relecture du rapport n° 40921",
+				"body": "Inspecteur,\n\nVotre rapport sur le citoyen SEDLAR retient sa présence à la Centrale le 21 octobre, sur la foi d'un certificat signé B. ORLIK. Le Bureau des transports confirme pourtant son passage au contrôle de Halvek ce jour-là.\n\nUn agent qui croit un certificat de complaisance contre un registre de l'État doit s'attendre à ce qu'on relise ses autres rapports.\n\nContrôle interne, Section 4"
+			}
+		},
+		{
+			"id": "audit_51307",
+			"conditions": {
+				"min_day": 5,
+				"requires_flags": [
+					"51307.version_contestee"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"51307.audit_recu": true
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Relecture du rapport n° 51307",
+				"body": "Inspecteur,\n\nDans le dossier ORLIK, vous avez retenu une version que les pièces démentaient : le relevé d'entretien de l'horloge pointeuse, ou ses propres aveux, disaient autre chose.\n\nLe capitaine ORLIK, de la Milice, a lu votre rapport avec intérêt. Nous aussi.\n\nContrôle interne, Section 4"
+			}
+		},
+		{
+			"id": "audit_53190",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"53190.version_contestee"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"53190.audit_recu": true
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Relecture du rapport n° 53190",
+				"body": "Inspecteur,\n\nLe registre de Saint-Roch et l'état civil concordaient : les cloches sonnaient le glas, et le citoyen KOLB briguait la place du bedeau. Votre rapport a retenu autre chose.\n\nLe Bureau des signalements continue de tenir KOLB pour fiable. C'est désormais en partie votre faute.\n\nContrôle interne, Section 4"
+			}
+		},
+		{
+			"id": "return_40000_regularized",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"40000.regularized"
+				],
+				"forbidden_flags": [
+					"novak.returned"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"novak.returned": true
+			},
+			"message": {
+				"from": "Ida NOVAK, guichet 3, Registre des résidences",
+				"subject": "Une carte de résidence",
+				"body": "Monsieur l'inspecteur,\n\nVous ne vous souvenez sans doute pas de moi : carte de résidence, rue des Tilleuls, votre tout premier dossier. Vous aviez vérifié au lieu de signer.\n\nJ'ai été embauchée au guichet du Registre le mois dernier. Je vois passer des fiches qu'on corrige le soir, après la fermeture. Je ne sais pas à qui le dire. Je vous le dis.\n\nIda NOVAK"
+			}
+		},
+		{
+			"id": "return_40000_dismissed",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"40000.dismissed_despite"
+				],
+				"forbidden_flags": [
+					"novak.returned"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"novak.returned": true
+			},
+			"message": {
+				"from": "Bureau des signalements, gare centrale de Velmira",
+				"subject": "Personne sans résidence, n° 40000",
+				"body": "Signalement de routine.\n\nLa citoyenne n° 40000, Ida NOVAK, dort depuis plusieurs nuits dans la salle d'attente de la gare centrale. Sa carte de résidence n'a pas été renouvelée (décision de votre service, dossier 40000).\n\nInterrogée, elle a cité votre matricule. Le Bureau demande s'il convient de l'éloigner du centre.\n\nLe préposé de garde"
+			}
+		},
+		{
+			"id": "return_51307_orlik_back",
+			"conditions": {
+				"min_day": 15,
+				"requires_flags": [
+					"51307.orlik_arrested"
+				],
+				"forbidden_flags": [
+					"orlik.returned"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"orlik.returned": true
+			},
+			"message": {
+				"from": "B. ORLIK, chef d'équipe, Centrale thermique n° 3",
+				"subject": "(sans objet)",
+				"body": "Libéré mardi. Ordre du Capitaine. Réintégré à mon poste, avec mes certificats.\n\nVous avez fait votre travail. Moi aussi, je ferai le mien.\n\nB. O."
+			}
+		},
+		{
+			"id": "return_52044_kovac_camp",
+			"conditions": {
+				"min_day": 13,
+				"requires_flags": [
+					"52044.baker_arrested"
+				],
+				"forbidden_flags": [
+					"kovac.returned"
+				]
+			},
+			"effects": {},
+			"set_flags": {
+				"kovac.returned": true
+			},
+			"message": {
+				"from": "Courrier civil, centre de travail de Dravna (contrôlé)",
+				"subject": "Lettre d'une détenue",
+				"body": "Monsieur,\n\nOn nous laisse écrire une lettre par mois. J'ai choisi de vous écrire à vous, parce qu'ici on m'a dit votre nom.\n\nJe pétris encore. Pour trois cents détenues, avec la farine de cent. Les tickets des morts, je ne les ai jamais encaissés. Mais vous le savez peut-être, maintenant.\n\n[huit lignes caviardées par le contrôle]\n\nZora KOVAC"
+			}
+		},
+		{
+			"id": "return_52310_varga_anthology",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"52310.varga_arrested"
+				],
+				"forbidden_flags": [
+					"varga.returned"
+				]
+			},
+			"effects": {
+				"loyalty": 1
+			},
+			"set_flags": {
+				"varga.returned": true
+			},
+			"message": {
+				"from": "Service de la censure, bureau des publications",
+				"subject": "Anthologie officielle 1987",
+				"body": "Inspecteur,\n\nPour information : le poème « Novembre » figurera dans l'Anthologie des poètes du peuple, édition 1987, sous la signature d'un auteur méritant. Le texte a été jugé irréprochable après correction de deux vers.\n\nLe recueil d'origine reste interdit. Son ancien auteur ne sera pas informé.\n\nLe chef de bureau"
+			}
+		},
+		{
+			"id": "return_52310_varga_poem",
+			"conditions": {
+				"min_day": 14,
+				"requires_flags": [
+					"52310.poem_cleared"
+				],
+				"forbidden_flags": [
+					"varga.returned"
+				]
+			},
+			"effects": {
+				"suspicion": 1
+			},
+			"set_flags": {
+				"varga.returned": true
+			},
+			"message": {
+				"from": "T. VARGA, correcteur, Imprimerie d'État n° 2",
+				"subject": "Un poème",
+				"body": "Inspecteur,\n\nVous avez lu mon poème comme un poème. C'est devenu rare.\n\nJ'en ai écrit un autre. Il ne sera jamais imprimé, je le sais. Je vous le recopie quand même, à la main :\n\n    « On a compté mes vers un par un,\n    on cherchait une frontière dans les marges.\n    Quelqu'un, une fois, n'a trouvé que la neige. »\n\nT. V."
+			}
+		},
+		{
+			"id": "return_53402_vrabec_card",
+			"conditions": {
+				"min_day": 16,
+				"requires_flags": [
+					"53402.line_cleared"
+				],
+				"forbidden_flags": [
+					"vrabec.returned"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"vrabec.returned": true
+			},
+			"message": {
+				"from": "M. VRABEC, aiguilleur, poste de Brenec",
+				"subject": "Une carte postale",
+				"body": "Inspecteur,\n\nUne carte est arrivée de l'autre côté. De mon fils, après cinq ans. Elle a mis trois mois et elle est passée par trois bureaux, mais elle est arrivée.\n\nJe sais que je ne devrais pas vous l'écrire. Je voulais que quelqu'un ici sache que le train de nuit transporte aussi ça.\n\nMarek VRABEC"
+			}
+		},
+		{
+			"id": "deadline_53402_late",
+			"conditions": {
+				"min_day": 8,
+				"requires_flags": [
+					"53402.rendu_en_retard"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Rapport 53402 : hors délai",
+				"body": "Inspecteur,\n\nLa Direction de la ligne attendait votre rapport avant midi. Elle l'a reçu après. Entre-temps, elle a appelé l'étage, puis l'étage m'a appelé.\n\nJe ne vous demande pas d'aller vite. Je vous demande d'aller à l'heure.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "deadline_53402_on_time",
+			"conditions": {
+				"min_day": 8,
+				"requires_flags": [
+					"53402.rendu_a_temps"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Direction de la ligne Velmira–Halvek",
+				"subject": "Accusé de réception : rapport 53402",
+				"body": "Le rapport n° 53402 a été reçu à l'heure dite. La Direction de la ligne en prend acte et le signale à votre hiérarchie.\n\nLe train de nuit circulera selon l'horaire."
+			}
+		},
+		{
+			"id": "radio_neighbours_heard",
+			"conditions": {
+				"min_day": 1,
+				"requires_flags": [
+					"radio.neighbours_heard"
+				]
+			},
+			"effects": {
+				"suspicion": 2
+			},
+			"message": {
+				"from": "Comité d'immeuble, bloc 7, District 2",
+				"subject": "Bruit après vingt-deux heures",
+				"body": "Au locataire du deuxième étage, porte gauche.\n\nPlusieurs résidents signalent un poste de radio entendu depuis le palier, tard le soir, sur une longueur d'onde « qui n'est pas la nôtre ».\n\nLe comité rappelle que les murs sont minces et que les oreilles sont nombreuses. Il n'a, pour l'instant, rien transmis.\n\nLe responsable d'escalier"
+			}
+		},
+		{
+			"id": "radio_reported",
+			"conditions": {
+				"min_day": 1,
+				"requires_flags": [
+					"radio.reported"
+				]
+			},
+			"effects": {
+				"suspicion": 4
+			},
+			"set_flags": {
+				"player.flagged": true
+			},
+			"message": {
+				"from": "Bureau des signalements, District 2",
+				"subject": "Signalement reçu vous concernant",
+				"body": "Inspecteur,\n\nLe Bureau a reçu un signalement visant un poste de radio réglé sur l'étranger, entendu depuis le palier du bloc 7, deuxième étage. L'auteur du signalement est, d'après l'adresse, votre plus proche voisin.\n\nLe signalement est versé à votre dossier personnel. Par courtoisie entre services, aucune suite immédiate.\n\nLe préposé"
+			}
+		},
+		{
+			"id": "trust_53517_informer_file",
+			"conditions": {
+				"min_day": 8,
+				"min_indicators": {
+					"loyalty": 60
+				}
+			},
+			"effects": {},
+			"grant_documents": [
+				{
+					"case": "53517",
+					"document": "informer_file"
+				}
+			],
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Dossier 53517 : pièce jointe d'office",
+				"body": "Inspecteur,\n\nJe vous joins directement la fiche de l'informateur CHAUDRON. D'ordinaire, il faut la demander par écrit et attendre un jour.\n\nLa Direction vous fait confiance. Ce genre de confiance se prête, elle ne se donne pas.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "distrust_54012_visits",
+			"conditions": {
+				"min_day": 11,
+				"min_indicators": {
+					"suspicion": 55
+				}
+			},
+			"effects": {},
+			"refuse_documents": [
+				{
+					"case": "54012",
+					"document": "visits"
+				}
+			],
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Communication des registres hospitaliers",
+				"body": "Inspecteur,\n\nÀ compter de ce jour, les registres de l'Hôpital du District 9 ne sont plus communiqués à votre poste. Les demandes en cours ou à venir seront classées sans suite.\n\nCette mesure ne vous vise pas personnellement. Elle s'applique aux agents dont le dossier est en cours de revue.\n\nContrôle interne"
+			}
+		},
+		{
+			"id": "54030_orlik_collects",
+			"conditions": {
+				"min_day": 13,
+				"requires_flags": [
+					"milice.ally",
+					"adler.freed"
+				]
+			},
+			"effects": {
+				"influence": 1,
+				"suspicion": 2
+			},
+			"set_flags": {
+				"milice.favor_owed": true
+			},
+			"message": {
+				"from": "Capitaine L. ORLIK, Milice du District 9",
+				"subject": "ADLER",
+				"body": "Inspecteur,\n\nLe vieux est rentré chez lui hier soir, comme convenu. Il ne sait pas qui remercier ; moi, je sais qui créditer.\n\nUn service rendu en appelle un autre. Je vous ferai signe.\n\nL. ORLIK"
+			}
+		},
+		{
+			"id": "mail_vesely_summoned",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"mail.vesely_reported"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Bureau des signalements, District 4",
+				"subject": "Suite donnée : famille VESELY",
+				"body": "Inspecteur,\n\nSur votre signalement du tri n° 1, la famille VESELY (District 4) a été convoquée. Le correspondant de Brod ne recevra plus de courrier de Velmira.\n\nJan VESELY a demandé qui l'avait signalé. Il ne lui a pas été répondu.\n\nLe préposé"
+			}
+		},
+		{
+			"id": "mail_kral_letter_arrived",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"centrale.warning_passed"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Une lettre arrivée",
+				"body": "Monsieur,\n\nMon mari m'avait écrit que la soupape sifflait depuis septembre. Sa lettre est arrivée le 15. Lui n'est pas rentré le 17.\n\nJe garde la lettre. Si un jour quelqu'un demande ce qui s'est passé à la Centrale, elle dit tout.\n\nDana KRAL"
+			}
+		},
+		{
+			"id": "mail_kral_transferred",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"centrale.worker_reported"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Direction du personnel, Centrale thermique n° 3",
+				"subject": "Mutation : D. KRAL",
+				"body": "Pour information.\n\nSuite au signalement de la Section 4, le chauffeur D. KRAL a été muté au dépôt de charbon le 15.11, pour propos alarmistes.\n\nIl n'était donc pas en chaufferie au moment de l'accident du 17. Il est l'un des rares de son équipe."
+			}
+		},
+		{
+			"id": "mail_self_denunciation_missing",
+			"conditions": {
+				"min_day": 18,
+				"requires_flags": [
+					"mail.self_denunciation_held"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Un signalement égaré",
+				"body": "Inspecteur,\n\nUn résident du bloc 7 affirme avoir posté le 3 un signalement adressé au Bureau du District 2. Le Bureau ne l'a jamais reçu.\n\nLe tri du courrier de ce jour-là était confié à votre poste. Nous ne tirons aucune conclusion. Nous notons.\n\nContrôle interne"
 			}
 		}
 	]

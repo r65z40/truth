@@ -45,6 +45,21 @@
 		}
 	],
 	"priority": "prioritaire",
+	"deadline": {
+		"day": 7,
+		"hour": 12,
+		"on_time": {
+			"effects": {
+				"loyalty": 2
+			}
+		},
+		"late": {
+			"effects": {
+				"loyalty": -2,
+				"suspicion": 3
+			}
+		}
+	},
 	"field_scene": "audition_53402",
 	"documents": [
 		{
@@ -275,12 +290,12 @@
 			"rows": [
 				[
 					"02.10.1986",
-					"KOVAC, Irena",
+					"BENDA, Livia",
 					"Permis de visite familiale (Halvek)"
 				],
 				[
 					"09.10.1986",
-					"KOVAC, Irena",
+					"BENDA, Livia",
 					"Permis de visite familiale (Halvek)"
 				],
 				[
@@ -295,7 +310,7 @@
 				],
 				[
 					"30.10.1986",
-					"KOVAC, Irena",
+					"BENDA, Livia",
 					"Permis de visite familiale (Halvek)"
 				]
 			],
@@ -397,6 +412,69 @@
 							"field.audition_53402.p_link"
 						]
 					}
+				}
+			]
+		},
+		{
+			"id": "border_register",
+			"type": "register",
+			"title": "Registre confidentiel des passages, poste de Brenec",
+			"source": "Garde-frontière, poste de Brenec (archive confidentielle)",
+			"reliability": "A",
+			"date": "1986-10-31",
+			"request": {
+				"label": "Registre confidentiel des passages de Brenec (octobre)",
+				"confidential": true,
+				"flags": {
+					"53402.border_register_requested": true
+				},
+				"effects": {
+					"suspicion": 1
+				}
+			},
+			"veritas_remark": "Archive confidentielle, fiabilité A. Aucun passage irrégulier relevé avant le 20 octobre.",
+			"columns": [
+				"Date",
+				"Passage",
+				"Motif"
+			],
+			"rows": [
+				[
+					"02.10.1986",
+					"BENDA, Livia",
+					"Visite familiale, permis valide"
+				],
+				[
+					"16.10.1986",
+					"DRABEK, Stefan",
+					"Visite familiale, permis valide"
+				],
+				[
+					"23.10.1986",
+					"DRABEK, Stefan + 3",
+					"Permis expirés le 20.10 : passage noté, non bloqué"
+				],
+				[
+					"14.06.1981",
+					"VRABEC, Luka",
+					"Sortie définitive (fils de l'aiguilleur)"
+				]
+			],
+			"body": "Extrait du registre tenu au poste de Brenec. Les retards du train 2241 tombent les nuits de visites familiales, toutes déclarées. Une ligne de 1981 au même nom que l'aiguilleur.",
+			"facts": [
+				{
+					"id": "f_br_permits",
+					"key": "confidential.53402.permits",
+					"value": "Toutes les visites déclarées avant le 20.10",
+					"label": "Registre de Brenec : les passages des nuits de retard sont des visites familiales déclarées",
+					"quote": "Visite familiale, permis valide"
+				},
+				{
+					"id": "f_br_son",
+					"key": "confidential.53402.son",
+					"value": "Le fils VRABEC parti en 1981",
+					"label": "Registre de Brenec : Luka VRABEC, le fils de l'aiguilleur, est passé à Halvek en 1981",
+					"quote": "Sortie définitive (fils de l'aiguilleur)"
 				}
 			]
 		}

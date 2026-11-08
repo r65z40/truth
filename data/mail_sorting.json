@@ -1,0 +1,328 @@
+{
+	"_comment": "Tri du courrier : certains jours, un paquet de lettres interceptées attend l'agent (bouton TRI dans la barre des tâches). Pour chaque lettre : transmit (laisser passer), hold (retenir, la lettre n'arrive jamais), report (signaler l'expéditeur). Un paquet non trié le soir part tel quel (issue transmit). Drapeau posé : « mail.<lettre>.<verdict> ». Voir scripts/core/mail_sorting.gd. Une lettre peut porter des conditions (celles des soirées : min_count / max_count par type de soirée, drapeaux, jour) : elle n'apparaît que si elles sont remplies.",
+	"verdicts": {
+		"transmit": "TRANSMETTRE",
+		"hold": "RETENIR",
+		"report": "SIGNALER"
+	},
+	"batches": [
+		{
+			"id": "tri_1",
+			"day": 4,
+			"letters": [
+				{
+					"id": "soldier_mother",
+					"from": "Mme HAVEL, bloc 3, District 9",
+					"to": "Soldat P. HAVEL, caserne de Brenec",
+					"text": "Mon petit,\n\nIci tout va. Le chauffage marche une heure sur deux, comme partout. Ta sœur a trouvé des oranges. Mange, dors, ne te fais pas remarquer.\n\nTa mère",
+					"outcomes": {
+						"transmit": {},
+						"hold": {
+							"effects": {
+								"loyalty": 1
+							}
+						},
+						"report": {
+							"effects": {
+								"loyalty": 1,
+								"suspicion": 1
+							}
+						}
+					}
+				},
+				{
+					"id": "aldria_cousin",
+					"from": "J. VESELY, District 4",
+					"to": "M. VESELY, Brod (Aldria)",
+					"text": "Cher cousin,\n\nLes files d'attente commencent à cinq heures. On dit que le courant viendra de chez vous cet hiver. Si c'est vrai, remercie tes voisins pour nous. Ici, personne ne dit merci à voix haute.\n\nJan",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 2
+							}
+						},
+						"hold": {
+							"effects": {
+								"loyalty": 1
+							}
+						},
+						"report": {
+							"effects": {
+								"loyalty": 2
+							},
+							"flags": {
+								"mail.vesely_reported": true
+							}
+						}
+					}
+				},
+				{
+					"id": "adler_card",
+					"from": "V. ADLER, bloc 7, District 2",
+					"to": "K. MUSIL, horloger retraité, Halvek",
+					"text": "Karel,\n\nLes pendules du ministère retardent toutes de la même minute. Ce n'est pas une panne, c'est un réglage. Tu te souviens de qui nous a appris ça.\n\nTon vieil ami, V.",
+					"outcomes": {
+						"transmit": {
+							"flags": {
+								"heure_juste.letter_passed": true
+							}
+						},
+						"hold": {},
+						"report": {
+							"effects": {
+								"loyalty": 2
+							},
+							"flags": {
+								"adler.mail_reported": true
+							}
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": "tri_2",
+			"day": 9,
+			"letters": [
+				{
+					"id": "centrale_worker",
+					"from": "D. KRAL, chauffeur, Centrale thermique n° 3",
+					"to": "Mme KRAL, District 9",
+					"text": "Ma chérie,\n\nNe t'inquiète pas si je rentre tard. La soupape de la chaudière n° 2 siffle depuis septembre, on nous dit de continuer et de ne pas en parler. Je n'en parle qu'à toi.\n\nDominik",
+					"outcomes": {
+						"transmit": {
+							"flags": {
+								"centrale.warning_passed": true
+							}
+						},
+						"hold": {},
+						"report": {
+							"effects": {
+								"loyalty": 1
+							},
+							"flags": {
+								"centrale.worker_reported": true
+							}
+						}
+					}
+				},
+				{
+					"id": "abroad_poem",
+					"from": "Expéditeur non indiqué, cachet du District 2",
+					"to": "Éditions du Pont, Brod (Aldria)",
+					"text": "Messieurs,\n\nCi-joint un poème intitulé « Novembre », dans sa version d'origine, avant correction. L'auteur ne peut pas signer. Faites-en ce que vous voudrez, pourvu qu'on le lise quelque part.",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 3
+							},
+							"flags": {
+								"varga.poem_abroad": true
+							}
+						},
+						"hold": {
+							"effects": {
+								"loyalty": 1
+							}
+						},
+						"report": {
+							"effects": {
+								"loyalty": 2,
+								"suspicion": -1
+							}
+						}
+					}
+				},
+				{
+					"id": "father_question",
+					"from": "Mme TOMAN, District 6",
+					"to": "Bureau des requêtes, ministère de la Sécurité nationale",
+					"text": "Monsieur le Directeur,\n\nMon père, horloger, a été convoqué en 1971 et n'est pas revenu. On m'a dit qu'il avait émigré. Il n'aurait pas laissé ses outils. Je vous demande seulement où il est enterré.\n\nAnna TOMAN",
+					"outcomes": {
+						"transmit": {
+							"flags": {
+								"toman.request_passed": true
+							}
+						},
+						"hold": {
+							"effects": {
+								"loyalty": 1
+							}
+						},
+						"report": {
+							"effects": {
+								"loyalty": 1,
+								"suspicion": 1
+							}
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": "tri_3",
+			"day": 16,
+			"letters": [
+				{
+					"id": "commission_delegate",
+					"from": "Délégué de la commission internationale, hôtel Central",
+					"to": "Bureau de la commission, Orsenne",
+					"text": "On ne nous montre que des façades fraîchement repeintes. Les archives sont « en cours de classement ». Les gens sourient trop longtemps. Je demande l'autorisation de rester une semaine de plus.",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 2
+							},
+							"flags": {
+								"commission.letter_passed": true
+							}
+						},
+						"hold": {
+							"effects": {
+								"loyalty": 2
+							}
+						},
+						"report": {
+							"effects": {
+								"loyalty": 1,
+								"influence": -1
+							}
+						}
+					}
+				},
+				{
+					"id": "self_denunciation",
+					"from": "Un résident du bloc 7, District 2",
+					"to": "Bureau des signalements, District 2",
+					"text": "Je signale que le locataire du deuxième étage, porte gauche, employé au ministère, rentre tard et écoute des émissions étrangères. Je ne signe pas : il travaille chez vous.",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 4
+							},
+							"flags": {
+								"player.flagged": true
+							}
+						},
+						"hold": {
+							"effects": {
+								"suspicion": 1
+							},
+							"flags": {
+								"mail.self_denunciation_held": true
+							}
+						},
+						"report": {
+							"effects": {
+								"suspicion": 4,
+								"loyalty": 1
+							},
+							"flags": {
+								"player.flagged": true
+							}
+						}
+					},
+					"conditions": {
+						"min_count": {
+							"radio": 1
+						}
+					}
+				},
+				{
+					"id": "self_denunciation_quiet",
+					"from": "Un résident du bloc 7, District 2",
+					"to": "Bureau des signalements, District 2",
+					"text": "Je signale que le locataire du deuxième étage, porte gauche, employé au ministère, rentre tard et ne salue personne. On voit de la lumière chez lui jusqu'à trois heures du matin. Un homme qui n'a rien à cacher dort la nuit. Je ne signe pas : il travaille chez vous.",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 4
+							},
+							"flags": {
+								"player.flagged": true
+							}
+						},
+						"hold": {
+							"effects": {
+								"suspicion": 1
+							},
+							"flags": {
+								"mail.self_denunciation_held": true
+							}
+						},
+						"report": {
+							"effects": {
+								"suspicion": 4,
+								"loyalty": 1
+							},
+							"flags": {
+								"player.flagged": true
+							}
+						}
+					},
+					"conditions": {
+						"max_count": {
+							"radio": 0
+						}
+					}
+				},
+				{
+					"id": "typist_sister",
+					"from": "Mlle ZEMAN, dactylo, ministère de la Sécurité nationale",
+					"to": "Mme PROKOP, Halvek",
+					"text": "Ma grande,\n\nCette semaine, on tape la même lettre trente fois en changeant seulement les noms. Mon chef dit que c'est pour la commission. Je ne sais pas qui la lira, ni si quelqu'un la lira.\n\nTa sœur, Ilona",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 1
+							}
+						},
+						"hold": {
+							"effects": {
+								"loyalty": 1
+							}
+						},
+						"report": {
+							"effects": {
+								"loyalty": 1
+							},
+							"flags": {
+								"mail.typist_reported": true
+							}
+						}
+					}
+				},
+				{
+					"id": "cadran_wife",
+					"conditions": {
+						"requires_flags": [
+							"heure_juste.network_hit"
+						]
+					},
+					"from": "Mme R. HOLUB, cité des cheminots, Velmira",
+					"to": "M. P. HOLUB, Brenec",
+					"text": "Petit frère,\n\nIls ont pris Oskar au dépôt mardi, avec deux autres de l'équipe de nuit. On me dit que c'est à cause d'un cahier trouvé chez un horloger. Oskar n'a jamais su lire l'heure sans ses lunettes.\n\nSi tu peux venir, viens. Ne parle de rien au guichet.\n\nRuzena",
+					"outcomes": {
+						"transmit": {
+							"effects": {
+								"suspicion": 1
+							},
+							"flags": {
+								"mail.cadran_wife.passed": true
+							}
+						},
+						"hold": {},
+						"report": {
+							"effects": {
+								"loyalty": 1
+							},
+							"flags": {
+								"mail.cadran_wife_reported": true
+							}
+						}
+					}
+				}
+			]
+		}
+	]
+}

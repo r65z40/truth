@@ -15,6 +15,11 @@ extends RefCounted
 ## contradiction au sens de CaseLibrary.confront(). Le joueur retient alors l'une
 ## des deux versions (GameState.retain_version), ce qui établit la contradiction.
 ## La fiche ne dit jamais quelle version est vraie.
+##
+## Une question peut porter "truth" : la ou les valeurs vraies de sa clé
+## contradictoire (donnée cachée, jamais affichée). Retenir une autre version ne
+## change rien sur le moment ; à la signature, le dossier reçoit le drapeau
+## "<dossier>.version_contestee", que des événements plus tard peuvent lire.
 
 ## États d'une question, pour l'interface et l'aide.
 const HIDDEN := "hidden"          ## pas encore découverte (aucun élément noté)
@@ -90,6 +95,58 @@ static func build(case_data: Dictionary, case_state: Dictionary) -> Array:
 	return sheet
 
 
+## Liens visibles entre les pièces : pour chaque élément noté dans cette pièce,
+## les autres pièces visibles qui parlent du même sujet (même clé, rattachée à une
+## question). On ne montre un lien qu'à partir de ce que l'agent a déjà relevé :
+## le jeu indique où regarder, jamais qui ment.
+## Renvoie [{document_id, title, question}] sans doublon, dans l'ordre des pièces.
+static func links(case_data: Dictionary, case_state: Dictionary, document_id: String) -> Array:
+	var keys := {}
+	for fact_id in case_state.get("noted_facts", []):
+		var fact := CaseLibrary.get_fact(case_data, fact_id)
+		if fact.get("document_id", "") == document_id and fact.get("key", "") != "":
+			keys[fact.key] = true
+	var result := []
+	var seen := {}
+	for document in case_data.get("documents", []):
+		if document.get("id", "") == document_id:
+			continue
+		for fact in document.get("facts", []):
+			var key: String = fact.get("key", "")
+			if not keys.has(key):
+				continue
+			var question := _question_for_key(case_data, key)
+			if question.is_empty():
+				continue
+			var tag := "%s|%s" % [document.id, question.id]
+			if seen.has(tag):
+				continue
+			seen[tag] = true
+			result.append({"document_id": document.id, "title": document.get("title", ""),
+					"question": question.get("text", "")})
+	return result
+
+
+static func _question_for_key(case_data: Dictionary, key: String) -> Dictionary:
+	for question in case_data.get("questions", []):
+		if key in question.get("keys", []):
+			return question
+	return {}
+
+
+## Questions où l'agent a retenu une version que les données savent fausse.
+static func wrong_versions(case_data: Dictionary, case_state: Dictionary) -> Array:
+	var wrong := []
+	for question in build(case_data, case_state):
+		var truth: Array = get_question(case_data, question.id).get("truth", [])
+		if truth.is_empty() or question.retained == "":
+			continue
+		for answer in question.answers:
+			if answer.fact_id == question.retained and not answer.value in truth:
+				wrong.append(question.id)
+	return wrong
+
+
 ## Première paire d'éléments qui se contredisent : [fact_a, fact_b, clé] ou [].
 static func _first_conflict(answers: Array) -> Array:
 	for i in answers.size():
@@ -139,6 +196,9 @@ static func validate(case_data: Dictionary) -> Array[String]:
 			problems.append("question %s sans texte" % qid)
 		if question.get("keys", []).is_empty():
 			problems.append("question %s sans clé" % qid)
+		for value in question.get("truth", []):
+			if not _has_value(case_data, question.get("keys", []), value):
+				problems.append("question %s : valeur vraie inconnue %s" % [qid, value])
 		for key in question.get("keys", []):
 			if not known_keys.has(key):
 				problems.append("question %s : clé inconnue %s" % [qid, key])
@@ -159,3 +219,11 @@ static func validate(case_data: Dictionary) -> Array[String]:
 		if not claimed.has(key):
 			problems.append("clé contradictoire %s sans question" % key)
 	return problems
+
+
+static func _has_value(case_data: Dictionary, keys: Array, value: String) -> bool:
+	for document in case_data.get("documents", []):
+		for fact in document.get("facts", []):
+			if fact.get("key", "") in keys and fact.get("value", "") == value:
+				return true
+	return false

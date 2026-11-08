@@ -15,8 +15,14 @@ extends RefCounted
 const EVENINGS_PATH := "res://data/evenings.json"
 
 
+## Fichier lu une fois : ne pas modifier ce qui est renvoyé.
+static var _data := {}
+
+
 static func get_data() -> Dictionary:
-	return DataLoader.load_json(EVENINGS_PATH)
+	if _data.is_empty():
+		_data = DataLoader.load_json(EVENINGS_PATH)
+	return _data
 
 
 ## Soirée prévue pour ce jour, ou {} s'il n'y en a pas.
@@ -46,6 +52,11 @@ static func are_conditions_met(conditions: Dictionary, state: Dictionary) -> boo
 	var required: Dictionary = conditions.get("min_count", {})
 	for kind in required:
 		if int(current.get(kind, 0)) < int(required[kind]):
+			return false
+	# max_count : au plus N soirées de ce type (0 = jamais).
+	var limits: Dictionary = conditions.get("max_count", {})
+	for kind in limits:
+		if int(current.get(kind, 0)) > int(limits[kind]):
 			return false
 	return true
 
@@ -103,3 +114,17 @@ static func resolve(action: Dictionary, state: Dictionary) -> Dictionary:
 			effects[indicator] = int(effects.get(indicator, 0)) + int(followup.effects[indicator])
 		set_flags.merge(followup.get("set_flags", {}), true)
 	return {"text": "\n\n".join(texts), "effects": effects, "set_flags": set_flags}
+
+
+## Lieu d'une action (piste 4) : clé « place », sinon le lieu de son kind,
+## sinon le lieu par défaut. Renvoie l'identifiant du lieu.
+static func place_of(action: Dictionary, data: Dictionary = get_data()) -> String:
+	var places: Dictionary = data.get("places", {})
+	if action.has("place"):
+		return action.place
+	return places.get("by_kind", {}).get(action.get("kind", ""), places.get("default", "kitchen"))
+
+
+## {label, slot} d'un lieu ; {} s'il est inconnu.
+static func place_info(place_id: String, data: Dictionary = get_data()) -> Dictionary:
+	return data.get("places", {}).get("list", {}).get(place_id, {})

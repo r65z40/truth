@@ -107,8 +107,18 @@ func apply() -> void:
 			DisplayServer.window_set_size(window_size)
 			var screen := DisplayServer.screen_get_size(DisplayServer.window_get_current_screen())
 			DisplayServer.window_set_position((screen - window_size) / 2)
-	get_tree().root.content_scale_factor = ui_scale
+	get_tree().root.content_scale_factor = ui_scale * device_factor()
 	changed.emit()
+
+
+## Agrandissement propre à l'appareil : sur téléphone et tablette, selon la
+## densité de l'écran (ScreenFit) ; 1 sur ordinateur. Le réglage « Taille de
+## l'interface » s'applique en plus : 100 % = la taille adaptée à l'appareil.
+func device_factor() -> float:
+	if not OS.has_feature("mobile"):
+		return 1.0
+	var screen := DisplayServer.window_get_current_screen()
+	return ScreenFit.factor_for(DisplayServer.screen_get_size(screen), DisplayServer.screen_get_dpi(screen))
 
 
 func set_fullscreen(value: bool) -> void:

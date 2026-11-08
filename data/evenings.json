@@ -1,6 +1,40 @@
 {
 	"note": "Soirées de Vosk, appartement du bloc 7, District 2. Une action par soir. Une journée finie en heures supplémentaires fait perdre la soirée. Les conditions suivent le format des événements, plus min_count (nombre de soirées passées à une activité, choix du soir compris).",
 	"location": "BLOC 7, DISTRICT 2",
+	"places": {
+		"_comment": "Lieux des soirées (piste 4, 08.11). Chaque action se passe dans un lieu : clé place de l'action, sinon celui de son kind (by_kind), sinon la cuisine. L'image vient de l'emplacement slot (data/images.json) ; absente, on garde le fond de la cuisine.",
+		"default": "kitchen",
+		"by_kind": {
+			"radio": "kitchen",
+			"work": "kitchen",
+			"lena": "kitchen",
+			"adler": "lodge",
+			"visit": "landing",
+			"civic": "courtyard"
+		},
+		"list": {
+			"kitchen": {
+				"label": "LA CUISINE",
+				"slot": "evening_kitchen"
+			},
+			"lodge": {
+				"label": "LA LOGE DE M. ADLER",
+				"slot": "evening_lodge"
+			},
+			"booth": {
+				"label": "LA CABINE DU HALL",
+				"slot": "evening_booth"
+			},
+			"landing": {
+				"label": "LE PALIER",
+				"slot": "evening_landing"
+			},
+			"courtyard": {
+				"label": "LA COUR DE L'IMMEUBLE",
+				"slot": "evening_courtyard"
+			}
+		}
+	},
 	"overtime": {
 		"text": "Vous quittez le ministère après vingt heures. Le dernier tramway est parti ; vous rentrez à pied par le quai. Dans le hall, la lampe de M. ADLER est encore allumée. Vous vous couchez sans dîner.",
 		"set_flags": {
@@ -90,6 +124,7 @@
 				},
 				{
 					"id": "lena_call",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena depuis la cabine du hall",
 					"description": "Trois minutes, une seule pièce dans l'appareil.",
@@ -235,6 +270,7 @@
 			"actions": [
 				{
 					"id": "lena_permit_call",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler le ministère de la Santé pour Lena",
 					"description": "Donner votre matricule. Ce sera noté quelque part.",
@@ -326,6 +362,14 @@
 						]
 					},
 					"text": "Sous votre porte, une enveloppe sans timbre : un bon de charbon, deux sacs, au nom de la Milice du district. Personne ne vous a rien demandé. Pas encore."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"lena.left_early"
+						]
+					},
+					"text": "Lena n'a pas rappelé. Sur la table, son torchon plié en quatre, à la place exacte où elle l'avait posé. Elle range comme papa rangeait ses outils."
 				}
 			]
 		},
@@ -357,6 +401,7 @@
 				},
 				{
 					"id": "lena_news",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena",
 					"description": "La commission s'est réunie ce matin.",
@@ -439,6 +484,21 @@
 					}
 				},
 				{
+					"id": "civic_5",
+					"kind": "civic",
+					"label": "Assister à la réunion du comité d'immeuble",
+					"description": "Ordre du jour : le chauffage, les poubelles, la vigilance.",
+					"results": [
+						{
+							"text": "Deux heures sur une chaise pliante. Vous votez comme tout le monde, vous applaudissez au bon moment. Le responsable d'escalier note votre présence d'un petit trait satisfait."
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
+					}
+				},
+				{
 					"id": "work_5",
 					"kind": "work",
 					"label": "Relire le dossier de l'archive",
@@ -454,6 +514,7 @@
 				},
 				{
 					"id": "lena_5",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena",
 					"description": "Sa première semaine à son nouveau poste.",
@@ -478,6 +539,16 @@
 					"set_flags": {
 						"lena.week2_called": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"adler.mail_reported"
+						]
+					},
+					"text": "Dans le hall, M. ADLER trie le courrier de l'immeuble. Il vous tend le vôtre sans vous regarder. « Les cartes postales se perdent beaucoup, en ce moment. » Il sait."
 				}
 			]
 		},
@@ -549,6 +620,14 @@
 						]
 					},
 					"text": "Sur un mur du District 2, quelqu'un a recopié à la craie deux vers de VARGA. Personne ne les efface. Vous les relisez en passant, comme un mot de passe."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"radio.halvek_heard"
+						]
+					},
+					"text": "Le bulletin du soir parle d'une « provocation armée » à Halvek. L'autre soir, Aldria parlait d'un berger et d'un fusil de chasse. Vous ne savez plus laquelle des deux voix vous croyez."
 				}
 			]
 		},
@@ -642,6 +721,21 @@
 					],
 					"set_flags": {
 						"radio.conformite_heard": true
+					}
+				},
+				{
+					"id": "civic_8",
+					"kind": "civic",
+					"label": "Pousser la brouette de la collecte de ferraille",
+					"description": "Le quartier ramasse les métaux pour la Centrale n° 3.",
+					"results": [
+						{
+							"text": "Vous poussez une brouette de vieux radiateurs jusqu'au dépôt. Une voisine vous montre du doigt à son fils : « Tu vois ? Même les gens du ministère. »"
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
 					}
 				},
 				{
@@ -874,6 +968,21 @@
 					}
 				},
 				{
+					"id": "civic_11",
+					"kind": "civic",
+					"label": "Signer le registre de condoléances de la Centrale",
+					"description": "Dans le hall du bloc, un registre pour les « héros du travail » de la Centrale.",
+					"results": [
+						{
+							"text": "Vous signez sous trente autres noms, avec la même formule : « Gloire à leur sacrifice. » Personne n'a écrit « accident ». Vous non plus."
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
+					}
+				},
+				{
 					"id": "work_11",
 					"kind": "work",
 					"label": "Compter les fenêtres",
@@ -889,6 +998,7 @@
 				},
 				{
 					"id": "lena_11",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena",
 					"description": "L'hôpital a reçu les blessés de la Centrale.",
@@ -903,6 +1013,16 @@
 					"set_flags": {
 						"lena.blast_called": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"lena.warned_papers"
+						]
+					},
+					"text": "Lena a laissé un mot au gardien : « Les papiers dorment chez une amie. Je n'en parle plus. Toi non plus. » Le gardien a lu le mot, bien sûr. Il le replie avec soin avant de vous le donner."
 				}
 			]
 		},
@@ -989,6 +1109,7 @@
 			"actions": [
 				{
 					"id": "work_13",
+					"place": "landing",
 					"kind": "work",
 					"label": "Observer votre nouvelle voisine",
 					"description": "Sans en avoir l'air, par l'œilleton.",
@@ -1022,7 +1143,7 @@
 					"description": "Sur le palier, impossible de l'éviter.",
 					"conditions": {
 						"requires_flags": [
-							"brandt.revealed"
+							"54100.consulted"
 						]
 					},
 					"results": [
@@ -1079,6 +1200,21 @@
 					}
 				},
 				{
+					"id": "civic_14",
+					"kind": "civic",
+					"label": "Écouter le discours du Directeur, porte ouverte",
+					"description": "La radio d'État diffuse le discours ; sur le palier, on laisse les portes ouvertes.",
+					"results": [
+						{
+							"text": "Vous laissez la porte ouverte, le volume assez fort pour que le palier entende. Quarante minutes sur la vigilance et l'ordre des archives. En face, le voisin ferme doucement la sienne."
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
+					}
+				},
+				{
 					"id": "radio_14",
 					"kind": "radio",
 					"label": "Écouter la radio d'Aldria",
@@ -1094,6 +1230,7 @@
 				},
 				{
 					"id": "lena_14",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Parler à Lena du nom barré",
 					"description": "Elle était trop petite, mais elle écoute.",
@@ -1110,6 +1247,16 @@
 					"set_flags": {
 						"lena.father_1971_told": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"adler.kolar_known"
+						]
+					},
+					"text": "Au troisième, la porte des KOLAR est ouverte. L'appartement est vide, le poste de radio aussi a disparu. M. ADLER balaie le palier. « Ils ont déménagé. » Il ne dit pas qui les a aidés."
 				}
 			]
 		},
@@ -1170,6 +1317,16 @@
 						"brandt.delivered_mirror": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"lena.father_1971_told"
+						]
+					},
+					"text": "Une lettre de Lena, courte : « J'ai demandé aux anciennes de l'hôpital. Personne ne se souvient d'un horloger. Toutes se souviennent qu'en 1971, l'horloge de la gare s'est arrêtée trois jours. »"
+				}
 			]
 		},
 		{
@@ -1178,6 +1335,7 @@
 			"actions": [
 				{
 					"id": "lena_16",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Rappeler Lena",
 					"description": "Trois appels manqués, c'est rare.",
@@ -1266,6 +1424,21 @@
 					}
 				},
 				{
+					"id": "civic_17",
+					"kind": "civic",
+					"label": "Répéter le défilé du 8 décembre",
+					"description": "Le ministère fournit les pancartes.",
+					"results": [
+						{
+							"text": "Trois heures à piétiner sur la place, une pancarte « LA MÉMOIRE EST UN DEVOIR » sur l'épaule. Le chef de cortège vous félicite pour votre ponctualité. Personne ne vous demande ce que vous pensez de la mémoire."
+						}
+					],
+					"effects": {
+						"suspicion": -3,
+						"loyalty": 1
+					}
+				},
+				{
 					"id": "radio_17",
 					"kind": "radio",
 					"label": "Écouter la radio d'Aldria",
@@ -1300,6 +1473,16 @@
 					"set_flags": {
 						"brandt.confronted_landing": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"heure_juste.network_hit"
+						]
+					},
+					"text": "Rue des Tisserands, trois ateliers portent des scellés. Devant le dernier, une femme en manteau de cheminot attend, un cabas à la main. Elle attend quelqu'un qui ne sortira pas."
 				}
 			]
 		},
@@ -1358,6 +1541,24 @@
 						"vosk.father_proof_found": true
 					}
 				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"brandt.confronted_landing"
+						]
+					},
+					"text": "Mme BRANDT a fait poser un second verrou. Ce soir, pour la première fois, sa porte reste fermée quand vous passez. Vous l'entendez taper à la machine très tard."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"brandt.threatened"
+						]
+					},
+					"text": "Sous votre porte, une chemise vide, sans nom. Le dossier 54100 a dû changer de couverture : l'ancienne était devenue trop mince."
+				}
 			]
 		},
 		{
@@ -1397,6 +1598,7 @@
 				},
 				{
 					"id": "lena_19",
+					"place": "booth",
 					"kind": "lena",
 					"label": "Appeler Lena une dernière fois",
 					"description": "Avant demain, entendre sa voix.",
@@ -1416,6 +1618,24 @@
 					"set_flags": {
 						"lena.last_call": true
 					}
+				}
+			],
+			"echoes": [
+				{
+					"conditions": {
+						"requires_flags": [
+							"radio.varga_again"
+						]
+					},
+					"text": "Dans l'escalier, vous vous surprenez à murmurer les derniers vers de « Halina ». Vous vous taisez. Au palier du dessus, quelqu'un les termine à votre place."
+				},
+				{
+					"conditions": {
+						"requires_flags": [
+							"brandt.held_too"
+						]
+					},
+					"text": "Sous votre porte, une seule ligne tapée à la machine : « Eux aussi relisent mes notes. I. B. » Le papier est celui de la Section."
 				}
 			]
 		}

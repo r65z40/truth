@@ -32,6 +32,27 @@ static var _params: Dictionary = {}
 
 
 ## Paramètres internes (base, bornes, multiplicateurs par catégorie).
+## Commentaire de VERITAS sur une question de la fiche (voir CaseSheet.build) :
+## le système juge la version retenue à la cote de sa source, pas à la vérité,
+## qu'il ne connaît pas. Il peut donc se tromper. "" s'il n'a rien à dire.
+static func sheet_comment(question: Dictionary) -> String:
+	if question.get("state", "") == CaseSheet.CONFLICT:
+		return UiText.of("deux versions non tranchées : rapport jugé incomplet.")
+	var retained: String = question.get("retained", "")
+	if retained == "":
+		return ""
+	var kept := ""
+	var other := ""
+	for answer in question.get("answers", []):
+		if answer.fact_id == retained:
+			kept = answer.reliability
+		elif answer.fact_id in question.get("conflict", []):
+			other = answer.reliability
+	if kept == "" or other == "" or kept <= other:
+		return UiText.of("version conforme à la source la mieux cotée (%s).") % kept
+	return UiText.of("écart : vous retenez une source cotée %s contre %s.") % [kept, other]
+
+
 static func params() -> Dictionary:
 	if _params.is_empty():
 		_params = DataLoader.load_json(PARAMS_PATH)

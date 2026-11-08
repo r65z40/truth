@@ -11,6 +11,9 @@ const GALLERY_SCENE := "res://scenes/debug/scene_gallery.tscn"
 @onready var _settings_layer: Control = %SettingsLayer
 @onready var _confirm_panel: Control = %ConfirmPanel
 @onready var _error_label: Label = %ErrorLabel
+## Départ rapide : acte où commence la nouvelle partie (1 : début normal).
+var start_act := 1
+var _start_act_option: OptionButton
 
 
 func _ready() -> void:
@@ -33,8 +36,46 @@ func _ready() -> void:
 	_settings_layer.hide()
 	_confirm_panel.hide()
 	%DifficultyPanel.hide()
+	_build_start_act_row()
 	_error_label.text = ""
+	resized.connect(fit_to_screen)
+	fit_to_screen()
 	refresh()
+
+
+## Écran court (téléphone à l'horizontale) : on retire l'accroche et la ligne
+## du haut, on resserre les boutons, pour que tout tienne sans rogner le titre.
+func fit_to_screen() -> void:
+	var short := ScreenFit.is_short(size)
+	for node_name in ["Overline", "Pitch", "Gap"]:
+		var node := get_node_or_null("Center/Column/" + node_name) as Control
+		if node:
+			node.visible = not short
+	$Center/Column.add_theme_constant_override("separation", 6 if short else 12)
+	for button in [%NewGameButton, _continue_button, %SettingsButton, %GalleryButton, _quit_button]:
+		(button as Control).custom_minimum_size.y = 48 if short else 54
+
+
+## Départ rapide, proposé une fois une fin découverte : commencer à l'acte 2, 3 ou 4.
+func _build_start_act_row() -> void:
+	var row := HBoxContainer.new()
+	row.name = "StartActRow"
+	row.add_theme_constant_override("separation", 12)
+	var label := Label.new()
+	label.text = tr("COMMENCER À")
+	label.theme_type_variation = &"MutedLabel"
+	row.add_child(label)
+	_start_act_option = OptionButton.new()
+	_start_act_option.name = "StartActOption"
+	_start_act_option.custom_minimum_size = Vector2(0, 44)
+	_start_act_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for act in FictionalCalendar._data().get("acts", []):
+		_start_act_option.add_item(tr("ACTE %d — %s") % [int(act.number), act.title], int(act.number))
+	_start_act_option.tooltip_text = tr("Les jours précédents passent seuls : vos dossiers sont conclus selon l'avis de VERITAS.")
+	_start_act_option.item_selected.connect(func(index: int) -> void: start_act = _start_act_option.get_item_id(index))
+	row.add_child(_start_act_option)
+	%DifficultyCancelButton.add_sibling(row)
+	%DifficultyCancelButton.get_parent().move_child(row, %DifficultyCancelButton.get_index())
 
 
 func refresh() -> void:
@@ -68,6 +109,10 @@ func open_settings() -> void:
 
 
 func start_new_game() -> void:
+	if start_act > 1:
+		GameState.new_game_at_act(start_act)
+		get_tree().change_scene_to_file(DESK_SCENE)
+		return
 	GameState.new_game()
 	get_tree().change_scene_to_file(INTRO_SCENE)
 
@@ -82,6 +127,9 @@ func continue_game() -> void:
 
 ## NOUVELLE PARTIE : on choisit d'abord le niveau de difficulté.
 func _on_new_game_pressed() -> void:
+	start_act = 1
+	_start_act_option.select(0)
+	_start_act_option.get_parent().visible = not Settings.endings_discovered.is_empty()
 	%DifficultyPanel.show()
 
 

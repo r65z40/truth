@@ -259,6 +259,36 @@
 			]
 		},
 		{
+			"id": "orlik_offer",
+			"type": "letter",
+			"title": "Mot du capitaine ORLIK",
+			"source": "Capitaine L. ORLIK, transmis par porteur",
+			"reliability": "C",
+			"date": "1986-11-19",
+			"conditions": {
+				"requires_flags": [
+					"milice.ally"
+				]
+			},
+			"veritas_remark": "Source de la Milice, service allié. Aucune incidence sur l'indice.",
+			"body": "Inspecteur VOSK,\n\nLe vieux ADLER est votre voisin, je le sais. Mes hommes l'ont un peu bousculé ; ça ne se reproduira pas.\n\nSi vous classez, je le fais ramener chez lui ce soir. Entre services amis, on se rend ces petits services. Je noterai celui-ci avec les autres.\n\nL. ORLIK"
+		},
+		{
+			"id": "milice_watch",
+			"type": "report",
+			"title": "Note de surveillance — bloc 7",
+			"source": "Milice du District 9, brigade de nuit",
+			"reliability": "C",
+			"date": "1986-11-19",
+			"conditions": {
+				"requires_flags": [
+					"milice.hostile"
+				]
+			},
+			"veritas_remark": "Note de la Milice. Mention d'un agent du ministère : transmise au Contrôle interne.",
+			"body": "Brigade de nuit, bloc 7, District 2.\n\nOutre le suspect ADLER, la brigade signale au même palier le logement de l'inspecteur A. VOSK (Section 4), dont la lumière reste allumée tard. Le poste de radio du suspect est audible depuis ce logement.\n\nÀ toutes fins utiles."
+		},
+		{
 			"id": "veritas_link",
 			"type": "report",
 			"title": "Note de raccordement VERITAS",

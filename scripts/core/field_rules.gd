@@ -16,10 +16,16 @@ extends RefCounted
 const FIELD_DIR := "res://data/field/"
 
 
+## Scènes lues une fois, par identifiant : ne pas modifier ce qui est renvoyé.
+static var _cache := {}
+
+
 static func get_scene(scene_id: String) -> Dictionary:
 	if scene_id == "":
 		return {}
-	return DataLoader.load_json(FIELD_DIR + scene_id + ".json")
+	if not _cache.has(scene_id):
+		_cache[scene_id] = DataLoader.load_json(FIELD_DIR + scene_id + ".json")
+	return _cache[scene_id]
 
 
 ## Scène rattachée au dossier, ou {}.

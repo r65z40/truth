@@ -84,6 +84,15 @@ func _reset_data_caches() -> void:
 	MinistryRecord._entries = []
 	SoundRules._data = {}
 	ImageSlots._data = {}
+	MessageTone._data = {}
+	SourceWear._data = {}
+	CallRules._data = {}
+	RadioRules._data = {}
+	MailSorting._data = {}
+	Features._data = {}
+	EveningRules._data = {}
+	FactionRules._data = {}
+	FieldRules._cache = {}
 
 
 func _register_ui_translation(code: String) -> void:

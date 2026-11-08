@@ -59,6 +59,11 @@ conforme », « attention de la hiérarchie : surveillance renforcée ») et ajo
 observations selon les drapeaux (note au dossier, relations avec la Milice).
 Paliers et textes : `data/assessment.json`. Décision de fen du 2026-10-24.
 
+Réglage d'équilibre (`data/rules/balance.json`) : seules 60 % de chaque hausse de
+suspicion écrite dans les données s'appliquent (les baisses restent entières).
+Mesuré le 08.11 avec le robot de partie : sans ce réglage, tout joueur qui ne suit
+pas VERITAS finissait à 100 de suspicion et deux fins étaient hors d'atteinte.
+
 Chaque indicateur doit produire des effets observables (ton des messages,
 dossiers confiés, promotions, enquêtes internes). Pas de variable décorative.
 
@@ -186,6 +191,10 @@ supplémentaires fait perdre la soirée. Fils de l'acte 1 :
   montre qu'il pourrait aussi dénoncer ses voisins.
 - **Visites** selon les décisions : Vera SEDLAR après l'arrestation de son
   mari, Irena BENES après celle de « VARGA ».
+- **Faire profil bas** (jours 5, 8, 11, 14, 17) : réunion du comité d'immeuble,
+  collecte de ferraille, registre de condoléances, discours du Directeur porte
+  ouverte, répétition du défilé. Suspicion -3, loyauté +1 : un moyen de se
+  racheter, au prix d'une soirée sans Lena ni radio.
 
 ## Le terrain (0.6)
 
@@ -235,5 +244,25 @@ le refus est mémorisé (`career.refused_promotion`).
 - 2026-11-04 : interface simplifiée (fen) : applications du bureau en plein
   écran avec « ← RETOUR », une seule aide à l'écran (MAZUR dans le bandeau),
   bureau à cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal).
+- 2026-11-08 : « toutes les idées » (fen) : fil rouge réponse → passage, fiche
+  commentée par VERITAS (qui juge à la cote, pas à la vérité) et audit des
+  mauvaises versions, bureau qui change avec la carrière, relevé de carrière,
+  départ rapide par acte, post-scriptum selon les indicateurs, citoyens jugés qui
+  reviennent aux actes 3-4, dossier urgent en heures de service (jamais en temps
+  réel), sources prises en défaut qui perdent une cote, téléphone (2-3 réponses,
+  sans chronomètre ; un appel non pris est manqué le soir), radio d'Aldria au
+  volume choisi (fort = tout entendre, mais les voisins finissent par signaler),
+  caviardage ligne par ligne à l'acte 4 (ce qui reste lisible compte).
+  Puis : tri du courrier intercepté (transmettre, retenir, signaler ; aucune
+  bonne réponse affichée, un signalement peut aussi sauver quelqu'un), pièces
+  jointes d'office ou refusées selon la confiance, liens « Voir aussi ».
+- 2026-11-08 : la fin de la Milice passe avant le Miroir parfait (alliance choisie
+  au téléphone) ; soirées « profil bas » ; la lettre de dénonciation du jour 16
+  parle de la radio seulement si on l'a écoutée ; répertoire des personnes croisées
+  dans le menu MINISTÈRE (rôle révélé au fil des drapeaux, jamais avant).
+- 2026-11-08 (suite) : les soirées ont des lieux ; une quinzaine de choix oubliés
+  ont une suite visible ; deux scènes : BRANDT vous interroge dans le couloir
+  (votre sang-froid), et la salle 3 où l'horloge retardait en 1971 (troisième
+  voie vers La Correction).
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

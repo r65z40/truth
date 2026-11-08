@@ -422,6 +422,35 @@
 					}
 				}
 			]
+		},
+		{
+			"id": "kolb_card",
+			"type": "report",
+			"title": "Fiche confidentielle d'informateur : I. KOLB",
+			"source": "Bureau des signalements (archive confidentielle)",
+			"reliability": "A",
+			"date": "1986-11-05",
+			"request": {
+				"label": "Fiche d'informateur de I. KOLB",
+				"confidential": true,
+				"flags": {
+					"53118.kolb_card_requested": true
+				},
+				"effects": {
+					"suspicion": 1
+				}
+			},
+			"veritas_remark": "Archive confidentielle, fiabilité A.",
+			"body": "KOLB, Ignác. Ancien organiste de la paroisse Sainte-Agathe, remplacé en 1985. Quatre signalements depuis, tous visant la paroisse. Rémunération : néant. Mention du correspondant : « zèle personnel, à recouper ».",
+			"facts": [
+				{
+					"id": "f_kc_motive",
+					"key": "confidential.53118.kolb",
+					"value": "KOLB a perdu sa place d'organiste en 1985",
+					"label": "Fiche de KOLB : ancien organiste remplacé en 1985, quatre signalements contre la même paroisse",
+					"quote": "zèle personnel, à recouper"
+				}
+			]
 		}
 	],
 	"decisions": [

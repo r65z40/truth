@@ -1,0 +1,135 @@
+{
+	"note": "Entretien de couloir avec I. BRANDT (dossier 54100, piste 5 du 08.11). Rôles inversés : c'est l'agent qu'on interroge. La tension mesure VOTRE sang-froid ; « retourner la question » n'est possible que si vous restez calme (requires_composure). Chaque choix pose field.corridor_54100.<id> ; la note d'entretien du 54100 en dépend.",
+	"id": "corridor_54100",
+	"case_id": "54100",
+	"type": "interrogation",
+	"button": "LE COULOIR",
+	"image": "res://assets/field/lieu_ministere_couloir.webp",
+	"title": "ENTRETIEN  //  COULOIR DE LA SECTION 4, 19 H",
+	"time_action": "corridor_talk",
+	"turns": 4,
+	"available_when": [
+		{
+			"min_day": 13,
+			"requires_flags": [
+				"54100.consulted"
+			]
+		}
+	],
+	"start_flags": {
+		"brandt.corridor_met": true
+	},
+	"subject": {
+		"name": "I. BRANDT",
+		"photo": {
+			"face": "oval",
+			"hair": "bun",
+			"gray": true,
+			"facial_hair": "none",
+			"mark": "none"
+		}
+	},
+	"tension": {
+		"start": 60,
+		"label": "Votre sang-froid"
+	},
+	"intro": "Couloir de la Section 4, dix-neuf heures. Les plafonniers sont éteints un sur deux. Mme BRANDT vous attend devant votre porte, deux tasses à la main.\n\n« Inspecteur VOSK. Deux minutes. Pour votre dossier : le vôtre, cette fois. » Elle vous tend une tasse. Ce n'est pas une question.",
+	"present_default": "BRANDT ne regarde pas le papier. « Je l'ai déjà lu, inspecteur. C'est moi qui l'ai classé. »",
+	"options": [
+		{
+			"id": "o_listen",
+			"label": "« Je vous écoute, inspectrice. »",
+			"text": "Elle sourit, satisfaite. « Vous partez à seize heures, sauf les jours où vous restez. Ces jours-là, vous rentrez par le quai et pas par le tram. Je voulais seulement vérifier que je ne me trompais pas. » Elle ne se trompait pas.",
+			"note": [
+				"f_cor_hours"
+			],
+			"composure_delta": 10
+		},
+		{
+			"id": "o_lena",
+			"label": "« Ma sœur ne sait rien de mon travail. »",
+			"conditions": {
+				"forbidden_flags": [
+					"lena.father_1971_told"
+				]
+			},
+			"text": "« Bien. » Elle l'écrit. « C'est mieux pour elle. Les infirmières parlent beaucoup, à l'hôpital n° 2. »",
+			"composure_delta": -5,
+			"set_flags": {
+				"brandt.lena_shielded": true
+			}
+		},
+		{
+			"id": "o_lena_lie",
+			"label": "« Ma sœur ne sait rien de mon travail. »",
+			"conditions": {
+				"requires_flags": [
+					"lena.father_1971_told"
+				]
+			},
+			"text": "Elle repose sa tasse. « Vous lui avez parlé d'un nom barré, au téléphone. Les cabines du hall ont des oreilles, inspecteur. Ne me mentez pas : c'est la seule chose que je ne pardonne pas. »",
+			"note": [
+				"f_cor_booth"
+			],
+			"composure_delta": -20,
+			"effects": {
+				"suspicion": 2
+			},
+			"set_flags": {
+				"brandt.caught_lying": true
+			}
+		},
+		{
+			"id": "o_father",
+			"label": "« Vous avez lu le dossier de mon père ? »",
+			"text": "« Il est mieux tenu que le vôtre. » Elle hésite. « Il y a une salle, au deuxième, la salle 3. L'horloge y retarde. Votre père l'avait mesurée. » Elle se tait, comme si elle en avait trop dit, et vous reprend la tasse.",
+			"note": [
+				"f_cor_salle3"
+			],
+			"composure_delta": -10,
+			"set_flags": {
+				"brandt.hinted_salle3": true
+			}
+		},
+		{
+			"id": "o_turn",
+			"label": "« Et votre dossier à vous, qui le tient ? »",
+			"requires_composure": {
+				"min": 55
+			},
+			"text": "Un temps. « Le même service que le vôtre. Nous sommes tous tenus, inspecteur. La seule question est : par qui, et pour combien de temps. » Pour la première fois, elle baisse les yeux.",
+			"note": [
+				"f_cor_held"
+			],
+			"composure_delta": 5,
+			"set_flags": {
+				"brandt.held_too": true
+			}
+		},
+		{
+			"id": "o_threat",
+			"label": "« Encore une note sur moi, et je parle des bordereaux signés « B. » à la Direction. »",
+			"conditions": {
+				"requires_flags": [
+					"brandt.revealed"
+				]
+			},
+			"text": "Elle sort un carnet et écrit votre phrase, mot pour mot. « Merci. Cela m'évite de la reformuler. » Elle s'éloigne sans se presser. Ses talons résonnent jusqu'à l'escalier.",
+			"composure_delta": -10,
+			"effects": {
+				"suspicion": 3
+			},
+			"set_flags": {
+				"brandt.threatened": true
+			},
+			"ends": true
+		}
+	],
+	"presentations": [],
+	"outro": "Mme BRANDT rince les deux tasses au lavabo du couloir. « À demain, inspecteur. Je note que vous avez été aimable. Je note tout. »",
+	"ambience": {
+		"drift": 0.4,
+		"flicker": 0.5,
+		"grain": 0.6
+	}
+}

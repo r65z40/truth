@@ -136,5 +136,19 @@
 	"Pourquoi le train 2241 a-t-il du retard ?": "Why is train 2241 late?",
 	"Qui a franchi la frontière ces nuits-là ?": "Who crossed the border on those nights?",
 	"Qu'est-ce qui lie VRABEC à l'étranger ?": "What ties VRABEC to abroad?",
-	"VRABEC fait-il partie d'une filière ?": "Is VRABEC part of a smuggling line?"
+	"VRABEC fait-il partie d'une filière ?": "Is VRABEC part of a smuggling line?",
+	"Registre confidentiel des passages, poste de Brenec": "Confidential crossings register, Brenec post",
+	"Garde-frontière, poste de Brenec (archive confidentielle)": "Border guard, Brenec post (confidential archive)",
+	"Registre confidentiel des passages de Brenec (octobre)": "Confidential Brenec crossings register (October)",
+	"Archive confidentielle, fiabilité A. Aucun passage irrégulier relevé avant le 20 octobre.": "Confidential archive, reliability A. No irregular crossing recorded before 20 October.",
+	"Passage": "Crossing",
+	"Motif": "Reason",
+	"Visite familiale, permis valide": "Family visit, valid permit",
+	"Permis expirés le 20.10 : passage noté, non bloqué": "Permits expired on 20.10: crossing noted, not stopped",
+	"Sortie définitive (fils de l'aiguilleur)": "Permanent exit (the signalman's son)",
+	"Extrait du registre tenu au poste de Brenec. Les retards du train 2241 tombent les nuits de visites familiales, toutes déclarées. Une ligne de 1981 au même nom que l'aiguilleur.": "Extract from the register kept at the Brenec post. The delays of train 2241 fall on nights of family visits, all declared. One line from 1981 bears the signalman's name.",
+	"Toutes les visites déclarées avant le 20.10": "All visits declared before 20.10",
+	"Registre de Brenec : les passages des nuits de retard sont des visites familiales déclarées": "Brenec register: the crossings on the nights of delay are declared family visits",
+	"Le fils VRABEC parti en 1981": "The VRABEC son left in 1981",
+	"Registre de Brenec : Luka VRABEC, le fils de l'aiguilleur, est passé à Halvek en 1981": "Brenec register: Luka VRABEC, the signalman's son, crossed to Halvek in 1981"
 }

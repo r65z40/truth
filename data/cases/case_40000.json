@@ -14,7 +14,10 @@
 			"keys": [
 				"novak.address"
 			],
-			"main": true
+			"main": true,
+			"truth": [
+				"District 7, depuis le 03.09.1986"
+			]
 		},
 		{
 			"id": "move",

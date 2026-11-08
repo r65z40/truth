@@ -11,8 +11,14 @@ extends RefCounted
 const DATA_PATH := "res://data/factions.json"
 
 
+## Fichier lu une fois : ne pas modifier ce qui est renvoyé.
+static var _data := {}
+
+
 static func get_data() -> Dictionary:
-	return DataLoader.load_json(DATA_PATH)
+	if _data.is_empty():
+		_data = DataLoader.load_json(DATA_PATH)
+	return _data
 
 
 static func get_faction(faction_id: String, data: Dictionary = get_data()) -> Dictionary:

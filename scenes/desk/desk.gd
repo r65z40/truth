@@ -78,6 +78,13 @@ var _toast_tween: Tween
 ## Bandeau d'aide permanent (début de partie) : rappelle en clair la prochaine
 ## étape, même si le joueur a fermé la bulle de MAZUR. S'efface une fois rodé.
 var _guide_bar: PanelContainer
+var phone_button: Button
+var phone_screen: PhoneScreen
+var mail_button: Button
+var mail_sort_screen: MailSortScreen
+var redaction_screen: RedactionScreen
+var punch_clock_screen: PunchClockScreen
+var people_screen: PeopleScreen
 var _guide_bar_label: Label
 ## Jour où l'on a déjà prévenu que l'horloge marque 16h00 (une fois par jour).
 var _day_over_notice_day := -1
@@ -126,6 +133,10 @@ func _ready() -> void:
 	_refresh_sound_button()
 	_start_button.toggled.connect(_start_menu.set_visible)
 	%StartPersonnel.pressed.connect(terminal.submit_command.bind("PROFIL"))
+	# Répertoire des personnes croisées, rempli au fil des dossiers ouverts.
+	people_screen = PeopleScreen.new()
+	add_child(people_screen)
+	%StartPeople.pressed.connect(people_screen.open)
 	%StartTerminal.pressed.connect(open_app.bind("terminal"))
 	%StartSettings.pressed.connect(open_app.bind("settings"))
 	for item: Button in _start_menu.find_children("*", "Button", true, false):
@@ -153,13 +164,29 @@ func _ready() -> void:
 	_toast.grow_horizontal = Control.GROW_DIRECTION_END
 	_toast.grow_vertical = Control.GROW_DIRECTION_END
 	_toast.custom_minimum_size.x = 520.0
+	# Largeur fixée pour le texte : sans elle, l'étiquette à retour à la ligne
+	# calcule sa hauteur sur une largeur nulle et la notification devient très haute.
+	_toast_label.custom_minimum_size.x = 480.0
 	_day_transition.hide()
 	coach.target_provider = coach_target
 	coach.dismissed.connect(_on_coach_dismissed)
 	_build_guide_bar()
+	_build_phone()
+	_scroll_icons()
+	resized.connect(fit_to_screen)
+	fit_to_screen.call_deferred()
 	windows.dossiers.field_requested.connect(open_field)
 	windows.dossiers.comparison_requested.connect(open_comparison)
 	windows.dossiers.timeline_requested.connect(open_timeline)
+	windows.dossiers.redaction_requested.connect(open_redaction)
+	windows.dossiers.punch_clock_requested.connect(open_punch_clock)
+	punch_clock_screen = PunchClockScreen.new()
+	add_child(punch_clock_screen)
+	punch_clock_screen.closed.connect(func() -> void: windows.dossiers.select_case(punch_clock_screen.case_id))
+	redaction_screen = RedactionScreen.new()
+	add_child(redaction_screen)
+	redaction_screen.closed.connect(func() -> void: windows.dossiers.select_case(redaction_screen.case_id))
+	redaction_screen.signed.connect(func(case_id: String) -> void: windows.dossiers.select_case(case_id))
 	windows.dossiers.document_window_requested.connect(open_document_window)
 	windows.dossiers.veritas_requested.connect(open_veritas)
 	windows.archives.case_requested.connect(open_case)
@@ -346,6 +373,9 @@ func _on_state_changed() -> void:
 ## Petits papiers posés sur le bureau (DeskTraces) : les suites des signatures
 ## et le fil du père, en bas à droite, derrière les fenêtres.
 func refresh_traces() -> void:
+	# Le bureau change avec la partie : grade sur la plaque, plante, œil.
+	($Wallpaper as DesktopWallpaper).set_state(int(FictionalCalendar.act_for_day(GameState.day_index).get("number", 1)),
+			"%s  —  %s" % [GameState.player.get("name", ""), GameState.get_rank_title()], GameState.get_indicator("suspicion"))
 	var box := $Wallpaper.get_node_or_null("Traces") as VBoxContainer
 	if box == null:
 		box = VBoxContainer.new()
@@ -427,7 +457,90 @@ func _refresh_header() -> void:
 	%StartArchives.visible = GameState.is_feature_unlocked("archives")
 	%StartPersonnel.visible = GameState.is_feature_unlocked("personnel")
 	terminal.set_advanced_visible(GameState.is_feature_unlocked("terminal_advanced"))
+	_refresh_phone()
 	_refresh_objective()
+
+
+## Le téléphone : un bouton dans la barre des tâches, visible quand il sonne,
+## et l'écran d'appel posé sur le bureau.
+func _build_phone() -> void:
+	phone_button = Button.new()
+	phone_button.name = "PhoneButton"
+	phone_button.theme_type_variation = &"EndDayButton"
+	phone_button.text = tr("DÉCROCHER")
+	phone_button.tooltip_text = tr("Le téléphone sonne. Personne ne vous presse.")
+	phone_button.custom_minimum_size = Vector2(0, 44)
+	phone_button.visible = false
+	phone_button.pressed.connect(open_phone)
+	var end_day_button: Button = %EndDayButton
+	end_day_button.get_parent().add_child(phone_button)
+	end_day_button.get_parent().move_child(phone_button, end_day_button.get_index())
+	mail_button = Button.new()
+	mail_button.name = "MailSortButton"
+	mail_button.theme_type_variation = &"EndDayButton"
+	mail_button.tooltip_text = tr("Lettres interceptées à contrôler aujourd'hui.")
+	mail_button.custom_minimum_size = Vector2(0, 44)
+	mail_button.visible = false
+	mail_button.pressed.connect(open_mail_sort)
+	end_day_button.get_parent().add_child(mail_button)
+	end_day_button.get_parent().move_child(mail_button, phone_button.get_index())
+	mail_sort_screen = MailSortScreen.new()
+	add_child(mail_sort_screen)
+	mail_sort_screen.closed.connect(_refresh_header)
+	phone_screen = PhoneScreen.new()
+	add_child(phone_screen)
+	phone_screen.closed.connect(_refresh_header)
+	_refresh_phone()
+
+
+func open_phone() -> void:
+	close_start_menu()
+	if phone_screen.open():
+		terminal.print_line(tr("Appel : %s.") % phone_screen._caller.text, Terminal.COLOR_DIM)
+
+
+func open_mail_sort() -> void:
+	close_start_menu()
+	mail_sort_screen.open()
+
+
+func _refresh_phone() -> void:
+	if phone_button == null:
+		return
+	var letters := GameState.get_pending_letters().size()
+	mail_button.visible = letters > 0
+	mail_button.text = tr("TRI (%d)") % letters
+	var ringing := not GameState.get_pending_call().is_empty()
+	if ringing and not phone_button.visible:
+		Sound.play("phone_ring")
+	phone_button.visible = ringing
+
+
+## Les icônes du bureau défilent si l'écran est trop court : sans cela, leur
+## hauteur poussait la barre des tâches hors de l'écran.
+func _scroll_icons() -> void:
+	var icons := get_node("Main/Body/Icons") as MarginContainer
+	var list := icons.get_node("List") as Control
+	var scroll := ScrollContainer.new()
+	scroll.name = "IconsScroll"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	scroll.mouse_filter = Control.MOUSE_FILTER_PASS
+	# Hauteur plancher : la zone de travail garde de quoi poser une fenêtre.
+	scroll.custom_minimum_size.y = 300.0
+	icons.add_child(scroll)
+	# reparent garde le propriétaire : les noms uniques (%DossiersButton...) restent valides.
+	list.reparent(scroll, false)
+
+
+## Écran court (téléphone à l'horizontale, ~600 points de haut) : les icônes du
+## bureau se resserrent pour que la barre des tâches (FIN DE SERVICE) reste visible.
+func fit_to_screen() -> void:
+	var short := ScreenFit.is_short(size)
+	var list := get_node("Main/Body/Icons/IconsScroll/List") as VBoxContainer
+	list.add_theme_constant_override("separation", 0 if short else 6)
+	for icon in list.get_children():
+		(icon as Control).custom_minimum_size.y = 72.0 if short else 86.0
 
 
 ## Bandeau d'aide permanent, posé en haut du bureau pendant l'apprentissage.
@@ -639,6 +752,16 @@ func open_comparison(case_id: String) -> void:
 
 
 ## Ouvre le mini-jeu « frise chronologique » pour ce dossier (facultatif).
+func open_punch_clock(case_id: String) -> void:
+	if punch_clock_screen.open_case(case_id):
+		terminal.print_line(tr("Ruban de la pointeuse : dossier n° %s.") % case_id)
+
+
+func open_redaction(case_id: String) -> void:
+	if redaction_screen.open_case(case_id):
+		terminal.print_line(tr("Caviardage MIROIR : dossier n° %s.") % case_id)
+
+
 func open_timeline(case_id: String) -> void:
 	if timeline_screen.open_case(case_id):
 		terminal.print_line(tr("Frise chronologique : dossier n° %s.") % case_id)

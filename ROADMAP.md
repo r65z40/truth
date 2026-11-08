@@ -76,7 +76,10 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Calendrier en 20 journées de service, ellipses entre les actes
 - [x] Profil du joueur dans `data/campaign.json` (préparation des extensions)
 - [x] Écran de fin d'acte (archive des sujets), commission d'avancement, promotion en 2e classe acceptée ou déclinée
-- [ ] Acte 2 : action « demander une archive confidentielle » débloquée par la 2e classe
+- [x] Acte 2 : « demander une archive confidentielle » débloquée par la 2e classe (08.11) :
+      une par jour, suspicion +1 ; sans le grade, une fois par KREMER s'il a été couvert.
+      Une archive par dossier de l'acte 2 (registre de Brenec, fiche CHAUDRON, fiche de KOLB,
+      bordereau de 1971)
 
 ## En cours : accueil du joueur (demande de fen du 25.10)
 
@@ -128,7 +131,12 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Perquisition chez SEDLAR (40921) : endroits cliquables sur le dessin, rapport versé au dossier
 - [x] Indice L'HEURE JUSTE : l'horloge sans aiguilles (escalier, soirée 1, puis poêle de SEDLAR)
 - [x] Visite de la boulangerie n° 12 (52044) et perquisition chez Karel BENES (52310)
-- [ ] Soirées dans des lieux dessinés (cuisine, loge d'ADLER, cabine du hall)
+- [x] Soirées dans des lieux (08.11) : chaque action a son lieu (cuisine, loge d'ADLER,
+      cabine du hall, palier, cour), montré au survol et pendant le résultat
+- [ ] Images de fen : loge d'ADLER (`assets/images/soir_loge_adler.webp`) et cabine du hall
+      (`assets/images/soir_cabine_hall.webp`) ; d'ici là, la cuisine
+- [ ] Zones cliquables sur l'image du soir (quand les images seront là ; il faudra
+      dégager le centre de l'écran, aujourd'hui couvert par le panneau)
 - [x] Décors 3D (demande de fen du 25.10) : moteur `FieldStage3D`, audition d'ORLIK et appartement des SEDLAR en formes simples, réglage 2D/3D
 - [x] Images de terrain livrées par fen : clé `image` par scène, affichées en fond (cadrage « cover »), prioritaires sur la 3D (réglage `field_3d` désormais optionnel, désactivé par défaut)
 - [x] Perquisition en plusieurs pièces : clé `rooms` + `doors`, on clique une porte pour changer de pièce (gratuit), budget de fouilles commun. Pilote : 40921 (salon + chambre)
@@ -145,8 +153,13 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
 - [x] Atelier d'ADLER (54030, acte 3), deux pièces : radio sans ondes courtes, clientèle d'État, pendule bloquée à 06h05, notes du père (« Demander à K. »), cahier de L'HEURE JUSTE versé au dossier
 - [x] Traces sur le bureau des nouvelles scènes (chemise du père, encre verte, carnet de Mira, notes du père, cahier « exploité »)
 - [ ] Images de l'atelier d'ADLER à livrer (`search_54030_atelier.webp`, `search_54030_arriere.webp`) ; décors dessinés en attendant
-- [ ] Suites du cahier de L'HEURE JUSTE versé au dossier (`heure_juste.list_in_file`) : arrestations à l'acte 4, fin ?
-- [ ] Autres idées gardées (doc du 27.10) : BRANDT qui vous interroge dans le couloir, la salle d'audition vide (MIROIR), l'escalier de l'immeuble, la filature, la table d'écoute
+- [x] Suites du cahier de L'HEURE JUSTE versé au dossier : opération CADRAN (acte 4), ateliers scellés le soir 17, lettre de la femme d'un cheminot au tri du jour 16
+- [x] BRANDT vous interroge dans le couloir (54100, 08.11) : rôles inversés, la tension mesure
+      votre sang-froid ; elle indique la salle 3
+- [x] La salle d'audition vide (salle 3, 60003, 08.11) : fouille à la lampe ; pendule + registre
+      = troisième voie vers La Correction (avec la vérité du père, sans KREMER arrêté)
+- [ ] Idées encore gardées : la filature (53517), la table d'écoute (nuit de la Centrale) ;
+      images à fournir
 - [ ] Repositionner finement les zones des autres scènes (51307, 52044, 52310, 53517) avec l'éditeur
 - [ ] Modèles et images fournis par fen (ChatGPT, Blender, CC0) : cahier des charges `docs/design/ASSETS_3D.md`
 - [ ] Décors 3D de la boulangerie n° 12 et de l'appartement 40
@@ -228,7 +241,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
   - [x] Comparer avec l'archive — registre modifié de SEDLAR (révélation d'acte 2) :
         dossier 53761, original du sous-sol B vs copie transmise ; la ligne du 21.10
         vers Halvek est un ajout postérieur (tampon coiffé) ; établit `register.altered`
-  - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
+  - [x] Caviarder ; [x] radio étrangère ; [x] tri du courrier ; [x] pointeuse (ruban CHR-4 du 51307, 08.11)
 
 ## Fait : acte 2 — L'Archive et le registre truqué (2026-10-26)
 
@@ -316,7 +329,7 @@ caviarder) via le système de décisions existant — données pures, sans moteu
       `get_ending()` / `finish_game()`, `desk._end_game()` → menu). Tests `test_endings`
       et `test_end_of_game_in_desk`. Ordre et seuils validés par fen le 27.10.
       Conception : `docs/design/FINS_PROPOSITION.md`.
-- [ ] Facultatif (proposé à fen) : compteur « fins découvertes X/7 » au menu principal,
+- [x] Compteur « fins découvertes X/7 » au menu principal (fait), relevé de carrière à la fin,
       pour inciter à rejouer. À faire si fen le valide.
 
 ## Fait : audit de cohérence du scénario (demande de fen du 28.10)
@@ -338,7 +351,9 @@ Rapport complet : document « Audit du scénario » (lien dans la pull request).
       KREMER sans « lundi » ; la veillée du 9 novembre fête la dédicace de l'église
       (plus la Sainte-Agathe, qui tombe en février) ; le Bureau du ravitaillement relève
       du ministère de la Sécurité nationale
-- [ ] ~120 drapeaux posés jamais lus : suites proposées dans le rapport d'audit
+- [x] Drapeaux posés jamais lus (118 au 08.11) : une quinzaine ont désormais une suite
+      (échos du soir, traces sur le bureau, lettre CADRAN au tri du jour 16, notes de BRANDT
+      au 54100). Les autres restent des archives de choix, sans suite prévue
 
 ## Retours du test complet de fen (28.10)
 
@@ -373,8 +388,11 @@ choisi de commencer par un prototype sur les deux premiers dossiers.
       modifiables dans Paramètres (`Settings.difficulty`). Débutant = fiche d'enquête ;
       expérimenté = jeu d'origine (carnet libre, CONFRONTER, bulle pendant la lecture)
 - [x] Questions des 15 autres dossiers (pour que le niveau débutant couvre tout le jeu)
-- [ ] Une mécanique nouvelle par journée, gros dossiers livrés en deux temps
-- [ ] Liens visibles entre les pièces
+- [x] Une mécanique nouvelle par journée (08.11) : jour 2 DEMANDER + archives, jour 3
+      CONSULTER + dossier personnel + téléphone, jour 4 terminal complet, jour 5 tri du
+      courrier, chacune annoncée par MAZUR ; le 52310 arrive en deux temps (5 pièces, puis
+      la bibliothèque et le courrier saisi le lendemain)
+- [x] Liens visibles entre les pièces (08.11) : « Voir aussi » sous la source, à partir des éléments notés (niveau débutant)
 
 ### Interface plus simple et fluide (demande de fen du 04.11)
 
@@ -393,6 +411,73 @@ Proposition : https://claude.ai/artifact/Dua5iU65YykqvSUREUESug. fen : « plein
 - [x] COMPARER compact (une ligne par trait) ; pied du dossier qui passe à la ligne ;
       pièce en 16 px à côté de la fiche
 - [ ] Test de fen
+
+## Fait : recommandations et idées de gameplay (demande de fen du 08.11)
+
+Bilan et idées : https://claude.ai/artifact/6KkyMd9gXGKSe4h7Qvi3mv. fen : « fais tes
+recommandations, et mets en place toutes tes idées ».
+
+- [x] #52 et #53 fusionnées (questions du dossier 53190 ajoutées)
+- [x] Fil rouge : une réponse de la fiche ouvre la pièce et surligne le passage
+- [x] Conclusion = fiche : VERITAS commente chaque réponse (à la cote de la source) ;
+      une version démentie par les pièces déclenche un audit quelques jours plus tard
+- [x] Le bureau change (plaque, plante, œil du fond d'écran selon acte, grade, soupçon)
+- [x] Relevé de carrière sur l'écran de fin ; compteur de fins au menu
+- [x] Départ rapide à l'acte 2, 3 ou 4 une fois une fin connue
+- [x] Ton du courrier : post-scriptum de MAZUR, de la Milice, du Contrôle interne
+- [x] Le dossier qui revient : NOVAK, ORLIK, KOVAC, VARGA, VRABEC réécrivent aux actes 3-4
+- [x] Dossier urgent : 53402 à rendre avant midi (heures de service)
+- [x] Sources qui s'usent : KOLB démenti au 53118 → cote D au 53190 ; Milice démentie au 54012 → 54030
+- [x] Téléphone : cinq appels (MAZUR, ORLIK, Vera SEDLAR, KREMER, Contrôle interne)
+- [x] Radio étrangère : volume bas (début du bulletin) ou fort (tout, mais les voisins signalent)
+- [x] Caviarder : 60001 et 60002 ligne par ligne ; caviardage partiel = la personne reste accusée
+- [x] Police IBM Plex Mono embarquée ; préréglage d'export Windows
+- [x] Suite (« continue ») : liens « Voir aussi » entre pièces, dossiers confiés selon la
+      confiance, Milice alliée / hostile au 54030, tri du courrier (jours 4, 9, 16 : neuf
+      lettres, TRANSMETTRE / RETENIR / SIGNALER, quatre suites), notification compacte,
+      POINTEUSE au 51307 (le ruban d'octobre dément les « pannes » des certificats),
+      une nouveauté par journée
+- [ ] Test de fen ; export sur une machine Windows (modèles d'export à installer)
+
+## Fait : robot de partie et équilibre (demande de fen du 08.11, « A puis D »)
+
+- [x] Robot qui joue des campagnes complètes par l'API de GameState
+      (`tests/tools/playthrough_bot.gd`), 11 profils de joueurs, déterministe
+- [x] Rapport : `tests/tools/playthrough_report.tscn -- <dossier> [parties] [pourcentage]`
+      (fins par profil, fins manquées de peu, sources de suspicion, contenu jamais vu)
+- [x] Bug trouvé : 7 événements « retour » avaient set_flags en liste (plantage en fin de journée)
+- [x] Équilibre : la suspicion saturait à 100 dès qu'on ne suivait pas VERITAS ;
+      L'HEURE JUSTE et LE SILENCE : 2 parties sur 1 100. Hausses de suspicion à 60 %
+      (`data/rules/balance.json`) : chaque fin est obtenue par plusieurs profils
+- [x] Mobile : agrandissement automatique selon la densité de l'écran (`ScreenFit`,
+      jamais moins de 600 points de haut, un bouton de 44 points ≈ 80 pixels sur
+      téléphone) ; menu principal et bureau resserrés sur écran court (icônes
+      défilantes, barre des tâches toujours visible) ; préréglage d'export Android
+- [x] Choix : le jeu reste à l'horizontale sur téléphone (bureau, pièces côte à
+      côte) ; le portrait demanderait une autre interface complète
+- [ ] Export Android à faire par fen : modèles d'export Godot, SDK Android, clé de signature
+- [ ] Test sur un vrai téléphone (ressenti du toucher, lisibilité)
+
+## Fait : vérification de la traduction et du scénario (demande de fen du 08.11)
+
+- [x] Contenu anglais complet (nouveau test : tout texte de contenu a sa traduction) ;
+      2 textes d'interface ajoutés
+- [x] Anglais harmonisé : guillemets droits, Militia, Internal Review, Reports Bureau,
+      Petitions Bureau, Civilian mail
+- [x] Soirée « Rendre son salut à Mme BRANDT » (jour 13) inatteignable : condition corrigée
+- [x] KREMER n'appelle plus s'il a été arrêté
+- [x] Prénoms en double : REIS devient Emil, l'épouse KRAL Dana, le fils KOVAC Jiri,
+      la dactylo Ilona, la voyageuse du 53402 Livia BENDA
+
+## Fait : les 4 points à améliorer (demande de fen du 08.11)
+
+- [x] La fin de la Milice passe avant le Miroir parfait (elle exige `milice.ally`,
+      donc le marché d'ORLIK accepté au téléphone)
+- [x] Soirée « faire profil bas » les jours 5, 8, 11, 14, 17 (suspicion -3, loyauté +1)
+- [x] Lettre du jour 16 : la dénonciation « radio » seulement si la radio a été écoutée,
+      sinon une version « lumière allumée » ; nouvelle condition `max_count`
+- [x] Répertoire des personnes dans le menu MINISTÈRE (`data/people.json`,
+      `PeopleDirectory`, écran `PeopleScreen`) : une fiche par dossier ouvert
 
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)
 
@@ -420,8 +505,10 @@ Proposition : https://claude.ai/artifact/Dua5iU65YykqvSUREUESug. fen : « plein
 
 ## Prochaine itération
 
-- [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
-- [ ] Utiliser les drapeaux `milice.ally` / `milice.enemy` dans un troisième dossier
+- [x] Effets observables des indicateurs : ton des messages ; dossiers confiés selon la
+      confiance (loyal : fiche CHAUDRON jointe d'office au 53517 ; soupçonné : registre des
+      visites du 54012 refusé), clés d'événement `grant_documents` / `refuse_documents` (08.11)
+- [x] Milice alliée / hostile dans un troisième dossier (54030, 08.11) : marché d'ORLIK ou note de surveillance, dette notée si ADLER est libéré
 - [x] Lecteur de musique (demande de fen du 25.10) : autoload `Music`, fondus enchaînés,
       volume dans Paramètres, morceau choisi par `data/music.json` (moment, acte, drapeaux, indicateurs)
 - [ ] Morceaux fournis par fen (.ogg dans `assets/music/`, liste dans son README)
@@ -442,8 +529,8 @@ Proposition : https://claude.ai/artifact/Dua5iU65YykqvSUREUESug. fen : « plein
 
 - [ ] Troisième dossier, personnages récurrents (ORLIK, MAZUR)
 - [ ] Chronologie et association de preuves
-- [ ] Polices libres embarquées
-- [ ] Preset d'export Windows, premiers tests sur machine cible
+- [x] Polices libres embarquées (IBM Plex Mono, 08.11)
+- [x] Preset d'export Windows (08.11) ; [ ] premiers tests sur machine cible
 
 ## Plus tard
 
