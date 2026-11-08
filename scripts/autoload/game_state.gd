@@ -439,6 +439,11 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 		push_warning("GameState: le dossier %s a déjà fait l'objet d'une décision." % case_id)
 		return {}
 	var case_state := get_case_state(case_id)
+	# Dossier urgent : l'échéance se juge sur l'heure de la signature.
+	var case_data := CaseLibrary.get_case(case_id)
+	if DeadlineRules.has_deadline(case_data) and not _deadline_settled(case_id):
+		var sign_hours := WorkTime.cost("sign_conclusion") if WorkTime.check(hours_used, "sign_conclusion").ok else 0
+		_apply_deadline(case_id, DeadlineRules.is_on_time(case_data, day_index, hours_used, sign_hours))
 	# Signer reste toujours possible ; l'heure n'est comptée que s'il en reste.
 	if WorkTime.check(hours_used, "sign_conclusion").ok:
 		hours_used += WorkTime.cost("sign_conclusion")
@@ -471,6 +476,28 @@ func apply_decision(case_id: String, decision_id: String) -> Dictionary:
 	state_changed.emit()
 	decision_applied.emit(case_id, decision_id, message_id)
 	return result
+
+
+## État de l'échéance d'un dossier : "none", "pending", "late", "met" (rendu à temps).
+func deadline_status(case_id: String) -> String:
+	var case_data := CaseLibrary.get_case(case_id)
+	if not DeadlineRules.has_deadline(case_data):
+		return "none"
+	if flags.get(DeadlineRules.ON_TIME_FLAG % case_id, false):
+		return "met"
+	if flags.get(DeadlineRules.LATE_FLAG % case_id, false):
+		return "late"
+	return DeadlineRules.status(case_data, day_index, hours_used, WorkTime.cost("sign_conclusion"))
+
+
+func _deadline_settled(case_id: String) -> bool:
+	return flags.get(DeadlineRules.ON_TIME_FLAG % case_id, false) or flags.get(DeadlineRules.LATE_FLAG % case_id, false)
+
+
+func _apply_deadline(case_id: String, on_time: bool) -> void:
+	var result := DeadlineRules.outcome(CaseLibrary.get_case(case_id), case_id, on_time)
+	_apply_effects(result.effects)
+	_merge_flags(result.flags)
 
 
 # --- Terrain : interrogatoires et perquisitions ------------------------------
@@ -851,6 +878,12 @@ func get_unread_count() -> int:
 ## Termine la journée : passe au jour suivant et applique les événements dus.
 ## Renvoie la liste des événements déclenchés.
 func end_day() -> Array:
+	# Un dossier urgent laissé ouvert à la fin de son jour d'échéance est en retard.
+	for case_id in cases:
+		if can_decide(case_id) and not _deadline_settled(case_id):
+			var case_data := CaseLibrary.get_case(case_id)
+			if DeadlineRules.has_deadline(case_data) and int(case_data.deadline.get("day", 0)) <= day_index:
+				_apply_deadline(case_id, false)
 	day_index += 1
 	hours_used = 0
 	var fired := EventRules.due_events(get_condition_state())

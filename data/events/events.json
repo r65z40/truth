@@ -723,7 +723,7 @@
 			"message": {
 				"from": "R. MAZUR, Directeur adjoint, Section 4",
 				"subject": "Nouveau dossier prioritaire : n° 53402",
-				"body": "Inspecteur,\n\nLa Direction de la ligne Velmira–Halvek signale des retards nocturnes anormaux au poste de Brenec, à trois kilomètres de la frontière. L'aiguilleur s'appelle VRABEC.\n\nLe dossier 53402 vous est attribué. Depuis le décret 86-31, le mot « frontière » n'a plus le même poids. VERITAS l'a déjà raccordé. Lisez la ligne avant de lire le raccordement.\n\nR. MAZUR"
+				"body": "Inspecteur,\n\nLa Direction de la ligne Velmira–Halvek signale des retards nocturnes anormaux au poste de Brenec, à trois kilomètres de la frontière. L'aiguilleur s'appelle VRABEC.\n\nLe dossier 53402 vous est attribué. Depuis le décret 86-31, le mot « frontière » n'a plus le même poids. VERITAS l'a déjà raccordé. Lisez la ligne avant de lire le raccordement.\n\nLa Direction de la ligne attend votre rapport aujourd'hui, avant midi. Chaque heure de service compte : choisissez ce que vous vérifiez.\n\nR. MAZUR"
 			}
 		},
 		{
@@ -1956,6 +1956,36 @@
 				"from": "M. VRABEC, aiguilleur, poste de Brenec",
 				"subject": "Une carte postale",
 				"body": "Inspecteur,\n\nUne carte est arrivée de l'autre côté. De mon fils, après cinq ans. Elle a mis trois mois et elle est passée par trois bureaux, mais elle est arrivée.\n\nJe sais que je ne devrais pas vous l'écrire. Je voulais que quelqu'un ici sache que le train de nuit transporte aussi ça.\n\nMarek VRABEC"
+			}
+		},
+		{
+			"id": "deadline_53402_late",
+			"conditions": {
+				"min_day": 8,
+				"requires_flags": [
+					"53402.rendu_en_retard"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Rapport 53402 : hors délai",
+				"body": "Inspecteur,\n\nLa Direction de la ligne attendait votre rapport avant midi. Elle l'a reçu après. Entre-temps, elle a appelé l'étage, puis l'étage m'a appelé.\n\nJe ne vous demande pas d'aller vite. Je vous demande d'aller à l'heure.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "deadline_53402_on_time",
+			"conditions": {
+				"min_day": 8,
+				"requires_flags": [
+					"53402.rendu_a_temps"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Direction de la ligne Velmira–Halvek",
+				"subject": "Accusé de réception : rapport 53402",
+				"body": "Le rapport n° 53402 a été reçu à l'heure dite. La Direction de la ligne en prend acte et le signale à votre hiérarchie.\n\nLe train de nuit circulera selon l'horaire."
 			}
 		}
 	]

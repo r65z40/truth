@@ -113,6 +113,7 @@ func _run() -> void:
 		"test_quick_start",
 		"test_message_tone",
 		"test_returning_citizens",
+		"test_urgent_case",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -2859,6 +2860,36 @@ func test_returning_citizens() -> void:
 	for event in EventRules.get_events():
 		if str(event.id).begins_with("return_"):
 			check(translations.has(event.message.body) and translations.has(event.message.from), "retour traduit : " + event.id)
+
+
+## Dossier urgent : à rendre avant midi, en heures de service (pas en temps réel).
+func test_urgent_case() -> void:
+	var case_data := CaseLibrary.get_case("53402")
+	check(DeadlineRules.has_deadline(case_data) and DeadlineRules.limit_hours(case_data) == 4, "53402 : à rendre avant midi (4 heures de service)")
+	check(DeadlineRules.is_on_time(case_data, 7, 3, 1), "signer à 11h00 : à temps")
+	check(not DeadlineRules.is_on_time(case_data, 7, 4, 1), "signer à 12h00 : trop tard (la signature prend une heure)")
+	check(not DeadlineRules.is_on_time(case_data, 8, 0, 1), "le lendemain : trop tard")
+	check(not DeadlineRules.has_deadline(CaseLibrary.get_case("51307")), "un dossier ordinaire n'a pas d'échéance")
+	GameState.new_game()
+	GameState.day_index = 7
+	GameState.assign_case("53402")
+	check(GameState.deadline_status("53402") == "pending", "dossier attribué : échéance en cours")
+	check(DossiersWindow.deadline_text("53402").contains("12h00"), "l'en-tête affiche l'heure limite")
+	var loyalty := GameState.get_indicator("loyalty")
+	GameState.apply_decision("53402", "reassign")
+	check(GameState.deadline_status("53402") == "met" and GameState.flags.get("53402.rendu_a_temps", false), "signé à 08h00 : rendu à l'heure")
+	check(GameState.get_indicator("loyalty") >= loyalty + 2, "rendre à temps : loyauté")
+	GameState.new_game()
+	GameState.day_index = 7
+	GameState.assign_case("53402")
+	GameState.hours_used = 5
+	check(GameState.deadline_status("53402") == "late", "13h00 : hors délai")
+	GameState.hours_used = 0
+	var suspicion := GameState.get_indicator("suspicion")
+	GameState.end_day()
+	check(GameState.flags.get("53402.rendu_en_retard", false) and GameState.get_indicator("suspicion") >= suspicion + 3, "laissé ouvert le soir : en retard, soupçon")
+	check(GameState.messages.any(func(m): return str(m.id).begins_with("event.deadline_53402_late")), "le lendemain matin, MAZUR : rapport hors délai")
+	GameState.new_game()
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier

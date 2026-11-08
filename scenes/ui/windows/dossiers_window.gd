@@ -642,6 +642,22 @@ static func format_iso_date(iso: String) -> String:
 	return "%s.%s.%s" % [bits[2], bits[1], bits[0]]
 
 
+## Mention d'échéance d'un dossier urgent, ajoutée à l'en-tête (vide sinon).
+static func deadline_text(case_id: String) -> String:
+	match GameState.deadline_status(case_id):
+		"pending":
+			return "  |  " + tr_static("À RENDRE AVANT %s") % DeadlineRules.hour_text(CaseLibrary.get_case(case_id))
+		"late":
+			return "  |  " + tr_static("HORS DÉLAI")
+		"met":
+			return "  |  " + tr_static("RENDU À L'HEURE")
+	return ""
+
+
+static func tr_static(text: String) -> String:
+	return TranslationServer.translate(text)
+
+
 func _refresh_all() -> void:
 	if current_case_id == "":
 		return
@@ -651,6 +667,7 @@ func _refresh_all() -> void:
 	if case_state.decision != "":
 		status_text += "  //  " + CaseLibrary.get_decision(case_data, case_state.decision).get("label", "").to_upper()
 	_case_header.text = tr("DOSSIER N° %s  |  %s  |  %s") % [current_case_id, case_data.subject_name, status_text]
+	_case_header.text += deadline_text(current_case_id)
 	_progress_label.text = progress_text(case_data, case_state)
 	# Pendant l'apprentissage, on masque le compteur d'avancement : le bandeau
 	# « À FAIRE » dit déjà quoi faire, et l'en-tête reste épuré.

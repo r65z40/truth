@@ -45,6 +45,21 @@
 		}
 	],
 	"priority": "prioritaire",
+	"deadline": {
+		"day": 7,
+		"hour": 12,
+		"on_time": {
+			"effects": {
+				"loyalty": 2
+			}
+		},
+		"late": {
+			"effects": {
+				"loyalty": -2,
+				"suspicion": 3
+			}
+		}
+	},
 	"field_scene": "audition_53402",
 	"documents": [
 		{
