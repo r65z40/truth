@@ -351,6 +351,8 @@ func is_overtime_today() -> bool:
 func request_document(case_id: String, document_id: String) -> bool:
 	var document := CaseLibrary.get_document(CaseLibrary.get_case(case_id), document_id)
 	var case_state := get_case_state(case_id)
+	if flags.get(refused_flag(case_id, document_id), false):
+		return false
 	if not document.has("request") or case_state.requested_documents.has(document_id) \
 			or not is_feature_unlocked("request_document"):
 		return false
@@ -366,11 +368,35 @@ func request_document(case_id: String, document_id: String) -> bool:
 	return true
 
 
+## Dossiers confiés selon la confiance de la hiérarchie (événements) :
+## - "grant_documents" : [{case, document}] une pièce « sur demande » est jointe
+##   d'office, sans heure de service ni effet de la demande (ses drapeaux, oui) ;
+## - "refuse_documents" : [{case, document}] la pièce ne peut plus être demandée.
+func _apply_trust(event: Dictionary) -> void:
+	for grant in event.get("grant_documents", []):
+		var document := CaseLibrary.get_document(CaseLibrary.get_case(grant.case), grant.document)
+		if not cases.has(grant.case) or not document.has("request"):
+			continue
+		var case_state := get_case_state(grant.case)
+		if not case_state.requested_documents.has(grant.document):
+			case_state.requested_documents[grant.document] = day_index - 1
+			_merge_flags(document.request.get("flags", {}))
+	for refusal in event.get("refuse_documents", []):
+		_set_flag(refused_flag(refusal.case, refusal.document), true)
+
+
+## Drapeau d'une pièce que la hiérarchie refuse de communiquer.
+static func refused_flag(case_id: String, document_id: String) -> String:
+	return "refused.%s.%s" % [case_id, document_id]
+
+
 ## Pièces que l'agent peut encore demander pour ce dossier.
 func get_requestable_documents(case_id: String) -> Array:
 	var case_state := get_case_state(case_id)
 	var result := []
 	for document in CaseLibrary.get_case(case_id).get("documents", []):
+		if flags.get(refused_flag(case_id, document.id), false):
+			continue
 		if document.has("request") and not case_state.requested_documents.has(document.id) \
 				and EventRules.are_conditions_met(document.get("conditions", {}), get_condition_state()):
 			result.append(document)
@@ -940,6 +966,7 @@ func end_day() -> Array:
 	for event in fired:
 		for case_id in event.get("assign_cases", []):
 			assign_case(case_id)
+		_apply_trust(event)
 		for indicator in event.get("effects", {}):
 			indicators[indicator] = clampi(indicators.get(indicator, 0) + int(event.effects[indicator]),
 					INDICATOR_MIN, INDICATOR_MAX)

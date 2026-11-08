@@ -2024,6 +2024,48 @@
 				"subject": "Signalement reçu vous concernant",
 				"body": "Inspecteur,\n\nLe Bureau a reçu un signalement visant un poste de radio réglé sur l'étranger, entendu depuis le palier du bloc 7, deuxième étage. L'auteur du signalement est, d'après l'adresse, votre plus proche voisin.\n\nLe signalement est versé à votre dossier personnel. Par courtoisie entre services, aucune suite immédiate.\n\nLe préposé"
 			}
+		},
+		{
+			"id": "trust_53517_informer_file",
+			"conditions": {
+				"min_day": 8,
+				"min_indicators": {
+					"loyalty": 60
+				}
+			},
+			"effects": {},
+			"grant_documents": [
+				{
+					"case": "53517",
+					"document": "informer_file"
+				}
+			],
+			"message": {
+				"from": "R. MAZUR, Directeur adjoint, Section 4",
+				"subject": "Dossier 53517 : pièce jointe d'office",
+				"body": "Inspecteur,\n\nJe vous joins directement la fiche de l'informateur CHAUDRON. D'ordinaire, il faut la demander par écrit et attendre un jour.\n\nLa Direction vous fait confiance. Ce genre de confiance se prête, elle ne se donne pas.\n\nR. MAZUR"
+			}
+		},
+		{
+			"id": "distrust_54012_visits",
+			"conditions": {
+				"min_day": 11,
+				"min_indicators": {
+					"suspicion": 55
+				}
+			},
+			"effects": {},
+			"refuse_documents": [
+				{
+					"case": "54012",
+					"document": "visits"
+				}
+			],
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Communication des registres hospitaliers",
+				"body": "Inspecteur,\n\nÀ compter de ce jour, les registres de l'Hôpital du District 9 ne sont plus communiqués à votre poste. Les demandes en cours ou à venir seront classées sans suite.\n\nCette mesure ne vous vise pas personnellement. Elle s'applique aux agents dont le dossier est en cours de revue.\n\nContrôle interne"
+			}
 		}
 	]
 }

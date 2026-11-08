@@ -120,6 +120,7 @@ func _run() -> void:
 		"test_redaction",
 		"test_embedded_font",
 		"test_document_links",
+		"test_trust_assignments",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -3072,6 +3073,30 @@ func test_document_links() -> void:
 		(row.find_child("Link_declaration", true, false) as Button).pressed.emit()
 		check(window.current_document_id == "declaration", "toucher le lien ouvre l'autre pièce")
 	window.queue_free()
+	GameState.new_game()
+
+
+## Dossiers confiés selon la confiance : pièce jointe d'office, ou refusée.
+func test_trust_assignments() -> void:
+	GameState.new_game()
+	GameState.day_index = 7
+	GameState.indicators["loyalty"] = 65
+	GameState.end_day()
+	check(GameState.cases.has("53517") and CaseLibrary.get_document(GameState.get_case_view("53517"), "informer_file").size() > 0, "loyal : la fiche de l'informateur est jointe d'office au 53517")
+	check(GameState.flags.get("53517.informer_checked", false) and GameState.hours_used == 0, "sans heure de service, drapeaux de la demande posés")
+	GameState.new_game()
+	GameState.day_index = 7
+	GameState.indicators["loyalty"] = 40
+	GameState.end_day()
+	check(CaseLibrary.get_document(GameState.get_case_view("53517"), "informer_file").is_empty(), "loyauté ordinaire : il faut la demander")
+	GameState.new_game()
+	GameState.day_index = 10
+	GameState.indicators["suspicion"] = 60
+	GameState.end_day()
+	check(GameState.cases.has("54012"), "54012 attribué")
+	check(not GameState.get_requestable_documents("54012").any(func(d): return d.id == "visits"), "soupçonné : le registre des visites n'est plus communiqué")
+	check(not GameState.request_document("54012", "visits"), "la demande est refusée")
+	check(GameState.messages.any(func(m): return str(m.id).begins_with("event.distrust_54012_visits")), "le Contrôle interne prévient")
 	GameState.new_game()
 
 

@@ -442,7 +442,9 @@ recommandations, et mets en place toutes tes idées ».
 
 ## Prochaine itération
 
-- [x] Effets observables des indicateurs : ton des messages (08.11) ; dossiers confiés à faire
+- [x] Effets observables des indicateurs : ton des messages ; dossiers confiés selon la
+      confiance (loyal : fiche CHAUDRON jointe d'office au 53517 ; soupçonné : registre des
+      visites du 54012 refusé), clés d'événement `grant_documents` / `refuse_documents` (08.11)
 - [ ] Utiliser les drapeaux `milice.ally` / `milice.enemy` dans un troisième dossier
 - [x] Lecteur de musique (demande de fen du 25.10) : autoload `Music`, fondus enchaînés,
       volume dans Paramètres, morceau choisi par `data/music.json` (moment, acte, drapeaux, indicateurs)
