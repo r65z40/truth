@@ -354,7 +354,10 @@ personnage (`docs/design/EXTENSIONS_PERSONNAGES.md`).
 Fichier `user://savegame.json` :
 `{save_version, game_version, saved_at, state}`. Pour changer le format :
 incrémenter `SAVE_VERSION` et ajouter une étape dans `SaveManager._migrate()`.
-Un chargement en échec ne modifie pas l'état courant. Version actuelle : 5
+Un chargement en échec ne modifie pas l'état courant. Version actuelle : 9
+(v9 : volume de la radio de chaque soirée, lignes caviardées de chaque dossier ;
+v8 : versions retenues de la fiche ; v7 : dossiers classés, plis jetés ; v6 :
+contradictions repérées). Plus ancien : v5
 (v5 : mémoire institutionnelle `ministry_record` ; v4 : heures de service, pièces
 demandées, consultation, soirées, scènes de terrain).
 Emplacement de `user://` sous Windows : `%APPDATA%\Godot\app_userdata\Ministry of Truth\`.
@@ -369,12 +372,31 @@ option d'agrandissement de l'interface, bouton Quitter masqué sur mobile/web.
 
 Fond `#0b0d0c`, anthracite `#1b1f1e`, phosphore `#3ce07a`, beige document
 `#d8ccad`, encre `#2a241c`, rouge alerte `#8e1f1f`, blanc cassé `#e8e4d8`.
-Police : monospace système (SystemFont avec repli). Variations de thème :
+Police : IBM Plex Mono embarquée (`assets/fonts/`, licence SIL OFL 1.1), avec les
+monospaces du système en secours pour les signes absents. Variations de thème :
 `TerminalPanel`, `TerminalText`, `DocumentPanel`, `DocumentLabel`, `DocumentText`,
 `DocumentTab`, `WindowFrame`, `TitleBar`, `TopBar`, `HeaderLabel`, `MutedLabel`,
-`StampLabel`, `AlertButton`.
+`StampLabel`, `AlertButton`, `RedactedLine` (ligne caviardée : bloc noir).
 
 ## Export
 
-Les fichiers `.json` de `data/` doivent être inclus dans l'export : à vérifier
-lors de la création du premier preset (filtre « fichiers non-ressources » : `*.json`).
+`export_presets.cfg` : préréglage « Windows » (x86_64, pck intégré à l'exécutable,
+sortie `build/windows/MinistryOfTruth.exe`). Filtre d'inclusion `data/*.json,
+assets/fonts/*.txt` ; `tests/` et `docs/` sont exclus. Il faut les modèles
+d'export de Godot 4.7.2 (Éditeur > Gérer les modèles d'export) pour produire
+l'exécutable.
+
+## Mécaniques du 08.11 (logique pure dans `scripts/core/`)
+
+| Mécanique | Données | Logique | État |
+|---|---|---|---|
+| Ton du courrier (post-scriptum selon les indicateurs) | `data/message_tone.json` | `MessageTone` | clé `postscript` du pli |
+| Dossier urgent (à rendre avant midi, en heures de service) | bloc `deadline` du dossier | `DeadlineRules` | drapeaux `<dossier>.rendu_a_temps` / `.rendu_en_retard` |
+| Sources qui s'usent | `data/sources.json` | `SourceWear` (appliqué dans `CaseLibrary.filter_case`) | aucun : déduit des contradictions établies |
+| Téléphone (appels courts, sans chronomètre) | `data/calls.json` | `CallRules` | drapeaux `call.<id>.<réponse>` / `.missed` |
+| Radio étrangère (volume bas ou fort) | `data/radio.json` | `RadioRules` | `evenings[jour].volume` (sauvegarde v9) |
+| Caviarder (acte 4) | bloc `redaction` du dossier | `RedactionRules` ; conditions `redacted:a+b`, `redacted_any` | `redacted_lines` du dossier (v9) |
+| Le dossier qui revient | événements `return_*` | `EventRules` | `fired_events` |
+
+Écrans posés sur le bureau, construits en code : `PhoneScreen`
+(`scenes/ui/phone_screen.gd`) et `RedactionScreen` (`scenes/ui/redaction_screen.gd`).

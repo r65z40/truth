@@ -235,5 +235,14 @@ le refus est mémorisé (`career.refused_promotion`).
 - 2026-11-04 : interface simplifiée (fen) : applications du bureau en plein
   écran avec « ← RETOUR », une seule aide à l'écran (MAZUR dans le bandeau),
   bureau à cinq icônes (Dossiers, Courrier, Journal, VERITAS, Terminal).
+- 2026-11-08 : « toutes les idées » (fen) : fil rouge réponse → passage, fiche
+  commentée par VERITAS (qui juge à la cote, pas à la vérité) et audit des
+  mauvaises versions, bureau qui change avec la carrière, relevé de carrière,
+  départ rapide par acte, post-scriptum selon les indicateurs, citoyens jugés qui
+  reviennent aux actes 3-4, dossier urgent en heures de service (jamais en temps
+  réel), sources prises en défaut qui perdent une cote, téléphone (2-3 réponses,
+  sans chronomètre ; un appel non pris est manqué le soir), radio d'Aldria au
+  volume choisi (fort = tout entendre, mais les voisins finissent par signaler),
+  caviardage ligne par ligne à l'acte 4 (ce qui reste lisible compte).
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

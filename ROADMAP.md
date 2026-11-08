@@ -228,7 +228,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
   - [x] Comparer avec l'archive — registre modifié de SEDLAR (révélation d'acte 2) :
         dossier 53761, original du sous-sol B vs copie transmise ; la ligne du 21.10
         vers Halvek est un ajout postérieur (tampon coiffé) ; établit `register.altered`
-  - [ ] Caviarder / réécrire ; pointeuse / l'heure juste ; radio étrangère ; tri du courrier
+  - [x] Caviarder ; [x] radio étrangère (08.11) ; [ ] pointeuse / l'heure juste ; [ ] tri du courrier
 
 ## Fait : acte 2 — L'Archive et le registre truqué (2026-10-26)
 
@@ -394,6 +394,28 @@ Proposition : https://claude.ai/artifact/Dua5iU65YykqvSUREUESug. fen : « plein
       pièce en 16 px à côté de la fiche
 - [ ] Test de fen
 
+## Fait : recommandations et idées de gameplay (demande de fen du 08.11)
+
+Bilan et idées : https://claude.ai/artifact/6KkyMd9gXGKSe4h7Qvi3mv. fen : « fais tes
+recommandations, et mets en place toutes tes idées ».
+
+- [x] #52 et #53 fusionnées (questions du dossier 53190 ajoutées)
+- [x] Fil rouge : une réponse de la fiche ouvre la pièce et surligne le passage
+- [x] Conclusion = fiche : VERITAS commente chaque réponse (à la cote de la source) ;
+      une version démentie par les pièces déclenche un audit quelques jours plus tard
+- [x] Le bureau change (plaque, plante, œil du fond d'écran selon acte, grade, soupçon)
+- [x] Relevé de carrière sur l'écran de fin ; compteur de fins au menu
+- [x] Départ rapide à l'acte 2, 3 ou 4 une fois une fin connue
+- [x] Ton du courrier : post-scriptum de MAZUR, de la Milice, du Contrôle interne
+- [x] Le dossier qui revient : NOVAK, ORLIK, KOVAC, VARGA, VRABEC réécrivent aux actes 3-4
+- [x] Dossier urgent : 53402 à rendre avant midi (heures de service)
+- [x] Sources qui s'usent : KOLB démenti au 53118 → cote D au 53190 ; Milice démentie au 54012 → 54030
+- [x] Téléphone : cinq appels (MAZUR, ORLIK, Vera SEDLAR, KREMER, Contrôle interne)
+- [x] Radio étrangère : volume bas (début du bulletin) ou fort (tout, mais les voisins signalent)
+- [x] Caviarder : 60001 et 60002 ligne par ligne ; caviardage partiel = la personne reste accusée
+- [x] Police IBM Plex Mono embarquée ; préréglage d'export Windows
+- [ ] Test de fen ; export sur une machine Windows (modèles d'export à installer)
+
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)
 
 - [x] Les papiers de la pendule (`vosk.father_proof_found`) : pièce du 60003 et seconde
@@ -420,7 +442,7 @@ Proposition : https://claude.ai/artifact/Dua5iU65YykqvSUREUESug. fen : « plein
 
 ## Prochaine itération
 
-- [ ] Effets observables des indicateurs (ton des messages, dossiers confiés)
+- [x] Effets observables des indicateurs : ton des messages (08.11) ; dossiers confiés à faire
 - [ ] Utiliser les drapeaux `milice.ally` / `milice.enemy` dans un troisième dossier
 - [x] Lecteur de musique (demande de fen du 25.10) : autoload `Music`, fondus enchaînés,
       volume dans Paramètres, morceau choisi par `data/music.json` (moment, acte, drapeaux, indicateurs)
@@ -442,8 +464,8 @@ Proposition : https://claude.ai/artifact/Dua5iU65YykqvSUREUESug. fen : « plein
 
 - [ ] Troisième dossier, personnages récurrents (ORLIK, MAZUR)
 - [ ] Chronologie et association de preuves
-- [ ] Polices libres embarquées
-- [ ] Preset d'export Windows, premiers tests sur machine cible
+- [x] Polices libres embarquées (IBM Plex Mono, 08.11)
+- [x] Preset d'export Windows (08.11) ; [ ] premiers tests sur machine cible
 
 ## Plus tard
 
