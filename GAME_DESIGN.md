@@ -244,5 +244,8 @@ le refus est mémorisé (`career.refused_promotion`).
   sans chronomètre ; un appel non pris est manqué le soir), radio d'Aldria au
   volume choisi (fort = tout entendre, mais les voisins finissent par signaler),
   caviardage ligne par ligne à l'acte 4 (ce qui reste lisible compte).
+  Puis : tri du courrier intercepté (transmettre, retenir, signaler ; aucune
+  bonne réponse affichée, un signalement peut aussi sauver quelqu'un), pièces
+  jointes d'office ou refusées selon la confiance, liens « Voir aussi ».
 - 2026-10-24 : contenu des enquêtes en JSON ; contradictions détectées par
   comparaison de « faits » déclarés dans chaque pièce ; indicateurs masqués.

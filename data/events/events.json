@@ -2088,6 +2088,68 @@
 				"subject": "ADLER",
 				"body": "Inspecteur,\n\nLe vieux est rentré chez lui hier soir, comme convenu. Il ne sait pas qui remercier ; moi, je sais qui créditer.\n\nUn service rendu en appelle un autre. Je vous ferai signe.\n\nL. ORLIK"
 			}
+		},
+		{
+			"id": "mail_vesely_summoned",
+			"conditions": {
+				"min_day": 6,
+				"requires_flags": [
+					"mail.vesely_reported"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Bureau des signalements, District 4",
+				"subject": "Suite donnée : famille VESELY",
+				"body": "Inspecteur,\n\nSur votre signalement du tri n° 1, la famille VESELY (District 4) a été convoquée. Le correspondant de Brod ne recevra plus de courrier de Velmira.\n\nJan VESELY a demandé qui l'avait signalé. Il ne lui a pas été répondu.\n\nLe préposé"
+			}
+		},
+		{
+			"id": "mail_kral_letter_arrived",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"centrale.warning_passed"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Courrier civil, transmis par le Bureau des requêtes",
+				"subject": "Une lettre arrivée",
+				"body": "Monsieur,\n\nMon mari m'avait écrit que la soupape sifflait depuis septembre. Sa lettre est arrivée le 15. Lui n'est pas rentré le 17.\n\nJe garde la lettre. Si un jour quelqu'un demande ce qui s'est passé à la Centrale, elle dit tout.\n\nIrena KRAL"
+			}
+		},
+		{
+			"id": "mail_kral_transferred",
+			"conditions": {
+				"min_day": 11,
+				"requires_flags": [
+					"centrale.worker_reported"
+				]
+			},
+			"effects": {},
+			"message": {
+				"from": "Direction du personnel, Centrale thermique n° 3",
+				"subject": "Mutation : D. KRAL",
+				"body": "Pour information.\n\nSuite au signalement de la Section 4, le chauffeur D. KRAL a été muté au dépôt de charbon le 15.11, pour propos alarmistes.\n\nIl n'était donc pas en chaufferie au moment de l'accident du 17. Il est l'un des rares de son équipe."
+			}
+		},
+		{
+			"id": "mail_self_denunciation_missing",
+			"conditions": {
+				"min_day": 18,
+				"requires_flags": [
+					"mail.self_denunciation_held"
+				]
+			},
+			"effects": {
+				"suspicion": 3
+			},
+			"message": {
+				"from": "Contrôle interne, Section 4",
+				"subject": "Un signalement égaré",
+				"body": "Inspecteur,\n\nUn résident du bloc 7 affirme avoir posté le 3 un signalement adressé au Bureau du District 2. Le Bureau ne l'a jamais reçu.\n\nLe tri du courrier de ce jour-là était confié à votre poste. Nous ne tirons aucune conclusion. Nous notons.\n\nContrôle interne"
+			}
 		}
 	]
 }

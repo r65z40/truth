@@ -80,6 +80,8 @@ var _toast_tween: Tween
 var _guide_bar: PanelContainer
 var phone_button: Button
 var phone_screen: PhoneScreen
+var mail_button: Button
+var mail_sort_screen: MailSortScreen
 var redaction_screen: RedactionScreen
 var _guide_bar_label: Label
 ## Jour où l'on a déjà prévenu que l'horloge marque 16h00 (une fois par jour).
@@ -156,6 +158,9 @@ func _ready() -> void:
 	_toast.grow_horizontal = Control.GROW_DIRECTION_END
 	_toast.grow_vertical = Control.GROW_DIRECTION_END
 	_toast.custom_minimum_size.x = 520.0
+	# Largeur fixée pour le texte : sans elle, l'étiquette à retour à la ligne
+	# calcule sa hauteur sur une largeur nulle et la notification devient très haute.
+	_toast_label.custom_minimum_size.x = 480.0
 	_day_transition.hide()
 	coach.target_provider = coach_target
 	coach.dismissed.connect(_on_coach_dismissed)
@@ -457,6 +462,18 @@ func _build_phone() -> void:
 	var end_day_button: Button = %EndDayButton
 	end_day_button.get_parent().add_child(phone_button)
 	end_day_button.get_parent().move_child(phone_button, end_day_button.get_index())
+	mail_button = Button.new()
+	mail_button.name = "MailSortButton"
+	mail_button.theme_type_variation = &"EndDayButton"
+	mail_button.tooltip_text = tr("Lettres interceptées à contrôler aujourd'hui.")
+	mail_button.custom_minimum_size = Vector2(0, 44)
+	mail_button.visible = false
+	mail_button.pressed.connect(open_mail_sort)
+	end_day_button.get_parent().add_child(mail_button)
+	end_day_button.get_parent().move_child(mail_button, phone_button.get_index())
+	mail_sort_screen = MailSortScreen.new()
+	add_child(mail_sort_screen)
+	mail_sort_screen.closed.connect(_refresh_header)
 	phone_screen = PhoneScreen.new()
 	add_child(phone_screen)
 	phone_screen.closed.connect(_refresh_header)
@@ -469,9 +486,17 @@ func open_phone() -> void:
 		terminal.print_line(tr("Appel : %s.") % phone_screen._caller.text, Terminal.COLOR_DIM)
 
 
+func open_mail_sort() -> void:
+	close_start_menu()
+	mail_sort_screen.open()
+
+
 func _refresh_phone() -> void:
 	if phone_button == null:
 		return
+	var letters := GameState.get_pending_letters().size()
+	mail_button.visible = letters > 0
+	mail_button.text = tr("TRI (%d)") % letters
 	var ringing := not GameState.get_pending_call().is_empty()
 	if ringing and not phone_button.visible:
 		Sound.play("phone_ring")

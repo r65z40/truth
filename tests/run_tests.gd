@@ -122,6 +122,7 @@ func _run() -> void:
 		"test_document_links",
 		"test_trust_assignments",
 		"test_milice_54030",
+		"test_mail_sorting",
 		"test_case_51307_depends_on_first_case",
 		"test_case_51307_contradictions_and_veritas",
 		"test_case_51307_consequences",
@@ -3112,6 +3113,44 @@ func test_milice_54030() -> void:
 	var due := EventRules.due_events({"day_index": 13, "flags": {"milice.ally": true, "adler.freed": true}, "cases": {}, "fired_events": [], "indicators": {}})
 	check(due.any(func(e): return e.id == "54030_orlik_collects"), "ADLER libéré avec la Milice alliée : ORLIK note la dette")
 	check(CaseLibrary.validate_case(CaseLibrary.get_case("54030")).is_empty(), "le dossier 54030 reste valide")
+
+
+## Tri du courrier : TRANSMETTRE, RETENIR ou SIGNALER ; non trié = parti tel quel.
+func test_mail_sorting() -> void:
+	for batch in MailSorting.get_data().batches:
+		for letter in batch.letters:
+			for verdict in MailSorting.VERDICTS:
+				check(letter.outcomes.has(verdict), "lettre %s : issue « %s »" % [letter.id, verdict])
+	GameState.new_game()
+	check(GameState.get_pending_letters().is_empty(), "premier jour : rien à trier")
+	GameState.day_index = 4
+	check(GameState.get_pending_letters().size() == 3, "jour 4 : trois lettres interceptées")
+	var loyalty := GameState.get_indicator("loyalty")
+	check(GameState.sort_letter("aldria_cousin", "report") and GameState.flags.get("mail.vesely_reported", false), "signaler le cousin d'Aldria")
+	check(GameState.get_indicator("loyalty") == loyalty + 2, "signaler : loyauté")
+	check(not GameState.sort_letter("aldria_cousin", "hold"), "une lettre ne se trie qu'une fois")
+	check(not GameState.sort_letter("adler_card", "brûler"), "verdict inconnu refusé")
+	GameState.end_day()
+	check(GameState.flags.get("mail.adler_card.transmit", false) and GameState.flags.get("heure_juste.letter_passed", false), "non triée le soir : la carte d'ADLER part telle quelle")
+	check(GameState.get_pending_letters().is_empty(), "le lendemain, plus rien à trier")
+	var later := {"day_index": 11, "flags": {"centrale.worker_reported": true}, "cases": {}, "fired_events": [], "indicators": {}}
+	check(EventRules.due_events(later).any(func(e): return e.id == "mail_kral_transferred"), "signaler le chauffeur l'a éloigné de la chaufferie")
+	GameState.new_game()
+	GameState.day_index = 4
+	var screen := MailSortScreen.new()
+	get_tree().root.add_child(screen)
+	check(screen.open() and screen.letter_id == "soldier_mother", "l'écran ouvre la première lettre")
+	screen.choose("hold")
+	check(screen.letter_id == "aldria_cousin" and GameState.flags.get("mail.soldier_mother.hold", false), "retenue, lettre suivante")
+	screen.choose("transmit")
+	screen.choose("transmit")
+	check(screen.letter_id == "" and not screen.find_child("Verdicts", true, false).visible, "paquet trié")
+	screen.queue_free()
+	var translations := Localization.load_content_translations("en")
+	for batch in MailSorting.get_data().batches:
+		for letter in batch.letters:
+			check(translations.has(letter.text) and translations.has(letter.from), "lettre traduite : " + letter.id)
+	GameState.new_game()
 
 
 ## Moins de clics : plis lus repliés, pli qui ouvre son dossier, dossier

@@ -518,6 +518,26 @@ func toggle_redaction(case_id: String, line_id: String) -> Array:
 	return case_state.redacted_lines
 
 
+# --- Tri du courrier ---------------------------------------------------------
+
+## Lettres interceptées du jour, pas encore triées.
+func get_pending_letters() -> Array:
+	return MailSorting.pending(day_index, flags)
+
+
+## Trie une lettre du jour ; faux si elle n'est pas en attente ou le verdict inconnu.
+func sort_letter(letter_id: String, verdict: String) -> bool:
+	if not get_pending_letters().any(func(letter: Dictionary) -> bool: return letter.id == letter_id):
+		return false
+	var result := MailSorting.resolve(MailSorting.get_letter(letter_id), verdict)
+	if result.is_empty():
+		return false
+	_apply_effects(result.effects)
+	_merge_flags(result.flags)
+	state_changed.emit()
+	return true
+
+
 # --- Téléphone --------------------------------------------------------------
 
 ## Appel en attente (le téléphone sonne), ou {}.
@@ -948,6 +968,11 @@ func get_unread_count() -> int:
 ## Termine la journée : passe au jour suivant et applique les événements dus.
 ## Renvoie la liste des événements déclenchés.
 func end_day() -> Array:
+	# Courrier non trié : les lettres partent telles quelles.
+	for letter in get_pending_letters():
+		var passed := MailSorting.resolve(letter, MailSorting.DEFAULT_VERDICT)
+		_apply_effects(passed.effects)
+		_merge_flags(passed.flags)
 	# Le téléphone a sonné sans réponse : appel manqué.
 	var unanswered := get_pending_call()
 	if not unanswered.is_empty():

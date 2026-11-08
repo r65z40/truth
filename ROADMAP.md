@@ -228,7 +228,7 @@ VERITAS, dépendances, acte 5, roadmap hiérarchisée dans `docs/design/`
   - [x] Comparer avec l'archive — registre modifié de SEDLAR (révélation d'acte 2) :
         dossier 53761, original du sous-sol B vs copie transmise ; la ligne du 21.10
         vers Halvek est un ajout postérieur (tampon coiffé) ; établit `register.altered`
-  - [x] Caviarder ; [x] radio étrangère (08.11) ; [ ] pointeuse / l'heure juste ; [ ] tri du courrier
+  - [x] Caviarder ; [x] radio étrangère ; [x] tri du courrier (08.11) ; [ ] pointeuse / l'heure juste
 
 ## Fait : acte 2 — L'Archive et le registre truqué (2026-10-26)
 
@@ -414,6 +414,9 @@ recommandations, et mets en place toutes tes idées ».
 - [x] Radio étrangère : volume bas (début du bulletin) ou fort (tout, mais les voisins signalent)
 - [x] Caviarder : 60001 et 60002 ligne par ligne ; caviardage partiel = la personne reste accusée
 - [x] Police IBM Plex Mono embarquée ; préréglage d'export Windows
+- [x] Suite (« continue ») : liens « Voir aussi » entre pièces, dossiers confiés selon la
+      confiance, Milice alliée / hostile au 54030, tri du courrier (jours 4, 9, 16 : neuf
+      lettres, TRANSMETTRE / RETENIR / SIGNALER, quatre suites), notification compacte
 - [ ] Test de fen ; export sur une machine Windows (modèles d'export à installer)
 
 ## Fait : fils d'histoire raccordés (demande de fen du 02.11)

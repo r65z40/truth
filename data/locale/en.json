@@ -559,5 +559,13 @@
 	"CAVIARDER (%d)": "REDACT (%d)",
 	"Caviardage MIROIR : dossier n° %s.": "MIRROR redaction: file no. %s.",
 	"Voir aussi :": "See also:",
-	"Même sujet : %s": "Same subject: %s"
+	"Même sujet : %s": "Same subject: %s",
+	"Lettres interceptées à contrôler aujourd'hui.": "Intercepted letters to inspect today.",
+	"TRI (%d)": "SORT (%d)",
+	"CONTRÔLE DU COURRIER": "MAIL INSPECTION",
+	"Paquet trié.": "Bundle sorted.",
+	"Les lettres retenues ne seront jamais distribuées. Les autres sont déjà dans les sacs.": "Held letters will never be delivered. The others are already in the sacks.",
+	"CONTRÔLE DU COURRIER  //  lettre %d sur %d": "MAIL INSPECTION  //  letter %d of %d",
+	"De : %s\nÀ : %s": "From: %s\nTo: %s",
+	"PLUS TARD (non trié, il partira tel quel ce soir)": "LATER (unsorted, it goes out as is tonight)"
 }

@@ -88,6 +88,7 @@ func _reset_data_caches() -> void:
 	SourceWear._data = {}
 	CallRules._data = {}
 	RadioRules._data = {}
+	MailSorting._data = {}
 
 
 func _register_ui_translation(code: String) -> void:
