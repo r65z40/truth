@@ -4006,6 +4006,13 @@ func test_desk_traces() -> void:
 	desk.refresh_traces()
 	await get_tree().process_frame
 	check(desk.get_node("Wallpaper/Traces").get_child_count() == 1, "le bureau affiche les papiers du jour")
+	var wallpaper: DesktopWallpaper = desk.get_node("Wallpaper")
+	check(wallpaper.act == 1 and wallpaper.plate.contains(GameState.get_rank_title()), "plaque au grade de l'agent, acte 1")
+	GameState.day_index = 13
+	GameState.indicators["suspicion"] = 80
+	desk.refresh_traces()
+	check(wallpaper.act == FictionalCalendar.act_for_day(13).number and wallpaper.suspicion == 80,
+			"le décor suit l'acte et la méfiance")
 	desk.queue_free()
 	GameState.new_game()
 	await get_tree().process_frame

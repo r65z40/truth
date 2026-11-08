@@ -346,6 +346,9 @@ func _on_state_changed() -> void:
 ## Petits papiers posés sur le bureau (DeskTraces) : les suites des signatures
 ## et le fil du père, en bas à droite, derrière les fenêtres.
 func refresh_traces() -> void:
+	# Le bureau change avec la partie : grade sur la plaque, plante, œil.
+	($Wallpaper as DesktopWallpaper).set_state(int(FictionalCalendar.act_for_day(GameState.day_index).get("number", 1)),
+			"%s  —  %s" % [GameState.player.get("name", ""), GameState.get_rank_title()], GameState.get_indicator("suspicion"))
 	var box := $Wallpaper.get_node_or_null("Traces") as VBoxContainer
 	if box == null:
 		box = VBoxContainer.new()
